@@ -19,5 +19,12 @@
 *.tar.gz
 *.rar
 
+# IDE Files #
+dependency-track-maven-plugin.iml
+.idea/
+
+# Build Files #
+target/
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
