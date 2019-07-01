@@ -1,21 +1,21 @@
 package com.pmckeown.rest.client;
 
+import com.pmckeown.rest.ResourceConstants;
 import com.pmckeown.rest.model.Bom;
 import com.pmckeown.rest.model.Response;
 import kong.unirest.*;
 
+import static com.pmckeown.rest.ResourceConstants.V1_BOM;
+
 public class DependencyTrackClient {
 
-    private static final String V1_BOM = "/v1/bom";
-
     private String host;
-    private String apiKey;
 
     public DependencyTrackClient(String host, String apiKey) {
         this.host = host;
-        this.apiKey = apiKey;
 
         Unirest.config().setObjectMapper(new JacksonObjectMapper());
+        Unirest.config().addDefaultHeader(" X-Api-Key", apiKey);
     }
 
     public Response uploadBom(Bom bom) {
@@ -23,7 +23,6 @@ public class DependencyTrackClient {
             HttpResponse<String> response = Unirest.put(host + V1_BOM)
                     .header(HeaderNames.CONTENT_TYPE, "application/json")
                     .header(HeaderNames.ACCEPT, "application/json")
-                    .header(" X-Api-Key", apiKey)
                     .body(bom)
                     .asString();
 

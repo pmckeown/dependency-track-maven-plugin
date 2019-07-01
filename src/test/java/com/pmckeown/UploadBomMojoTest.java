@@ -1,50 +1,63 @@
 package com.pmckeown;
 
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.maven.plugin.testing.MojoRule;
-import org.apache.maven.plugin.testing.WithoutMojo;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.File;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.pmckeown.rest.ResourceConstants.V1_BOM;
+import static org.junit.Assert.*;
 
 public class UploadBomMojoTest {
 
     @Rule
-    public MojoRule rule = new MojoRule() {
-        @Override
-        protected void before() throws Throwable {
-        }
+    public WireMockRule wireMockRule = new WireMockRule(0);
 
-        @Override
-        protected void after() {
-        }
-    };
+    @Rule
+    public MojoRule mojoRule = new MojoRule();
 
-    /**
-     * @throws Exception if any
-     */
     @Test
-    public void thatExecutionHappens() throws Exception {
+    public void thatBomCanBeUploadedSuccessfully() throws Exception {
+        stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
+
+        uploadBomMojo().execute();
+
+        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM)));
+    }
+
+    @Test
+    public void thatFailureToUploadDoesNotError() throws Exception {
+        stubFor(put(urlEqualTo(V1_BOM)).willReturn(status(404)));
+
+        try {
+            uploadBomMojo().execute();
+        } catch (Exception ex) {
+            fail("No exception expected");
+        }
+
+        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM)));
+    }
+
+    /*
+     * Helper methods
+     */
+
+    private UploadBomMojo uploadBomMojo() throws Exception {
+        UploadBomMojo uploadBomMojo = (UploadBomMojo) mojoRule.lookupConfiguredMojo( getPomFile(), "upload-bom" );
+        uploadBomMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
+        assertNotNull(uploadBomMojo);
+        return uploadBomMojo;
+    }
+
+    private File getPomFile() {
         File pom = new File( "target/test-classes/project-to-test/" );
         assertNotNull( pom );
         assertTrue( pom.exists() );
-
-        UploadBomMojo uploadBomMojo = (UploadBomMojo) rule.lookupConfiguredMojo( pom, "upload-bom" );
-        assertNotNull(uploadBomMojo);
-        uploadBomMojo.execute();
+        return pom;
     }
-
-    /** Do not need the MojoRule. */
-    @WithoutMojo
-    @Test
-    public void testSomethingWhichDoesNotNeedTheMojoAndProbablyShouldBeExtractedIntoANewClassOfItsOwn()
-    {
-        assertTrue( true );
-    }
-
 }
 

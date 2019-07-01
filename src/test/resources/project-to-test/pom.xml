@@ -17,11 +17,8 @@
                 <groupId>com.pmckeown</groupId>
                 <artifactId>dependency-track-maven-plugin</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
-                <goals>
-                    <goal>upload-bom</goal>
-                </goals>
                 <configuration>
-                    <!-- Specify the UploadBomMojo parameter -->
+                    <dependencyTrackBaseUrl>http://dependencyTrackBaseUrl</dependencyTrackBaseUrl>
                 </configuration>
             </plugin>
         </plugins>

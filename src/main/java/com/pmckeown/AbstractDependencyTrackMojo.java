@@ -2,19 +2,19 @@ package com.pmckeown;
 
 import com.pmckeown.rest.client.DependencyTrackClient;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 abstract class AbstractDependencyTrackMojo extends AbstractMojo {
 
-    private String host = "http://localhost:8080/api";
-    private String apiKey = "CegP2X155YABba4gR805mVnbA9jRmQF1";
-    private DependencyTrackClient dependencyTrackClient;
+    @Parameter(required = true)
+    private String dependencyTrackBaseUrl;
 
-    AbstractDependencyTrackMojo() {
-        this.dependencyTrackClient = new DependencyTrackClient(host, apiKey);
-    }
+//    private String host = "http://localhost:8080/";
+    private String apiKey = "CegP2X155YABba4gR805mVnbA9jRmQF1";
 
     DependencyTrackClient dependencyTrackClient() {
-        return this.dependencyTrackClient;
+        info("Connecting to Dependency Track instance: %s", dependencyTrackBaseUrl);
+        return new DependencyTrackClient(dependencyTrackBaseUrl, apiKey);
     }
 
     void info(String message, Object... params) {
@@ -33,5 +33,9 @@ abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         if(getLog().isErrorEnabled()) {
             getLog().error(String.format(message, params));
         }
+    }
+
+    public void setDependencyTrackBaseUrl(String url) {
+        this.dependencyTrackBaseUrl = url;
     }
 }
