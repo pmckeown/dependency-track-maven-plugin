@@ -15,7 +15,7 @@ import java.util.Optional;
 public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     // Future Parameters
-    private String filename = "src/test/resources/project-to-test/target/bom.xml";
+    private String filename = "src/test/resources/project-to-test/bom.xml";
     private String projectName = "dependency-track";
     private String projectVersion = "3.7.0-SNAPSHOT";
 
