@@ -37,10 +37,8 @@ public class DependencyTrackClientTest {
     public void thatBomIsSentAsExpected() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
-        Bom bom = new Bom(PROJECT_NAME, PROJECT_VERSION,false, BASE_64_ENCODED_BOM);
-
         DependencyTrackClient client = new DependencyTrackClient(HOST + wireMockRule.port(), API_KEY);
-        Response response = client.uploadBom(bom);
+        Response response = client.uploadBom(aBom());
 
         assertThat(response.getStatus(), is(equalTo(200)));
         assertThat(response.getStatusText(), is(equalTo("OK")));
@@ -53,10 +51,8 @@ public class DependencyTrackClientTest {
     public void thatHttpErrorsWhenUploadingBomsAreTranslatedIntoAResponse() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(status(418)));
 
-        Bom bom = new Bom(PROJECT_NAME, PROJECT_VERSION,false, BASE_64_ENCODED_BOM);
-
         DependencyTrackClient client = new DependencyTrackClient(HOST + wireMockRule.port(), API_KEY);
-        Response response = client.uploadBom(bom);
+        Response response = client.uploadBom(aBom());
 
         assertThat(response.getStatus(), is(equalTo(418)));
 
@@ -69,15 +65,39 @@ public class DependencyTrackClientTest {
         stubFor(put(urlEqualTo(V1_BOM))
                 .willReturn(aResponse().withFault(Fault.EMPTY_RESPONSE)));
 
-        Bom bom = new Bom(PROJECT_NAME, PROJECT_VERSION,false, BASE_64_ENCODED_BOM);
-
         DependencyTrackClient client = new DependencyTrackClient(HOST + wireMockRule.port(), API_KEY);
-        Response response = client.uploadBom(bom);
+        Response response = client.uploadBom(aBom());
 
         assertThat(response.getStatus(), is(equalTo(-1)));
 
         verify(1, putRequestedFor(urlEqualTo(V1_BOM))
                 .withRequestBody(matchingJsonPath("$.projectName", WireMock.equalTo(PROJECT_NAME))));
+    }
+
+    @Test
+    public void thatProvidedBaseUrlsHaveTrailingSlashesRemoved() throws Exception {
+        String url = "http://www.slashes-r-us.com/";
+
+        DependencyTrackClient client = new DependencyTrackClient(url, "api123");
+
+        assertThat(client.getHost(), is(equalTo("http://www.slashes-r-us.com")));
+    }
+
+    @Test
+    public void thatProvidedBaseUrlsWithougTrailingSlashesAreNotModified() throws Exception {
+        String url = "http://www.slashes-r-not-us.com";
+
+        DependencyTrackClient client = new DependencyTrackClient(url, "api123");
+
+        assertThat(client.getHost(), is(equalTo("http://www.slashes-r-not-us.com")));
+    }
+
+    /*
+     * Helper methods
+     */
+
+    private Bom aBom() {
+        return new Bom(PROJECT_NAME, PROJECT_VERSION, false, BASE_64_ENCODED_BOM);
     }
 
 }
