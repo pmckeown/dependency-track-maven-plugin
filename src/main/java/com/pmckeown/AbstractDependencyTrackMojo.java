@@ -9,7 +9,6 @@ abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     @Parameter(required = true)
     private String dependencyTrackBaseUrl;
 
-//    private String host = "http://localhost:8080/";
     private String apiKey = "CegP2X155YABba4gR805mVnbA9jRmQF1";
 
     DependencyTrackClient dependencyTrackClient() {

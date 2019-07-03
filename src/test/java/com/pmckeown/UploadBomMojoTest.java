@@ -49,6 +49,7 @@ public class UploadBomMojoTest {
     private UploadBomMojo uploadBomMojo() throws Exception {
         UploadBomMojo uploadBomMojo = (UploadBomMojo) mojoRule.lookupConfiguredMojo( getPomFile(), "upload-bom" );
         uploadBomMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
+        uploadBomMojo.setBomLocation("src/test/resources/project-to-test/bom.xml");
         assertNotNull(uploadBomMojo);
         return uploadBomMojo;
     }
