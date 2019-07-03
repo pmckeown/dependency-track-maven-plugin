@@ -9,7 +9,8 @@ abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     @Parameter(required = true)
     private String dependencyTrackBaseUrl;
 
-    private String apiKey = "CegP2X155YABba4gR805mVnbA9jRmQF1";
+    @Parameter(required = true)
+    private String apiKey;
 
     DependencyTrackClient dependencyTrackClient() {
         info("Connecting to Dependency Track instance: %s", dependencyTrackBaseUrl);
@@ -34,7 +35,11 @@ abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         }
     }
 
-    public void setDependencyTrackBaseUrl(String url) {
+    void setDependencyTrackBaseUrl(String url) {
         this.dependencyTrackBaseUrl = url;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
     }
 }

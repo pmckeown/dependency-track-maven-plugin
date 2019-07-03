@@ -50,6 +50,7 @@ public class UploadBomMojoTest {
         UploadBomMojo uploadBomMojo = (UploadBomMojo) mojoRule.lookupConfiguredMojo( getPomFile(), "upload-bom" );
         uploadBomMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
         uploadBomMojo.setBomLocation("src/test/resources/project-to-test/bom.xml");
+        uploadBomMojo.setApiKey("ABC123");
         assertNotNull(uploadBomMojo);
         return uploadBomMojo;
     }

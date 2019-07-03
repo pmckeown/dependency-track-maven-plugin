@@ -20,6 +20,7 @@
                 <configuration>
                     <dependencyTrackBaseUrl>http://dependencyTrackBaseUrl</dependencyTrackBaseUrl>
                     <bomLocation>src/test/resources/project-to-test/bom.xml</bomLocation>
+                    <apiKey>CegP2X155YABba4gR805mVnbA9jRmQF1</apiKey>
                 </configuration>
             </plugin>
         </plugins>
