@@ -1,0 +1,36 @@
+package com.pmckeown.rest.model;
+
+public class Bom {
+
+    private String projectName;
+    private String projectVersion;
+    private boolean autoCreate;
+    private String base64EncodedBom;
+
+    public Bom(String projectName, String projectVersion, boolean autoCreate, String base64EncodedBom) {
+        this.projectName = projectName;
+        this.projectVersion = projectVersion;
+        this.autoCreate = autoCreate;
+        this.base64EncodedBom = base64EncodedBom;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public String getProjectVersion() {
+        return projectVersion;
+    }
+
+    public boolean isAutoCreate() {
+        return autoCreate;
+    }
+
+    public String getBom() {
+        return base64EncodedBom;
+    }
+
+    public String toString() {
+        return String.format("Project Name: %s; Project Version: %s;", projectName, projectVersion);
+    }
+}
