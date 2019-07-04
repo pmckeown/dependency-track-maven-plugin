@@ -1,9 +1,9 @@
 package com.pmckeown;
 
 
+import com.pmckeown.util.BomEncoder;
 import com.pmckeown.rest.model.Bom;
 import com.pmckeown.rest.model.Response;
-import com.pmckeown.util.BomUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -23,20 +23,22 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Parameter(required = true, defaultValue = "${project.version}")
     private String projectVersion;
 
+    private BomEncoder bomEncoder = new BomEncoder();
+
     public void execute() throws MojoExecutionException {
         info("upload-bom goal started");
         debug("Current working directory: %s", System.getProperty("user.dir"));
         debug("looking for bom.xml at %s", bomLocation);
 
-        Optional<String> base64EncodedBomOptional = BomUtils.getBase64EncodedBom(bomLocation, getLog());
+        Optional<String> encodedBomOptional = bomEncoder.encodeBom(bomLocation);
 
-        if (base64EncodedBomOptional.isPresent()) {
+        if (encodedBomOptional.isPresent()) {
             info("Project Name: %s", projectName);
             info("Project Version: %s", projectVersion);
 
-            debug("Base64 Encoded BOM: ", base64EncodedBomOptional.get());
+            debug("Base64 Encoded BOM: ", encodedBomOptional.get());
 
-            Bom bom = new Bom(projectName, projectVersion, true, base64EncodedBomOptional.get());
+            Bom bom = new Bom(projectName, projectVersion, true, encodedBomOptional.get());
             Response response = dependencyTrackClient().uploadBom(bom);
 
             if (response.isSuccess()) {
@@ -53,6 +55,9 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         }
     }
 
+    /*
+     * Setters for dependency injection in tests
+     */
     void setBomLocation(String bomLocation) {
         this.bomLocation = bomLocation;
     }
@@ -63,5 +68,9 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     void setProjectVersion(String projectVersion) {
         this.projectVersion = projectVersion;
+    }
+
+    void setBomEncoder(BomEncoder bomEncoder) {
+        this.bomEncoder = bomEncoder;
     }
 }

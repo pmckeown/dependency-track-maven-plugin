@@ -2,25 +2,41 @@ package com.pmckeown;
 
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.pmckeown.util.BomEncoder;
 import org.apache.maven.plugin.testing.MojoRule;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.io.File;
+import java.util.Optional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.pmckeown.rest.ResourceConstants.V1_BOM;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.doReturn;
 
 public class UploadBomMojoTest {
 
     private static final String TEST_RESOURCES = "target/test-classes/project-to-test/";
+    private static final String BOM_LOCATION = TEST_RESOURCES + "bom.xml";
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(0);
 
     @Rule
     public MojoRule mojoRule = new MojoRule();
+
+    @Mock
+    private BomEncoder bomEncoder;
+
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION);
+    }
 
     @Test
     public void thatBomCanBeUploadedSuccessfully() throws Exception {
@@ -101,8 +117,9 @@ public class UploadBomMojoTest {
     private UploadBomMojo uploadBomMojo() throws Exception {
         UploadBomMojo uploadBomMojo = (UploadBomMojo) mojoRule.lookupConfiguredMojo(getPomFile(), "upload-bom");
         uploadBomMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
-        uploadBomMojo.setBomLocation(TEST_RESOURCES + "bom.xml");
+        uploadBomMojo.setBomLocation(BOM_LOCATION);
         uploadBomMojo.setApiKey("ABC123");
+        uploadBomMojo.setBomEncoder(bomEncoder);
         assertNotNull(uploadBomMojo);
         return uploadBomMojo;
     }
