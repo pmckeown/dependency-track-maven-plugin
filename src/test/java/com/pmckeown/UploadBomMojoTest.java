@@ -48,6 +48,19 @@ public class UploadBomMojoTest {
     }
 
     @Test
+    public void thatFailureToUploadDoesNotError() throws Exception {
+        stubFor(put(urlEqualTo(V1_BOM)).willReturn(status(404)));
+
+        try {
+            uploadBomMojo().execute();
+        } catch (Exception ex) {
+            fail("No exception expected");
+        }
+
+        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM)));
+    }
+
+    @Test
     public void thatProjectNameCanBeProvided() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
@@ -98,16 +111,14 @@ public class UploadBomMojoTest {
     }
 
     @Test
-    public void thatFailureToUploadDoesNotError() throws Exception {
-        stubFor(put(urlEqualTo(V1_BOM)).willReturn(status(404)));
+    public void thatBomLocationDefaultsToTargetDirectory() throws Exception {
+        stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
-        try {
-            uploadBomMojo().execute();
-        } catch (Exception ex) {
-            fail("No exception expected");
-        }
+        UploadBomMojo uploadBomMojo = uploadBomMojoWithoutLocation();
+        uploadBomMojo.execute();
 
-        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM)));
+        // No BOM exists at the default location for this project
+        verify(exactly(0), putRequestedFor(urlEqualTo(V1_BOM)));
     }
 
     /*
@@ -115,9 +126,19 @@ public class UploadBomMojoTest {
      */
 
     private UploadBomMojo uploadBomMojo() throws Exception {
+        return uploadBomMojo(BOM_LOCATION);
+    }
+
+    private UploadBomMojo uploadBomMojoWithoutLocation() throws Exception {
+        return uploadBomMojo(null);
+    }
+
+    private UploadBomMojo uploadBomMojo(String location) throws Exception {
         UploadBomMojo uploadBomMojo = (UploadBomMojo) mojoRule.lookupConfiguredMojo(getPomFile(), "upload-bom");
         uploadBomMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
-        uploadBomMojo.setBomLocation(BOM_LOCATION);
+        if (location != null) {
+            uploadBomMojo.setBomLocation(location);
+        }
         uploadBomMojo.setApiKey("ABC123");
         uploadBomMojo.setBomEncoder(bomEncoder);
         assertNotNull(uploadBomMojo);

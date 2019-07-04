@@ -14,7 +14,7 @@ import java.util.Optional;
 @Mojo(name = "upload-bom", defaultPhase = LifecyclePhase.VERIFY)
 public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
-    @Parameter(required = true)
+    @Parameter(required = true, defaultValue = "target/bom.xml")
     private String bomLocation;
 
     @Parameter(required = true, defaultValue = "${project.artifactId}")
