@@ -9,6 +9,8 @@ import java.util.List;
  * Basic {@link Log} Test Double to provide as a dependency where needed.
  *
  * Prints and captures log contents for debugging and verification.
+ *
+ * TODO - Delete this and refactor the BomUtils to make it testable
  */
 public class TestLog implements Log {
 

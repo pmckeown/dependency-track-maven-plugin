@@ -8,9 +8,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.codehaus.plexus.util.FileUtils;
 
-import java.io.File;
 import java.util.Optional;
 
 @Mojo(name = "upload-bom", defaultPhase = LifecyclePhase.VERIFY)
@@ -19,9 +17,11 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Parameter(required = true)
     private String bomLocation;
 
-    // Future Parameters
-    private String projectName = "dependency-track";
-    private String projectVersion = "3.6.0-SNAPSHOT";
+    @Parameter(required = true, defaultValue = "${project.artifactId}")
+    private String projectName;
+
+    @Parameter(required = true, defaultValue = "${project.version}")
+    private String projectVersion;
 
     public void execute() throws MojoExecutionException {
         info("upload-bom goal started");
@@ -53,7 +53,15 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         }
     }
 
-    public void setBomLocation(String bomLocation) {
+    void setBomLocation(String bomLocation) {
         this.bomLocation = bomLocation;
+    }
+
+    void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    void setProjectVersion(String projectVersion) {
+        this.projectVersion = projectVersion;
     }
 }
