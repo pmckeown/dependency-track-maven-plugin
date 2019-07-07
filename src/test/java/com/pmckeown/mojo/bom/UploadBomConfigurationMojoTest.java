@@ -100,6 +100,32 @@ public class UploadBomConfigurationMojoTest {
         verify(exactly(0), putRequestedFor(urlEqualTo(V1_BOM)));
     }
 
+    @Test
+    public void thatUploadFailureCanFailBuild() throws Exception {
+        stubFor(put(urlEqualTo(V1_BOM)).willReturn(badRequest()));
+
+        UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
+        uploadBomMojo.setFailOnError(true);
+        try {
+            uploadBomMojo.execute();
+            fail("Exception expected");
+        } catch (MojoExecutionException ex) {
+            assertNotNull(ex);
+        }
+    }
+
+    @Test
+    public void thatBuildFailureOnUploadFailureDefaultsToFalse() throws Exception {
+        stubFor(put(urlEqualTo(V1_BOM)).willReturn(badRequest()));
+
+        UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
+        try {
+            uploadBomMojo.execute();
+        } catch (MojoExecutionException ex) {
+            fail("Exception not expected");
+        }
+    }
+
     /*
      * Helper methods
      */
