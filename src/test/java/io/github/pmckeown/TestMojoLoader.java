@@ -1,6 +1,6 @@
-package com.pmckeown;
+package io.github.pmckeown;
 
-import com.pmckeown.mojo.bom.UploadBomMojo;
+import io.github.pmckeown.mojo.bom.UploadBomMojo;
 import org.apache.maven.plugin.testing.MojoRule;
 
 import java.io.File;
@@ -8,6 +8,11 @@ import java.io.File;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * Helper class to load Mojos
+ *
+ * @author Paul McKeown
+ */
 public class TestMojoLoader {
 
     private static final String TEST_RESOURCES = "target/test-classes/project-to-test/";

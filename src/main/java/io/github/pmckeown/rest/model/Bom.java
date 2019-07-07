@@ -1,5 +1,10 @@
-package com.pmckeown.rest.model;
+package io.github.pmckeown.rest.model;
 
+/**
+ * Encapsulates the request payload for uploading a BOM
+ *
+ * @author Paul McKeown
+ */
 public class Bom {
 
     private String projectName;

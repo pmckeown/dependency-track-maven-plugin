@@ -5,12 +5,49 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.pmckeown</groupId>
+    <groupId>io.github.pmckeown</groupId>
     <artifactId>dependency-track-maven-plugin</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Dependency Track Maven Plugin</name>
+    <url>https://github.com/pmckeown/dependency-track-maven-plugin</url>
+    <description>Maven plugin to integrate with a Dependency Track server to submit dependency manifests and gather project metrics.</description>
+    <inceptionYear>2019</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>Apache-2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Paul McKeown</name>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:pmckeown/dependency-track-maven-plugin.git</connection>
+        <url>https://github.com/pmckeown/dependency-track-maven-plugin.git</url>
+        <developerConnection>scm:git:git@github.com:pmckeown/dependency-track-maven-plugin.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/pmckeown/dependency-track-maven-plugin/issues</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>travis-ci</system>
+        <url>https://travis-ci.com/pmckeown/dependency-track-maven-plugin</url>
+    </ciManagement>
 
     <prerequisites>
         <maven>${maven.version}</maven>
@@ -136,6 +173,10 @@
                 <plugin>
                     <artifactId>maven-invoker-plugin</artifactId>
                     <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version>
                 </plugin>
             </plugins>
         </pluginManagement>

@@ -1,9 +1,21 @@
-package com.pmckeown.mojo;
+package io.github.pmckeown.mojo;
 
-import com.pmckeown.rest.client.DependencyTrackClient;
+import io.github.pmckeown.rest.client.DependencyTrackClient;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+/**
+ * Base class for Mojos in this project.
+ *
+ * Provides common configuration options:
+ * <ol>
+ *     <li>dependencyTrackBaseUrl</li>
+ *     <li>apiKey</li>
+ *     <li>failOnError</li>
+ * </ol>
+ *
+ * @author Paul McKeown
+ */
 public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
 
     @Parameter(required = true)
@@ -13,7 +25,7 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     private String apiKey;
 
     @Parameter(defaultValue = "false")
-    protected boolean failOnError;
+    private boolean failOnError;
 
     protected DependencyTrackClient dependencyTrackClient() {
         info("Connecting to Dependency Track instance: %s", dependencyTrackBaseUrl);
