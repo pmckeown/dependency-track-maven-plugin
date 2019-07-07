@@ -1,8 +1,10 @@
-package com.pmckeown;
+package com.pmckeown.mojo.bom;
 
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.pmckeown.TestMojoLoader;
 import com.pmckeown.util.BomEncoder;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.junit.Before;
 import org.junit.Rule;
@@ -10,18 +12,17 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.io.File;
 import java.util.Optional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.pmckeown.rest.ResourceConstants.V1_BOM;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 
-public class UploadBomMojoTest {
+public class UploadBomConfigurationMojoTest {
 
-    private static final String TEST_RESOURCES = "target/test-classes/project-to-test/";
-    private static final String BOM_LOCATION = TEST_RESOURCES + "bom.xml";
+    private static final String BOM_LOCATION = "target/test-classes/project-to-test/bom.xml";
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(0);
@@ -39,32 +40,10 @@ public class UploadBomMojoTest {
     }
 
     @Test
-    public void thatBomCanBeUploadedSuccessfully() throws Exception {
-        stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
-
-        uploadBomMojo().execute();
-
-        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM)));
-    }
-
-    @Test
-    public void thatFailureToUploadDoesNotError() throws Exception {
-        stubFor(put(urlEqualTo(V1_BOM)).willReturn(status(404)));
-
-        try {
-            uploadBomMojo().execute();
-        } catch (Exception ex) {
-            fail("No exception expected");
-        }
-
-        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM)));
-    }
-
-    @Test
     public void thatProjectNameCanBeProvided() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
-        UploadBomMojo uploadBomMojo = uploadBomMojo();
+        UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
         uploadBomMojo.setProjectName("test-project");
         uploadBomMojo.execute();
 
@@ -77,7 +56,7 @@ public class UploadBomMojoTest {
     public void thatProjectNameDefaultsToArtifactId() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
-        UploadBomMojo uploadBomMojo = uploadBomMojo();
+        UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
         uploadBomMojo.execute();
 
         verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM))
@@ -89,7 +68,7 @@ public class UploadBomMojoTest {
     public void thatProjectVersionCanBeProvided() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
-        UploadBomMojo uploadBomMojo = uploadBomMojo();
+        UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
         uploadBomMojo.setProjectVersion("99.99.99-RELEASE");
         uploadBomMojo.execute();
 
@@ -99,10 +78,10 @@ public class UploadBomMojoTest {
     }
 
     @Test
-    public void thatProjectVersionDefaultsToArtifactId() throws Exception {
+    public void thatProjectVersionDefaultsToPomVersion() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
-        UploadBomMojo uploadBomMojo = uploadBomMojo();
+        UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
         uploadBomMojo.execute();
 
         verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM))
@@ -114,42 +93,52 @@ public class UploadBomMojoTest {
     public void thatBomLocationDefaultsToTargetDirectory() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
-        UploadBomMojo uploadBomMojo = uploadBomMojoWithoutLocation();
+        UploadBomMojo uploadBomMojo = uploadBomMojo(null);
         uploadBomMojo.execute();
 
         // No BOM exists at the default location for this project
         verify(exactly(0), putRequestedFor(urlEqualTo(V1_BOM)));
     }
 
+    @Test
+    public void thatUploadFailureCanFailBuild() throws Exception {
+        stubFor(put(urlEqualTo(V1_BOM)).willReturn(badRequest()));
+
+        UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
+        uploadBomMojo.setFailOnError(true);
+        try {
+            uploadBomMojo.execute();
+            fail("Exception expected");
+        } catch (MojoExecutionException ex) {
+            assertNotNull(ex);
+        }
+    }
+
+    @Test
+    public void thatBuildFailureOnUploadFailureDefaultsToFalse() throws Exception {
+        stubFor(put(urlEqualTo(V1_BOM)).willReturn(badRequest()));
+
+        UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
+        try {
+            uploadBomMojo.execute();
+        } catch (MojoExecutionException ex) {
+            fail("Exception not expected");
+        }
+    }
+
     /*
      * Helper methods
      */
 
-    private UploadBomMojo uploadBomMojo() throws Exception {
-        return uploadBomMojo(BOM_LOCATION);
-    }
-
-    private UploadBomMojo uploadBomMojoWithoutLocation() throws Exception {
-        return uploadBomMojo(null);
-    }
-
-    private UploadBomMojo uploadBomMojo(String location) throws Exception {
-        UploadBomMojo uploadBomMojo = (UploadBomMojo) mojoRule.lookupConfiguredMojo(getPomFile(), "upload-bom");
+    private UploadBomMojo uploadBomMojo(String bomLocation) throws Exception {
+        UploadBomMojo uploadBomMojo = TestMojoLoader.loadUploadBomMojo(mojoRule);
         uploadBomMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
-        if (location != null) {
-            uploadBomMojo.setBomLocation(location);
+        if (bomLocation != null) {
+            uploadBomMojo.setBomLocation(bomLocation);
         }
         uploadBomMojo.setApiKey("ABC123");
         uploadBomMojo.setBomEncoder(bomEncoder);
-        assertNotNull(uploadBomMojo);
         return uploadBomMojo;
-    }
-
-    private File getPomFile() {
-        File pom = new File(TEST_RESOURCES);
-        assertNotNull(pom);
-        assertTrue(pom.exists());
-        return pom;
     }
 }
 

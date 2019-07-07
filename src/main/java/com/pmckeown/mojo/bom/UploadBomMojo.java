@@ -1,6 +1,7 @@
-package com.pmckeown;
+package com.pmckeown.mojo.bom;
 
 
+import com.pmckeown.mojo.AbstractDependencyTrackMojo;
 import com.pmckeown.util.BomEncoder;
 import com.pmckeown.rest.model.Bom;
 import com.pmckeown.rest.model.Response;
@@ -32,6 +33,8 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
         Optional<String> encodedBomOptional = bomEncoder.encodeBom(bomLocation);
 
+        boolean uploadFailed = false;
+
         if (encodedBomOptional.isPresent()) {
             info("Project Name: %s", projectName);
             info("Project Version: %s", projectVersion);
@@ -43,15 +46,20 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
             if (response.isSuccess()) {
                 info("Bom uploaded to Dependency Track server");
-
             } else {
+                uploadFailed = true;
                 error("Failure integrating with Dependency Track.");
                 error("Status: %d", response.getStatus());
                 error("Status Text: %s", response.getStatusText());
             }
 
         } else {
+            uploadFailed = true;
             error("No bom.xml could be located at: %s", bomLocation);
+        }
+
+        if (shouldFailOnError() && uploadFailed) {
+            throw new MojoExecutionException("Bom upload failed");
         }
     }
 
