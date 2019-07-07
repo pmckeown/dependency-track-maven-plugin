@@ -12,6 +12,9 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     @Parameter(required = true)
     private String apiKey;
 
+    @Parameter(defaultValue = "false")
+    protected boolean failOnError;
+
     protected DependencyTrackClient dependencyTrackClient() {
         info("Connecting to Dependency Track instance: %s", dependencyTrackBaseUrl);
         return new DependencyTrackClient(dependencyTrackBaseUrl, apiKey);
@@ -41,5 +44,13 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
 
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
+    }
+
+    public void setFailOnError(boolean fail) {
+        this.failOnError = fail;
+    }
+
+    protected boolean shouldFailOnError() {
+        return failOnError;
     }
 }
