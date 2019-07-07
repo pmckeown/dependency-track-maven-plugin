@@ -7,6 +7,11 @@ import java.util.Optional;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+/**
+ * Test bom encoder
+ *
+ * @author Paul McKeown
+ */
 public class BomEncoderTest {
 
     private BomEncoder bomEncoder = new BomEncoder();

@@ -12,6 +12,29 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import java.util.Optional;
 
+/**
+ * Provides the capability to upload a Bill of Material (BOM) to your Dependency Track server.
+ *
+ * The BOM may any format supported by your Dependency Track server, has only been tested with the output from the
+ * <a hre="https://github.com/CycloneDX/cyclonedx-maven-plugin">cyclonedx-maven-plugin</a> in the
+ * <a href="https://cyclonedx.org/">CycloneDX</a> format
+ *
+ * Specific configuration options are:
+ * <ol>
+ *     <li>bomLocation</li>
+ *     <li>projectName</li>
+ *     <li>projectVersion</li>
+ * </ol>
+ *
+ * <Common configuration options are:
+ * <ol>
+ *     <li>dependencyTrackBaseUrl</li>
+ *     <li>apiKey</li>
+ *     <li>failOnError</li>
+ * </ol>
+ *
+ * @author Paul McKeown
+ */
 @Mojo(name = "upload-bom", defaultPhase = LifecyclePhase.VERIFY)
 public class UploadBomMojo extends AbstractDependencyTrackMojo {
 

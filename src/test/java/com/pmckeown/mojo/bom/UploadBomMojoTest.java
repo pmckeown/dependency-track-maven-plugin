@@ -18,6 +18,11 @@ import static com.pmckeown.rest.ResourceConstants.V1_BOM;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 
+/**
+ * Test bom uploading
+ *
+ * @author Paul McKeown
+ */
 public class UploadBomMojoTest {
 
     private static final String BOM_LOCATION = "target/test-classes/project-to-test/bom.xml";

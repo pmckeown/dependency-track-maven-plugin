@@ -8,6 +8,11 @@ import java.io.File;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * Helper class to load Mojos
+ *
+ * @author Paul McKeown
+ */
 public class TestMojoLoader {
 
     private static final String TEST_RESOURCES = "target/test-classes/project-to-test/";

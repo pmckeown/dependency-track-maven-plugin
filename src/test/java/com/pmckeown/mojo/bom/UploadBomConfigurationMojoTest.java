@@ -20,6 +20,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 
+/**
+ * Test upload configuration options
+ *
+ * @author Paul McKeown
+ */
 public class UploadBomConfigurationMojoTest {
 
     private static final String BOM_LOCATION = "target/test-classes/project-to-test/bom.xml";

@@ -1,14 +1,17 @@
 package com.pmckeown.rest.client;
 
-import com.pmckeown.rest.ResourceConstants;
 import com.pmckeown.rest.model.Bom;
 import com.pmckeown.rest.model.Response;
 import kong.unirest.*;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.plugin.logging.Log;
 
 import static com.pmckeown.rest.ResourceConstants.V1_BOM;
 
+/**
+ * Client for interacting with the Dependency Track server
+ *
+ * @author Paul McKeown
+ */
 public class DependencyTrackClient {
 
     private final String apiKey;

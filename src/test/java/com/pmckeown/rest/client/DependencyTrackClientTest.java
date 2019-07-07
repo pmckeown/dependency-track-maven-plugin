@@ -3,25 +3,22 @@ package com.pmckeown.rest.client;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.github.tomakehurst.wiremock.matching.MultipartValuePatternBuilder;
-import com.github.tomakehurst.wiremock.matching.StringValuePattern;
-import com.pmckeown.rest.ResourceConstants;
 import com.pmckeown.rest.model.Bom;
 import com.pmckeown.rest.model.Response;
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
-import unirest.shaded.org.apache.http.HttpStatus;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.http.Fault.CONNECTION_RESET_BY_PEER;
-import static com.github.tomakehurst.wiremock.http.Fault.MALFORMED_RESPONSE_CHUNK;
 import static com.pmckeown.rest.ResourceConstants.V1_BOM;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+/**
+ * Test Dependency Track client
+ *
+ * @author Paul McKeown
+ */
 public class DependencyTrackClientTest {
 
     static final String API_KEY = "api123";

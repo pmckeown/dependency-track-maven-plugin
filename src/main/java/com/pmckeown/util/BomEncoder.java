@@ -7,10 +7,23 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Optional;
 
+/**
+ * Encodes a BOM file in the Base64 format.
+ *
+ * @author Paul McKeown
+ */
 public class BomEncoder {
 
+    /**
+     * Encodes the file found at the provided location.
+     *
+     * Guarantees to return an {@link Optional} containing the Base64 encoded file if one is found at the provided
+     * location.  An empty {@link Optional} will be returned if the file location if invalid or the file cannot be read.
+     *
+     * @param bomLocation the location to find the file to encode
+     * @return an optional that will contain the Base64 encoded file or an empty optional
+     */
     public Optional<String> encodeBom(String bomLocation) {
-        String dir = System.getProperty("user.dir");
         try (FileInputStream fis = new FileInputStream(bomLocation)) {
             byte[] bytes = IOUtil.toByteArray(fis);
 
