@@ -1,6 +1,7 @@
 package io.github.pmckeown;
 
 import io.github.pmckeown.mojo.bom.UploadBomMojo;
+import io.github.pmckeown.mojo.score.ScoreMojo;
 import org.apache.maven.plugin.testing.MojoRule;
 
 import java.io.File;
@@ -21,6 +22,12 @@ public class TestMojoLoader {
         UploadBomMojo uploadBomMojo = (UploadBomMojo) mojoRule.lookupConfiguredMojo(getPomFile(), "upload-bom");
         assertNotNull(uploadBomMojo);
         return uploadBomMojo;
+    }
+
+    public static ScoreMojo loadScoreMojo(MojoRule mojoRule) throws Exception {
+        ScoreMojo scoreMojo = (ScoreMojo) mojoRule.lookupConfiguredMojo(getPomFile(), "score");
+        assertNotNull(scoreMojo);
+        return scoreMojo;
     }
 
     private static File getPomFile() {

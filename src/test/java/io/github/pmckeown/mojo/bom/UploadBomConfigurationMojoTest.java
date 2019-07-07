@@ -1,13 +1,11 @@
 package io.github.pmckeown.mojo.bom;
 
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import io.github.pmckeown.TestMojoLoader;
+import io.github.pmckeown.mojo.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.util.BomEncoder;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.testing.MojoRule;
+import org.apache.maven.plugin.MojoFailureException;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -25,15 +23,9 @@ import static org.mockito.Mockito.doReturn;
  *
  * @author Paul McKeown
  */
-public class UploadBomConfigurationMojoTest {
+public class UploadBomConfigurationMojoTest extends AbstractDependencyTrackMojoTest {
 
     private static final String BOM_LOCATION = "target/test-classes/project-to-test/bom.xml";
-
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(0);
-
-    @Rule
-    public MojoRule mojoRule = new MojoRule();
 
     @Mock
     private BomEncoder bomEncoder;
@@ -114,7 +106,7 @@ public class UploadBomConfigurationMojoTest {
         try {
             uploadBomMojo.execute();
             fail("Exception expected");
-        } catch (MojoExecutionException ex) {
+        } catch (MojoFailureException ex) {
             assertNotNull(ex);
         }
     }
@@ -126,7 +118,7 @@ public class UploadBomConfigurationMojoTest {
         UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
         try {
             uploadBomMojo.execute();
-        } catch (MojoExecutionException ex) {
+        } catch (MojoFailureException ex) {
             fail("Exception not expected");
         }
     }

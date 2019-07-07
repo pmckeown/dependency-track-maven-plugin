@@ -1,5 +1,8 @@
 package io.github.pmckeown.rest.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 /**
  * Encapsulates the request payload for uploading a BOM
  *
@@ -36,6 +39,6 @@ public class Bom {
     }
 
     public String toString() {
-        return String.format("Project Name: %s; Project Version: %s;", projectName, projectVersion);
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }
 }
