@@ -13,7 +13,7 @@ in the `pluginManagement` section of your POM to avoid repetition of common conf
 <pluginManagement>
     <plugins>
         <plugin>
-            <groupId>com.pmckeown</groupId>
+            <groupId>io.github.pmckeown</groupId>
             <artifactId>dependency-track-maven-plugin</artifactId>
             <version>${dependency-track-maven-plugin.version}</version>
             <configuration>
