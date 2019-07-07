@@ -1,4 +1,4 @@
-package com.pmckeown.util;
+package io.github.pmckeown.util;
 
 import org.codehaus.plexus.util.Base64;
 import org.codehaus.plexus.util.IOUtil;

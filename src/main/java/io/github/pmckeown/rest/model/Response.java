@@ -1,4 +1,4 @@
-package com.pmckeown.rest.model;
+package io.github.pmckeown.rest.model;
 
 /**
  * Wrapper for responses from the Dependency Track server

@@ -1,11 +1,11 @@
-package com.pmckeown.rest.client;
+package io.github.pmckeown.rest.client;
 
-import com.pmckeown.rest.model.Bom;
-import com.pmckeown.rest.model.Response;
+import io.github.pmckeown.rest.model.Bom;
+import io.github.pmckeown.rest.model.Response;
 import kong.unirest.*;
 import org.apache.commons.lang3.StringUtils;
 
-import static com.pmckeown.rest.ResourceConstants.V1_BOM;
+import static io.github.pmckeown.rest.ResourceConstants.V1_BOM;
 
 /**
  * Client for interacting with the Dependency Track server

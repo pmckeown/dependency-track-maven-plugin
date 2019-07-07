@@ -1,4 +1,4 @@
-package com.pmckeown.rest.model;
+package io.github.pmckeown.rest.model;
 
 /**
  * Encapsulates the request payload for uploading a BOM

@@ -1,6 +1,6 @@
-package com.pmckeown.mojo;
+package io.github.pmckeown.mojo;
 
-import com.pmckeown.rest.client.DependencyTrackClient;
+import io.github.pmckeown.rest.client.DependencyTrackClient;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 

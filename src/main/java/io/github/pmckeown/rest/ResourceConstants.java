@@ -1,4 +1,4 @@
-package com.pmckeown.rest;
+package io.github.pmckeown.rest;
 
 /**
  * Resource address constants.

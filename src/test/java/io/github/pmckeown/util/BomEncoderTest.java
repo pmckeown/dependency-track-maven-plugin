@@ -1,4 +1,4 @@
-package com.pmckeown.util;
+package io.github.pmckeown.util;
 
 import org.junit.Test;
 

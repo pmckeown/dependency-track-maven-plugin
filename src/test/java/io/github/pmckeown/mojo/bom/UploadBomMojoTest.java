@@ -1,9 +1,10 @@
-package com.pmckeown.mojo.bom;
+package io.github.pmckeown.mojo.bom;
 
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.pmckeown.TestMojoLoader;
-import com.pmckeown.util.BomEncoder;
+import io.github.pmckeown.TestMojoLoader;
+import io.github.pmckeown.util.BomEncoder;
+import io.github.pmckeown.rest.ResourceConstants;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.junit.Before;
 import org.junit.Rule;
@@ -14,7 +15,6 @@ import org.mockito.MockitoAnnotations;
 import java.util.Optional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.pmckeown.rest.ResourceConstants.V1_BOM;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 
@@ -44,16 +44,16 @@ public class UploadBomMojoTest {
 
     @Test
     public void thatBomCanBeUploadedSuccessfully() throws Exception {
-        stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
+        stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(ok()));
 
         uploadBomMojo(BOM_LOCATION).execute();
 
-        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM)));
+        verify(exactly(1), putRequestedFor(urlEqualTo(ResourceConstants.V1_BOM)));
     }
 
     @Test
     public void thatFailureToUploadDoesNotError() {
-        stubFor(put(urlEqualTo(V1_BOM)).willReturn(status(404)));
+        stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(status(404)));
 
         try {
             uploadBomMojo(BOM_LOCATION).execute();
@@ -61,7 +61,7 @@ public class UploadBomMojoTest {
             fail("No exception expected");
         }
 
-        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM)));
+        verify(exactly(1), putRequestedFor(urlEqualTo(ResourceConstants.V1_BOM)));
     }
 
     /*

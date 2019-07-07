@@ -1,6 +1,6 @@
-package com.pmckeown;
+package io.github.pmckeown;
 
-import com.pmckeown.mojo.bom.UploadBomMojo;
+import io.github.pmckeown.mojo.bom.UploadBomMojo;
 import org.apache.maven.plugin.testing.MojoRule;
 
 import java.io.File;

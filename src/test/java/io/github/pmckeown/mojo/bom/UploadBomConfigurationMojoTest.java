@@ -1,9 +1,9 @@
-package com.pmckeown.mojo.bom;
+package io.github.pmckeown.mojo.bom;
 
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.pmckeown.TestMojoLoader;
-import com.pmckeown.util.BomEncoder;
+import io.github.pmckeown.TestMojoLoader;
+import io.github.pmckeown.util.BomEncoder;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.junit.Before;
@@ -15,7 +15,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.Optional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.pmckeown.rest.ResourceConstants.V1_BOM;
+import static io.github.pmckeown.rest.ResourceConstants.V1_BOM;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;

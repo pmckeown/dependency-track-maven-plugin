@@ -1,10 +1,10 @@
-package com.pmckeown.mojo.bom;
+package io.github.pmckeown.mojo.bom;
 
 
-import com.pmckeown.mojo.AbstractDependencyTrackMojo;
-import com.pmckeown.util.BomEncoder;
-import com.pmckeown.rest.model.Bom;
-import com.pmckeown.rest.model.Response;
+import io.github.pmckeown.mojo.AbstractDependencyTrackMojo;
+import io.github.pmckeown.util.BomEncoder;
+import io.github.pmckeown.rest.model.Bom;
+import io.github.pmckeown.rest.model.Response;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
