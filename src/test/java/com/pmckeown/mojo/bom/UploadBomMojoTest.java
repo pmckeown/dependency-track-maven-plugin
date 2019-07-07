@@ -1,4 +1,4 @@
-package com.pmckeown;
+package com.pmckeown.mojo.bom;
 
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -48,7 +48,7 @@ public class UploadBomMojoTest {
     }
 
     @Test
-    public void thatFailureToUploadDoesNotError() throws Exception {
+    public void thatFailureToUploadDoesNotError() {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(status(404)));
 
         try {

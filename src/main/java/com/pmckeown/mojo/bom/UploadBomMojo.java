@@ -1,6 +1,7 @@
-package com.pmckeown;
+package com.pmckeown.mojo.bom;
 
 
+import com.pmckeown.mojo.AbstractDependencyTrackMojo;
 import com.pmckeown.util.BomEncoder;
 import com.pmckeown.rest.model.Bom;
 import com.pmckeown.rest.model.Response;
