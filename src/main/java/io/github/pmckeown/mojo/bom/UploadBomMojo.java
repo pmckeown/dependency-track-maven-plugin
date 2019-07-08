@@ -2,10 +2,10 @@ package io.github.pmckeown.mojo.bom;
 
 
 import io.github.pmckeown.mojo.AbstractDependencyTrackMojo;
-import io.github.pmckeown.util.BomEncoder;
 import io.github.pmckeown.rest.model.Bom;
 import io.github.pmckeown.rest.model.Response;
-import org.apache.maven.plugin.MojoExecutionException;
+import io.github.pmckeown.util.BomEncoder;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -22,8 +22,6 @@ import java.util.Optional;
  * Specific configuration options are:
  * <ol>
  *     <li>bomLocation</li>
- *     <li>projectName</li>
- *     <li>projectVersion</li>
  * </ol>
  *
  * @author Paul McKeown
@@ -34,16 +32,9 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Parameter(required = true, defaultValue = "target/bom.xml")
     private String bomLocation;
 
-    @Parameter(required = true, defaultValue = "${project.artifactId}")
-    private String projectName;
-
-    @Parameter(required = true, defaultValue = "${project.version}")
-    private String projectVersion;
-
     private BomEncoder bomEncoder = new BomEncoder();
 
-    public void execute() throws MojoExecutionException {
-        info("upload-bom goal started");
+    public void execute() throws MojoFailureException {
         debug("Current working directory: %s", System.getProperty("user.dir"));
         debug("looking for bom.xml at %s", bomLocation);
 
@@ -75,7 +66,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         }
 
         if (shouldFailOnError() && uploadFailed) {
-            throw new MojoExecutionException("Bom upload failed");
+            throw new MojoFailureException("Bom upload failed");
         }
     }
 
@@ -84,14 +75,6 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
      */
     void setBomLocation(String bomLocation) {
         this.bomLocation = bomLocation;
-    }
-
-    void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-
-    void setProjectVersion(String projectVersion) {
-        this.projectVersion = projectVersion;
     }
 
     void setBomEncoder(BomEncoder bomEncoder) {

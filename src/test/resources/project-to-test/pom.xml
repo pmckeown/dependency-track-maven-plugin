@@ -20,6 +20,7 @@
                 <configuration>
                     <dependencyTrackBaseUrl>http://dependencyTrackBaseUrl</dependencyTrackBaseUrl>
                     <apiKey>CegP2X155YABba4gR805mVnbA9jRmQF1</apiKey>
+                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                 </configuration>
             </plugin>
         </plugins>
