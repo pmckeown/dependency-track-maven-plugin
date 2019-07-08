@@ -23,21 +23,22 @@ public class DependencyTrackClient {
 
     private static final int CLIENT_EXCEPTION_STATUS = -1;
     private String host;
+    private String apiKey;
 
     public DependencyTrackClient(String host, String apiKey) {
         this.host = normaliseHost(host);
+        this.apiKey = apiKey;
 
-        Unirest.config()
-                .addDefaultHeader("X-Api-Key", apiKey)
-                .addDefaultHeader(ACCEPT_ENCODING, "gzip, deflate")
-                .addDefaultHeader(ACCEPT, "application/json")
-                .setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()));
+        Unirest.config().setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()));
     }
     
     public Response uploadBom(Bom bom) {
         try {
             HttpResponse<String> response = Unirest.put(host + V1_BOM)
                     .header(CONTENT_TYPE, "application/json")
+                    .header("X-Api-Key", apiKey)
+                    .header(ACCEPT_ENCODING, "gzip, deflate")
+                    .header(ACCEPT, "application/json")
                     .body(bom)
                     .asString();
 
@@ -50,6 +51,9 @@ public class DependencyTrackClient {
     public GetProjectsResponse getProjects() {
         try {
             HttpResponse<List<Project>> response = Unirest.get(host + V1_PROJECT)
+                    .header("X-Api-Key", apiKey)
+                    .header(ACCEPT_ENCODING, "gzip, deflate")
+                    .header(ACCEPT, "application/json")
                     .asObject(new GenericType<List<Project>>(){});
 
             return new GetProjectsResponse(response.getStatus(), response.getStatusText(), response.isSuccess(),
