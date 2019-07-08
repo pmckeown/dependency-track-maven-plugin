@@ -24,7 +24,7 @@ import static java.lang.String.format;
 @Mojo(name = "score", defaultPhase = LifecyclePhase.VERIFY)
 public class ScoreMojo extends AbstractDependencyTrackMojo {
 
-    private static final String DELIMITER = "=========================================================================";
+    private static final String DELIMITER = "========================================================================";
 
     @Parameter(defaultValue = "${project}")
     private MavenProject mavenProject;
