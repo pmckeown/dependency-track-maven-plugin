@@ -136,5 +136,11 @@
       "firstOccurrence": 1562223476643,
       "lastOccurrence": 1562482716510
     }
+  },
+  {
+    "name": "noMetrics",
+    "version": "1.0.0",
+    "uuid": "8977c66f-b310-45b5-bb6a-e63e9eb7c4ce",
+    "lastBomImport": 1562225389158
   }
 ]

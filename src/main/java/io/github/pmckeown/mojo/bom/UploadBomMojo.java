@@ -22,8 +22,6 @@ import java.util.Optional;
  * Specific configuration options are:
  * <ol>
  *     <li>bomLocation</li>
- *     <li>projectName</li>
- *     <li>projectVersion</li>
  * </ol>
  *
  * @author Paul McKeown
@@ -34,16 +32,9 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Parameter(required = true, defaultValue = "target/bom.xml")
     private String bomLocation;
 
-    @Parameter(required = true, defaultValue = "${project.artifactId}")
-    private String projectName;
-
-    @Parameter(required = true, defaultValue = "${project.version}")
-    private String projectVersion;
-
     private BomEncoder bomEncoder = new BomEncoder();
 
     public void execute() throws MojoFailureException {
-        info("upload-bom goal started");
         debug("Current working directory: %s", System.getProperty("user.dir"));
         debug("looking for bom.xml at %s", bomLocation);
 
@@ -84,14 +75,6 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
      */
     void setBomLocation(String bomLocation) {
         this.bomLocation = bomLocation;
-    }
-
-    void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-
-    void setProjectVersion(String projectVersion) {
-        this.projectVersion = projectVersion;
     }
 
     void setBomEncoder(BomEncoder bomEncoder) {
