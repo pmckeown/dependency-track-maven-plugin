@@ -2,10 +2,10 @@ package io.github.pmckeown.mojo.bom;
 
 
 import io.github.pmckeown.mojo.AbstractDependencyTrackMojo;
-import io.github.pmckeown.util.BomEncoder;
 import io.github.pmckeown.rest.model.Bom;
 import io.github.pmckeown.rest.model.Response;
-import org.apache.maven.plugin.MojoExecutionException;
+import io.github.pmckeown.util.BomEncoder;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -42,7 +42,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     private BomEncoder bomEncoder = new BomEncoder();
 
-    public void execute() throws MojoExecutionException {
+    public void execute() throws MojoFailureException {
         info("upload-bom goal started");
         debug("Current working directory: %s", System.getProperty("user.dir"));
         debug("looking for bom.xml at %s", bomLocation);
@@ -75,7 +75,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         }
 
         if (shouldFailOnError() && uploadFailed) {
-            throw new MojoExecutionException("Bom upload failed");
+            throw new MojoFailureException("Bom upload failed");
         }
     }
 

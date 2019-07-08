@@ -38,6 +38,12 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         }
     }
 
+    protected void warning(String message, Object... params) {
+        if(getLog().isWarnEnabled()) {
+            getLog().warn(String.format(message, params));
+        }
+    }
+
     protected void debug(String message, Object... params) {
         if(getLog().isDebugEnabled()) {
             getLog().debug(String.format(message, params));

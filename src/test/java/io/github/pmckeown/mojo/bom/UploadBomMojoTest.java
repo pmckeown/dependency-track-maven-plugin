@@ -1,13 +1,11 @@
 package io.github.pmckeown.mojo.bom;
 
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import io.github.pmckeown.TestMojoLoader;
-import io.github.pmckeown.util.BomEncoder;
+import io.github.pmckeown.mojo.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.rest.ResourceConstants;
-import org.apache.maven.plugin.testing.MojoRule;
+import io.github.pmckeown.util.BomEncoder;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -23,15 +21,9 @@ import static org.mockito.Mockito.doReturn;
  *
  * @author Paul McKeown
  */
-public class UploadBomMojoTest {
+public class UploadBomMojoTest extends AbstractDependencyTrackMojoTest {
 
     private static final String BOM_LOCATION = "target/test-classes/project-to-test/bom.xml";
-
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(0);
-
-    @Rule
-    public MojoRule mojoRule = new MojoRule();
 
     @Mock
     private BomEncoder bomEncoder;
