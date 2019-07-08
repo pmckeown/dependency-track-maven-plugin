@@ -68,7 +68,13 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
                 compareScoreToThreshold(inheritedRiskScore);
 
             } else {
-                error("Failed to find project on server: Project: %s, Version: %s", projectName, projectVersion);
+                String message = format("Failed to find project on server: Project: %s, Version: %s",
+                        projectName, projectVersion);
+                error(message);
+                
+                if (shouldFailOnError()) {
+                    throw new MojoFailureException(message);
+                }
             }
         } else {
             error("Failed to get projects from Dependency Track with error: ", response.getStatusText());

@@ -26,13 +26,13 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     @Parameter(required = true, defaultValue = "${project.version}", property = "dependency-track.projectVersion")
     protected String projectVersion;
 
-    @Parameter(required = true)
+    @Parameter(required = true, property = "dependency-track.dependencyTrackBaseUrl")
     private String dependencyTrackBaseUrl;
 
-    @Parameter(required = true)
+    @Parameter(required = true, property = "dependency-track.apiKey")
     private String apiKey;
 
-    @Parameter(defaultValue = "false")
+    @Parameter(defaultValue = "false", property = "dependency-track.failOnError")
     private boolean failOnError;
 
     protected DependencyTrackClient dependencyTrackClient() {
