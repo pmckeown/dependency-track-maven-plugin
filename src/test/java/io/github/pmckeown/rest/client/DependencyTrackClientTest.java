@@ -95,7 +95,7 @@ public class DependencyTrackClientTest {
 
         GetProjectsResponse response = dependencyTrackClient().getProjects();
 
-        assertThat(response.getBody().size(), is(equalTo(6)));
+        assertThat(response.getBody().size(), is(equalTo(7)));
         verify(exactly(1), getRequestedFor(urlEqualTo(V1_PROJECT)));
     }
 

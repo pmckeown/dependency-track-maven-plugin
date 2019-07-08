@@ -2,6 +2,7 @@ package io.github.pmckeown.mojo.score;
 
 import io.github.pmckeown.mojo.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.rest.ResourceConstants;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,6 +78,23 @@ public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
             scoreMojo.execute();
         } catch (MojoFailureException ex) {
             fail("Exception not expected");
+        }
+    }
+
+    @Test
+    public void thatWhenNoMetricsHaveBeenCalculatedTheGoalFails() throws Exception {
+        // The current project score in the JSON file is 3
+        stubFor(get(urlEqualTo(ResourceConstants.V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+
+        scoreMojo.setProjectName("noMetrics");
+        scoreMojo.setProjectVersion("1.0.0");
+
+        try {
+            scoreMojo.execute();
+            fail("Exception expected");
+        } catch (MojoExecutionException ex) {
+            assertNotNull(ex);
         }
     }
 }

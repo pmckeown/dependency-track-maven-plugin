@@ -4,6 +4,7 @@ import io.github.pmckeown.mojo.AbstractDependencyTrackMojo;
 import io.github.pmckeown.rest.model.GetProjectsResponse;
 import io.github.pmckeown.rest.model.Metrics;
 import io.github.pmckeown.rest.model.Project;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -33,7 +34,7 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
     private Integer inheritedRiskScoreThreshold;
 
     @Override
-    public void execute() throws MojoFailureException {
+    public void execute() throws MojoFailureException, MojoExecutionException {
         GetProjectsResponse response = dependencyTrackClient().getProjects();
 
         if (response.isSuccess()) {
@@ -46,8 +47,12 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
             if (projectOptional.isPresent()) {
                 Project project = projectOptional.get();
 
-                // TODO - Fail gracefully when no metrics have yet been calculated
                 Metrics metrics = project.getMetrics();
+                if (metrics == null) {
+                    throw new MojoExecutionException("No metrics have yet been calculated. Request a metrics analysis" +
+                            "in the Dependency Track UI.");
+                }
+
                 int inheritedRiskScore = metrics.getInheritedRiskScore();
 
                 info(DELIMITER);
@@ -71,7 +76,7 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
                 String message = format("Failed to find project on server: Project: %s, Version: %s",
                         projectName, projectVersion);
                 error(message);
-                
+
                 if (shouldFailOnError()) {
                     throw new MojoFailureException(message);
                 }
