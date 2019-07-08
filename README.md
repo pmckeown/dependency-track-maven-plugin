@@ -37,10 +37,16 @@ The Automation team in Dependency Track needs the following permissions:
 * VIEW_PORTFOLIO
 * VULNERABILITY_ANALYSIS
 
-|Property              |Required|Default Value|
-|----------------------|--------|-------------|
-|dependencyTrackBaseUrl|true    |N/A          |
-|apiKey                |true    |N/A          |  
+The following options are common to all goals and can be declared centrally in the plugin management definition 
+of this plugin:
+
+|Property              |Required|Default Value        |
+|----------------------|--------|---------------------|
+|dependencyTrackBaseUrl|true    |N/A                  |
+|apiKey                |true    |N/A                  |
+|projectName           |false   |${project.artifactId}|
+|projectVersion        |false   |${project.version}   |
+|failOnError           |false   |false                |
 
 
 ## Features
@@ -64,5 +70,3 @@ first in your POM to ensure that it runs first.
 |Property      |Required|Default Value        |
 |--------------|--------|---------------------|
 |bomLocation   |false   |target/bom.xml       |
-|projectName   |false   |${project.artifactId}|
-|projectVersion|false   |${project.version}   |

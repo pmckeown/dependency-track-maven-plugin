@@ -9,6 +9,8 @@ import org.apache.maven.plugins.annotations.Parameter;
  *
  * Provides common configuration options:
  * <ol>
+ *     <li>projectName</li>
+ *     <li>projectVersion</li>
  *     <li>dependencyTrackBaseUrl</li>
  *     <li>apiKey</li>
  *     <li>failOnError</li>
@@ -17,6 +19,12 @@ import org.apache.maven.plugins.annotations.Parameter;
  * @author Paul McKeown
  */
 public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
+
+    @Parameter(required = true, defaultValue = "${project.artifactId}", property = "dependency-track.projectName")
+    protected String projectName;
+
+    @Parameter(required = true, defaultValue = "${project.version}", property = "dependency-track.projectVersion")
+    protected String projectVersion;
 
     @Parameter(required = true)
     private String dependencyTrackBaseUrl;
@@ -54,6 +62,14 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         if(getLog().isErrorEnabled()) {
             getLog().error(String.format(message, params));
         }
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public void setProjectVersion(String projectVersion) {
+        this.projectVersion = projectVersion;
     }
 
     public void setDependencyTrackBaseUrl(String url) {
