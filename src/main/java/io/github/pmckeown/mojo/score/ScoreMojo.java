@@ -36,6 +36,7 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
     @Override
     public void execute() throws MojoFailureException, MojoExecutionException {
         GetProjectsResponse response = dependencyTrackClient().getProjects();
+        debug(response.toString());
 
         if (response.isSuccess()) {
             List<Project> projects = response.getBody();
@@ -82,7 +83,8 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
                 }
             }
         } else {
-            error("Failed to get projects from Dependency Track with error: ", response.getStatusText());
+            error("Failed to get projects from Dependency Track with error: %d %s", response.getStatus(),
+                    response.getStatusText());
         }
     }
 

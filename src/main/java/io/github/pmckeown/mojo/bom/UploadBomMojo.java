@@ -50,6 +50,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
             Bom bom = new Bom(projectName, projectVersion, true, encodedBomOptional.get());
             Response response = dependencyTrackClient().uploadBom(bom);
+            debug(response.toString());
 
             if (response.isSuccess()) {
                 info("Bom uploaded to Dependency Track server");
