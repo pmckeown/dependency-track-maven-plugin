@@ -10,9 +10,15 @@ import org.junit.Test;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.TestMojoLoader.loadScoreMojo;
 import static io.github.pmckeown.rest.ResourceConstants.V1_PROJECT;
+import static io.github.pmckeown.rest.client.TestResourceConstants.API_V1_METRICS_PROJECT_CURRENT;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+/**
+ * Mojo tests for the score goal
+ *
+ * @author Paul McKeown
+ */
 public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
 
     private ScoreMojo scoreMojo;
@@ -82,10 +88,27 @@ public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
+    public void thatWhenNoMetricsHaveBeenCalculatedThenTheMetricsAreRetrieved() throws Exception {
+        // The current project score in the JSON file is 3
+        stubFor(get(urlEqualTo(ResourceConstants.V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathMatching(API_V1_METRICS_PROJECT_CURRENT)).willReturn(
+                aResponse().withBodyFile("api/v1/metrics/project/project-metrics.json")));
+
+        scoreMojo.setProjectName("noMetrics");
+        scoreMojo.setProjectVersion("1.0.0");
+        scoreMojo.execute();
+
+        verify(exactly(1), getRequestedFor(urlPathMatching(API_V1_METRICS_PROJECT_CURRENT)));
+    }
+
+    @Test
     public void thatWhenNoMetricsHaveBeenCalculatedTheGoalFails() throws Exception {
         // The current project score in the JSON file is 3
         stubFor(get(urlEqualTo(ResourceConstants.V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathMatching(API_V1_METRICS_PROJECT_CURRENT)).willReturn(
+                aResponse().withStatus(404).withBody("The project could not be found.")));
 
         scoreMojo.setProjectName("noMetrics");
         scoreMojo.setProjectVersion("1.0.0");
