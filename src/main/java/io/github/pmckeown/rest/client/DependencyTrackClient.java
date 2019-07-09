@@ -1,16 +1,12 @@
 package io.github.pmckeown.rest.client;
 
-import io.github.pmckeown.rest.model.Bom;
-import io.github.pmckeown.rest.model.GetProjectsResponse;
-import io.github.pmckeown.rest.model.Project;
-import io.github.pmckeown.rest.model.Response;
+import io.github.pmckeown.rest.model.*;
 import kong.unirest.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
-import static io.github.pmckeown.rest.ResourceConstants.V1_BOM;
-import static io.github.pmckeown.rest.ResourceConstants.V1_PROJECT;
+import static io.github.pmckeown.rest.ResourceConstants.*;
 import static io.github.pmckeown.rest.client.ObjectMapperBuilder.relaxedObjectMapper;
 import static kong.unirest.HeaderNames.*;
 
@@ -60,6 +56,22 @@ public class DependencyTrackClient {
                     response.getBody());
         } catch (UnirestException ex) {
             return new GetProjectsResponse(CLIENT_EXCEPTION_STATUS, ex.getMessage(), false, null);
+        }
+    }
+
+    public ResponseWithBody<Metrics> getMetrics(String projectUuid) {
+        try {
+            HttpResponse<Metrics> response = Unirest.get(host + V1_CURRENT_PROJECT_METRICS)
+                    .header("X-Api-Key", apiKey)
+                    .header(ACCEPT_ENCODING, "gzip, deflate")
+                    .header(ACCEPT, "application/json")
+                    .routeParam("uuid", projectUuid)
+                    .asObject(new GenericType<Metrics>(){});
+
+            return new ResponseWithBody<Metrics>(response.getStatus(), response.getStatusText(), response.isSuccess(),
+                    response.getBody());
+        } catch (UnirestException ex) {
+            return new ResponseWithBody<>(CLIENT_EXCEPTION_STATUS, ex.getMessage(), false, null);
         }
     }
 
