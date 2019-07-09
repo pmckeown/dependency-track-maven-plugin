@@ -41,37 +41,16 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
         if (response.isSuccess()) {
             List<Project> projects = response.getBody();
             info("Found %s projects", projects.size());
-
             debug("Searching for project using Artifact ID: [%s] and Version [%s]", projectName, projectVersion);
-            Optional<Project> projectOptional = findCurrentProject(projects, projectName, projectVersion);
 
+            Optional<Project> projectOptional = findCurrentProject(projects, projectName, projectVersion);
             if (projectOptional.isPresent()) {
                 Project project = projectOptional.get();
+                Metrics metrics = getMetrics(project);
 
-                Metrics metrics = project.getMetrics();
-                if (metrics == null) {
-                    throw new MojoExecutionException("No metrics have yet been calculated. Request a metrics analysis" +
-                            "in the Dependency Track UI.");
-                }
+                printInheritedRiskScore(project, metrics.getInheritedRiskScore());
 
-                int inheritedRiskScore = metrics.getInheritedRiskScore();
-
-                info(DELIMITER);
-                info("Project: %s, Version: %s", project.getName(), project.getVersion());
-                StringBuffer scoreMessage = new StringBuffer(format("Inherited Risk Score: %d", inheritedRiskScore));
-
-                if (inheritedRiskScoreThreshold != null) {
-                    scoreMessage.append(format(" - Maximum allowed Inherited Risk Score: %d", inheritedRiskScoreThreshold));
-                }
-
-                if (inheritedRiskScore > 0) {
-                    warning(scoreMessage.toString());
-                } else {
-                    info(scoreMessage.toString());
-                }
-                info(DELIMITER);
-
-                compareScoreToThreshold(inheritedRiskScore);
+                failBuildIfThresholdIsBreached(metrics.getInheritedRiskScore());
 
             } else {
                 String message = format("Failed to find project on server: Project: %s, Version: %s",
@@ -88,7 +67,33 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
         }
     }
 
-    private void compareScoreToThreshold(int inheritedRiskScore) throws MojoFailureException {
+    private void printInheritedRiskScore(Project project, int inheritedRiskScore) {
+        info(DELIMITER);
+        info("Project: %s, Version: %s", project.getName(), project.getVersion());
+        StringBuffer scoreMessage = new StringBuffer(format("Inherited Risk Score: %d", inheritedRiskScore));
+
+        if (inheritedRiskScoreThreshold != null) {
+            scoreMessage.append(format(" - Maximum allowed Inherited Risk Score: %d", inheritedRiskScoreThreshold));
+        }
+
+        if (inheritedRiskScore > 0) {
+            warning(scoreMessage.toString());
+        } else {
+            info(scoreMessage.toString());
+        }
+        info(DELIMITER);
+    }
+
+    private Metrics getMetrics(Project project) throws MojoExecutionException {
+        Metrics metrics = project.getMetrics();
+        if (metrics == null) {
+            throw new MojoExecutionException("No metrics have yet been calculated. Request a metrics analysis" +
+                    "in the Dependency Track UI.");
+        }
+        return metrics;
+    }
+
+    private void failBuildIfThresholdIsBreached(int inheritedRiskScore) throws MojoFailureException {
         debug("Inherited Risk Score Threshold set to: ", inheritedRiskScoreThreshold);
 
         if (inheritedRiskScoreThreshold != null && inheritedRiskScore > inheritedRiskScoreThreshold) {
