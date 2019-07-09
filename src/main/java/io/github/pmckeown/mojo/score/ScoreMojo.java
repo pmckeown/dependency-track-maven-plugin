@@ -1,9 +1,9 @@
 package io.github.pmckeown.mojo.score;
 
 import io.github.pmckeown.mojo.AbstractDependencyTrackMojo;
-import io.github.pmckeown.rest.model.GetProjectsResponse;
 import io.github.pmckeown.rest.model.Metrics;
 import io.github.pmckeown.rest.model.Project;
+import io.github.pmckeown.rest.model.ResponseWithBody;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -35,7 +35,7 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
 
     @Override
     public void execute() throws MojoFailureException, MojoExecutionException {
-        GetProjectsResponse response = dependencyTrackClient().getProjects();
+        ResponseWithBody<List<Project>> response = dependencyTrackClient().getProjects();
         debug(response.toString());
 
         if (response.isSuccess()) {
@@ -70,7 +70,7 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
     private void printInheritedRiskScore(Project project, int inheritedRiskScore) {
         info(DELIMITER);
         info("Project: %s, Version: %s", project.getName(), project.getVersion());
-        StringBuffer scoreMessage = new StringBuffer(format("Inherited Risk Score: %d", inheritedRiskScore));
+        StringBuilder scoreMessage = new StringBuilder(format("Inherited Risk Score: %d", inheritedRiskScore));
 
         if (inheritedRiskScoreThreshold != null) {
             scoreMessage.append(format(" - Maximum allowed Inherited Risk Score: %d", inheritedRiskScoreThreshold));

@@ -1,10 +1,12 @@
 package io.github.pmckeown.rest.client;
 
-import io.github.pmckeown.rest.model.GetProjectsResponse;
+import io.github.pmckeown.rest.model.Project;
+import io.github.pmckeown.rest.model.ResponseWithBody;
 import org.junit.Test;
 
+import java.util.List;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static io.github.pmckeown.rest.ResourceConstants.V1_PROJECT;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -22,7 +24,7 @@ public class GetProjectsIntegrationTest extends AbstractDependencyTrackIntegrati
         stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
 
-        GetProjectsResponse response = dependencyTrackClient().getProjects();
+        ResponseWithBody<List<Project>> response = dependencyTrackClient().getProjects();
 
         assertThat(response.getBody().size(), is(equalTo(7)));
         verify(exactly(1), getRequestedFor(urlEqualTo(V1_PROJECT)));

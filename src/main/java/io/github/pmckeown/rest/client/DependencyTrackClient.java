@@ -44,7 +44,7 @@ public class DependencyTrackClient {
         }
     }
 
-    public GetProjectsResponse getProjects() {
+    public ResponseWithBody<List<Project>> getProjects() {
         try {
             HttpResponse<List<Project>> response = Unirest.get(host + V1_PROJECT)
                     .header("X-Api-Key", apiKey)
@@ -52,10 +52,10 @@ public class DependencyTrackClient {
                     .header(ACCEPT, "application/json")
                     .asObject(new GenericType<List<Project>>(){});
 
-            return new GetProjectsResponse(response.getStatus(), response.getStatusText(), response.isSuccess(),
-                    response.getBody());
+            return new ResponseWithBody<>(response.getStatus(), response.getStatusText(),
+                    response.isSuccess(), response.getBody());
         } catch (UnirestException ex) {
-            return new GetProjectsResponse(CLIENT_EXCEPTION_STATUS, ex.getMessage(), false, null);
+            return new ResponseWithBody<>(CLIENT_EXCEPTION_STATUS, ex.getMessage(), false, null);
         }
     }
 
@@ -68,7 +68,7 @@ public class DependencyTrackClient {
                     .routeParam("uuid", projectUuid)
                     .asObject(new GenericType<Metrics>(){});
 
-            return new ResponseWithBody<Metrics>(response.getStatus(), response.getStatusText(), response.isSuccess(),
+            return new ResponseWithBody<>(response.getStatus(), response.getStatusText(), response.isSuccess(),
                     response.getBody());
         } catch (UnirestException ex) {
             return new ResponseWithBody<>(CLIENT_EXCEPTION_STATUS, ex.getMessage(), false, null);
