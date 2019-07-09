@@ -5,6 +5,7 @@ import kong.unirest.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 import static io.github.pmckeown.rest.ResourceConstants.*;
 import static io.github.pmckeown.rest.client.ObjectMapperBuilder.relaxedObjectMapper;
@@ -25,6 +26,7 @@ public class DependencyTrackClient {
         this.host = normaliseHost(host);
         this.apiKey = apiKey;
 
+        // TODO - move to class context
         Unirest.config().setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()));
     }
     
@@ -44,7 +46,7 @@ public class DependencyTrackClient {
         }
     }
 
-    public ResponseWithBody<List<Project>> getProjects() {
+    public ResponseWithOptionalBody<List<Project>> getProjects() {
         try {
             HttpResponse<List<Project>> response = Unirest.get(host + V1_PROJECT)
                     .header("X-Api-Key", apiKey)
@@ -52,27 +54,30 @@ public class DependencyTrackClient {
                     .header(ACCEPT, "application/json")
                     .asObject(new GenericType<List<Project>>(){});
 
-            return new ResponseWithBody<>(response.getStatus(), response.getStatusText(),
-                    response.isSuccess(), response.getBody());
+            return new ResponseWithOptionalBody<>(response.getStatus(), response.getStatusText(),
+                    response.isSuccess(), Optional.of(response.getBody()));
         } catch (UnirestException ex) {
-            return new ResponseWithBody<>(CLIENT_EXCEPTION_STATUS, ex.getMessage(), false, null);
+            return new ResponseWithOptionalBody<>(CLIENT_EXCEPTION_STATUS, ex.getMessage(), false, null);
         }
     }
 
-    public ResponseWithBody<Metrics> getMetrics(String projectUuid) {
-        try {
-            HttpResponse<Metrics> response = Unirest.get(host + V1_CURRENT_PROJECT_METRICS)
-                    .header("X-Api-Key", apiKey)
-                    .header(ACCEPT_ENCODING, "gzip, deflate")
-                    .header(ACCEPT, "application/json")
-                    .routeParam("uuid", projectUuid)
-                    .asObject(new GenericType<Metrics>(){});
+    public ResponseWithOptionalBody<Metrics> getMetrics(String projectUuid) {
+        final HttpResponse<Metrics> httpResponse = Unirest.get(host + V1_CURRENT_PROJECT_METRICS)
+                .header("X-Api-Key", apiKey)
+                .header(ACCEPT_ENCODING, "gzip, deflate")
+                .header(ACCEPT, "application/json")
+                .routeParam("uuid", projectUuid)
+                .asObject(new GenericType<Metrics>(){});
 
-            return new ResponseWithBody<>(response.getStatus(), response.getStatusText(), response.isSuccess(),
-                    response.getBody());
-        } catch (UnirestException ex) {
-            return new ResponseWithBody<>(CLIENT_EXCEPTION_STATUS, ex.getMessage(), false, null);
+        Optional<Metrics> body;
+        if (httpResponse.isSuccess()) {
+            body = Optional.of(httpResponse.getBody());
+        } else {
+            body = Optional.empty();
         }
+
+        return new ResponseWithOptionalBody<>(httpResponse.getStatus(), httpResponse.getStatusText(),
+                httpResponse.isSuccess(), body);
     }
 
     /*

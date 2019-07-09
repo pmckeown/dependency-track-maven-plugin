@@ -1,7 +1,7 @@
 package io.github.pmckeown.rest.client;
 
 import io.github.pmckeown.rest.model.Project;
-import io.github.pmckeown.rest.model.ResponseWithBody;
+import io.github.pmckeown.rest.model.ResponseWithOptionalBody;
 import org.junit.Test;
 
 import java.util.List;
@@ -24,9 +24,9 @@ public class GetProjectsIntegrationTest extends AbstractDependencyTrackIntegrati
         stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
 
-        ResponseWithBody<List<Project>> response = dependencyTrackClient().getProjects();
+        ResponseWithOptionalBody<List<Project>> response = dependencyTrackClient().getProjects();
 
-        assertThat(response.getBody().size(), is(equalTo(7)));
+        assertThat(response.getBody().get().size(), is(equalTo(7)));
         verify(exactly(1), getRequestedFor(urlEqualTo(V1_PROJECT)));
     }
 }
