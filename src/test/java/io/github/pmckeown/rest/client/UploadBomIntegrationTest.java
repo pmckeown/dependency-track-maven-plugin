@@ -1,7 +1,6 @@
 package io.github.pmckeown.rest.client;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.http.Fault;
 import io.github.pmckeown.rest.ResourceConstants;
 import io.github.pmckeown.rest.model.Bom;
 import io.github.pmckeown.rest.model.Response;
@@ -51,11 +50,11 @@ public class UploadBomIntegrationTest extends AbstractDependencyTrackIntegration
     @Test
     public void thatConnectionErrorsWhenUploadingBomsAreTranslatedIntoAResponse() throws Exception {
         stubFor(put(urlEqualTo(ResourceConstants.V1_BOM))
-                .willReturn(aResponse().withFault(Fault.EMPTY_RESPONSE)));
+                .willReturn(aResponse().withStatus(404).withBody("Not Found")));
 
         Response response = dependencyTrackClient().uploadBom(aBom());
 
-        assertThat(response.getStatus(), is(equalTo(-1)));
+        assertThat(response.getStatus(), is(equalTo(404)));
 
         verify(1, putRequestedFor(urlEqualTo(ResourceConstants.V1_BOM))
                 .withRequestBody(matchingJsonPath("$.projectName", WireMock.equalTo(PROJECT_NAME))));

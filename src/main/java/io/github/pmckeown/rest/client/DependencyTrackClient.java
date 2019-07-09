@@ -31,34 +31,41 @@ public class DependencyTrackClient {
     }
     
     public Response uploadBom(Bom bom) {
-        try {
-            HttpResponse<String> response = Unirest.put(host + V1_BOM)
-                    .header(CONTENT_TYPE, "application/json")
-                    .header("X-Api-Key", apiKey)
-                    .header(ACCEPT_ENCODING, "gzip, deflate")
-                    .header(ACCEPT, "application/json")
-                    .body(bom)
-                    .asString();
+        HttpResponse<String> httpResponse = Unirest.put(host + V1_BOM)
+                .header(CONTENT_TYPE, "application/json")
+                .header("X-Api-Key", apiKey)
+                .header(ACCEPT_ENCODING, "gzip, deflate")
+                .header(ACCEPT, "application/json")
+                .body(bom)
+                .asString();
 
-            return new Response(response.getStatus(), response.getStatusText(), response.isSuccess());
-        } catch (UnirestException ex) {
-            return new Response(CLIENT_EXCEPTION_STATUS, ex.getMessage(), false);
+        Optional<String> body;
+        if (httpResponse.isSuccess()) {
+            body = Optional.of(httpResponse.getBody());
+        } else {
+            body = Optional.empty();
         }
+
+        return new ResponseWithOptionalBody<>(httpResponse.getStatus(), httpResponse.getStatusText(),
+                httpResponse.isSuccess(), body);
     }
 
     public ResponseWithOptionalBody<List<Project>> getProjects() {
-        try {
-            HttpResponse<List<Project>> response = Unirest.get(host + V1_PROJECT)
-                    .header("X-Api-Key", apiKey)
-                    .header(ACCEPT_ENCODING, "gzip, deflate")
-                    .header(ACCEPT, "application/json")
-                    .asObject(new GenericType<List<Project>>(){});
+        HttpResponse<List<Project>> httpResponse = Unirest.get(host + V1_PROJECT)
+                .header("X-Api-Key", apiKey)
+                .header(ACCEPT_ENCODING, "gzip, deflate")
+                .header(ACCEPT, "application/json")
+                .asObject(new GenericType<List<Project>>(){});
 
-            return new ResponseWithOptionalBody<>(response.getStatus(), response.getStatusText(),
-                    response.isSuccess(), Optional.of(response.getBody()));
-        } catch (UnirestException ex) {
-            return new ResponseWithOptionalBody<>(CLIENT_EXCEPTION_STATUS, ex.getMessage(), false, null);
+        Optional<List<Project>> body;
+        if (httpResponse.isSuccess()) {
+            body = Optional.of(httpResponse.getBody());
+        } else {
+            body = Optional.empty();
         }
+
+        return new ResponseWithOptionalBody<>(httpResponse.getStatus(), httpResponse.getStatusText(),
+                httpResponse.isSuccess(), body);
     }
 
     public ResponseWithOptionalBody<Metrics> getMetrics(String projectUuid) {
