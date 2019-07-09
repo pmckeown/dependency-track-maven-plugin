@@ -46,7 +46,7 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
             Optional<Project> projectOptional = findCurrentProject(projects, projectName, projectVersion);
             if (projectOptional.isPresent()) {
                 Project project = projectOptional.get();
-                Metrics metrics = getMetrics(project);
+                Metrics metrics = getProjectMetrics(project);
 
                 printInheritedRiskScore(project, metrics.getInheritedRiskScore());
 
@@ -84,7 +84,7 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
         info(DELIMITER);
     }
 
-    private Metrics getMetrics(Project project) throws MojoExecutionException {
+    private Metrics getProjectMetrics(Project project) throws MojoExecutionException {
         Metrics metrics = project.getMetrics();
         if (metrics == null) {
             throw new MojoExecutionException("No metrics have yet been calculated. Request a metrics analysis" +
