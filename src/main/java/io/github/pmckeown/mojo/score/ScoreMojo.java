@@ -4,6 +4,7 @@ import io.github.pmckeown.mojo.AbstractDependencyTrackMojo;
 import io.github.pmckeown.rest.model.Metrics;
 import io.github.pmckeown.rest.model.Project;
 import io.github.pmckeown.rest.model.ResponseWithOptionalBody;
+import kong.unirest.UnirestException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -35,13 +36,18 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
 
     @Override
     public void execute() throws MojoFailureException, MojoExecutionException {
-        ResponseWithOptionalBody<List<Project>> response = dependencyTrackClient().getProjects();
+        try {
+            ResponseWithOptionalBody<List<Project>> response = dependencyTrackClient().getProjects();
 
-        if (response.isSuccess() && response.getBody().isPresent()) {
-            parseAndHandleResponse(response.getBody().get());
-        } else {
-            error("Failed to get projects from Dependency Track with error: %d %s", response.getStatus(),
-                    response.getStatusText());
+            if (response.isSuccess() && response.getBody().isPresent()) {
+                parseAndHandleResponse(response.getBody().get());
+            } else {
+                handleFailure(format("Failed to get projects from Dependency Track with error: %d %s",
+                        response.getStatus(), response.getStatusText()));
+            }
+        } catch (UnirestException ex) {
+            error(ex.getMessage());
+            handleFailure("Get score failed");
         }
     }
 
@@ -60,13 +66,8 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
             failBuildIfThresholdIsBreached(metrics.getInheritedRiskScore());
 
         } else {
-            String message = format("Failed to find project on server: Project: %s, Version: %s",
-                    projectName, projectVersion);
-            error(message);
-
-            if (shouldFailOnError()) {
-                throw new MojoFailureException(message);
-            }
+            handleFailure(format("Failed to find project on server: Project: %s, Version: %s", projectName,
+                    projectVersion));
         }
     }
 

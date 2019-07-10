@@ -1,7 +1,6 @@
 package io.github.pmckeown.mojo.score;
 
 import io.github.pmckeown.mojo.AbstractDependencyTrackMojoTest;
-import io.github.pmckeown.rest.ResourceConstants;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.Before;
@@ -11,8 +10,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.TestMojoLoader.loadScoreMojo;
 import static io.github.pmckeown.rest.ResourceConstants.V1_PROJECT;
 import static io.github.pmckeown.rest.client.TestResourceConstants.API_V1_METRICS_PROJECT_CURRENT;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
 
 /**
  * Mojo tests for the score goal
@@ -33,7 +33,7 @@ public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     public void thatAllProjectsCanBeRetrieved() throws Exception {
-        stubFor(get(urlEqualTo(ResourceConstants.V1_PROJECT)).willReturn(
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
 
         scoreMojo.execute();
@@ -44,7 +44,7 @@ public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
     @Test
     public void thatARiskScoreHigherThanTheThresholdCausesBuildToFail() throws Exception {
         // The current project score in the JSON file is 3
-        stubFor(get(urlEqualTo(ResourceConstants.V1_PROJECT)).willReturn(
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
 
         scoreMojo.setInheritedRiskScoreThreshold(1);
@@ -60,7 +60,7 @@ public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
     @Test
     public void thatARiskScoreEqualToTheThresholdDoesNothing() throws Exception {
         // The current project score in the JSON file is 3
-        stubFor(get(urlEqualTo(ResourceConstants.V1_PROJECT)).willReturn(
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
 
         scoreMojo.setInheritedRiskScoreThreshold(3);
@@ -75,7 +75,7 @@ public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
     @Test
     public void thatARiskScoreLowerThanTheThresholdDoesNothing() throws Exception {
         // The current project score in the JSON file is 3
-        stubFor(get(urlEqualTo(ResourceConstants.V1_PROJECT)).willReturn(
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
 
         scoreMojo.setInheritedRiskScoreThreshold(999);
@@ -90,7 +90,7 @@ public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
     @Test
     public void thatWhenNoMetricsHaveBeenCalculatedThenTheMetricsAreRetrieved() throws Exception {
         // The current project score in the JSON file is 3
-        stubFor(get(urlEqualTo(ResourceConstants.V1_PROJECT)).willReturn(
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(get(urlPathMatching(API_V1_METRICS_PROJECT_CURRENT)).willReturn(
                 aResponse().withBodyFile("api/v1/metrics/project/project-metrics.json")));
@@ -105,7 +105,7 @@ public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
     @Test
     public void thatWhenNoMetricsHaveBeenCalculatedTheGoalFails() throws Exception {
         // The current project score in the JSON file is 3
-        stubFor(get(urlEqualTo(ResourceConstants.V1_PROJECT)).willReturn(
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(get(urlPathMatching(API_V1_METRICS_PROJECT_CURRENT)).willReturn(
                 aResponse().withStatus(404).withBody("The project could not be found.")));
@@ -118,6 +118,60 @@ public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
             fail("Exception expected");
         } catch (MojoExecutionException ex) {
             assertNotNull(ex);
+        }
+    }
+
+    @Test
+    public void thatWhenFailOnErrorIsFalseAFailureFromToDependencyTrackDoesNotFailTheBuild() {
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(status(404)));
+
+        try {
+            scoreMojo.setFailOnError(false);
+            scoreMojo.execute();
+        } catch (Exception ex) {
+            fail("No exception expected");
+        }
+
+        verify(exactly(1), getRequestedFor(urlEqualTo(V1_PROJECT)));
+    }
+
+    @Test
+    public void thatWhenFailOnErrorIsTrueAFailureFromToDependencyTrackDoesFailTheBuild() throws Exception {
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(status(404)));
+
+        try {
+            scoreMojo.setFailOnError(true);
+            scoreMojo.execute();
+            fail("Exception expected");
+        } catch (Exception ex) {
+            assertThat(ex, is(instanceOf(MojoFailureException.class)));
+        }
+    }
+
+    @Test
+    public void thatWhenFailOnErrorIsFalseAFailureToConnectToDependencyTrackDoesNotFailTheBuild() {
+        // No Wiremock Stubbing
+
+        try {
+            scoreMojo.setDependencyTrackBaseUrl("http://localghost:80");
+            scoreMojo.setFailOnError(false);
+            scoreMojo.execute();
+        } catch (Exception ex) {
+            fail("No exception expected");
+        }
+    }
+
+    @Test
+    public void thatWhenFailOnErrorIsTrueAFailureToConnectToDependencyTrackDoesFailTheBuild() throws Exception {
+        // No Wiremock Stubbing
+
+        try {
+            scoreMojo.setDependencyTrackBaseUrl("http://localghost:80");
+            scoreMojo.setFailOnError(true);
+            scoreMojo.execute();
+            fail("No exception expected");
+        } catch (Exception ex) {
+            assertThat(ex, is(instanceOf(MojoFailureException.class)));
         }
     }
 }
