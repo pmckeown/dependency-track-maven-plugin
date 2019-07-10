@@ -14,7 +14,7 @@ import static org.junit.Assert.assertThat;
  *
  * @author Paul McKeown
  */
-public class GetMetricsTest extends AbstractDependencyTrackIntegrationTest {
+public class GetMetricsIntegrationTest extends AbstractDependencyTrackIntegrationTest {
 
     @Test
     public void thatMetricsCanBeRetrieved() throws Exception {
