@@ -59,7 +59,7 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
         if (projectOptional.isPresent()) {
             Project project = projectOptional.get();
 
-            Metrics metrics = getProjectMetrics(project);
+            Metrics metrics = getMetricsFromProject(project);
 
             printInheritedRiskScore(project, metrics.getInheritedRiskScore());
 
@@ -88,22 +88,36 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
         info(DELIMITER);
     }
 
-    private Metrics getProjectMetrics(Project project) throws MojoExecutionException {
+    private Metrics getMetricsFromProject(Project project) throws MojoExecutionException, MojoFailureException {
         Metrics metrics = project.getMetrics();
         if (metrics == null) {
             info("Metrics not present, checking the server for more info");
-            ResponseWithOptionalBody<Metrics> response = dependencyTrackClient().getMetrics(project.getUuid());
-
-            if (response.getBody().isPresent()) {
-                debug("Metrics found for project: %s", project.getUuid());
-                debug(response.getBody().get().toString());
-                return response.getBody().get();
+            Optional<Metrics> metricsFromServer = getMetricsFromServer(project);
+            if (metricsFromServer.isPresent()) {
+                metrics = metricsFromServer.get();
             } else {
-                throw new MojoExecutionException("No metrics have yet been calculated. Request a metrics analysis " +
-                        "in the Dependency Track UI.");
+                metrics = null;
             }
         }
         return metrics;
+    }
+
+    private Optional<Metrics> getMetricsFromServer(Project project) throws MojoExecutionException, MojoFailureException {
+        try {
+            ResponseWithOptionalBody<Metrics> response = dependencyTrackClient().getMetrics(project.getUuid());
+
+            if (!response.getBody().isPresent()) {
+                throw new MojoExecutionException("No metrics have yet been calculated. Request a metrics analysis " +
+                        "in the Dependency Track UI.");
+            }
+            debug("Metrics found for project: %s", project.getUuid());
+            debug(response.getBody().get().toString());
+            return response.getBody();
+        } catch (UnirestException ex) {
+            error(ex.getMessage());
+            handleFailure(format("Failed to get Metrics for project: %s", project.getUuid()));
+        }
+        return Optional.empty();
     }
 
     private void failBuildIfThresholdIsBreached(int inheritedRiskScore) throws MojoFailureException {

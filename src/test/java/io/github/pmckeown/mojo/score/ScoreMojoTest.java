@@ -115,7 +115,7 @@ public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
 
         try {
             scoreMojo.execute();
-            fail("Exception expected");
+            fail("Exceptio`n expected");
         } catch (MojoExecutionException ex) {
             assertNotNull(ex);
         }
