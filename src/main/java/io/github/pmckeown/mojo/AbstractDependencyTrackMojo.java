@@ -2,6 +2,7 @@ package io.github.pmckeown.mojo;
 
 import io.github.pmckeown.rest.client.DependencyTrackClient;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
@@ -84,7 +85,10 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         this.failOnError = fail;
     }
 
-    protected boolean shouldFailOnError() {
-        return failOnError;
+    protected void handleFailure(String message) throws MojoFailureException {
+        error(message);
+        if (failOnError) {
+            throw new MojoFailureException(message);
+        }
     }
 }
