@@ -1,6 +1,6 @@
-package io.github.pmckeown.mojo.score;
+package io.github.pmckeown.dependencytrack.score;
 
-import io.github.pmckeown.mojo.AbstractDependencyTrackMojoTest;
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.rest.ResourceConstants;
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.Before;

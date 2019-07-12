@@ -1,6 +1,9 @@
 package io.github.pmckeown.util;
 
+import org.apache.maven.plugin.testing.SilentLog;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
 
@@ -8,24 +11,27 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 /**
- * Test bom encoder
+ * Test upload encoder
  *
  * @author Paul McKeown
  */
+@RunWith(MockitoJUnitRunner.class)
 public class BomEncoderTest {
 
     private BomEncoder bomEncoder = new BomEncoder();
 
+    private Logger logger = new Logger(new SilentLog());
+
     @Test
     public void thatABomFileCanBeBase64Encoded() {
-        Optional<String> encodedBom = bomEncoder.encodeBom("target/test-classes/project-to-test/bom.xml");
+        Optional<String> encodedBom = bomEncoder.encodeBom("target/test-classes/project-to-test/bom.xml", logger);
 
         assertThat(encodedBom.isPresent(), is(true));
     }
 
     @Test
     public void thatNoExceptionOccursWhenBomIsMissing() {
-        Optional<String> encodedBom = bomEncoder.encodeBom("invalid/location");
+        Optional<String> encodedBom = bomEncoder.encodeBom("invalid/location", logger);
 
         assertThat(encodedBom.isPresent(), is(false));
     }

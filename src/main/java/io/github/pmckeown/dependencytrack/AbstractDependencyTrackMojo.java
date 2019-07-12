@@ -1,10 +1,13 @@
-package io.github.pmckeown.mojo;
+package io.github.pmckeown.dependencytrack;
 
 import io.github.pmckeown.rest.client.DependencyTrackClient;
 import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
+
+import static io.github.pmckeown.dependencytrack.CommonConfigBuilder.config;
 
 /**
  * Base class for Mojos in this project.
@@ -44,6 +47,16 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         return new DependencyTrackClient(dependencyTrackBaseUrl, apiKey);
     }
 
+    protected CommonConfig commonConfig() {
+        return config()
+                .withProjectName(projectName)
+                .withProjectVersion(projectVersion)
+                .withDependencyTrackBaseUrl(dependencyTrackBaseUrl)
+                .withApiKey(apiKey)
+                .shouldFailOnError(failOnError)
+                .build();
+    }
+
     public void setProjectName(String projectName) {
         this.projectName = projectName;
     }
@@ -68,6 +81,13 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         log.error(message);
         if (failOnError) {
             throw new MojoFailureException(message);
+        }
+    }
+
+    protected void handleFailure(String message, Throwable ex) throws MojoExecutionException {
+        log.error(message, ex);
+        if (failOnError) {
+            throw new MojoExecutionException(message);
         }
     }
 }

@@ -1,5 +1,6 @@
 package io.github.pmckeown.rest.client;
 
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackIntegrationTest;
 import io.github.pmckeown.rest.model.Project;
 import io.github.pmckeown.rest.model.ResponseWithOptionalBody;
 import org.junit.Test;

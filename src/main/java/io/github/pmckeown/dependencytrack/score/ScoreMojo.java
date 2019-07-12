@@ -1,6 +1,6 @@
-package io.github.pmckeown.mojo.score;
+package io.github.pmckeown.dependencytrack.score;
 
-import io.github.pmckeown.mojo.AbstractDependencyTrackMojo;
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.rest.model.Metrics;
 import io.github.pmckeown.rest.model.Project;
 import io.github.pmckeown.rest.model.ResponseWithOptionalBody;

@@ -1,11 +1,12 @@
-package io.github.pmckeown.mojo.bom;
+package io.github.pmckeown.dependencytrack.upload;
 
 
 import io.github.pmckeown.TestMojoLoader;
-import io.github.pmckeown.mojo.AbstractDependencyTrackMojoTest;
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.rest.ResourceConstants;
 import io.github.pmckeown.util.BomEncoder;
-import org.apache.maven.plugin.MojoFailureException;
+import io.github.pmckeown.util.Logger;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -17,11 +18,14 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.rest.ResourceConstants.V1_BOM;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 
 /**
- * Test bom uploading
+ * Test upload uploading
  *
  * @author Paul McKeown
  */
@@ -35,7 +39,7 @@ public class UploadBomMojoTest extends AbstractDependencyTrackMojoTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION);
+        doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(anyString(), any(Logger.class));
     }
 
     @Test
@@ -73,7 +77,7 @@ public class UploadBomMojoTest extends AbstractDependencyTrackMojoTest {
             uploadBomMojo.execute();
             fail("Exception expected");
         } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoFailureException.class)));
+            assertThat(ex, is(instanceOf(MojoExecutionException.class)));
         }
     }
 
@@ -102,7 +106,7 @@ public class UploadBomMojoTest extends AbstractDependencyTrackMojoTest {
             uploadBomMojo.execute();
             fail("Exception expected");
         } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoFailureException.class)));
+            assertThat(ex, is(instanceOf(MojoExecutionException.class)));
         }
     }
 
@@ -178,7 +182,6 @@ public class UploadBomMojoTest extends AbstractDependencyTrackMojoTest {
             uploadBomMojo.setBomLocation(bomLocation);
         }
         uploadBomMojo.setApiKey("ABC123");
-        uploadBomMojo.setBomEncoder(bomEncoder);
         return uploadBomMojo;
     }
 }

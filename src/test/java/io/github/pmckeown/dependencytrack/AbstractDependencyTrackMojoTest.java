@@ -1,4 +1,4 @@
-package io.github.pmckeown.mojo;
+package io.github.pmckeown.dependencytrack;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.maven.plugin.testing.MojoRule;
