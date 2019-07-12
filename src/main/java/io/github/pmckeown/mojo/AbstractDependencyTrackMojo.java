@@ -1,6 +1,7 @@
 package io.github.pmckeown.mojo;
 
 import io.github.pmckeown.rest.client.DependencyTrackClient;
+import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -36,33 +37,11 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     @Parameter(defaultValue = "false", property = "dependency-track.failOnError")
     private boolean failOnError;
 
+    protected Logger log = new Logger(getLog());
+
     protected DependencyTrackClient dependencyTrackClient() {
-        info("Connecting to Dependency Track instance: %s", dependencyTrackBaseUrl);
+        log.info("Connecting to Dependency Track instance: %s", dependencyTrackBaseUrl);
         return new DependencyTrackClient(dependencyTrackBaseUrl, apiKey);
-    }
-
-    protected void info(String message, Object... params) {
-        if(getLog().isInfoEnabled()) {
-            getLog().info(String.format(message, params));
-        }
-    }
-
-    protected void warning(String message, Object... params) {
-        if(getLog().isWarnEnabled()) {
-            getLog().warn(String.format(message, params));
-        }
-    }
-
-    protected void debug(String message, Object... params) {
-        if(getLog().isDebugEnabled()) {
-            getLog().debug(String.format(message, params));
-        }
-    }
-
-    protected void error(String message, Object... params) {
-        if(getLog().isErrorEnabled()) {
-            getLog().error(String.format(message, params));
-        }
     }
 
     public void setProjectName(String projectName) {
@@ -86,7 +65,7 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     }
 
     protected void handleFailure(String message) throws MojoFailureException {
-        error(message);
+        log.error(message);
         if (failOnError) {
             throw new MojoFailureException(message);
         }

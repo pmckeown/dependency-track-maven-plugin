@@ -46,15 +46,15 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
                         response.getStatus(), response.getStatusText()));
             }
         } catch (UnirestException ex) {
-            error(ex.getMessage());
+            log.error(ex.getMessage());
             handleFailure("Get score failed");
         }
     }
 
     private void parseAndHandleResponse(List<Project> projects) throws MojoExecutionException, MojoFailureException {
-        debug(projects.toString());
+        log.debug(projects.toString());
 
-        info("Found %s projects", projects.size());
+        log.info("Found %s projects", projects.size());
         Optional<Project> projectOptional = findCurrentProject(projects, projectName, projectVersion);
         if (projectOptional.isPresent()) {
             Project project = projectOptional.get();
@@ -72,8 +72,8 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
     }
 
     private void printInheritedRiskScore(Project project, int inheritedRiskScore) {
-        info(DELIMITER);
-        info("Project: %s, Version: %s", project.getName(), project.getVersion());
+        log.info(DELIMITER);
+        log.info("Project: %s, Version: %s", project.getName(), project.getVersion());
         StringBuilder scoreMessage = new StringBuilder(format("Inherited Risk Score: %d", inheritedRiskScore));
 
         if (inheritedRiskScoreThreshold != null) {
@@ -81,17 +81,17 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
         }
 
         if (inheritedRiskScore > 0) {
-            warning(scoreMessage.toString());
+            log.warn(scoreMessage.toString());
         } else {
-            info(scoreMessage.toString());
+            log.info(scoreMessage.toString());
         }
-        info(DELIMITER);
+        log.info(DELIMITER);
     }
 
     private Metrics getMetricsFromProject(Project project) throws MojoExecutionException, MojoFailureException {
         Metrics metrics = project.getMetrics();
         if (metrics == null) {
-            info("Metrics not present, checking the server for more info");
+            log.info("Metrics not present, checking the server for more info");
             Optional<Metrics> metricsFromServer = getMetricsFromServer(project);
             if (metricsFromServer.isPresent()) {
                 metrics = metricsFromServer.get();
@@ -110,18 +110,18 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
                 throw new MojoExecutionException("No metrics have yet been calculated. Request a metrics analysis " +
                         "in the Dependency Track UI.");
             }
-            debug("Metrics found for project: %s", project.getUuid());
-            debug(response.getBody().get().toString());
+            log.debug("Metrics found for project: %s", project.getUuid());
+            log.debug(response.getBody().get().toString());
             return response.getBody();
         } catch (UnirestException ex) {
-            error(ex.getMessage());
+            log.error(ex.getMessage());
             handleFailure(format("Failed to get Metrics for project: %s", project.getUuid()));
         }
         return Optional.empty();
     }
 
     private void failBuildIfThresholdIsBreached(int inheritedRiskScore) throws MojoFailureException {
-        debug("Inherited Risk Score Threshold set to: %s",
+        log.debug("Inherited Risk Score Threshold set to: %s",
                 inheritedRiskScoreThreshold == null ? "Not set" : inheritedRiskScoreThreshold);
 
         if (inheritedRiskScoreThreshold != null && inheritedRiskScore > inheritedRiskScoreThreshold) {
@@ -132,10 +132,10 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
     }
 
     private Optional<Project> findCurrentProject(List<Project> projects, String name, String version) {
-        debug("Searching for project using Name: [%s] and Version [%s]", name, version);
+        log.debug("Searching for project using Name: [%s] and Version [%s]", name, version);
         return projects.stream()
                 .parallel()
-                .peek(project -> debug(project.toString()))
+                .peek(project -> log.debug(project.toString()))
                 .filter(project -> project.getName().equals(name))
                 .filter(project -> project.getVersion().equals(version))
                 .findFirst();

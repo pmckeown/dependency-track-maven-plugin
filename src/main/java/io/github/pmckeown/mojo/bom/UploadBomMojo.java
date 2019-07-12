@@ -38,16 +38,14 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     private BomEncoder bomEncoder = new BomEncoder();
 
     public void execute() throws MojoFailureException {
-        debug("Current working directory: %s", System.getProperty("user.dir"));
-        debug("looking for bom.xml at %s", bomLocation);
+        log.debug(format("Current working directory: %s", System.getProperty("user.dir")));
+        log.debug(format("looking for bom.xml at %s", bomLocation));
 
         Optional<String> encodedBomOptional = bomEncoder.encodeBom(bomLocation);
 
         if (encodedBomOptional.isPresent()) {
-            info("Project Name: %s", projectName);
-            info("Project Version: %s", projectVersion);
-
-            debug("Base64 Encoded BOM: %s", encodedBomOptional.get());
+            log.info(format("Project Name: %s", projectName));
+            log.info(format("Project Version: %s", projectVersion));
 
             Bom bom = new Bom(projectName, projectVersion, true, encodedBomOptional.get());
             uploadBom(bom);
@@ -60,17 +58,17 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     private void uploadBom(Bom bom) throws MojoFailureException {
         try {
             Response response = dependencyTrackClient().uploadBom(bom);
-            debug(response.toString());
+            log.debug(response.toString());
 
             if (response.isSuccess()) {
-                info("Bom uploaded to Dependency Track server");
+                log.debug("Bom uploaded to Dependency Track server");
             } else {
                 handleFailure(format("Failure integrating with Dependency Track: %d %s", response.getStatus(),
                         response.getStatusText()));
             }
 
         } catch (UnirestException ex) {
-            error(ex.getMessage());
+            log.debug(ex.getMessage());
             handleFailure("Bom upload failed");
         }
     }
