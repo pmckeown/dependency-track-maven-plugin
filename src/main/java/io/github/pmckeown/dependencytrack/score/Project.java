@@ -1,7 +1,8 @@
-package io.github.pmckeown.rest.model;
+package io.github.pmckeown.dependencytrack.score;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.github.pmckeown.dependencytrack.metrics.Metrics;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 

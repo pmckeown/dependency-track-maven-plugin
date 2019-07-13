@@ -2,16 +2,15 @@ package io.github.pmckeown.dependencytrack.metrics;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackClient;
 import io.github.pmckeown.dependencytrack.CommonConfig;
-import io.github.pmckeown.rest.model.Metrics;
-import io.github.pmckeown.rest.model.Project;
-import io.github.pmckeown.rest.model.ResponseWithOptionalBody;
+import io.github.pmckeown.dependencytrack.score.Project;
+import io.github.pmckeown.dependencytrack.ResponseWithOptionalBody;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
 
 import java.util.Optional;
 
-import static io.github.pmckeown.rest.ResourceConstants.V1_CURRENT_PROJECT_METRICS;
+import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_CURRENT_PROJECT_METRICS;
 import static kong.unirest.Unirest.get;
 
 public class MetricsClient extends AbstractDependencyTrackClient {

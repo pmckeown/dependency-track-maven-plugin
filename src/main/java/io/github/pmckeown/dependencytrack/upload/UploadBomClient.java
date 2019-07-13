@@ -1,16 +1,15 @@
 package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackClient;
-import io.github.pmckeown.rest.model.Bom;
-import io.github.pmckeown.rest.model.Response;
-import io.github.pmckeown.rest.model.ResponseWithOptionalBody;
+import io.github.pmckeown.dependencytrack.Response;
+import io.github.pmckeown.dependencytrack.ResponseWithOptionalBody;
 import kong.unirest.HttpResponse;
 import kong.unirest.RequestBodyEntity;
 import kong.unirest.Unirest;
 
 import java.util.Optional;
 
-import static io.github.pmckeown.rest.ResourceConstants.V1_BOM;
+import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_BOM;
 import static kong.unirest.HeaderNames.CONTENT_TYPE;
 
 class UploadBomClient extends AbstractDependencyTrackClient {

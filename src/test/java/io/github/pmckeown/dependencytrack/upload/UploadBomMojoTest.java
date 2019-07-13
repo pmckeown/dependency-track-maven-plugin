@@ -3,7 +3,7 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.TestMojoLoader;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
-import io.github.pmckeown.rest.ResourceConstants;
+import io.github.pmckeown.dependencytrack.ResourceConstants;
 import io.github.pmckeown.util.BomEncoder;
 import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -15,7 +15,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.Optional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static io.github.pmckeown.rest.ResourceConstants.V1_BOM;
+import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_BOM;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

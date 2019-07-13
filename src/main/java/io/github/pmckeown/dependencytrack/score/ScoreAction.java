@@ -2,9 +2,8 @@ package io.github.pmckeown.dependencytrack.score;
 
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
-import io.github.pmckeown.rest.model.Metrics;
-import io.github.pmckeown.rest.model.Project;
-import io.github.pmckeown.rest.model.ResponseWithOptionalBody;
+import io.github.pmckeown.dependencytrack.metrics.Metrics;
+import io.github.pmckeown.dependencytrack.ResponseWithOptionalBody;
 import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.MojoFailureException;
 

@@ -1,8 +1,7 @@
 package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.rest.model.Bom;
-import io.github.pmckeown.rest.model.Response;
+import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.util.BomEncoder;
 import io.github.pmckeown.util.Logger;
 

@@ -1,4 +1,4 @@
-package io.github.pmckeown.rest.model;
+package io.github.pmckeown.dependencytrack;
 
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package io.github.pmckeown.rest;
+package io.github.pmckeown.dependencytrack;
 
 /**
  * Resource address constants.

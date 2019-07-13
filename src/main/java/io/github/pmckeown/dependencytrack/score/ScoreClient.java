@@ -1,8 +1,7 @@
 package io.github.pmckeown.dependencytrack.score;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackClient;
-import io.github.pmckeown.rest.model.Project;
-import io.github.pmckeown.rest.model.ResponseWithOptionalBody;
+import io.github.pmckeown.dependencytrack.ResponseWithOptionalBody;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -10,7 +9,7 @@ import kong.unirest.Unirest;
 import java.util.List;
 import java.util.Optional;
 
-import static io.github.pmckeown.rest.ResourceConstants.V1_PROJECT;
+import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
 
 class ScoreClient extends AbstractDependencyTrackClient {
 

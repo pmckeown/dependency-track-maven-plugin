@@ -9,7 +9,7 @@ import org.junit.Test;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.TestMojoLoader.loadScoreMojo;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.API_V1_METRICS_PROJECT_CURRENT;
-import static io.github.pmckeown.rest.ResourceConstants.V1_PROJECT;
+import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;

@@ -1,7 +1,7 @@
 package io.github.pmckeown.dependencytrack.score;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackIntegrationTest;
-import io.github.pmckeown.rest.ResourceConstants;
+import io.github.pmckeown.dependencytrack.ResourceConstants;
 import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.testing.SilentLog;
 import org.junit.Test;

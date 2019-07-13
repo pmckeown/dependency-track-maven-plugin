@@ -1,7 +1,7 @@
 package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackIntegrationTest;
-import io.github.pmckeown.rest.ResourceConstants;
+import io.github.pmckeown.dependencytrack.ResourceConstants;
 import io.github.pmckeown.util.BomEncoder;
 import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.testing.SilentLog;

@@ -2,10 +2,9 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import io.github.pmckeown.dependencytrack.CommonConfig;
-import io.github.pmckeown.rest.ResourceConstants;
+import io.github.pmckeown.dependencytrack.ResourceConstants;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackIntegrationTest;
-import io.github.pmckeown.rest.model.Bom;
-import io.github.pmckeown.rest.model.Response;
+import io.github.pmckeown.dependencytrack.Response;
 import org.junit.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;

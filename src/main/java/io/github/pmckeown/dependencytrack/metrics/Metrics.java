@@ -1,4 +1,4 @@
-package io.github.pmckeown.rest.model;
+package io.github.pmckeown.dependencytrack.metrics;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
