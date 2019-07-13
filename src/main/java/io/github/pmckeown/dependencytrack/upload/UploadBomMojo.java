@@ -45,24 +45,6 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         }
     }
 
-//    private void uploadBom(Bom bom) throws MojoFailureException {
-//        try {
-//            Response response = dependencyTrackClient().uploadBom(bom);
-//            log.debug(response.toString());
-//
-//            if (response.isSuccess()) {
-//                log.debug("Bom uploaded to Dependency Track server");
-//            } else {
-//                handleFailure(format("Failure integrating with Dependency Track: %d %s", response.getStatus(),
-//                        response.getStatusText()));
-//            }
-//
-//        } catch (UnirestException ex) {
-//            log.debug(ex.getMessage());
-//            handleFailure("Bom upload failed");
-//        }
-//    }
-//
     /*
      * Setters for dependency injection in tests
      */
