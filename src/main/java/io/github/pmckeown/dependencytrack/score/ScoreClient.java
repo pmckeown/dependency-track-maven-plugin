@@ -1,7 +1,7 @@
 package io.github.pmckeown.dependencytrack.score;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackClient;
-import io.github.pmckeown.dependencytrack.ResponseWithOptionalBody;
+import io.github.pmckeown.dependencytrack.Response;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -13,7 +13,7 @@ import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
 
 class ScoreClient extends AbstractDependencyTrackClient {
 
-    public ResponseWithOptionalBody<List<Project>> getProjects(ScoreConfig config) {
+    public Response<List<Project>> getProjects(ScoreConfig config) {
         HttpResponse<List<Project>> httpResponse = Unirest.get(config.common().getDependencyTrackBaseUrl() + V1_PROJECT)
                 .header("X-Api-Key", config.common().getApiKey())
                 .asObject(new GenericType<List<Project>>(){});
@@ -25,7 +25,6 @@ class ScoreClient extends AbstractDependencyTrackClient {
             body = Optional.empty();
         }
 
-        return new ResponseWithOptionalBody<>(httpResponse.getStatus(), httpResponse.getStatusText(),
-                httpResponse.isSuccess(), body);
+        return new Response<>(httpResponse.getStatus(), httpResponse.getStatusText(), httpResponse.isSuccess(), body);
     }
 }

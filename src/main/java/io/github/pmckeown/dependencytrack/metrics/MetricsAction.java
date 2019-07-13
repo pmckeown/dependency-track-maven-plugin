@@ -3,7 +3,7 @@ package io.github.pmckeown.dependencytrack.metrics;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.score.Project;
-import io.github.pmckeown.dependencytrack.ResponseWithOptionalBody;
+import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.UnirestException;
 
@@ -15,7 +15,7 @@ public class MetricsAction {
 
     public Metrics getMetrics(CommonConfig config, Logger logger, Project project) throws DependencyTrackException {
         try {
-            ResponseWithOptionalBody<Metrics> response = metricsClient.getMetrics(config, logger, project);
+            Response<Metrics> response = metricsClient.getMetrics(config, logger, project);
 
             if (!response.getBody().isPresent()) {
                 throw new DependencyTrackException("No metrics have yet been calculated. Request a metrics analysis " +

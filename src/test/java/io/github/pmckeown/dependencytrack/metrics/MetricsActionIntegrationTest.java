@@ -2,7 +2,7 @@ package io.github.pmckeown.dependencytrack.metrics;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackIntegrationTest;
 import io.github.pmckeown.dependencytrack.score.Project;
-import io.github.pmckeown.dependencytrack.ResponseWithOptionalBody;
+import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.testing.SilentLog;
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class MetricsActionIntegrationTest extends AbstractDependencyTrackIntegra
         stubFor(get(urlPathMatching(API_V1_METRICS_PROJECT_CURRENT)).willReturn(
                 aResponse().withBodyFile("api/v1/metrics/project/project-metrics.json")));
 
-        ResponseWithOptionalBody<Metrics> metrics = metricsClient.getMetrics(getCommonConfig(), logger,
+        Response<Metrics> metrics = metricsClient.getMetrics(getCommonConfig(), logger,
                 new Project("123", PROJECT_NAME, PROJECT_VERSION, null));
 
         assertThat(metrics, is(not(nullValue())));

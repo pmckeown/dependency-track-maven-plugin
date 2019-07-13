@@ -2,7 +2,6 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackClient;
 import io.github.pmckeown.dependencytrack.Response;
-import io.github.pmckeown.dependencytrack.ResponseWithOptionalBody;
 import kong.unirest.HttpResponse;
 import kong.unirest.RequestBodyEntity;
 import kong.unirest.Unirest;
@@ -28,7 +27,6 @@ class UploadBomClient extends AbstractDependencyTrackClient {
             body = Optional.empty();
         }
 
-        return new ResponseWithOptionalBody<>(httpResponse.getStatus(), httpResponse.getStatusText(),
-                httpResponse.isSuccess(), body);
+        return new Response<>(httpResponse.getStatus(), httpResponse.getStatusText(), httpResponse.isSuccess(), body);
     }
 }
