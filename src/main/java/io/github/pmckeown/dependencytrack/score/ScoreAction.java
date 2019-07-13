@@ -21,7 +21,7 @@ public class ScoreAction {
 
     private static final String DELIMITER = "========================================================================";
 
-    private ScoreClient scoreClient = new ScoreClient();
+    private ProjectClient scoreClient = new ProjectClient();
     private MetricsAction metricsAction = new MetricsAction();
 
     public Integer determineScore(ScoreConfig scoreConfig, Logger logger) throws DependencyTrackException {

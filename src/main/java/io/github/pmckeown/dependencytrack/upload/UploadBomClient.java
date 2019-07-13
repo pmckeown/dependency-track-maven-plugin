@@ -1,17 +1,29 @@
 package io.github.pmckeown.dependencytrack.upload;
 
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackClient;
 import io.github.pmckeown.dependencytrack.Response;
 import kong.unirest.HttpResponse;
+import kong.unirest.JacksonObjectMapper;
 import kong.unirest.RequestBodyEntity;
 import kong.unirest.Unirest;
 
 import java.util.Optional;
 
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_BOM;
-import static kong.unirest.HeaderNames.CONTENT_TYPE;
+import static io.github.pmckeown.dependencytrack.builders.ObjectMapperBuilder.relaxedObjectMapper;
+import static kong.unirest.HeaderNames.*;
 
-class UploadBomClient extends AbstractDependencyTrackClient {
+/**
+ * Client for uploading BOMs to Dependency Track
+ *
+ * @author Paul McKeown
+ */
+class UploadBomClient {
+
+    static {
+        Unirest.config().setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
+                .addDefaultHeader(ACCEPT_ENCODING, "gzip, deflate")
+                .addDefaultHeader(ACCEPT, "application/json");
+    }
 
     Response uploadBom(UploadBomConfig config, Bom bom) {
         RequestBodyEntity requestBodyEntity = Unirest.put(config.common().getDependencyTrackBaseUrl() + V1_BOM)

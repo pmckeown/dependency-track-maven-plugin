@@ -3,6 +3,8 @@ package io.github.pmckeown.dependencytrack.score;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 
 /**
+ * Config class for the {@link ScoreAction}
+ *
  * @author Paul McKeown
  */
 class ScoreConfig {

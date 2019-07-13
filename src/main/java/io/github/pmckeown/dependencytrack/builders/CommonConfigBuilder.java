@@ -3,6 +3,11 @@ package io.github.pmckeown.dependencytrack.builders;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * Builer class for creating a {@link CommonConfig}
+ *
+ * @author Paul McKeown
+ */
 public class CommonConfigBuilder {
 
     private String projectName;

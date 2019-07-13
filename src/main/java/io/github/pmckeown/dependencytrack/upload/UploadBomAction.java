@@ -7,7 +7,12 @@ import io.github.pmckeown.util.Logger;
 
 import java.util.Optional;
 
-public class UploadBomAction { //extends DependencyTrackAction {
+/**
+ * Handles uploading BOMs
+ *
+ * @author Paul McKeown
+ */
+public class UploadBomAction {
 
     private BomEncoder bomEncoder = new BomEncoder();
     private UploadBomClient uploadBomClient = new UploadBomClient();

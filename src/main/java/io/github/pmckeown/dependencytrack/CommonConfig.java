@@ -1,6 +1,8 @@
 package io.github.pmckeown.dependencytrack;
 
 /**
+ * Holder for common configuration supplied on Mojo execution
+ *
  * @author Paul McKeown
  */
 public class CommonConfig {

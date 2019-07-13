@@ -3,6 +3,8 @@ package io.github.pmckeown.dependencytrack.upload;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 
 /**
+ * Config class for the {@link UploadBomAction}
+ *
  * @author Paul McKeown
  */
 class UploadBomConfig {

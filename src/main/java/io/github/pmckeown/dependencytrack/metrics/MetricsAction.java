@@ -9,6 +9,11 @@ import kong.unirest.UnirestException;
 
 import static java.lang.String.format;
 
+/**
+ * Handles the integration to Dependency Track for getting Metrics
+ *
+ * @author Paul McKeown
+ */
 public class MetricsAction {
 
     private MetricsClient metricsClient = new MetricsClient();

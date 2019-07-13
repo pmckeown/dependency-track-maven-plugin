@@ -1,5 +1,8 @@
 package io.github.pmckeown.dependencytrack;
 
+/**
+ * Exception class for wrapping exceptions when integrating with Dependency Track
+ */
 public class DependencyTrackException extends Exception {
 
     public DependencyTrackException(String message) {
@@ -10,11 +13,4 @@ public class DependencyTrackException extends Exception {
         super(message, cause);
     }
 
-    public DependencyTrackException(Throwable cause) {
-        super(cause);
-    }
-
-    public DependencyTrackException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }
