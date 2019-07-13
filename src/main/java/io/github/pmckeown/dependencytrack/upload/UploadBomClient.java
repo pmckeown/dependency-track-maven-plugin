@@ -5,21 +5,22 @@ import io.github.pmckeown.rest.model.Bom;
 import io.github.pmckeown.rest.model.Response;
 import io.github.pmckeown.rest.model.ResponseWithOptionalBody;
 import kong.unirest.HttpResponse;
+import kong.unirest.RequestBodyEntity;
 import kong.unirest.Unirest;
 
 import java.util.Optional;
 
 import static io.github.pmckeown.rest.ResourceConstants.V1_BOM;
-import static kong.unirest.HeaderNames.*;
+import static kong.unirest.HeaderNames.CONTENT_TYPE;
 
 class UploadBomClient extends AbstractDependencyTrackClient {
 
     Response uploadBom(UploadBomConfig config, Bom bom) {
-        HttpResponse<String> httpResponse = Unirest.put(config.common().getDependencyTrackBaseUrl() + V1_BOM)
-                .header(ACCEPT, "application/json")
+        RequestBodyEntity requestBodyEntity = Unirest.put(config.common().getDependencyTrackBaseUrl() + V1_BOM)
+                .header(CONTENT_TYPE, "application/json")
                 .header("X-Api-Key", config.common().getApiKey())
-                .body(bom)
-                .asString();
+                .body(bom);
+        HttpResponse<String> httpResponse = requestBodyEntity.asString();
 
         Optional<String> body;
         if (httpResponse.isSuccess()) {
