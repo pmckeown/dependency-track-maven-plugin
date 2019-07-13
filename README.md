@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/pmckeown/dependency-track-maven-plugin.svg?branch=master)](https://travis-ci.com/pmckeown/dependency-track-maven-plugin)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.pmckeown/dependency-track-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.pmckeown/dependency-track-maven-plugin)
 
 # dependency-track-maven-plugin
 Maven plugin to integrate with a [Dependency Track](https://dependencytrack.org/) server to submit dependency manifests 
