@@ -1,4 +1,4 @@
-package io.github.pmckeown.rest.client;
+package io.github.pmckeown.dependencytrack.builders;
 
 import io.github.pmckeown.rest.model.Project;
 import kong.unirest.GenericType;

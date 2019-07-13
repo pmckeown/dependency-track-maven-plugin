@@ -7,7 +7,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import static io.github.pmckeown.dependencytrack.CommonConfigBuilder.config;
+import static io.github.pmckeown.dependencytrack.builders.CommonConfigBuilder.config;
 
 /**
  * Base class for Mojos in this project.
@@ -40,8 +40,10 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     @Parameter(defaultValue = "false", property = "dependency-track.failOnError")
     private boolean failOnError;
 
+    @Deprecated
     protected Logger log = new Logger(getLog());
 
+    @Deprecated
     protected DependencyTrackClient dependencyTrackClient() {
         log.info("Connecting to Dependency Track instance: %s", dependencyTrackBaseUrl);
         return new DependencyTrackClient(dependencyTrackBaseUrl, apiKey);

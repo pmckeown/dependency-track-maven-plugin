@@ -1,4 +1,4 @@
-package io.github.pmckeown.rest.client;
+package io.github.pmckeown.dependencytrack;
 
 /**
  * Test metrics retrieval

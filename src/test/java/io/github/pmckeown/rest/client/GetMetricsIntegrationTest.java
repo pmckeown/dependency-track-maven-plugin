@@ -6,7 +6,7 @@ import io.github.pmckeown.rest.model.ResponseWithOptionalBody;
 import org.junit.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static io.github.pmckeown.rest.client.TestResourceConstants.API_V1_METRICS_PROJECT_CURRENT;
+import static io.github.pmckeown.dependencytrack.TestResourceConstants.API_V1_METRICS_PROJECT_CURRENT;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 

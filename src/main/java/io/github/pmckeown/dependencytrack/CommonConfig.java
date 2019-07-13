@@ -11,8 +11,8 @@ public class CommonConfig {
     private String apiKey;
     private boolean failOnError;
 
-    CommonConfig(String projectName, String projectVersion, String dependencyTrackBaseUrl, String apiKey,
-            boolean failOnError) {
+    public CommonConfig(String projectName, String projectVersion, String dependencyTrackBaseUrl, String apiKey,
+                        boolean failOnError) {
         this.projectName = projectName;
         this.projectVersion = projectVersion;
         this.dependencyTrackBaseUrl = dependencyTrackBaseUrl;

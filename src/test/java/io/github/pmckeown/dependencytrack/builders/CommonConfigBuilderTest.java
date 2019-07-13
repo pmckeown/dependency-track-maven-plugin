@@ -1,8 +1,9 @@
-package io.github.pmckeown.dependencytrack;
+package io.github.pmckeown.dependencytrack.builders;
 
+import io.github.pmckeown.dependencytrack.CommonConfig;
 import org.junit.Test;
 
-import static io.github.pmckeown.dependencytrack.CommonConfigBuilder.config;
+import static io.github.pmckeown.dependencytrack.builders.CommonConfigBuilder.config;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

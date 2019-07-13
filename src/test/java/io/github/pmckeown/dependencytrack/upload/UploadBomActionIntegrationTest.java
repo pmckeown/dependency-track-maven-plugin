@@ -17,6 +17,7 @@ import java.util.Optional;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.mockito.Mockito.doReturn;
 
+// TODO - refactor to remove wiremock from these tests
 @RunWith(MockitoJUnitRunner.class)
 public class UploadBomActionIntegrationTest extends AbstractDependencyTrackIntegrationTest {
 

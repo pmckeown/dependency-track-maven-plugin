@@ -1,27 +1,25 @@
-package io.github.pmckeown.dependencytrack.upload;
+package io.github.pmckeown.dependencytrack.score;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackClient;
-import io.github.pmckeown.rest.model.Bom;
-import io.github.pmckeown.rest.model.Response;
+import io.github.pmckeown.rest.model.Project;
 import io.github.pmckeown.rest.model.ResponseWithOptionalBody;
+import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
+import java.util.List;
 import java.util.Optional;
 
-import static io.github.pmckeown.rest.ResourceConstants.V1_BOM;
-import static kong.unirest.HeaderNames.*;
+import static io.github.pmckeown.rest.ResourceConstants.V1_PROJECT;
 
-class UploadBomClient extends AbstractDependencyTrackClient {
+class ScoreClient extends AbstractDependencyTrackClient {
 
-    Response uploadBom(UploadBomConfig config, Bom bom) {
-        HttpResponse<String> httpResponse = Unirest.put(config.common().getDependencyTrackBaseUrl() + V1_BOM)
-                .header(ACCEPT, "application/json")
+    public ResponseWithOptionalBody<List<Project>> getProjects(ScoreConfig config) {
+        HttpResponse<List<Project>> httpResponse = Unirest.get(config.common().getDependencyTrackBaseUrl() + V1_PROJECT)
                 .header("X-Api-Key", config.common().getApiKey())
-                .body(bom)
-                .asString();
+                .asObject(new GenericType<List<Project>>(){});
 
-        Optional<String> body;
+        Optional<List<Project>> body;
         if (httpResponse.isSuccess()) {
             body = Optional.of(httpResponse.getBody());
         } else {

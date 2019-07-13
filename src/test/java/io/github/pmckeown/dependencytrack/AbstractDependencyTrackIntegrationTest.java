@@ -1,6 +1,7 @@
 package io.github.pmckeown.dependencytrack;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import io.github.pmckeown.dependencytrack.builders.CommonConfigBuilder;
 import io.github.pmckeown.rest.client.DependencyTrackClient;
 import org.junit.Rule;
 

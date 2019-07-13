@@ -5,7 +5,7 @@ import io.github.pmckeown.dependencytrack.CommonConfig;
 /**
  * @author Paul McKeown
  */
-public class UploadBomConfig {
+class UploadBomConfig {
 
     private CommonConfig commonConfig;
     private String bomLocation;

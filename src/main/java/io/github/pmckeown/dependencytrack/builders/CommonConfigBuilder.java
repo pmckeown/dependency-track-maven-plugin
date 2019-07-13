@@ -1,5 +1,6 @@
-package io.github.pmckeown.dependencytrack;
+package io.github.pmckeown.dependencytrack.builders;
 
+import io.github.pmckeown.dependencytrack.CommonConfig;
 import org.apache.commons.lang3.StringUtils;
 
 public class CommonConfigBuilder {

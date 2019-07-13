@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack.score;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.rest.ResourceConstants;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +10,9 @@ import org.junit.Test;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.TestMojoLoader.loadScoreMojo;
 import static io.github.pmckeown.rest.ResourceConstants.V1_PROJECT;
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 public class ArbitraryProjectDetailsScoreMojoTest extends AbstractDependencyTrackMojoTest {
@@ -64,8 +67,8 @@ public class ArbitraryProjectDetailsScoreMojoTest extends AbstractDependencyTrac
         try {
             scoreMojo.execute();
             fail("Exception expected");
-        } catch (MojoFailureException ex) {
-            assertNotNull(ex);
+        } catch (Exception ex) {
+            assertThat(ex, is(instanceOf(MojoExecutionException.class)));
         }
 
         verify(exactly(1), getRequestedFor(urlEqualTo(V1_PROJECT)));

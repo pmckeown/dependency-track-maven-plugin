@@ -10,8 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.Optional;
 
+import static io.github.pmckeown.dependencytrack.builders.ObjectMapperBuilder.relaxedObjectMapper;
 import static io.github.pmckeown.rest.ResourceConstants.*;
-import static io.github.pmckeown.rest.client.ObjectMapperBuilder.relaxedObjectMapper;
 import static kong.unirest.HeaderNames.*;
 
 /**
@@ -33,24 +33,6 @@ public class DependencyTrackClient {
     public DependencyTrackClient(String host, String apiKey) {
         this.host = normaliseHost(host);
         this.apiKey = apiKey;
-    }
-    
-    public Response uploadBom(Bom bom) {
-        HttpResponse<String> httpResponse = Unirest.put(host + V1_BOM)
-                .header(CONTENT_TYPE, "application/json")
-                .header("X-Api-Key", apiKey)
-                .body(bom)
-                .asString();
-
-        Optional<String> body;
-        if (httpResponse.isSuccess()) {
-            body = Optional.of(httpResponse.getBody());
-        } else {
-            body = Optional.empty();
-        }
-
-        return new ResponseWithOptionalBody<>(httpResponse.getStatus(), httpResponse.getStatusText(),
-                httpResponse.isSuccess(), body);
     }
 
     public ResponseWithOptionalBody<List<Project>> getProjects() {

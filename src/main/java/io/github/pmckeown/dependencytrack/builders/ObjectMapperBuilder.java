@@ -1,4 +1,4 @@
-package io.github.pmckeown.rest.client;
+package io.github.pmckeown.dependencytrack.builders;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,13 +8,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  * @author Paul McKeown
  */
-class ObjectMapperBuilder {
+public class ObjectMapperBuilder {
 
     /**
      * Get an {@link ObjectMapper} instance that is configured to
      * @return
      */
-    static ObjectMapper relaxedObjectMapper() {
+    public static ObjectMapper relaxedObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
