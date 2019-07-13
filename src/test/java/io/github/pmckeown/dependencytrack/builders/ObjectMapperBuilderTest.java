@@ -12,9 +12,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 
-/**
- * @author Paul McKeown
- */
 public class ObjectMapperBuilderTest {
 
     @Test

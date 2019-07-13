@@ -1,10 +1,5 @@
 package io.github.pmckeown.dependencytrack;
 
-/**
- * Test metrics retrieval
- *
- * @author Paul McKeown
- */
 public class TestResourceConstants {
 
     private TestResourceConstants() {

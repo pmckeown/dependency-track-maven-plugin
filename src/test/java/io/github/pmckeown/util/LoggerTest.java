@@ -10,9 +10,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.mockito.Mockito.*;
 
-/**
- * @author Paul McKeown
- */
 @RunWith(MockitoJUnitRunner.class)
 public class LoggerTest {
 

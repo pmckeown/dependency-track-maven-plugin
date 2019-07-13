@@ -14,11 +14,6 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
-/**
- * Mojo tests for the score goal
- *
- * @author Paul McKeown
- */
 public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
 
     private ScoreMojo scoreMojo;

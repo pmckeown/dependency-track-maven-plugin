@@ -24,11 +24,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 
-/**
- * Test upload uploading
- *
- * @author Paul McKeown
- */
 public class UploadBomMojoTest extends AbstractDependencyTrackMojoTest {
 
     private static final String BOM_LOCATION = "target/test-classes/project-to-test/bom.xml";

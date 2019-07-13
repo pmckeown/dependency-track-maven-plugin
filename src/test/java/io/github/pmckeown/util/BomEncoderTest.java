@@ -10,11 +10,6 @@ import java.util.Optional;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-/**
- * Test upload encoder
- *
- * @author Paul McKeown
- */
 @RunWith(MockitoJUnitRunner.class)
 public class BomEncoderTest {
 
