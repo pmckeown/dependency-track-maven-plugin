@@ -3,6 +3,7 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -36,8 +37,10 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     }
 
     public void execute() throws MojoExecutionException, MojoFailureException {
+        Logger logger = new Logger(getLog());
+
         try {
-            if (!uploadBomAction.upload(new UploadBomConfig(commonConfig(), bomLocation), log)) {
+            if (!uploadBomAction.upload(new UploadBomConfig(commonConfig(), bomLocation), logger)) {
                 handleFailure("Bom upload failed");
             }
         } catch (DependencyTrackException ex) {

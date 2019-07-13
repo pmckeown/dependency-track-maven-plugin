@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack.score;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -31,22 +32,23 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
     @Override
     public void execute() throws MojoFailureException, MojoExecutionException {
         ScoreConfig scoreConfig = new ScoreConfig(commonConfig(), inheritedRiskScoreThreshold);
+        Logger logger = new Logger(getLog());
 
         try {
-            Integer inheritedRiskScore = scoreAction.determineScore(scoreConfig, log);
+            Integer inheritedRiskScore = scoreAction.determineScore(scoreConfig, logger);
             if (inheritedRiskScore == null) {
                 handleFailure(format("Failed to determine score for: %s-%s", commonConfig().getProjectName(),
                         commonConfig().getProjectVersion()));
             } else {
-                failBuildIfThresholdIsBreached(inheritedRiskScore);
+                failBuildIfThresholdIsBreached(inheritedRiskScore, logger);
             }
         } catch (DependencyTrackException ex) {
             handleFailure("Error occurred while determining score", ex);
         }
     }
 
-    private void failBuildIfThresholdIsBreached(Integer inheritedRiskScore) throws MojoFailureException {
-        log.debug("Inherited Risk Score Threshold set to: %s",
+    private void failBuildIfThresholdIsBreached(Integer inheritedRiskScore, Logger logger) throws MojoFailureException {
+        logger.debug("Inherited Risk Score Threshold set to: %s",
                 inheritedRiskScoreThreshold == null ? "Not set" : inheritedRiskScoreThreshold);
 
         if (inheritedRiskScoreThreshold != null && inheritedRiskScore > inheritedRiskScoreThreshold) {

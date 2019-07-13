@@ -1,7 +1,5 @@
 package io.github.pmckeown.dependencytrack;
 
-import io.github.pmckeown.rest.client.DependencyTrackClient;
-import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -40,15 +38,6 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     @Parameter(defaultValue = "false", property = "dependency-track.failOnError")
     private boolean failOnError;
 
-    @Deprecated
-    protected Logger log = new Logger(getLog());
-
-    @Deprecated
-    protected DependencyTrackClient dependencyTrackClient() {
-        log.info("Connecting to Dependency Track instance: %s", dependencyTrackBaseUrl);
-        return new DependencyTrackClient(dependencyTrackBaseUrl, apiKey);
-    }
-
     protected CommonConfig commonConfig() {
         return config()
                 .withProjectName(projectName)
@@ -80,14 +69,14 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     }
 
     protected void handleFailure(String message) throws MojoFailureException {
-        log.error(message);
+        getLog().error(message);
         if (failOnError) {
             throw new MojoFailureException(message);
         }
     }
 
     protected void handleFailure(String message, Throwable ex) throws MojoExecutionException {
-        log.error(message, ex);
+        getLog().error(message, ex);
         if (failOnError) {
             throw new MojoExecutionException(message);
         }
