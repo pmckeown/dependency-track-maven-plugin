@@ -1,6 +1,6 @@
 package io.github.pmckeown.dependencytrack.builders;
 
-import io.github.pmckeown.dependencytrack.score.Project;
+import io.github.pmckeown.dependencytrack.project.Project;
 import kong.unirest.GenericType;
 import kong.unirest.JacksonObjectMapper;
 import org.apache.commons.io.FileUtils;

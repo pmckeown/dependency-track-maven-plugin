@@ -1,4 +1,4 @@
-package io.github.pmckeown.dependencytrack.score;
+package io.github.pmckeown.dependencytrack.project;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

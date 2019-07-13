@@ -1,5 +1,6 @@
-package io.github.pmckeown.dependencytrack.score;
+package io.github.pmckeown.dependencytrack.project;
 
+import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
@@ -19,7 +20,7 @@ import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
  *
  * @author Paul McKeown
  */
-class ProjectClient {
+public class ProjectClient {
 
     static {
         Unirest.config().setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
@@ -27,9 +28,9 @@ class ProjectClient {
                 .addDefaultHeader(ACCEPT, "application/json");
     }
 
-    Response<List<Project>> getProjects(ScoreConfig config) {
-        HttpResponse<List<Project>> httpResponse = Unirest.get(config.common().getDependencyTrackBaseUrl() + V1_PROJECT)
-                .header("X-Api-Key", config.common().getApiKey())
+    public Response<List<Project>> getProjects(CommonConfig config) {
+        HttpResponse<List<Project>> httpResponse = Unirest.get(config.getDependencyTrackBaseUrl() + V1_PROJECT)
+                .header("X-Api-Key", config.getApiKey())
                 .asObject(new GenericType<List<Project>>(){});
 
         Optional<List<Project>> body;

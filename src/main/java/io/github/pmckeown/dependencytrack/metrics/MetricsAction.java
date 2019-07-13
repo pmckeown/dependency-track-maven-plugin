@@ -2,7 +2,7 @@ package io.github.pmckeown.dependencytrack.metrics;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.score.Project;
+import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.UnirestException;

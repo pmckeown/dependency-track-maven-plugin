@@ -4,6 +4,8 @@ import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.metrics.Metrics;
 import io.github.pmckeown.dependencytrack.Response;
+import io.github.pmckeown.dependencytrack.project.Project;
+import io.github.pmckeown.dependencytrack.project.ProjectClient;
 import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -26,7 +28,7 @@ public class ScoreAction {
 
     public Integer determineScore(ScoreConfig scoreConfig, Logger logger) throws DependencyTrackException {
         try {
-            Response<List<Project>> response = scoreClient.getProjects(scoreConfig);
+            Response<List<Project>> response = scoreClient.getProjects(scoreConfig.common());
 
             if (response.isSuccess() && response.getBody().isPresent()) {
                 return generateResult(response.getBody().get(), scoreConfig, logger);

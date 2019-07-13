@@ -1,7 +1,7 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackIntegrationTest;
-import io.github.pmckeown.dependencytrack.score.Project;
+import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.testing.SilentLog;
