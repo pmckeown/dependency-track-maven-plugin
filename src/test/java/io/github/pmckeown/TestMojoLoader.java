@@ -1,7 +1,7 @@
 package io.github.pmckeown;
 
-import io.github.pmckeown.mojo.bom.UploadBomMojo;
-import io.github.pmckeown.mojo.score.ScoreMojo;
+import io.github.pmckeown.dependencytrack.upload.UploadBomMojo;
+import io.github.pmckeown.dependencytrack.score.ScoreMojo;
 import org.apache.maven.plugin.testing.MojoRule;
 
 import java.io.File;
