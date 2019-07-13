@@ -2,7 +2,6 @@ package io.github.pmckeown.dependencytrack;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import io.github.pmckeown.dependencytrack.builders.CommonConfigBuilder;
-import io.github.pmckeown.rest.client.DependencyTrackClient;
 import org.junit.Rule;
 
 /**
@@ -19,11 +18,6 @@ public abstract class AbstractDependencyTrackIntegrationTest {
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(0);
-
-    @Deprecated
-    public DependencyTrackClient dependencyTrackClient() {
-        return new DependencyTrackClient(HOST + wireMockRule.port(), API_KEY);
-    }
 
     protected CommonConfig getCommonConfig() {
         return CommonConfigBuilder.config()

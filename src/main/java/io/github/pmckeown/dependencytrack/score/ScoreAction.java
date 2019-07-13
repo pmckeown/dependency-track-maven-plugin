@@ -91,19 +91,6 @@ public class ScoreAction {
         logger.info(DELIMITER);
     }
 
-    private void failBuildIfThresholdIsBreached(int inheritedRiskScore, ScoreConfig scoreConfig, Logger logger)
-            throws MojoFailureException {
-        Integer inheritedRiskScoreThreshold = scoreConfig.getInheritedRiskScoreThreshold();
-        logger.debug("Inherited Risk Score Threshold set to: %s",
-                inheritedRiskScoreThreshold == null ? "Not set" : inheritedRiskScoreThreshold);
-
-        if (inheritedRiskScoreThreshold != null && inheritedRiskScore > inheritedRiskScoreThreshold) {
-
-            throw new MojoFailureException(format("Inherited Risk Score [%d] was greater than the " +
-                    "configured threshold [%d]", inheritedRiskScore, inheritedRiskScoreThreshold));
-        }
-    }
-
     private Optional<Project> findCurrentProject(List<Project> projects, ScoreConfig scoreConfig, Logger logger) {
         logger.debug("Searching for project using Name: [%s] and Version [%s]",
                 scoreConfig.common().getProjectName(), scoreConfig.common().getProjectVersion());
