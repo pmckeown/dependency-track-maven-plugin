@@ -8,6 +8,8 @@ import io.github.pmckeown.util.Logger;
 
 import kong.unirest.UnirestException;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.Optional;
 
 import static java.lang.String.format;
@@ -17,6 +19,8 @@ import static java.lang.String.format;
  *
  * @author Paul McKeown
  */
+@Named
+@Singleton
 public class MetricsAction {
 
     private MetricsClient metricsClient = new MetricsClient();

@@ -2,11 +2,16 @@ package io.github.pmckeown.util;
 
 import org.apache.maven.plugin.logging.Log;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 /**
  * Wrapper service around the Maven {@link Log} implementation.  Provides convenient shortcuts to common log methods.
  *
  * @author Paul McKeown
  */
+@Named
+@Singleton
 public class Logger {
 
     private Log log;
