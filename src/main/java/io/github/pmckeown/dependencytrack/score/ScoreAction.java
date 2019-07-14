@@ -1,13 +1,12 @@
 package io.github.pmckeown.dependencytrack.score;
 
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
-import io.github.pmckeown.dependencytrack.metrics.Metrics;
 import io.github.pmckeown.dependencytrack.Response;
+import io.github.pmckeown.dependencytrack.metrics.Metrics;
+import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectClient;
 import io.github.pmckeown.util.Logger;
-import org.apache.maven.plugin.MojoFailureException;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,8 +29,9 @@ public class ScoreAction {
         try {
             Response<List<Project>> response = scoreClient.getProjects(scoreConfig.common());
 
-            if (response.isSuccess() && response.getBody().isPresent()) {
-                return generateResult(response.getBody().get(), scoreConfig, logger);
+            Optional<List<Project>> body = response.getBody();
+            if (response.isSuccess() && body.isPresent()) {
+                return generateResult(body.get(), scoreConfig, logger);
             } else {
                 throw new DependencyTrackException(format("Failed to get projects from Dependency Track: %d %s",
                         response.getStatus(), response.getStatusText()));
@@ -42,7 +42,7 @@ public class ScoreAction {
     }
 
     private Integer generateResult(List<Project> projects, ScoreConfig scoreConfig, Logger logger)
-            throws DependencyTrackException, MojoFailureException {
+            throws DependencyTrackException {
         logger.debug(projects.toString());
         logger.debug("Found %s projects", projects.size());
 
