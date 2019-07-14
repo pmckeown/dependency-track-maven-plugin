@@ -5,7 +5,10 @@ import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.util.Logger;
+
 import kong.unirest.UnirestException;
+
+import java.util.Optional;
 
 import static java.lang.String.format;
 
@@ -22,13 +25,16 @@ public class MetricsAction {
         try {
             Response<Metrics> response = metricsClient.getMetrics(config, logger, project);
 
-            if (!response.getBody().isPresent()) {
+            Optional<Metrics> body = response.getBody();
+            if (body.isPresent()) {
+                logger.debug("Metrics found for project: %s", project.getUuid());
+                logger.debug(body.get().toString());
+                return body.get();
+            } else {
                 throw new DependencyTrackException("No metrics have yet been calculated. Request a metrics analysis " +
                         "in the Dependency Track UI.");
             }
-            logger.debug("Metrics found for project: %s", project.getUuid());
-            logger.debug(response.getBody().get().toString());
-            return response.getBody().get();
+
         } catch (UnirestException ex) {
             logger.error(ex.getMessage());
             throw new DependencyTrackException(format("Failed to get Metrics for project: %s", project.getUuid()));
