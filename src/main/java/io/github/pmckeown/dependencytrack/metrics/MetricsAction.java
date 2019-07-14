@@ -5,6 +5,7 @@ import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.util.Logger;
+
 import kong.unirest.UnirestException;
 
 import java.util.Optional;
