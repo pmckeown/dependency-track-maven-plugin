@@ -10,3 +10,9 @@ script:
 # Don't shallow clone to allow for full history analysis
 git:
   depth: false
+
+# Enable caching of maven dependencies
+cache:
+  directories:
+    - .autoconf
+    - $HOME/.m2
