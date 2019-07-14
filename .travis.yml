@@ -1,1 +1,12 @@
 language: java
+
+# Sonarcloud integration configuration
+addons:
+  sonarcloud:
+    organization: "pmckeown"
+script:
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=pmckeown_dependency-track-maven-plugin
+
+# Don't shallow clone to allow for full history analysis
+git:
+  depth: false
