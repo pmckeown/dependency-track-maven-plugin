@@ -10,6 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class ObjectMapperBuilder {
 
+    private ObjectMapperBuilder() {
+        // Use factory method
+    }
+
     /**
      * Get an {@link ObjectMapper} instance that is configured to
      * @return

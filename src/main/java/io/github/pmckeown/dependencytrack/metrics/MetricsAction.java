@@ -1,14 +1,12 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
-import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.Response;
+import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
-
 import kong.unirest.UnirestException;
 
-import javax.inject.Named;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Optional;
 
@@ -19,15 +17,22 @@ import static java.lang.String.format;
  *
  * @author Paul McKeown
  */
-@Named
 @Singleton
 public class MetricsAction {
 
-    private MetricsClient metricsClient = new MetricsClient();
+    private MetricsClient metricsClient;
 
-    public Metrics getMetrics(CommonConfig config, Logger logger, Project project) throws DependencyTrackException {
+    private Logger logger;
+
+    @Inject
+    public MetricsAction(MetricsClient metricsClient, Logger logger) {
+        this.metricsClient = metricsClient;
+        this.logger = logger;
+    }
+
+    public Metrics getMetrics(Project project) throws DependencyTrackException {
         try {
-            Response<Metrics> response = metricsClient.getMetrics(config, logger, project);
+            Response<Metrics> response = metricsClient.getMetrics(project);
 
             Optional<Metrics> body = response.getBody();
             if (body.isPresent()) {

@@ -3,6 +3,7 @@ package io.github.pmckeown.util;
 import org.codehaus.plexus.util.Base64;
 import org.codehaus.plexus.util.IOUtil;
 
+import javax.inject.Singleton;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Optional;
@@ -12,6 +13,7 @@ import java.util.Optional;
  *
  * @author Paul McKeown
  */
+@Singleton
 public class BomEncoder {
 
     /**

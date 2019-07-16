@@ -93,6 +93,16 @@
             <artifactId>javax.inject</artifactId>
             <version>1</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>4.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.sisu</groupId>
+            <artifactId>org.eclipse.sisu.inject</artifactId>
+            <version>0.3.3</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -326,8 +336,9 @@
                         <executions>
                             <execution>
                                 <id>generate-index</id>
+                                <phase>package</phase>
                                 <goals>
-                                    <goal>main-index</goal>
+                                    <goal>index</goal>
                                 </goals>
                             </execution>
                         </executions>
