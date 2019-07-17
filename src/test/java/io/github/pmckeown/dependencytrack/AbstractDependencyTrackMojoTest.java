@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.maven.plugin.testing.MojoRule;
+import org.junit.Before;
 import org.junit.Rule;
 
 public abstract class AbstractDependencyTrackMojoTest {
@@ -11,4 +12,9 @@ public abstract class AbstractDependencyTrackMojoTest {
 
     @Rule
     public MojoRule mojoRule = new MojoRule();
+
+    @Before
+    public void resetWireMock() {
+        wireMockRule.resetAll();
+    }
 }
