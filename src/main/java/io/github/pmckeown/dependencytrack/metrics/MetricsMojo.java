@@ -4,32 +4,33 @@ import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.DependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.project.Project;
+import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
 
 import javax.inject.Inject;
 
-@Mojo(name = "metrics", defaultPhase = LifecyclePhase.VERIFY)
+//@Mojo(name = "metrics", defaultPhase = LifecyclePhase.VERIFY)
 public class MetricsMojo extends DependencyTrackMojo {
 
     private MetricsAction metricsAction;
+    private ProjectAction projectAction;
 
     @Inject
-    public MetricsMojo(MetricsAction metricsAction, CommonConfig commonConfig, Logger logger) {
+    public MetricsMojo(MetricsAction metricsAction, ProjectAction projectAction, CommonConfig commonConfig,
+           Logger logger) {
         super(commonConfig, logger);
         this.metricsAction = metricsAction;
+        this.projectAction = projectAction;
     }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         super.execute();
         try {
-            Metrics metrics = metricsAction.getMetrics(new Project("4b37f262-9f0f-4986-9293-f36c55e3f708",
-                    "hardcoded-test", "0.0.1", null));
-            logger.info(metrics.toString());
+            Project project = projectAction.getProject(commonConfig.getProjectName(), commonConfig.getProjectVersion());
+            logger.info(project.toString());
         } catch (DependencyTrackException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }

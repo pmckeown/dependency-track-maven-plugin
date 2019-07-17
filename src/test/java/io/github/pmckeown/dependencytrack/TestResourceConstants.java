@@ -6,5 +6,5 @@ public class TestResourceConstants {
         // Utility Class
     }
 
-    public static final String API_V1_METRICS_PROJECT_CURRENT = "/api/v1/metrics/project/(.*)/current";
+    public static final String V1_METRICS_PROJECT_CURRENT = "/api/v1/metrics/project/(.*)/current";
 }
