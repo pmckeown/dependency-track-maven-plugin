@@ -44,18 +44,14 @@ public class ScoreMojo extends DependencyTrackMojo {
 
         try {
             Integer inheritedRiskScore = scoreAction.determineScore(inheritedRiskScoreThreshold);
-            if (inheritedRiskScore == null) {
-                handleFailure(format("Failed to determine score for: %s-%s", commonConfig.getProjectName(),
-                        commonConfig.getProjectVersion()));
-            } else {
-                failBuildIfThresholdIsBreached(inheritedRiskScore, logger);
-            }
+            failBuildIfThresholdIsBreached(inheritedRiskScore);
         } catch (DependencyTrackException ex) {
-            handleFailure("Error occurred while determining score", ex);
+            handleFailure(format("Failed to determine score for: %s-%s", commonConfig.getProjectName(),
+                    commonConfig.getProjectVersion()));
         }
     }
 
-    private void failBuildIfThresholdIsBreached(Integer inheritedRiskScore, Logger logger) throws MojoFailureException {
+    private void failBuildIfThresholdIsBreached(Integer inheritedRiskScore) throws MojoFailureException {
         logger.debug("Inherited Risk Score Threshold set to: %s",
                 inheritedRiskScoreThreshold == null ? "Not set" : inheritedRiskScoreThreshold);
 

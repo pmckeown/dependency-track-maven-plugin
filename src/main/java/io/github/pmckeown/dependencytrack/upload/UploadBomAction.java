@@ -32,7 +32,7 @@ public class UploadBomAction {
         this.logger = logger;
     }
 
-    public boolean upload(String bomLocation) throws DependencyTrackException {
+    boolean upload(String bomLocation) throws DependencyTrackException {
         logger.info("Project Name: %s", commonConfig.getProjectName());
         logger.info("Project Version: %s", commonConfig.getProjectVersion());
 

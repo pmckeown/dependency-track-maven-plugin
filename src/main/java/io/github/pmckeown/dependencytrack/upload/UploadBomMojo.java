@@ -60,7 +60,4 @@ public class UploadBomMojo extends DependencyTrackMojo {
         this.bomLocation = bomLocation;
     }
 
-    void setUploadBomAction(UploadBomAction uploadBomAction) {
-        this.uploadBomAction = uploadBomAction;
-    }
 }

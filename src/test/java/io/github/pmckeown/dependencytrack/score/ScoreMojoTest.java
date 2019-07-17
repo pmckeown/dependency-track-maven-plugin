@@ -1,18 +1,18 @@
 package io.github.pmckeown.dependencytrack.score;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.Before;
 import org.junit.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.TestMojoLoader.loadScoreMojo;
-import static io.github.pmckeown.dependencytrack.TestResourceConstants.API_V1_METRICS_PROJECT_CURRENT;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
+import static io.github.pmckeown.dependencytrack.TestResourceConstants.API_V1_METRICS_PROJECT_CURRENT;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
 
@@ -55,6 +55,21 @@ public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     public void thatARiskScoreEqualToTheThresholdDoesNothing() throws Exception {
+        // The current project score in the JSON file is 3
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+
+        scoreMojo.setInheritedRiskScoreThreshold(3);
+
+        try {
+            scoreMojo.execute();
+        } catch (MojoFailureException ex) {
+            fail("Exception not expected");
+        }
+    }
+
+    @Test
+    public void thatFailureToGetARiskScoreEqualThrowsAnException() throws Exception {
         // The current project score in the JSON file is 3
         stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
@@ -114,7 +129,7 @@ public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
             scoreMojo.execute();
             fail("Exception expected");
         } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoExecutionException.class)));
+            assertThat(ex, is(instanceOf(MojoFailureException.class)));
         }
     }
 
@@ -141,7 +156,7 @@ public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
             scoreMojo.execute();
             fail("Exception expected");
         } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoExecutionException.class)));
+            assertThat(ex, is(instanceOf(MojoFailureException.class)));
         }
     }
 
@@ -168,7 +183,7 @@ public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
             scoreMojo.execute();
             fail("No exception expected");
         } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoExecutionException.class)));
+            assertThat(ex, is(instanceOf(MojoFailureException.class)));
         }
     }
 }
