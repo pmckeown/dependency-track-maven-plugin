@@ -1,11 +1,14 @@
 package io.github.pmckeown.dependencytrack.upload;
 
+import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import kong.unirest.HttpResponse;
 import kong.unirest.JacksonObjectMapper;
 import kong.unirest.RequestBodyEntity;
 import kong.unirest.Unirest;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.Optional;
 
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_BOM;
@@ -17,7 +20,15 @@ import static kong.unirest.HeaderNames.*;
  *
  * @author Paul McKeown
  */
+@Singleton
 class UploadBomClient {
+
+    private CommonConfig commonConfig;
+
+    @Inject
+    UploadBomClient(CommonConfig commonConfig) {
+        this.commonConfig = commonConfig;
+    }
 
     static {
         Unirest.config().setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
@@ -25,10 +36,10 @@ class UploadBomClient {
                 .addDefaultHeader(ACCEPT, "application/json");
     }
 
-    Response uploadBom(UploadBomConfig config, Bom bom) {
-        RequestBodyEntity requestBodyEntity = Unirest.put(config.common().getDependencyTrackBaseUrl() + V1_BOM)
+    Response uploadBom(Bom bom) {
+        RequestBodyEntity requestBodyEntity = Unirest.put(commonConfig.getDependencyTrackBaseUrl() + V1_BOM)
                 .header(CONTENT_TYPE, "application/json")
-                .header("X-Api-Key", config.common().getApiKey())
+                .header("X-Api-Key", commonConfig.getApiKey())
                 .body(bom);
         HttpResponse<String> httpResponse = requestBodyEntity.asString();
 

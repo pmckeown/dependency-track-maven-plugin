@@ -1,4 +1,4 @@
-package io.github.pmckeown.dependencytrack.builders;
+package io.github.pmckeown.util;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import org.apache.commons.lang3.StringUtils;

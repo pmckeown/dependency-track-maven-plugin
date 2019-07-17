@@ -10,12 +10,12 @@ import java.util.Optional;
  *
  * @author Paul McKeown
  */
-public class Response<Body> {
+public class Response<B> {
 
     private final int status;
     private final String statusText;
     private boolean success;
-    private final Optional<Body> body;
+    private final Optional<B> body;
 
     public Response(int status, String statusText, boolean success) {
         this.status = status;
@@ -24,7 +24,7 @@ public class Response<Body> {
         this.body = Optional.empty();
     }
 
-    public Response(int status, String statusText, boolean success, Optional<Body> body) {
+    public Response(int status, String statusText, boolean success, Optional<B> body) {
         this.status = status;
         this.statusText = statusText;
         this.success = success;
@@ -43,7 +43,7 @@ public class Response<Body> {
         return this.success;
     }
 
-    public Optional<Body> getBody() {
+    public Optional<B> getBody() {
         return this.body;
     }
 

@@ -15,7 +15,7 @@ public class Bom {
     private boolean autoCreate;
     private String base64EncodedBom;
 
-    public Bom(String projectName, String projectVersion, boolean autoCreate, String base64EncodedBom) {
+    Bom(String projectName, String projectVersion, boolean autoCreate, String base64EncodedBom) {
         this.projectName = projectName;
         this.projectVersion = projectVersion;
         this.autoCreate = autoCreate;
