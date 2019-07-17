@@ -1,14 +1,17 @@
 package io.github.pmckeown.dependencytrack.upload;
 
 
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
+import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.DependencyTrackMojo;
 import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+
+import javax.inject.Inject;
 
 /**
  * Provides the capability to upload a Bill of Material (BOM) to your Dependency Track server.
@@ -25,22 +28,24 @@ import org.apache.maven.plugins.annotations.Parameter;
  * @author Paul McKeown
  */
 @Mojo(name = "upload-bom", defaultPhase = LifecyclePhase.VERIFY)
-public class UploadBomMojo extends AbstractDependencyTrackMojo {
+public class UploadBomMojo extends DependencyTrackMojo {
 
     @Parameter(required = true, defaultValue = "target/bom.xml")
     private String bomLocation;
 
     private UploadBomAction uploadBomAction;
 
-    public UploadBomMojo() {
-        this.uploadBomAction = new UploadBomAction();
+    @Inject
+    public UploadBomMojo(UploadBomAction uploadBomAction, CommonConfig commonConfig, Logger logger) {
+        super(commonConfig, logger);
+        this.uploadBomAction = uploadBomAction;
     }
 
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        Logger logger = new Logger(getLog());
-
+        super.execute();
         try {
-            if (!uploadBomAction.upload(new UploadBomConfig(commonConfig(), bomLocation), logger)) {
+            if (!uploadBomAction.upload(bomLocation)) {
                 handleFailure("Bom upload failed");
             }
         } catch (DependencyTrackException ex) {
@@ -55,7 +60,4 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         this.bomLocation = bomLocation;
     }
 
-    void setUploadBomAction(UploadBomAction uploadBomAction) {
-        this.uploadBomAction = uploadBomAction;
-    }
 }

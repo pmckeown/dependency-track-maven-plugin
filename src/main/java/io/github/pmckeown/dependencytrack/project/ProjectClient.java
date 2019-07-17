@@ -7,6 +7,8 @@ import kong.unirest.HttpResponse;
 import kong.unirest.JacksonObjectMapper;
 import kong.unirest.Unirest;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +22,15 @@ import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
  *
  * @author Paul McKeown
  */
+@Singleton
 public class ProjectClient {
+
+    private CommonConfig commonConfig;
+
+    @Inject
+    public ProjectClient(CommonConfig commonConfig) {
+        this.commonConfig = commonConfig;
+    }
 
     static {
         Unirest.config().setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
@@ -28,9 +38,9 @@ public class ProjectClient {
                 .addDefaultHeader(ACCEPT, "application/json");
     }
 
-    public Response<List<Project>> getProjects(CommonConfig config) {
-        HttpResponse<List<Project>> httpResponse = Unirest.get(config.getDependencyTrackBaseUrl() + V1_PROJECT)
-                .header("X-Api-Key", config.getApiKey())
+    public Response<List<Project>> getProjects() {
+        HttpResponse<List<Project>> httpResponse = Unirest.get(commonConfig.getDependencyTrackBaseUrl() + V1_PROJECT)
+                .header("X-Api-Key", commonConfig.getApiKey())
                 .asObject(new GenericType<List<Project>>(){});
 
         Optional<List<Project>> body;

@@ -1,11 +1,10 @@
 package io.github.pmckeown.dependencytrack;
 
+import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
-
-import static io.github.pmckeown.dependencytrack.builders.CommonConfigBuilder.config;
 
 /**
  * Base class for Mojos in this project.
@@ -21,7 +20,8 @@ import static io.github.pmckeown.dependencytrack.builders.CommonConfigBuilder.co
  *
  * @author Paul McKeown
  */
-public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
+// TODO - refactor into a template method so that the execute() method cannot be forgotten
+public class DependencyTrackMojo extends AbstractMojo {
 
     @Parameter(required = true, defaultValue = "${project.artifactId}", property = "dependency-track.projectName")
     protected String projectName;
@@ -38,14 +38,31 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     @Parameter(defaultValue = "false", property = "dependency-track.failOnError")
     private boolean failOnError;
 
-    protected CommonConfig commonConfig() {
-        return config()
-                .withProjectName(projectName)
-                .withProjectVersion(projectVersion)
-                .withDependencyTrackBaseUrl(dependencyTrackBaseUrl)
-                .withApiKey(apiKey)
-                .shouldFailOnError(failOnError)
-                .build();
+    protected Logger logger;
+
+    protected CommonConfig commonConfig;
+
+    protected DependencyTrackMojo() {
+
+    }
+
+    protected DependencyTrackMojo(CommonConfig commonConfig, Logger logger) {
+        this.logger = logger;
+        this.commonConfig = commonConfig;
+    }
+
+    /**
+     * Initialises the {@link Logger} and {@link CommonConfig} instances that were injected by the SISU inversion of
+     * control container (using Guice under the hood) by providing the data provided by the Plexus IOC container.
+     */
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        this.logger.setLog(getLog());
+        this.commonConfig.setProjectName(projectName);
+        this.commonConfig.setProjectVersion(projectVersion);
+        this.commonConfig.setDependencyTrackBaseUrl(dependencyTrackBaseUrl);
+        this.commonConfig.setApiKey(apiKey);
+        this.commonConfig.setFailOnError(failOnError);
     }
 
     public void setProjectName(String projectName) {
@@ -81,4 +98,5 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
             throw new MojoExecutionException(message);
         }
     }
+
 }
