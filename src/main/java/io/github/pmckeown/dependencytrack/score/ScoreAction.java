@@ -1,5 +1,6 @@
 package io.github.pmckeown.dependencytrack.score;
 
+import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.metrics.Metrics;
@@ -8,6 +9,8 @@ import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectClient;
 import io.github.pmckeown.util.Logger;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,20 +21,32 @@ import static java.lang.String.format;
  *
  * @author Paul McKeown
  */
-public class ScoreAction {
+@Singleton
+class ScoreAction {
 
     private static final String DELIMITER = "========================================================================";
 
-    private ProjectClient scoreClient = new ProjectClient();
-    private MetricsAction metricsAction = new MetricsAction();
+    private ProjectClient projectClient;
+    private MetricsAction metricsAction;
+    private CommonConfig commonConfig;
+    private Logger logger;
 
-    public Integer determineScore(ScoreConfig scoreConfig, Logger logger) throws DependencyTrackException {
+    @Inject
+    public ScoreAction(ProjectClient projectClient, MetricsAction metricsAction, CommonConfig commonConfig,
+           Logger logger) {
+        this.projectClient = projectClient;
+        this.metricsAction = metricsAction;
+        this.commonConfig = commonConfig;
+        this.logger = logger;
+    }
+
+    Integer determineScore(Integer inheritedRiskScoreThreshold) throws DependencyTrackException {
         try {
-            Response<List<Project>> response = scoreClient.getProjects(scoreConfig.common());
+            Response<List<Project>> response = projectClient.getProjects();
 
             Optional<List<Project>> body = response.getBody();
             if (response.isSuccess() && body.isPresent()) {
-                return generateResult(body.get(), scoreConfig, logger);
+                return generateResult(body.get(), inheritedRiskScoreThreshold);
             } else {
                 throw new DependencyTrackException(format("Failed to get projects from Dependency Track: %d %s",
                         response.getStatus(), response.getStatusText()));
@@ -41,47 +56,44 @@ public class ScoreAction {
         }
     }
 
-    private Integer generateResult(List<Project> projects, ScoreConfig scoreConfig, Logger logger)
+    private Integer generateResult(List<Project> projects, Integer inheritedRiskScoreThreshold)
             throws DependencyTrackException {
         logger.debug(projects.toString());
         logger.debug("Found %s projects", projects.size());
 
-        Optional<Project> projectOptional = findCurrentProject(projects, scoreConfig, logger);
+        Optional<Project> projectOptional = findCurrentProject(projects);
         if (projectOptional.isPresent()) {
             Project project = projectOptional.get();
 
-            Metrics metrics = getMetricsFromProject(project, scoreConfig, logger);
+            Metrics metrics = getMetricsFromProject(project);
 
-            printInheritedRiskScore(project, metrics.getInheritedRiskScore(), scoreConfig, logger);
+            printInheritedRiskScore(project, metrics.getInheritedRiskScore(), inheritedRiskScoreThreshold);
 
             return metrics.getInheritedRiskScore();
 
         } else {
             throw new DependencyTrackException(format("Failed to find project on server: Project: %s, Version: %s",
-                    scoreConfig.common().getProjectName(), scoreConfig.common().getProjectVersion()));
+                    commonConfig.getProjectName(), commonConfig.getProjectVersion()));
         }
     }
 
-    private Metrics getMetricsFromProject(Project project, ScoreConfig scoreConfig, Logger logger)
-            throws DependencyTrackException {
+    private Metrics getMetricsFromProject(Project project) throws DependencyTrackException {
         Metrics metrics = project.getMetrics();
         if (metrics != null) {
             return metrics;
         } else {
             logger.info("Metrics not present, checking the server for more info");
-            return metricsAction.getMetrics(scoreConfig.common(), logger, project);
+            return metricsAction.getMetrics(project);
         }
     }
 
-    private void printInheritedRiskScore(Project project, int inheritedRiskScore, ScoreConfig scoreConfig,
-             Logger logger) {
+    private void printInheritedRiskScore(Project project, int inheritedRiskScore, Integer inheritedRiskScoreThreshold) {
         logger.info(DELIMITER);
         logger.info("Project: %s, Version: %s", project.getName(), project.getVersion());
         StringBuilder scoreMessage = new StringBuilder(format("Inherited Risk Score: %d", inheritedRiskScore));
 
-        if (scoreConfig.getInheritedRiskScoreThreshold() != null) {
-            scoreMessage.append(format(" - Maximum allowed Inherited Risk Score: %d",
-                    scoreConfig.getInheritedRiskScoreThreshold()));
+        if (inheritedRiskScoreThreshold != null) {
+            scoreMessage.append(format(" - Maximum allowed Inherited Risk Score: %d", inheritedRiskScoreThreshold));
         }
 
         if (inheritedRiskScore > 0) {
@@ -92,14 +104,17 @@ public class ScoreAction {
         logger.info(DELIMITER);
     }
 
-    private Optional<Project> findCurrentProject(List<Project> projects, ScoreConfig scoreConfig, Logger logger) {
+    private Optional<Project> findCurrentProject(List<Project> projects) {
         logger.debug("Searching for project using Name: [%s] and Version [%s]",
-                scoreConfig.common().getProjectName(), scoreConfig.common().getProjectVersion());
+                commonConfig.getProjectName(), commonConfig.getProjectVersion());
+
+        // Output each project when debug is enabled
+        projects.forEach(project -> logger.debug(project.toString()));
+
         return projects.stream()
                 .parallel()
-                .peek(project -> logger.debug(project.toString()))
-                .filter(project -> project.getName().equals(scoreConfig.common().getProjectName()))
-                .filter(project -> project.getVersion().equals(scoreConfig.common().getProjectVersion()))
+                .filter(project -> project.getName().equals(commonConfig.getProjectName()))
+                .filter(project -> project.getVersion().equals(commonConfig.getProjectVersion()))
                 .findFirst();
     }
 }
