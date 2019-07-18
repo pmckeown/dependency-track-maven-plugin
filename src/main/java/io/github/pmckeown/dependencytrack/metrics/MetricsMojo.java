@@ -18,13 +18,15 @@ public class MetricsMojo extends DependencyTrackMojo {
 
     private MetricsAction metricsAction;
     private ProjectAction projectAction;
+    private MetricsPrinter metricsPrinter;
 
     @Inject
-    public MetricsMojo(MetricsAction metricsAction, ProjectAction projectAction, CommonConfig commonConfig,
-           Logger logger) {
+    public MetricsMojo(MetricsAction metricsAction, ProjectAction projectAction, MetricsPrinter metricsPrinter,
+            CommonConfig commonConfig, Logger logger) {
         super(commonConfig, logger);
         this.metricsAction = metricsAction;
         this.projectAction = projectAction;
+        this.metricsPrinter = metricsPrinter;
     }
 
     @Override
@@ -34,11 +36,12 @@ public class MetricsMojo extends DependencyTrackMojo {
             Project project = projectAction.getProject(commonConfig.getProjectName(), commonConfig.getProjectVersion());
             logger.info(project.toString());
 
-            Metrics metrics = project.getMetrics();
-            if (metrics == null) {
-                metrics = metricsAction.getMetrics(project);
+            final Metrics projectMetrics = project.getMetrics();
+            if (projectMetrics != null) {
+                metricsPrinter.print(projectMetrics);
+            } else {
+                metricsPrinter.print(metricsAction.getMetrics(project));
             }
-            logger.info(metrics.toString());
         } catch (DependencyTrackException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }

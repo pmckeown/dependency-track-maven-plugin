@@ -23,7 +23,7 @@ public class MetricsBuilder {
     private MetricsBuilder() {
     }
 
-    public static MetricsBuilder aDefaultMetrics() {
+    public static MetricsBuilder aMetrics() {
         return new MetricsBuilder();
     }
 

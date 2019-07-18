@@ -13,7 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
 
-import static io.github.pmckeown.dependencytrack.builders.MetricsBuilder.aDefaultMetrics;
+import static io.github.pmckeown.dependencytrack.builders.MetricsBuilder.aMetrics;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -80,7 +80,7 @@ public class MetricsActionTest {
     }
 
     private Optional<Metrics> anOptionalMetrics() {
-        return Optional.of(aDefaultMetrics()
+        return Optional.of(aMetrics()
                 .withInheritedRiskScore(INHERITED_RISK_SCORE)
                 .withCritical(100)
                 .withHigh(200)

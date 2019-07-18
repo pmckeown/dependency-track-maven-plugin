@@ -17,7 +17,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.List;
 import java.util.Optional;
 
-import static io.github.pmckeown.dependencytrack.builders.MetricsBuilder.aDefaultMetrics;
+import static io.github.pmckeown.dependencytrack.builders.MetricsBuilder.aMetrics;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -106,7 +106,7 @@ public class ScoreActionTest {
     @Test
     public void thatWhenTheCurrentProjectHasNoMetricsInItTheyAreRequestedAndThenTheScoreIsReturned() throws Exception {
         doReturn(aProjectListResponseWithoutMetrics()).when(projectClient).getProjects();
-        doReturn(aDefaultMetrics().withInheritedRiskScore(100).build()).when(metricsAction).getMetrics(
+        doReturn(aMetrics().withInheritedRiskScore(100).build()).when(metricsAction).getMetrics(
                 any(Project.class));
         doReturn(PROJECT_NAME).when(commonConfig).getProjectName();
         doReturn(PROJECT_VERSION).when(commonConfig).getProjectVersion();
@@ -120,7 +120,7 @@ public class ScoreActionTest {
     @Test
     public void thatWhenTheCurrentProjectScoreIsZeroThenTheScoreIsReturned() throws Exception {
         doReturn(aProjectListResponseWithoutMetrics()).when(projectClient).getProjects();
-        doReturn(aDefaultMetrics().withInheritedRiskScore(0).build()).when(metricsAction).getMetrics(
+        doReturn(aMetrics().withInheritedRiskScore(0).build()).when(metricsAction).getMetrics(
                 any(Project.class));
         doReturn(PROJECT_NAME).when(commonConfig).getProjectName();
         doReturn(PROJECT_VERSION).when(commonConfig).getProjectVersion();
@@ -143,7 +143,7 @@ public class ScoreActionTest {
 
     private Project aProjectWithMetrics() {
         return new Project("uuid", PROJECT_NAME, PROJECT_VERSION,
-                aDefaultMetrics().withInheritedRiskScore(100).build());
+                aMetrics().withInheritedRiskScore(100).build());
     }
 
     private Project aProjectWithoutMetrics() {
