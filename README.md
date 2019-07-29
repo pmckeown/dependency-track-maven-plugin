@@ -119,3 +119,24 @@ whatever overridden values that are supplied.
 |Property                   |Required|Default Value|
 |---------------------------|--------|-------------|
 |inheritedRiskScoreThreshold|false   |N/A          |
+
+### Get Metrics
+Get and print all metrics from the Dependency Track server for the current project or any arbitrary project.
+
+#### POM Usage
+Binds by default to the Verify Phase in the Maven lifecycle.  This goal should be run after the `upload-bom` goal with
+enough time for the server to compute the new score if it has changed.
+
+Ideally `upload-bom` would run during the validate phase and `metrics` in the verify phase.
+
+#### Direct Usage
+```
+mvn dependency-track:metrics
+```
+
+#### Dependencies
+Depends on a project existing in the Dependency Track server that matches the current project artifactId and version or
+whatever overridden values that are supplied.
+
+#### Configuration
+See common configuration above
