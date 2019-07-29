@@ -155,17 +155,6 @@ public class UploadBomMojoTest extends AbstractDependencyTrackMojoTest {
                         matchingJsonPath("$.projectVersion", equalTo("0.0.1-SNAPSHOT"))));
     }
 
-    @Test
-    public void thatBomLocationDefaultsToTargetDirectory() throws Exception {
-        stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
-
-        UploadBomMojo uploadBomMojo = uploadBomMojo(null);
-        uploadBomMojo.execute();
-
-        // No BOM exists at the default location for this project
-        verify(exactly(0), putRequestedFor(urlEqualTo(V1_BOM)));
-    }
-
     /*
      * Helper methods
      */

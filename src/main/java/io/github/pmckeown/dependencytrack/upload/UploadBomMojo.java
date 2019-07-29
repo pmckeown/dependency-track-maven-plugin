@@ -3,7 +3,7 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.DependencyTrackMojo;
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -28,7 +28,7 @@ import javax.inject.Inject;
  * @author Paul McKeown
  */
 @Mojo(name = "upload-bom", defaultPhase = LifecyclePhase.VERIFY)
-public class UploadBomMojo extends DependencyTrackMojo {
+public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     @Parameter(required = true, defaultValue = "target/bom.xml")
     private String bomLocation;
@@ -42,8 +42,7 @@ public class UploadBomMojo extends DependencyTrackMojo {
     }
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        super.execute();
+    public void performAction() throws MojoExecutionException, MojoFailureException {
         try {
             if (!uploadBomAction.upload(bomLocation)) {
                 handleFailure("Bom upload failed");

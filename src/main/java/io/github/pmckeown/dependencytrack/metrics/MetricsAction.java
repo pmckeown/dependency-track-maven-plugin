@@ -37,7 +37,7 @@ public class MetricsAction {
             Optional<Metrics> body = response.getBody();
             if (body.isPresent()) {
                 logger.debug("Metrics found for project: %s", project.getUuid());
-                logger.debug(body.get().toString());
+                logger.info(body.get().toString());
                 return body.get();
             } else {
                 throw new DependencyTrackException("No metrics have yet been calculated. Request a metrics analysis " +

@@ -7,7 +7,7 @@
 
     <groupId>io.github.pmckeown</groupId>
     <artifactId>dependency-track-maven-plugin</artifactId>
-    <version>0.2.6</version>
+    <version>0.3.0</version>
     <packaging>maven-plugin</packaging>
 
     <name>Dependency Track Maven Plugin</name>
@@ -68,7 +68,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.version>3.3.9</maven.version>
+        <maven.version>3.6.1</maven.version>
     </properties>
 
     <dependencies>
@@ -103,6 +103,12 @@
             <artifactId>org.eclipse.sisu.inject</artifactId>
             <version>0.3.3</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>28.0-jre</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -363,6 +369,75 @@
                     <plugin>
                         <groupId>org.sonarsource.scanner.maven</groupId>
                         <artifactId>sonar-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!--
+            The following profile executes this plugin against an instance of Dependency Track.
+            It is behind a profile as you need a running server to communicate with.
+            2 properties must be set on the command line or as environment variables.
+
+            Example usage with command args:
+            mvn clean install -Peat-your-own-dog-food -Ddependency-track.dependencyTrackBaseUrl -Ddependency-track.dependencyTrackApiKey
+
+            Example usage with environment variables set (DEPENDENCY_TRACK_BASE_URL & DEPENDENCY_TRACK_API_KEY):
+            mvn clean install -Peat-your-own-dog-food
+        -->
+        <profile>
+            <id>eat-your-own-dog-food</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.cyclonedx</groupId>
+                        <artifactId>cyclonedx-maven-plugin</artifactId>
+                        <version>1.4.1</version>
+                        <configuration>
+                            <schemaVersion>1.1</schemaVersion>
+                            <includeBomSerialNumber>true</includeBomSerialNumber>
+                            <includeCompileScope>true</includeCompileScope>
+                            <includeProvidedScope>true</includeProvidedScope>
+                            <includeRuntimeScope>true</includeRuntimeScope>
+                            <includeSystemScope>true</includeSystemScope>
+                            <includeTestScope>false</includeTestScope>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>generate-bom</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>makeAggregateBom</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>io.github.pmckeown</groupId>
+                        <artifactId>dependency-track-maven-plugin</artifactId>
+                        <version>0.2.6</version>
+                        <configuration>
+                            <dependencyTrackBaseUrl>${env.DEPENDENCY_TRACK_BASE_URL}</dependencyTrackBaseUrl>
+                            <apiKey>${env.DEPENDENCY_TRACK_API_KEY}</apiKey>
+                            <inheritedRiskScoreThreshold>0</inheritedRiskScoreThreshold>
+                            <failOnError>true</failOnError>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>upload-bom</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>upload-bom</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>get-score</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>score</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
