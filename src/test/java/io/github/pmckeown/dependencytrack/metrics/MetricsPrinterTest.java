@@ -39,7 +39,7 @@ import static org.mockito.Mockito.verify;
 public class MetricsPrinterTest {
 
     static final String ISO_OFFSET_DATE_TIME_PATTERN =
-            "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}[+|-][0-9]{2}:[0-9]{2}";
+            "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}([+|-][0-9]{2}:[0-9]{2}|Z)";
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
