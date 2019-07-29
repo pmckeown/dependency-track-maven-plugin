@@ -42,10 +42,6 @@ public class DependencyTrackMojo extends AbstractMojo {
 
     protected CommonConfig commonConfig;
 
-    protected DependencyTrackMojo() {
-
-    }
-
     protected DependencyTrackMojo(CommonConfig commonConfig, Logger logger) {
         this.logger = logger;
         this.commonConfig = commonConfig;
