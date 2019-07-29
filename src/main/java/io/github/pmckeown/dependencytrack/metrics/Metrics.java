@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.Date;
+
 /**
  * Model class for the Project Metrics object
  *
@@ -25,8 +27,8 @@ public class Metrics {
     private int findingsTotal;
     private int findingsAudited;
     private int findingsUnaudited;
-    private long firstOccurrence;
-    private long lastOccurrence;
+    private Date firstOccurrence;
+    private Date lastOccurrence;
 
     @JsonCreator
     public Metrics(
@@ -43,8 +45,8 @@ public class Metrics {
             @JsonProperty("findingsTotal") int findingsTotal,
             @JsonProperty("findingsAudited") int findingsAudited,
             @JsonProperty("findingsUnaudited") int findingsUnaudited,
-            @JsonProperty("firstOccurrence") long firstOccurrence,
-            @JsonProperty("lastOccurrence") long lastOccurrence) {
+            @JsonProperty("firstOccurrence") Date firstOccurrence,
+            @JsonProperty("lastOccurrence") Date lastOccurrence) {
         this.inheritedRiskScore = inheritedRiskScore;
         this.critical = critical;
         this.high = high;
@@ -106,11 +108,11 @@ public class Metrics {
         return findingsAudited;
     }
 
-    public long getFirstOccurrence() {
+    public Date getFirstOccurrence() {
         return firstOccurrence;
     }
 
-    public long getLastOccurrence() {
+    public Date getLastOccurrence() {
         return lastOccurrence;
     }
 

@@ -34,7 +34,7 @@ public class MetricsMojo extends DependencyTrackMojo {
         super.execute();
         try {
             Project project = projectAction.getProject(commonConfig.getProjectName(), commonConfig.getProjectVersion());
-            logger.info(project.toString());
+            logger.debug("Project Details: %s", project.toString());
 
             final Metrics projectMetrics = project.getMetrics();
             if (projectMetrics != null) {

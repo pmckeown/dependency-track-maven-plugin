@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Date;
 import java.util.Optional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -20,6 +21,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_METRICS_PROJECT_CURRENT;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
@@ -66,7 +68,7 @@ public class MetricsClientTest {
         assertThat(metrics.getFindingsTotal(), is(equalTo(1)));
         assertThat(metrics.getFindingsAudited(), is(equalTo(0)));
         assertThat(metrics.getFindingsUnaudited(), is(equalTo(1)));
-        assertThat(metrics.getFirstOccurrence(), is(equalTo(1562223415567L)));
-        assertThat(metrics.getLastOccurrence(), is(equalTo(1562656525958L)));
+        assertThat(metrics.getFirstOccurrence(), is(instanceOf(Date.class)));
+        assertThat(metrics.getLastOccurrence(), is(instanceOf(Date.class)));
     }
 }

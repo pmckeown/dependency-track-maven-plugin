@@ -2,6 +2,8 @@ package io.github.pmckeown.dependencytrack.builders;
 
 import io.github.pmckeown.dependencytrack.metrics.Metrics;
 
+import java.util.Date;
+
 public class MetricsBuilder {
 
     private int inheritedRiskScore;
@@ -17,8 +19,8 @@ public class MetricsBuilder {
     private int findingsTotal;
     private int findingsAudited;
     private int findingsUnaudited;
-    private long firstOccurrence;
-    private long lastOccurrence;
+    private Date firstOccurrence;
+    private Date lastOccurrence;
 
     private MetricsBuilder() {
     }
@@ -93,12 +95,12 @@ public class MetricsBuilder {
     }
 
     public MetricsBuilder withFirstOccurrence(long fo) {
-        this.firstOccurrence = fo;
+        this.firstOccurrence = new Date(fo);
         return this;
     }
 
     public MetricsBuilder withLastOccurrence(long lo) {
-        this.lastOccurrence = lo;
+        this.lastOccurrence = new Date(lo);
         return this;
     }
 
