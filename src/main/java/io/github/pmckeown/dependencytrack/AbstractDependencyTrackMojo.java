@@ -20,8 +20,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  *
  * @author Paul McKeown
  */
-// TODO - refactor into a template method so that the execute() method cannot be forgotten
-public class DependencyTrackMojo extends AbstractMojo {
+public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
 
     @Parameter(required = true, defaultValue = "${project.artifactId}", property = "dependency-track.projectName")
     protected String projectName;
@@ -42,11 +41,7 @@ public class DependencyTrackMojo extends AbstractMojo {
 
     protected CommonConfig commonConfig;
 
-    protected DependencyTrackMojo() {
-
-    }
-
-    protected DependencyTrackMojo(CommonConfig commonConfig, Logger logger) {
+    protected AbstractDependencyTrackMojo(CommonConfig commonConfig, Logger logger) {
         this.logger = logger;
         this.commonConfig = commonConfig;
     }
@@ -54,16 +49,30 @@ public class DependencyTrackMojo extends AbstractMojo {
     /**
      * Initialises the {@link Logger} and {@link CommonConfig} instances that were injected by the SISU inversion of
      * control container (using Guice under the hood) by providing the data provided by the Plexus IOC container.
+     *
+     * Then performs the action defined by the subclass.
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        // Set up Mojo environment
         this.logger.setLog(getLog());
         this.commonConfig.setProjectName(projectName);
         this.commonConfig.setProjectVersion(projectVersion);
         this.commonConfig.setDependencyTrackBaseUrl(dependencyTrackBaseUrl);
         this.commonConfig.setApiKey(apiKey);
         this.commonConfig.setFailOnError(failOnError);
+
+        // Perform the requested action
+        this.performAction();
     }
+
+    /**
+     * Template method to be implemented by subclasses.
+     *
+     * @throws MojoExecutionException when an error is encountered during Mojo execution
+     * @throws MojoFailureException when the Mojo fails
+     */
+    protected abstract void performAction() throws MojoExecutionException, MojoFailureException;
 
     public void setProjectName(String projectName) {
         this.projectName = projectName;

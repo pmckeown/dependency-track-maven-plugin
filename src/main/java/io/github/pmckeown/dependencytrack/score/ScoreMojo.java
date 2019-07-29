@@ -1,7 +1,7 @@
 package io.github.pmckeown.dependencytrack.score;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
-import io.github.pmckeown.dependencytrack.DependencyTrackMojo;
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -25,7 +25,7 @@ import static java.lang.String.format;
  * @author Paul McKeown
  */
 @Mojo(name = "score", defaultPhase = LifecyclePhase.VERIFY)
-public class ScoreMojo extends DependencyTrackMojo {
+public class ScoreMojo extends AbstractDependencyTrackMojo {
 
     @Parameter
     private Integer inheritedRiskScoreThreshold;
@@ -39,9 +39,7 @@ public class ScoreMojo extends DependencyTrackMojo {
     }
 
     @Override
-    public void execute() throws MojoFailureException, MojoExecutionException {
-        super.execute();
-
+    public void performAction() throws MojoFailureException, MojoExecutionException {
         try {
             Integer inheritedRiskScore = scoreAction.determineScore(inheritedRiskScoreThreshold);
             failBuildIfThresholdIsBreached(inheritedRiskScore);

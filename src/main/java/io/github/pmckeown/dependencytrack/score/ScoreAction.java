@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 import java.util.List;
 import java.util.Optional;
 
+import static io.github.pmckeown.dependencytrack.Constants.DELIMITER;
 import static java.lang.String.format;
 
 /**
@@ -23,8 +24,6 @@ import static java.lang.String.format;
  */
 @Singleton
 class ScoreAction {
-
-    private static final String DELIMITER = "========================================================================";
 
     private ProjectClient projectClient;
     private MetricsAction metricsAction;
