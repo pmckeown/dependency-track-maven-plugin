@@ -13,13 +13,13 @@ import java.util.Optional;
 import static java.lang.String.format;
 
 @Singleton
-public class ProjectAction {
+public class GetProjectAction {
 
     private ProjectClient projectClient;
     private Logger logger;
 
     @Inject
-    public ProjectAction(ProjectClient projectClient, Logger logger) {
+    public GetProjectAction(ProjectClient projectClient, Logger logger) {
         this.projectClient = projectClient;
         this.logger = logger;
     }
