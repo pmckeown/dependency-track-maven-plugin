@@ -12,7 +12,7 @@ import kong.unirest.Unirest;
 import javax.inject.Inject;
 import java.util.Optional;
 
-import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_CURRENT_PROJECT_METRICS;
+import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_METRICS_PROJECT_UUID_CURRENT;
 import static io.github.pmckeown.dependencytrack.builders.ObjectMapperBuilder.relaxedObjectMapper;
 import static kong.unirest.HeaderNames.ACCEPT;
 import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
@@ -44,7 +44,7 @@ class MetricsClient {
     Response<Metrics> getMetrics(Project project) {
         logger.debug("Getting metrics for project: %s", project.getUuid());
         final HttpResponse<Metrics> httpResponse = get(
-                    commonConfig.getDependencyTrackBaseUrl() + V1_CURRENT_PROJECT_METRICS)
+                    commonConfig.getDependencyTrackBaseUrl() + V1_METRICS_PROJECT_UUID_CURRENT)
                 .header("X-Api-Key", commonConfig.getApiKey())
                 .routeParam("uuid", project.getUuid())
                 .asObject(new GenericType<Metrics>(){});

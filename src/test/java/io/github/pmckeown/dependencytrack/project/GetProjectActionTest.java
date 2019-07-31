@@ -20,7 +20,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProjectActionTest {
+public class GetProjectActionTest {
 
     private static final String UUID_1 = "project-uuid-1";
     private static final String PROJECT_NAME_1 = "projectName1";
@@ -30,7 +30,7 @@ public class ProjectActionTest {
     private static final String PROJECT_VERSION_2 = "projectVersion2";
 
     @InjectMocks
-    private ProjectAction projectAction;
+    private GetProjectAction getProjectAction;
 
     @Mock
     private ProjectClient projectClient;
@@ -43,7 +43,7 @@ public class ProjectActionTest {
         Response<List<Project>> response = aSuccessfulResponse();
         doReturn(response).when(projectClient).getProjects();
 
-        Project project = projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
+        Project project = getProjectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
 
         assertThat(project, is(not(nullValue())));
         assertThat(project.getUuid(), is(equalTo(UUID_2)));
@@ -55,7 +55,7 @@ public class ProjectActionTest {
         doThrow(UnirestException.class).when(projectClient).getProjects();
 
         try {
-            projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
+            getProjectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
@@ -66,7 +66,7 @@ public class ProjectActionTest {
         doReturn(aNotFoundResponse()).when(projectClient).getProjects();
 
         try {
-            projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
+            getProjectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
@@ -77,7 +77,7 @@ public class ProjectActionTest {
         doReturn(anEmptySuccessResponse()).when(projectClient).getProjects();
 
         try {
-            projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
+            getProjectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
@@ -89,7 +89,7 @@ public class ProjectActionTest {
         doReturn(response).when(projectClient).getProjects();
 
         try {
-            projectAction.getProject("missing-project", "unknown-version");
+            getProjectAction.getProject("missing-project", "unknown-version");
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }

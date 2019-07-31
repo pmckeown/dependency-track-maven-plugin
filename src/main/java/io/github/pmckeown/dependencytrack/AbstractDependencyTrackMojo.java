@@ -102,7 +102,7 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     }
 
     protected void handleFailure(String message, Throwable ex) throws MojoExecutionException {
-        getLog().error(message, ex);
+        getLog().debug(message, ex);
         if (failOnError) {
             throw new MojoExecutionException(message);
         }
