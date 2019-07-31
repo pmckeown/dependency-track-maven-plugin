@@ -8,7 +8,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.mockito.Mockito.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoggerTest {
@@ -91,6 +95,15 @@ public class LoggerTest {
         candidate.debug(CONTENT);
 
         verify(log, Mockito.never()).debug(CONTENT);
+    }
+
+    @Test
+    public void thatWhenNoLoggerIsSuppliedAnExceptionIsThrown() {
+        try {
+            new Logger(null);
+        } catch (Exception ex) {
+            assertThat(ex, is(instanceOf(IllegalStateException.class)));
+        }
     }
 
 }
