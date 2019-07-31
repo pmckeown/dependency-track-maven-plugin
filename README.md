@@ -140,3 +140,25 @@ whatever overridden values that are supplied.
 
 #### Configuration
 See common configuration above
+
+### Delete Project
+Delete the current or any arbitrary project from the Dependency Track server.
+
+#### POM Usage
+Does not bind by default to any Phase in the Maven lifecycle.  This goal can be run independently any time to delete a 
+project.
+
+Expected usage is for temporary scans of short-lived branch code that need to be cleaned up from the server once the 
+score has been determined.
+
+#### Direct Usage
+```
+mvn dependency-track:delete-project
+```
+
+#### Dependencies
+Depends on a project existing in the Dependency Track server that matches the current project artifactId and version or
+whatever overridden values that are supplied.
+
+#### Configuration
+See common configuration above
