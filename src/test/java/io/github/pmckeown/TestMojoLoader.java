@@ -1,6 +1,7 @@
 package io.github.pmckeown;
 
 import io.github.pmckeown.dependencytrack.metrics.MetricsMojo;
+import io.github.pmckeown.dependencytrack.project.DeleteProjectMojo;
 import io.github.pmckeown.dependencytrack.upload.UploadBomMojo;
 import io.github.pmckeown.dependencytrack.score.ScoreMojo;
 import org.apache.maven.plugin.testing.MojoRule;
@@ -35,6 +36,12 @@ public class TestMojoLoader {
         MetricsMojo metricsMojo = (MetricsMojo) mojoRule.lookupConfiguredMojo(getPomFile(), "metrics");
         assertNotNull(metricsMojo);
         return metricsMojo;
+    }
+
+    public static DeleteProjectMojo loadDeleteProjectMojo(MojoRule mojoRule) throws Exception {
+        DeleteProjectMojo deleteProjectMojo = (DeleteProjectMojo) mojoRule.lookupConfiguredMojo(getPomFile(), "delete-project");
+        assertNotNull(deleteProjectMojo);
+        return deleteProjectMojo;
     }
 
     private static File getPomFile() {

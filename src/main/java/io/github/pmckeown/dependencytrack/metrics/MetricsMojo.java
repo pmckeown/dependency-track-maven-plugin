@@ -13,26 +13,31 @@ import org.apache.maven.plugins.annotations.Mojo;
 
 import javax.inject.Inject;
 
+/**
+ * Provides the capability to print the full set of metrics about a project as determined by the Dependency Track Server
+ *
+ * @author Paul McKeown
+ */
 @Mojo(name = "metrics", defaultPhase = LifecyclePhase.VERIFY)
 public class MetricsMojo extends AbstractDependencyTrackMojo {
 
     private MetricsAction metricsAction;
-    private GetProjectAction projectAction;
+    private GetProjectAction getProjectAction;
     private MetricsPrinter metricsPrinter;
 
     @Inject
-    public MetricsMojo(MetricsAction metricsAction, GetProjectAction projectAction, MetricsPrinter metricsPrinter,
+    public MetricsMojo(MetricsAction metricsAction, GetProjectAction getProjectAction, MetricsPrinter metricsPrinter,
                        CommonConfig commonConfig, Logger logger) {
         super(commonConfig, logger);
         this.metricsAction = metricsAction;
-        this.projectAction = projectAction;
+        this.getProjectAction = getProjectAction;
         this.metricsPrinter = metricsPrinter;
     }
 
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
         try {
-            Project project = projectAction.getProject(commonConfig.getProjectName(), commonConfig.getProjectVersion());
+            Project project = getProjectAction.getProject(commonConfig.getProjectName(), commonConfig.getProjectVersion());
             logger.debug("Project Details: %s", project.toString());
 
             final Metrics projectMetrics = project.getMetrics();
