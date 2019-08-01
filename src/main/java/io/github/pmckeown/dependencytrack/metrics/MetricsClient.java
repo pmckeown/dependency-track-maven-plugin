@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import java.util.Optional;
 
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_METRICS_PROJECT_UUID_CURRENT;
-import static io.github.pmckeown.dependencytrack.builders.ObjectMapperBuilder.relaxedObjectMapper;
+import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
 import static kong.unirest.HeaderNames.ACCEPT;
 import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
 import static kong.unirest.Unirest.get;

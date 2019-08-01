@@ -1,4 +1,4 @@
-package io.github.pmckeown.dependencytrack.builders;
+package io.github.pmckeown.dependencytrack;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,9 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  * @author Paul McKeown
  */
-public class ObjectMapperBuilder {
+public class ObjectMapperFactory {
 
-    private ObjectMapperBuilder() {
+    private ObjectMapperFactory() {
         // Use factory method
     }
 
