@@ -14,7 +14,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
+public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     private ScoreMojo scoreMojo;
 

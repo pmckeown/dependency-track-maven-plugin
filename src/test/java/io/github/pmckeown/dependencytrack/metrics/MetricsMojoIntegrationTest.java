@@ -20,7 +20,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class MetricsMojoTest extends AbstractDependencyTrackMojoTest {
+public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     public void thatMetricsCanBeRetrievedForCurrentProject() throws Exception {

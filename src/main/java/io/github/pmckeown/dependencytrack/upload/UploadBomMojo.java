@@ -1,15 +1,17 @@
 package io.github.pmckeown.dependencytrack.upload;
 
 
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.util.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 import javax.inject.Inject;
 
@@ -30,8 +32,11 @@ import javax.inject.Inject;
 @Mojo(name = "upload-bom", defaultPhase = LifecyclePhase.VERIFY)
 public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
-    @Parameter(required = true, defaultValue = "target/bom.xml")
+    @Parameter(required = false)
     private String bomLocation;
+
+    @Parameter(property = "project", readonly = true, required = true)
+    private MavenProject project;
 
     private UploadBomAction uploadBomAction;
 
@@ -44,11 +49,21 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
         try {
-            if (!uploadBomAction.upload(bomLocation)) {
+            if (!uploadBomAction.upload(getBomLocation())) {
                 handleFailure("Bom upload failed");
             }
         } catch (DependencyTrackException ex) {
             handleFailure("Error occurred during upload", ex);
+        }
+    }
+
+    private String getBomLocation() {
+        if (StringUtils.isNotBlank(bomLocation)) {
+            return bomLocation;
+        } else {
+            String defaultLocation = project.getBasedir() + "/target/bom.xml";
+            logger.debug("bomLocation not supplied so using: %s", defaultLocation);
+            return defaultLocation;
         }
     }
 

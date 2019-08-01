@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 
-public class UploadBomMojoTest extends AbstractDependencyTrackMojoTest {
+public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     private static final String BOM_LOCATION = "target/test-classes/project-to-test/bom.xml";
 
@@ -148,6 +148,19 @@ public class UploadBomMojoTest extends AbstractDependencyTrackMojoTest {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
         UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
+        uploadBomMojo.execute();
+
+        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM))
+                .withRequestBody(
+                        matchingJsonPath("$.projectVersion", equalTo("0.0.1-SNAPSHOT"))));
+    }
+
+    @Test
+    public void thatBomLocationDefaultsToBaseTargetDirectory() throws Exception {
+        stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
+
+        UploadBomMojo uploadBomMojo = uploadBomMojo(null);
+        uploadBomMojo.setFailOnError(true);
         uploadBomMojo.execute();
 
         verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM))
