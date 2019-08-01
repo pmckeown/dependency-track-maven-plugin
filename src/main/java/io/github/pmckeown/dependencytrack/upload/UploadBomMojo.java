@@ -74,4 +74,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         this.bomLocation = bomLocation;
     }
 
+    public void setProject(MavenProject project) {
+        this.project = project;
+    }
 }
