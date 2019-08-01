@@ -49,4 +49,6 @@ public class MetricsAction {
             throw new DependencyTrackException(format("Failed to get Metrics for project: %s", project.getUuid()));
         }
     }
+
+
 }

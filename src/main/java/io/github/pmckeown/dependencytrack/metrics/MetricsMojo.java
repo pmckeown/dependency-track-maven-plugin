@@ -4,7 +4,7 @@ import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.dependencytrack.project.GetProjectAction;
+import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -22,11 +22,11 @@ import javax.inject.Inject;
 public class MetricsMojo extends AbstractDependencyTrackMojo {
 
     private MetricsAction metricsAction;
-    private GetProjectAction getProjectAction;
+    private ProjectAction getProjectAction;
     private MetricsPrinter metricsPrinter;
 
     @Inject
-    public MetricsMojo(MetricsAction metricsAction, GetProjectAction getProjectAction, MetricsPrinter metricsPrinter,
+    public MetricsMojo(MetricsAction metricsAction, ProjectAction getProjectAction, MetricsPrinter metricsPrinter,
                        CommonConfig commonConfig, Logger logger) {
         super(commonConfig, logger);
         this.metricsAction = metricsAction;

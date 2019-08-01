@@ -20,18 +20,20 @@ import static java.lang.String.format;
 @Mojo(name = "delete-project")
 public class DeleteProjectMojo extends AbstractDependencyTrackMojo {
 
-    private DeleteProjectAction deleteProjectAction;
+    private ProjectAction projectAction;
 
     @Inject
-    public DeleteProjectMojo(DeleteProjectAction deleteProjectAction, CommonConfig commonConfig, Logger logger) {
+    public DeleteProjectMojo(ProjectAction projectAction, CommonConfig commonConfig, Logger logger) {
         super(commonConfig, logger);
-        this.deleteProjectAction = deleteProjectAction;
+        this.projectAction = projectAction;
     }
 
     @Override
     protected void performAction() throws MojoExecutionException, MojoFailureException {
         try {
-            boolean success = deleteProjectAction.deleteProject();
+            Project project = projectAction.getProject(projectName, projectVersion);
+
+            boolean success = projectAction.deleteProject(project);
 
             if (!success) {
                 handleFailure(format("Failed to delete project: %s-%s", commonConfig.getProjectName(),
