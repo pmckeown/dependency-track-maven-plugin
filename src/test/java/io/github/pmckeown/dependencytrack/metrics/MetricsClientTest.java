@@ -17,9 +17,11 @@ import java.util.Optional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_METRICS_PROJECT_CURRENT;
+import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_METRICS_PROJECT_REFRESH;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -49,7 +51,7 @@ public class MetricsClientTest {
                 aResponse().withBodyFile("api/v1/metrics/project/project-metrics.json")));
 
         Response<Metrics> metricsResponse = metricsClient.getMetrics(
-                new Project("uuid", "name", "version", null));
+                aProject());
 
         Optional<Metrics> metricsOptional = metricsResponse.getBody();
         assertThat(metricsOptional.isPresent(), is(equalTo(true)));
@@ -70,5 +72,22 @@ public class MetricsClientTest {
         assertThat(metrics.getFindingsUnaudited(), is(equalTo(1)));
         assertThat(metrics.getFirstOccurrence(), is(instanceOf(Date.class)));
         assertThat(metrics.getLastOccurrence(), is(instanceOf(Date.class)));
+    }
+
+    @Test
+    public void thatASuccessfulMetricsRefreshReturnsAnEmptyResponse() {
+        doReturn("http://localhost:" + wireMockRule.port()).when(commonConfig).getDependencyTrackBaseUrl();
+        doReturn("api123").when(commonConfig).getApiKey();
+        stubFor(get(urlPathMatching(V1_METRICS_PROJECT_REFRESH)).willReturn(ok()));
+
+        Response<Void> response = metricsClient.refreshMetrics(aProject());
+
+        assertThat(response.isSuccess(), is(equalTo(true)));
+        assertThat(response.getStatus(), is(equalTo(200)));
+        assertThat(response.getBody().isPresent(), is(equalTo(false)));
+    }
+
+    private Project aProject() {
+        return new Project("uuid", "name", "version", null);
     }
 }

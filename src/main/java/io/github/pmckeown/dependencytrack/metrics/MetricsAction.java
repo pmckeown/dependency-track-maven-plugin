@@ -50,5 +50,19 @@ public class MetricsAction {
         }
     }
 
+    public void refreshMetrics(Project project) {
+        logger.info("Requesting Metrics analysis for project: %s-%s", project.getName(), project.getVersion());
+        try {
+            Response response = metricsClient.refreshMetrics(project);
+            if (response.isSuccess()) {
+                logger.debug("Metrics refreshed");
+            } else {
+                logger.debug("Metrics refresh failed, response from server: %s", response.getStatusText());
+            }
+        } catch (Exception ex) {
+            // Exception intentionally logged and swallowed
+            logger.error("Failed to refresh metrics with exception: %s", ex.getMessage());
+        }
+    }
 
 }

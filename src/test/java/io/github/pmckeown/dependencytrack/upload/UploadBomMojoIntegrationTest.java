@@ -16,6 +16,7 @@ import java.util.Optional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_BOM;
+import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -39,6 +40,8 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
 
     @Test
     public void thatBomCanBeUploadedSuccessfully() throws Exception {
+        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(ok()));
 
         uploadBomMojo(BOM_LOCATION).execute();
@@ -48,7 +51,9 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
 
     @Test
     public void thatWhenFailOnErrorIsFalseAFailureFromToDependencyTrackDoesNotFailTheBuild() {
-        stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(status(404)));
+        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(notFound()));
 
         try {
             UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
@@ -63,7 +68,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
 
     @Test
     public void thatWhenFailOnErrorIsTrueAFailureFromToDependencyTrackDoesFailTheBuild() throws Exception {
-        stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(status(404)));
+        stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(notFound()));
 
         try {
             UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
@@ -107,6 +112,8 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
 
     @Test
     public void thatProjectNameCanBeProvided() throws Exception {
+        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
         UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
@@ -120,6 +127,8 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
 
     @Test
     public void thatProjectNameDefaultsToArtifactId() throws Exception {
+        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
         UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
@@ -132,7 +141,10 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
 
     @Test
     public void thatProjectVersionCanBeProvided() throws Exception {
+        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
+
 
         UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
         uploadBomMojo.setProjectVersion("99.99.99-RELEASE");
@@ -145,6 +157,8 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
 
     @Test
     public void thatProjectVersionDefaultsToPomVersion() throws Exception {
+        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
         UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);

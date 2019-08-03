@@ -50,8 +50,7 @@ public class UploadBomClientIntegrationTest extends AbstractDependencyTrackInteg
 
     @Test
     public void thatConnectionErrorsWhenUploadingBomsAreTranslatedIntoAResponse() {
-        stubFor(put(urlEqualTo(ResourceConstants.V1_BOM))
-                .willReturn(aResponse().withStatus(404).withBody("Not Found")));
+        stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(notFound()));
 
         Response response = client.uploadBom(aBom());
 

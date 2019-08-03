@@ -1,8 +1,8 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
@@ -37,17 +37,20 @@ public class MetricsMojo extends AbstractDependencyTrackMojo {
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
         try {
-            Project project = getProjectAction.getProject(commonConfig.getProjectName(), commonConfig.getProjectVersion());
+            Project project = getProjectAction.getProject(projectName, projectVersion);
             logger.debug("Project Details: %s", project.toString());
 
-            final Metrics projectMetrics = project.getMetrics();
-            if (projectMetrics != null) {
-                metricsPrinter.print(projectMetrics);
-            } else {
-                metricsPrinter.print(metricsAction.getMetrics(project));
-            }
-        } catch (DependencyTrackException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
+            metricsPrinter.print(getMetrics(project));
+        } catch (DependencyTrackException ex) {
+            handleFailure(ex.getMessage(), ex);
+        }
+    }
+
+    private Metrics getMetrics(Project project) throws DependencyTrackException {
+        if (project.getMetrics() != null) {
+            return project.getMetrics();
+        } else {
+            return metricsAction.getMetrics(project);
         }
     }
 }

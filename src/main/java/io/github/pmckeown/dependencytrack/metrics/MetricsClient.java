@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_METRICS_PROJECT_UUID_CURRENT;
 import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
+import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_METRICS_PROJECT_UUID_REFRESH;
 import static kong.unirest.HeaderNames.ACCEPT;
 import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
 import static kong.unirest.Unirest.get;
@@ -42,7 +43,7 @@ class MetricsClient {
     }
 
     Response<Metrics> getMetrics(Project project) {
-        logger.debug("Getting metrics for project: %s", project.getUuid());
+        logger.debug("Getting metrics for project: %s-%s", project.getName(), project.getVersion());
         final HttpResponse<Metrics> httpResponse = get(
                     commonConfig.getDependencyTrackBaseUrl() + V1_METRICS_PROJECT_UUID_CURRENT)
                 .header("X-Api-Key", commonConfig.getApiKey())
@@ -58,5 +59,16 @@ class MetricsClient {
 
         return new Response<>(httpResponse.getStatus(), httpResponse.getStatusText(),
                 httpResponse.isSuccess(), body);
+    }
+
+    public Response<Void> refreshMetrics(Project project) {
+        logger.info("Refreshing Metrics for project: %s-%s", project.getName(), project.getVersion());
+        final HttpResponse httpResponse = get(
+                commonConfig.getDependencyTrackBaseUrl() + V1_METRICS_PROJECT_UUID_REFRESH)
+                .header("X-Api-Key", commonConfig.getApiKey())
+                .routeParam("uuid", project.getUuid())
+                .asEmpty();
+
+        return new Response<>(httpResponse.getStatus(), httpResponse.getStatusText(), httpResponse.isSuccess());
     }
 }

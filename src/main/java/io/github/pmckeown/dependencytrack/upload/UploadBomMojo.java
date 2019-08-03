@@ -4,6 +4,9 @@ package io.github.pmckeown.dependencytrack.upload;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
+import io.github.pmckeown.dependencytrack.project.Project;
+import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -40,10 +43,17 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     private UploadBomAction uploadBomAction;
 
+    private MetricsAction metricsAction;
+
+    private ProjectAction projectAction;
+
     @Inject
-    public UploadBomMojo(UploadBomAction uploadBomAction, CommonConfig commonConfig, Logger logger) {
+    public UploadBomMojo(UploadBomAction uploadBomAction, MetricsAction metricsAction, ProjectAction projectAction,
+             CommonConfig commonConfig, Logger logger) {
         super(commonConfig, logger);
         this.uploadBomAction = uploadBomAction;
+        this.metricsAction = metricsAction;
+        this.projectAction = projectAction;
     }
 
     @Override
@@ -52,6 +62,8 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
             if (!uploadBomAction.upload(getBomLocation())) {
                 handleFailure("Bom upload failed");
             }
+            Project project = projectAction.getProject(projectName, projectVersion);
+            metricsAction.refreshMetrics(project);
         } catch (DependencyTrackException ex) {
             handleFailure("Error occurred during upload", ex);
         }
