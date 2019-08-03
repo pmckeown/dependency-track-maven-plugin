@@ -20,7 +20,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GetProjectActionTest {
+public class ProjectActionTest {
 
     private static final String UUID_1 = "project-uuid-1";
     private static final String PROJECT_NAME_1 = "projectName1";
@@ -30,7 +30,7 @@ public class GetProjectActionTest {
     private static final String PROJECT_VERSION_2 = "projectVersion2";
 
     @InjectMocks
-    private GetProjectAction getProjectAction;
+    private ProjectAction getProjectAction;
 
     @Mock
     private ProjectClient projectClient;

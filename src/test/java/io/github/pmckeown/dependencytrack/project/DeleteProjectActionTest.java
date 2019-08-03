@@ -1,6 +1,5 @@
 package io.github.pmckeown.dependencytrack.project;
 
-import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.util.Logger;
@@ -30,14 +29,9 @@ public class DeleteProjectActionTest {
     private static final String PROJECT_UUID = "1234";
     private static final String PROJECT_NAME = "test-app";
     private static final String PROJECT_VERSION = "1.2.3";
+
     @InjectMocks
-    private DeleteProjectAction deleteProjectAction;
-
-    @Mock
-    private GetProjectAction getProjectAction;
-
-    @Mock
-    private CommonConfig commonConfig;
+    private ProjectAction projectAction;
 
     @Mock
     private ProjectClient projectClient;
@@ -47,37 +41,28 @@ public class DeleteProjectActionTest {
 
     @Test
     public void thatWhenProjectIsDeletedThenTrueIsReturn() throws Exception {
-        doReturn(PROJECT_NAME).when(commonConfig).getProjectName();
-        doReturn(PROJECT_VERSION).when(commonConfig).getProjectVersion();
-        doReturn(aProject()).when(getProjectAction).getProject(anyString(), anyString());
         doReturn(aSuccessResponse()).when(projectClient).deleteProject(any(Project.class));
 
-        boolean deleted = deleteProjectAction.deleteProject();
+        boolean deleted = projectAction.deleteProject(aProject());
 
         assertThat(deleted, is(equalTo(true)));
     }
 
     @Test
     public void thatWhenProjectIsNotDeletedThenFalseIsReturn() throws Exception {
-        doReturn(PROJECT_NAME).when(commonConfig).getProjectName();
-        doReturn(PROJECT_VERSION).when(commonConfig).getProjectVersion();
-        doReturn(aProject()).when(getProjectAction).getProject(anyString(), anyString());
         doReturn(aFailedResponse()).when(projectClient).deleteProject(any(Project.class));
 
-        boolean deleted = deleteProjectAction.deleteProject();
+        boolean deleted = projectAction.deleteProject(aProject());
 
         assertThat(deleted, is(equalTo(false)));
     }
 
     @Test
     public void thatWhenAnExceptionOccursWhenDeletingProjectThenCorrectExceptionIsThrown() throws Exception {
-        doReturn(PROJECT_NAME).when(commonConfig).getProjectName();
-        doReturn(PROJECT_VERSION).when(commonConfig).getProjectVersion();
-        doReturn(aProject()).when(getProjectAction).getProject(anyString(), anyString());
         doThrow(UnirestException.class).when(projectClient).deleteProject(any(Project.class));
 
         try {
-            deleteProjectAction.deleteProject();
+            projectAction.deleteProject(aProject());
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }

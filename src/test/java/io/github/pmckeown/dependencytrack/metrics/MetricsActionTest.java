@@ -22,8 +22,10 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MetricsActionTest {
@@ -73,6 +75,48 @@ public class MetricsActionTest {
         } catch (DependencyTrackException ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
+    }
+
+    @Test
+    public void thatRefreshMetricsCanBeCalled() {
+        doReturn(aSuccessResponse()).when(metricsClient).refreshMetrics(any(Project.class));
+        try {
+            metricsAction.refreshMetrics(aProject());
+        } catch (Exception e) {
+            fail("No exception expected");
+        }
+        verify(logger).debug(anyString());
+    }
+
+    @Test
+    public void thatRefreshMetricsDoesNotErrorWhenProjectNotFound() {
+        doReturn(aNotFoundResponse()).when(metricsClient).refreshMetrics(any(Project.class));
+        try {
+            metricsAction.refreshMetrics(aProject());
+        } catch (Exception e) {
+            fail("No exception expected");
+        }
+        verify(logger).debug(anyString(), anyString());
+    }
+
+    @Test
+    public void thatNoExceptionsAreThrownIfRefreshMetricsErrors() {
+        doThrow(new UnirestException("Boom")).when(metricsClient).refreshMetrics(any(Project.class));
+
+        try {
+            metricsAction.refreshMetrics(aProject());
+        } catch (Exception e) {
+            fail("No exception expected");
+        }
+        verify(logger).error(anyString(), anyString());
+    }
+
+    private Response<Void> aSuccessResponse() {
+        return new Response<>(200, "OK", true);
+    }
+
+    private Response<Void> aNotFoundResponse() {
+        return new Response<>(404, "Not Found", false);
     }
 
     private Project aProject() {

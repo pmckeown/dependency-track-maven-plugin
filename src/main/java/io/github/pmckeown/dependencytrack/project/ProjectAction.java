@@ -13,13 +13,13 @@ import java.util.Optional;
 import static java.lang.String.format;
 
 @Singleton
-public class GetProjectAction {
+public class ProjectAction {
 
     private ProjectClient projectClient;
     private Logger logger;
 
     @Inject
-    public GetProjectAction(ProjectClient projectClient, Logger logger) {
+    public ProjectAction(ProjectClient projectClient, Logger logger) {
         this.projectClient = projectClient;
         this.logger = logger;
     }
@@ -48,6 +48,18 @@ public class GetProjectAction {
             }
         } catch (UnirestException ex) {
             throw new DependencyTrackException(ex.getMessage(), ex);
+        }
+    }
+
+    boolean deleteProject(Project project) throws DependencyTrackException {
+        try {
+            logger.debug("Deleting project %s-%s", project.getName(), project.getVersion());
+
+            Response<?> response = projectClient.deleteProject(project);
+            return response.isSuccess();
+        } catch(UnirestException ex) {
+            logger.error("Failed to delete project", ex);
+            throw new DependencyTrackException("Failed to delete project");
         }
     }
 

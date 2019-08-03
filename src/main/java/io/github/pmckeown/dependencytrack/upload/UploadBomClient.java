@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 import java.util.Optional;
 
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_BOM;
-import static io.github.pmckeown.dependencytrack.builders.ObjectMapperBuilder.relaxedObjectMapper;
+import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
 import static kong.unirest.HeaderNames.*;
 
 /**

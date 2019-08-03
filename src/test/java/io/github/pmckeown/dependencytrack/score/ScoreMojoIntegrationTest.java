@@ -14,7 +14,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
+public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     private ScoreMojo scoreMojo;
 
@@ -135,7 +135,7 @@ public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     public void thatWhenFailOnErrorIsFalseAFailureFromToDependencyTrackDoesNotFailTheBuild() {
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(status(404)));
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(notFound()));
 
         try {
             scoreMojo.setFailOnError(false);
@@ -149,7 +149,7 @@ public class ScoreMojoTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     public void thatWhenFailOnErrorIsTrueAFailureFromToDependencyTrackDoesFailTheBuild() throws Exception {
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(status(404)));
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(notFound()));
 
         try {
             scoreMojo.setFailOnError(true);

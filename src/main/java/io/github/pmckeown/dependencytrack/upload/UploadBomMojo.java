@@ -1,15 +1,20 @@
 package io.github.pmckeown.dependencytrack.upload;
 
 
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
+import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
+import io.github.pmckeown.dependencytrack.project.Project;
+import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 import javax.inject.Inject;
 
@@ -30,25 +35,47 @@ import javax.inject.Inject;
 @Mojo(name = "upload-bom", defaultPhase = LifecyclePhase.VERIFY)
 public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
-    @Parameter(required = true, defaultValue = "target/bom.xml")
+    @Parameter(required = false)
     private String bomLocation;
+
+    @Parameter(property = "project", readonly = true, required = true)
+    private MavenProject project;
 
     private UploadBomAction uploadBomAction;
 
+    private MetricsAction metricsAction;
+
+    private ProjectAction projectAction;
+
     @Inject
-    public UploadBomMojo(UploadBomAction uploadBomAction, CommonConfig commonConfig, Logger logger) {
+    public UploadBomMojo(UploadBomAction uploadBomAction, MetricsAction metricsAction, ProjectAction projectAction,
+             CommonConfig commonConfig, Logger logger) {
         super(commonConfig, logger);
         this.uploadBomAction = uploadBomAction;
+        this.metricsAction = metricsAction;
+        this.projectAction = projectAction;
     }
 
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
         try {
-            if (!uploadBomAction.upload(bomLocation)) {
+            if (!uploadBomAction.upload(getBomLocation())) {
                 handleFailure("Bom upload failed");
             }
+            Project project = projectAction.getProject(projectName, projectVersion);
+            metricsAction.refreshMetrics(project);
         } catch (DependencyTrackException ex) {
             handleFailure("Error occurred during upload", ex);
+        }
+    }
+
+    private String getBomLocation() {
+        if (StringUtils.isNotBlank(bomLocation)) {
+            return bomLocation;
+        } else {
+            String defaultLocation = project.getBasedir() + "/target/bom.xml";
+            logger.debug("bomLocation not supplied so using: %s", defaultLocation);
+            return defaultLocation;
         }
     }
 
@@ -59,4 +86,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         this.bomLocation = bomLocation;
     }
 
+    public void setProject(MavenProject project) {
+        this.project = project;
+    }
 }
