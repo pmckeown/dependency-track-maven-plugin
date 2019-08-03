@@ -18,7 +18,7 @@ import javax.inject.Inject;
  * Print the full set of metrics about a project as determined by the Dependency Track Server
  *
  * You can optionally define thresholds for failing the build where the number of issues in a particular category
- * is greater than the threshold you define for that threshold.
+ * is greater than the threshold you define for that category.
  *
  * For example the following configuration with fail the build if there are any Critical or High issues found in the
  * scan, more than 10 medium issues or more than 20 low issues.

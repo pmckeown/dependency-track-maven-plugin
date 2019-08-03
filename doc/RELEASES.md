@@ -7,7 +7,7 @@ This project follows semantic versioning principles laid out at [SemVer](https:/
 these guidelines when setting the project version number:
 * Major - Reserved for major releases as defined by the project team or when changes are made to the plugin interface 
 that are not backwards compatible with the previous version.
-* Minor - Backwards compatible changes is to the interface, e.g. a new goal, a new configuration
+* Minor - Backwards compatible changes to the interface, e.g. a new goal, a new configuration
 option.
 * Patch - Implementation changes or bug fixes that have no impact on the interface.  
 
