@@ -51,7 +51,7 @@ public class UploadBomMojoTest {
 
     @Before
     public void setup() {
-        uploadBomMojo.setProject(project);
+        uploadBomMojo.setMavenProject(project);
     }
 
     @Test

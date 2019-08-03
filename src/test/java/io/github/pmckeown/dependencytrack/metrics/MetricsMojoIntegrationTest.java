@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.http.Fault;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.ResourceConstants;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.junit.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -17,9 +18,13 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static io.github.pmckeown.TestMojoLoader.loadMetricsMojo;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_METRICS_PROJECT_CURRENT;
+import static io.github.pmckeown.dependencytrack.builders.MetricsBuilder.aMetrics;
+import static io.github.pmckeown.dependencytrack.builders.ProjectBuilder.aProject;
+import static io.github.pmckeown.dependencytrack.builders.ProjectListBuilder.aListOfProjects;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
@@ -75,6 +80,38 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
             metricsMojo.execute();
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(MojoExecutionException.class)));
+        }
+    }
+
+    @Test
+    public void thatAnyCriticalIssuesPresentCanFailTheBuild() throws Exception {
+        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+                aResponse().withBody(
+                        aListOfProjects()
+                                .withProject(aProject()
+                                        .withUuid("1234")
+                                        .withName("test-project")
+                                        .withVersion("1.2.3")
+                                        .withMetrics(
+                                                aMetrics()
+                                                        .withCritical(101)
+                                                        .withHigh(201)
+                                                        .withMedium(301)
+                                                        .withLow(401)))
+                        .asJson())));
+
+        MetricsMojo metricsMojo = loadMetricsMojo(mojoRule);
+        metricsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
+        metricsMojo.setApiKey("abc123");
+        metricsMojo.setProjectName("test-project");
+        metricsMojo.setProjectVersion("1.2.3");
+        metricsMojo.setMetricsThresholds(new MetricsThresholds(100, 200, 300, 400));
+
+        try {
+            metricsMojo.execute();
+            fail("MojoFailureException expected");
+        } catch (Exception ex) {
+            assertThat(ex, is(instanceOf(MojoFailureException.class)));
         }
     }
 }
