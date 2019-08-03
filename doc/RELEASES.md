@@ -28,3 +28,9 @@ After these steps remember to set the next SNAPSHOT version release number and c
 3. change pom.xml version number
 4. `git commit -m 'Bumping to next SNAPSHOT release version'`
 5. `git push`
+
+# Notes
+
+The release process signs the published artifacts as a requirement for publishing to the Sonatype OSS Repository Hosting
+(OSSRH) servers.  Follow the instructions [here](https://blog.sonatype.com/2010/01/how-to-generate-pgp-signatures-with-maven/) 
+on how to generate, publish and use a pgp key for use when signing the release artifacts.  
