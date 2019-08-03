@@ -19,8 +19,8 @@ public class MetricsBuilder {
     private int findingsTotal;
     private int findingsAudited;
     private int findingsUnaudited;
-    private Date firstOccurrence;
-    private Date lastOccurrence;
+    private Date firstOccurrence = new Date();
+    private Date lastOccurrence = new Date();
 
     private MetricsBuilder() {
     }

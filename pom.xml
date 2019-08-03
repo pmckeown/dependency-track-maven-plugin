@@ -346,6 +346,7 @@
                 </plugins>
             </build>
         </profile>
+
         <profile>
             <id>sonar</id>
             <properties>
@@ -382,8 +383,8 @@
         <profile>
             <id>eat-your-own-dog-food</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <activeByDefault>true</activeByDefault>
+        </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -419,7 +420,7 @@
                             <!--suppress UnresolvedMavenProperty -->
                             <apiKey>${env.DEPENDENCY_TRACK_API_KEY}</apiKey>
                             <inheritedRiskScoreThreshold>0</inheritedRiskScoreThreshold>
-                            <failOnError>true</failOnError>
+                            <failOnError>false</failOnError>
                         </configuration>
                         <executions>
                             <execution>
