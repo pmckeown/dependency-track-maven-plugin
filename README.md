@@ -58,7 +58,8 @@ of this plugin:
 ### Upload Bill of Material
 Upload a Bill of Material (BOM) to a Dependency-Track server.  By default this uploads the bom.xml and creates (or 
 updates if already present) a project on the Dependency-Track server with the name and version that map to the current
-maven project artifactId and version.  Set the 
+maven project artifactId and version.  Set the projectName or projectVersion properties if you want to override the
+project name or version. 
 
 #### POM Usage
 Binds by default to the Verify Phase in the Maven lifecycle in line with 
@@ -141,13 +142,13 @@ whatever overridden values that are supplied.
 
 #### Configuration
 
-|Property                  |Required|Default Value|Description                                                                                     |
-|--------------------------|--------|-------------|------------------------------------------------------------------------------------------------|
-|metricsThresholds         |false   |N/A          |If present with no child elements, any issues found in any category will cause the build to fail|
-|metricsThresholds.critical|false   |0            |The build will fail if the issue count is higher than the configured value for this category    |
-|metricsThresholds.high    |false   |0            |The build will fail if the issue count is higher than the configured value for this category    |
-|metricsThresholds.medium  |false   |0            |The build will fail if the issue count is higher than the configured value for this category    |
-|metricsThresholds.low     |false   |0            |The build will fail if the issue count is higher than the configured value for this category    |
+|Property                  |Required|Default Value|Description                                                                                           |
+|--------------------------|--------|-------------|------------------------------------------------------------------------------------------------------|
+|metricsThresholds         |false   |N/A          |If present with no child elements, any issues found in any category will cause the build to fail      |
+|metricsThresholds.critical|false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
+|metricsThresholds.high    |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
+|metricsThresholds.medium  |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
+|metricsThresholds.low     |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
 
 #### Examples
 The following configuration will cause the build to fail if there are any critical or high issues found, more than 5 
