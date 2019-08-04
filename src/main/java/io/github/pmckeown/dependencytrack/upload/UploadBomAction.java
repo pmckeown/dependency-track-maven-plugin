@@ -49,7 +49,7 @@ public class UploadBomAction {
             return false;
         }
 
-        Optional<UploadBomResponse> uploadBomResponse = upload(encodedBomOptional);
+        Optional<UploadBomResponse> uploadBomResponse = upload(encodedBomOptional.get());
 
         if (pollingEnabled && uploadBomResponse.isPresent()) {
             try {
@@ -57,6 +57,7 @@ public class UploadBomAction {
             } catch (InterruptedException ex) {
                 logger.error("Polling for processing completion was interrupted so continuing: %s",
                         ex.getMessage());
+                Thread.currentThread().interrupt();
             }
         }
 
@@ -80,8 +81,9 @@ public class UploadBomAction {
     private void isBomProcessed(String bomToken, int counter) throws InterruptedException {
         Response<BomProcessingResponse> response = bomClient.isBomBeingProcessed(bomToken);
 
-        if (response.isSuccess() && response.getBody().isPresent()) {
-            boolean stillProcessing = response.getBody().get().isProcessing();
+        Optional<BomProcessingResponse> bomProcessingResponse = response.getBody();
+        if (response.isSuccess() && bomProcessingResponse.isPresent()) {
+            boolean stillProcessing = bomProcessingResponse.get().isProcessing();
             logger.info("Still processing: %b", stillProcessing);
 
             if (stillProcessing) {
@@ -90,17 +92,16 @@ public class UploadBomAction {
                     isBomProcessed(bomToken, counter + 1);
                 } else {
                     logger.info("Max number of polling attempts reached, continuing with plugin execution");
-                    return;
                 }
             }
         }
     }
 
-    private Optional<UploadBomResponse> upload(Optional<String> encodedBomOptional) throws DependencyTrackException {
+    private Optional<UploadBomResponse> upload(String encodedBom) throws DependencyTrackException {
         try {
             Response<UploadBomResponse> response = bomClient.uploadBom(new UploadBomRequest(
-                    commonConfig.getProjectName(), commonConfig.getProjectVersion(), true,
-                    encodedBomOptional.get()));
+                    commonConfig.getProjectName(), commonConfig.getProjectVersion(), true, encodedBom));
+            
             if (response.isSuccess()) {
                 logger.info("BOM uploaded to Dependency Track server");
                 return response.getBody();
