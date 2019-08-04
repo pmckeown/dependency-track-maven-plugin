@@ -16,6 +16,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.status;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static io.github.pmckeown.dependencytrack.TestUtils.asJson;
 import static io.github.pmckeown.dependencytrack.builders.UploadBomResponseBuilder.anUploadBomResponse;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
