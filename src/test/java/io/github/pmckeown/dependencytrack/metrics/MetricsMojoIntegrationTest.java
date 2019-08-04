@@ -18,6 +18,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static io.github.pmckeown.TestMojoLoader.loadMetricsMojo;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_METRICS_PROJECT_CURRENT;
+import static io.github.pmckeown.dependencytrack.TestUtils.asJson;
 import static io.github.pmckeown.dependencytrack.builders.MetricsBuilder.aMetrics;
 import static io.github.pmckeown.dependencytrack.builders.ProjectBuilder.aProject;
 import static io.github.pmckeown.dependencytrack.builders.ProjectListBuilder.aListOfProjects;
@@ -86,7 +87,7 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
     @Test
     public void thatAnyCriticalIssuesPresentCanFailTheBuild() throws Exception {
         stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
-                aResponse().withBody(
+                aResponse().withBody(asJson(
                         aListOfProjects()
                                 .withProject(aProject()
                                         .withUuid("1234")
@@ -98,7 +99,7 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
                                                         .withHigh(201)
                                                         .withMedium(301)
                                                         .withLow(401)))
-                        .asJson())));
+                        .build()))));
 
         MetricsMojo metricsMojo = loadMetricsMojo(mojoRule);
         metricsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());

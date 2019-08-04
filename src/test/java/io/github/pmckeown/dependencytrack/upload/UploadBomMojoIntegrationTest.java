@@ -176,6 +176,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     private UploadBomMojo uploadBomMojo(String bomLocation) throws Exception {
         UploadBomMojo uploadBomMojo = TestMojoLoader.loadUploadBomMojo(mojoRule);
         uploadBomMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
+        uploadBomMojo.setWaitUntilBomProcessingComplete("false");
         if (bomLocation != null) {
             uploadBomMojo.setBomLocation(bomLocation);
         }
