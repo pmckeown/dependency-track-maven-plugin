@@ -400,7 +400,7 @@
                         <executions>
                             <execution>
                                 <id>generate-bom</id>
-                                <phase>validate</phase>
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>makeAggregateBom</goal>
                                 </goals>
@@ -421,7 +421,7 @@
                         <executions>
                             <execution>
                                 <id>upload-bom</id>
-                                <phase>validate</phase>
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>upload-bom</goal>
                                 </goals>
