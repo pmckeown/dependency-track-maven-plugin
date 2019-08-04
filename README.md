@@ -84,9 +84,14 @@ first in your POM to ensure that it runs first.
 
 #### Configuration
 
-|Property      |Required|Default Value        |
-|--------------|--------|---------------------|
-|bomLocation   |false   |target/bom.xml       |
+By default this goal will poll the Dependency-Track server after a BOM upload to ensure that it has been analysed 
+before continuing with plugin execution.  This can be disabled by setting the `waitUntilBomProcessingComplete` 
+parameter to `false`.
+
+|Property                      |Required|Default Value |
+|------------------------------|--------|--------------|
+|bomLocation                   |false   |target/bom.xml|
+|waitUntilBomProcessingComplete|false   |true          |
 
 ### Get Inherited Risk Score
 Get the Inherited Risk Score from the Dependency-Track server for the current project or any arbitrary project.
