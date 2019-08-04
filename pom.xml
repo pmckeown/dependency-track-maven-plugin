@@ -64,6 +64,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.version>3.6.1</maven.version>
     </properties>
 
     <dependencies>
@@ -76,7 +77,7 @@
         <dependency>
             <groupId>com.konghq</groupId>
             <artifactId>unirest-objectmapper-jackson</artifactId>
-            <version>2.3.08</version>
+            <version>2.3.13</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -103,8 +104,6 @@
             <artifactId>guava</artifactId>
             <version>28.0-jre</version>
         </dependency>
-
-
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
@@ -347,6 +346,7 @@
                 </plugins>
             </build>
         </profile>
+
         <profile>
             <id>sonar</id>
             <properties>
@@ -412,7 +412,9 @@
                         <artifactId>dependency-track-maven-plugin</artifactId>
                         <version>0.2.6</version>
                         <configuration>
+                            <!--suppress UnresolvedMavenProperty -->
                             <dependencyTrackBaseUrl>${env.DEPENDENCY_TRACK_BASE_URL}</dependencyTrackBaseUrl>
+                            <!--suppress UnresolvedMavenProperty -->
                             <apiKey>${env.DEPENDENCY_TRACK_API_KEY}</apiKey>
                             <inheritedRiskScoreThreshold>0</inheritedRiskScoreThreshold>
                             <failOnError>true</failOnError>

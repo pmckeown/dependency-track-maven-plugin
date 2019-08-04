@@ -39,7 +39,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     private String bomLocation;
 
     @Parameter(property = "project", readonly = true, required = true)
-    private MavenProject project;
+    private MavenProject mavenProject;
 
     private UploadBomAction uploadBomAction;
 
@@ -73,7 +73,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         if (StringUtils.isNotBlank(bomLocation)) {
             return bomLocation;
         } else {
-            String defaultLocation = project.getBasedir() + "/target/bom.xml";
+            String defaultLocation = mavenProject.getBasedir() + "/target/bom.xml";
             logger.debug("bomLocation not supplied so using: %s", defaultLocation);
             return defaultLocation;
         }
@@ -86,7 +86,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         this.bomLocation = bomLocation;
     }
 
-    public void setProject(MavenProject project) {
-        this.project = project;
+    void setMavenProject(MavenProject mp) {
+        this.mavenProject = mp;
     }
 }
