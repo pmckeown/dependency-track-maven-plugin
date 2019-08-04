@@ -18,15 +18,14 @@ import java.util.Optional;
 @Singleton
 public class UploadBomAction {
 
-    private BomClient uploadBomClient;
+    private BomClient bomClient;
     private BomEncoder bomEncoder;
     private CommonConfig commonConfig;
     private Logger logger;
 
     @Inject
-    public UploadBomAction(BomClient uploadBomClient, BomEncoder bomEncoder, CommonConfig commonConfig,
-                           Logger logger) {
-        this.uploadBomClient = uploadBomClient;
+    public UploadBomAction(BomClient bomClient, BomEncoder bomEncoder, CommonConfig commonConfig, Logger logger) {
+        this.bomClient = bomClient;
         this.bomEncoder = bomEncoder;
         this.commonConfig = commonConfig;
         this.logger = logger;
@@ -43,7 +42,7 @@ public class UploadBomAction {
         }
 
         try {
-            Response<UploadBomResponse> response = uploadBomClient.uploadBom(new UploadBomRequest(
+            Response<UploadBomResponse> response = bomClient.uploadBom(new UploadBomRequest(
                     commonConfig.getProjectName(), commonConfig.getProjectVersion(), true,
                     encodedBomOptional.get()));
             if (response.isSuccess()) {
