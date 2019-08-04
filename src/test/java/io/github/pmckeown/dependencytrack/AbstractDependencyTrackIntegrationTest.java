@@ -1,5 +1,7 @@
 package io.github.pmckeown.dependencytrack;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Rule;
 
@@ -25,6 +27,10 @@ public abstract class AbstractDependencyTrackIntegrationTest {
                 HOST + wireMockRule.port(),
                 API_KEY,
                 false);
+    }
+
+    protected String asJson(Object object) throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(object);
     }
 
 }

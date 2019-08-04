@@ -43,8 +43,9 @@ public class UploadBomAction {
         }
 
         try {
-            Response response = uploadBomClient.uploadBom(new Bom(commonConfig.getProjectName(),
-                    commonConfig.getProjectVersion(), true, encodedBomOptional.get()));
+            Response<UploadBomResponse> response = uploadBomClient.uploadBom(new UploadBomRequest(
+                    commonConfig.getProjectName(), commonConfig.getProjectVersion(), true,
+                    encodedBomOptional.get()));
             if (response.isSuccess()) {
                 logger.info("Bom uploaded to Dependency Track server");
             } else {

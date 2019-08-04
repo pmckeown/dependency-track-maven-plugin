@@ -7,7 +7,16 @@ import io.github.pmckeown.dependencytrack.Response;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.notFound;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.status;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static io.github.pmckeown.dependencytrack.builders.UploadBomResponseBuilder.anUploadBomResponse;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -24,13 +33,15 @@ public class UploadBomClientIntegrationTest extends AbstractDependencyTrackInteg
     }
 
     @Test
-    public void thatBomIsSentAsExpected() {
-        stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(ok()));
+    public void thatBomCanBeUploadedAndProcessingTokenIsReceived() throws Exception {
+        stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(ok().withBody(
+                asJson(anUploadBomResponse().withToken("123").build()))));
 
-        Response response = client.uploadBom(aBom());
+        Response<UploadBomResponse> response = client.uploadBom(aBom());
 
         assertThat(response.getStatus(), is(equalTo(200)));
         assertThat(response.getStatusText(), is(equalTo("OK")));
+        assertThat(response.getBody().get().getToken(), is(equalTo("123")));
 
         verify(1, putRequestedFor(urlEqualTo(ResourceConstants.V1_BOM))
                 .withRequestBody(matchingJsonPath("$.projectName", WireMock.equalTo(PROJECT_NAME))));
@@ -64,7 +75,7 @@ public class UploadBomClientIntegrationTest extends AbstractDependencyTrackInteg
      * Helper methods
      */
 
-    private Bom aBom() {
-        return new Bom(PROJECT_NAME, PROJECT_VERSION, false, BASE_64_ENCODED_BOM);
+    private UploadBomRequest aBom() {
+        return new UploadBomRequest(PROJECT_NAME, PROJECT_VERSION, false, BASE_64_ENCODED_BOM);
     }
 }

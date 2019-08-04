@@ -2,10 +2,7 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
-import kong.unirest.HttpResponse;
-import kong.unirest.JacksonObjectMapper;
-import kong.unirest.RequestBodyEntity;
-import kong.unirest.Unirest;
+import kong.unirest.*;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -36,14 +33,15 @@ class UploadBomClient {
                 .addDefaultHeader(ACCEPT, "application/json");
     }
 
-    Response uploadBom(Bom bom) {
+    Response<UploadBomResponse> uploadBom(UploadBomRequest bom) {
         RequestBodyEntity requestBodyEntity = Unirest.put(commonConfig.getDependencyTrackBaseUrl() + V1_BOM)
                 .header(CONTENT_TYPE, "application/json")
                 .header("X-Api-Key", commonConfig.getApiKey())
                 .body(bom);
-        HttpResponse<String> httpResponse = requestBodyEntity.asString();
+        HttpResponse<UploadBomResponse> httpResponse = requestBodyEntity.asObject(
+                new GenericType<UploadBomResponse>() {});
 
-        Optional<String> body;
+        Optional<UploadBomResponse> body;
         if (httpResponse.isSuccess()) {
             body = Optional.of(httpResponse.getBody());
         } else {

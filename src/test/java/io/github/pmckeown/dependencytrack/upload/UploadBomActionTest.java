@@ -52,7 +52,7 @@ public class UploadBomActionTest {
     @Test
     public void thatBomCanBeUploadedSuccessfully() throws Exception {
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
-        doReturn(new Response(200, "OK", true)).when(uploadBomClient).uploadBom(any(Bom.class));
+        doReturn(new Response(200, "OK", true)).when(uploadBomClient).uploadBom(any(UploadBomRequest.class));
 
         boolean success = uploadBomAction.upload(BOM_LOCATION);
 
@@ -62,7 +62,7 @@ public class UploadBomActionTest {
     @Test
     public void thatBomUploadFailureReturnsFalse() throws Exception {
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
-        doReturn(new Response(404, "Not Found", false)).when(uploadBomClient).uploadBom(any(Bom.class));
+        doReturn(new Response(404, "Not Found", false)).when(uploadBomClient).uploadBom(any(UploadBomRequest.class));
 
         boolean success = uploadBomAction.upload(BOM_LOCATION);
 
@@ -72,7 +72,7 @@ public class UploadBomActionTest {
     @Test
     public void thatBomUploadExceptionResultsInException() throws Exception {
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
-        doThrow(UnirestException.class).when(uploadBomClient).uploadBom(any(Bom.class));
+        doThrow(UnirestException.class).when(uploadBomClient).uploadBom(any(UploadBomRequest.class));
 
         try {
             uploadBomAction.upload(BOM_LOCATION);
