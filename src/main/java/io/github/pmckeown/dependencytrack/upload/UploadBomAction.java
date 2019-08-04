@@ -18,14 +18,14 @@ import java.util.Optional;
 @Singleton
 public class UploadBomAction {
 
-    private UploadBomClient uploadBomClient;
+    private BomClient uploadBomClient;
     private BomEncoder bomEncoder;
     private CommonConfig commonConfig;
     private Logger logger;
 
     @Inject
-    public UploadBomAction(UploadBomClient uploadBomClient, BomEncoder bomEncoder, CommonConfig commonConfig,
-           Logger logger) {
+    public UploadBomAction(BomClient uploadBomClient, BomEncoder bomEncoder, CommonConfig commonConfig,
+                           Logger logger) {
         this.uploadBomClient = uploadBomClient;
         this.bomEncoder = bomEncoder;
         this.commonConfig = commonConfig;

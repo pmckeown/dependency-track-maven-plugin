@@ -32,7 +32,7 @@ public class UploadBomActionTest {
     private BomEncoder bomEncoder;
 
     @Mock
-    private UploadBomClient uploadBomClient;
+    private BomClient uploadBomClient;
 
     @Mock
     private CommonConfig commonConfig;
