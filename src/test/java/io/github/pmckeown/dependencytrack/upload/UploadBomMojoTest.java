@@ -19,6 +19,7 @@ import java.io.File;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
@@ -59,13 +60,13 @@ public class UploadBomMojoTest {
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
         doReturn(new File(".")).when(project).getBasedir();
         doReturn(aProject()).when(projectAction).getProject(PROJECT_NAME, PROJECT_VERSION);
-        doReturn(true).when(uploadBomAction).upload(anyString());
+        doReturn(true).when(uploadBomAction).upload(anyString(), anyBoolean());
 
         uploadBomMojo.setProjectName(PROJECT_NAME);
         uploadBomMojo.setProjectVersion(PROJECT_VERSION);
         uploadBomMojo.execute();
 
-        verify(uploadBomAction).upload(argumentCaptor.capture());
+        verify(uploadBomAction).upload(argumentCaptor.capture(), anyBoolean());
         assertThat(argumentCaptor.getValue(), is(equalTo("./target/bom.xml")));
     }
 
