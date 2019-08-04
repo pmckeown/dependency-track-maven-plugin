@@ -7,7 +7,7 @@
 
     <groupId>io.github.pmckeown</groupId>
     <artifactId>dependency-track-maven-plugin</artifactId>
-    <version>0.4.1</version>
+    <version>0.5.0</version>
     <packaging>maven-plugin</packaging>
 
     <name>Dependency Track Maven Plugin</name>
@@ -64,19 +64,20 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.version>3.6.1</maven.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.konghq</groupId>
             <artifactId>unirest-java</artifactId>
-            <version>2.3.08</version>
+            <version>2.3.14</version>
             <classifier>standalone</classifier>
         </dependency>
         <dependency>
             <groupId>com.konghq</groupId>
             <artifactId>unirest-objectmapper-jackson</artifactId>
-            <version>2.3.08</version>
+            <version>2.3.14</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -103,8 +104,6 @@
             <artifactId>guava</artifactId>
             <version>28.0-jre</version>
         </dependency>
-
-
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
@@ -347,6 +346,7 @@
                 </plugins>
             </build>
         </profile>
+
         <profile>
             <id>sonar</id>
             <properties>
@@ -400,7 +400,7 @@
                         <executions>
                             <execution>
                                 <id>generate-bom</id>
-                                <phase>validate</phase>
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>makeAggregateBom</goal>
                                 </goals>
@@ -410,17 +410,18 @@
                     <plugin>
                         <groupId>io.github.pmckeown</groupId>
                         <artifactId>dependency-track-maven-plugin</artifactId>
-                        <version>0.2.6</version>
+                        <version>${project.version}</version>
                         <configuration>
+                            <!--suppress UnresolvedMavenProperty -->
                             <dependencyTrackBaseUrl>${env.DEPENDENCY_TRACK_BASE_URL}</dependencyTrackBaseUrl>
+                            <!--suppress UnresolvedMavenProperty -->
                             <apiKey>${env.DEPENDENCY_TRACK_API_KEY}</apiKey>
-                            <inheritedRiskScoreThreshold>0</inheritedRiskScoreThreshold>
                             <failOnError>true</failOnError>
                         </configuration>
                         <executions>
                             <execution>
                                 <id>upload-bom</id>
-                                <phase>validate</phase>
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>upload-bom</goal>
                                 </goals>
@@ -431,6 +432,17 @@
                                 <goals>
                                     <goal>score</goal>
                                 </goals>
+                            </execution>
+                            <execution>
+                                <id>print-metrics</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>metrics</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- Enables all metrics thresholds with a value of 0 -->
+                                    <metricsThresholds />
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
