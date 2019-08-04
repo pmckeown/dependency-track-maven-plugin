@@ -4,11 +4,11 @@
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=pmckeown_dependency-track-maven-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=pmckeown_dependency-track-maven-plugin)
 
 # dependency-track-maven-plugin
-Maven plugin to integrate with a [Dependency Track](https://dependencytrack.org/) server to submit dependency manifests 
+Maven plugin to integrate with a [Dependency-Track](https://dependencytrack.org/) server to submit dependency manifests 
 and gather project metrics.
 
 #### Usage
-This maven plugin provides various functions relating to Dependency Track, from uploading the Bill of Material, to 
+This maven plugin provides various functions relating to Dependency-Track, from uploading the Bill of Material, to 
 checking for 3rd party dependencies with vulnerabilities in your Maven POM.  Common configuration can be provided 
 in the `pluginManagement` section of your POM to avoid repetition.
 
@@ -29,11 +29,11 @@ in the `pluginManagement` section of your POM to avoid repetition.
 </pluginManagement>
 ```
 
-#### Dependency Track Configuration
-Your Dependency Track server must be configured with an `Automation` team whose API Key should be provided
+#### Dependency-Track Configuration
+Your Dependency-Track server must be configured with an `Automation` team whose API Key should be provided
 in the `apiKey` configuration parameter to this plugin.
 
-The Automation team in Dependency Track needs the following permissions:
+The Automation team in Dependency-Track needs the following permissions:
 * BOM_UPLOAD
 * PORTFOLIO_MANAGEMENT
 * PROJECT_CREATION_UPLOAD
@@ -56,8 +56,8 @@ of this plugin:
 ## Features
 
 ### Upload Bill of Material
-Upload a Bill of Material (BOM) to a Dependency Track server.  By default this uploads the bom.xml and creates (or 
-updates if already present) a project on the Dependency Track server with the name and version that map to the current
+Upload a Bill of Material (BOM) to a Dependency-Track server.  By default this uploads the bom.xml and creates (or 
+updates if already present) a project on the Dependency-Track server with the name and version that map to the current
 maven project artifactId and version.  Set the 
 
 #### POM Usage
@@ -88,7 +88,7 @@ first in your POM to ensure that it runs first.
 |bomLocation   |false   |target/bom.xml       |
 
 ### Get Inherited Risk Score
-Get the Inherited Risk Score from the Dependency Track server for the current project or any arbitrary project.
+Get the Inherited Risk Score from the Dependency-Track server for the current project or any arbitrary project.
 The Risk Score per vulnerability tells you about a specific vulnerability in a dependency in your application and how 
 vulnerable you are to exploit and how bad the impact could be.  The Inherited Risk Score provides a summation of those
 Risk Scores into a single value.
@@ -111,7 +111,7 @@ mvn dependency-track:score
 ```
 
 #### Dependencies
-Depends on a project existing in the Dependency Track server that matches the current project artifactId and version or
+Depends on a project existing in the Dependency-Track server that matches the current project artifactId and version or
 whatever overridden values that are supplied.
 
 #### Configuration
@@ -121,7 +121,8 @@ whatever overridden values that are supplied.
 |inheritedRiskScoreThreshold|false   |N/A          |
 
 ### Get Metrics
-Get and print all metrics from the Dependency Track server for the current project or any arbitrary project.
+Get and print all metrics from the Dependency-Track server for the current project or any arbitrary project.  Optionally
+define thresholds for each category of issue found to allow finer grained control over build failure.
 
 #### POM Usage
 Binds by default to the Verify Phase in the Maven lifecycle.  This goal should be run after the `upload-bom` goal with
@@ -135,14 +136,37 @@ mvn dependency-track:metrics
 ```
 
 #### Dependencies
-Depends on a project existing in the Dependency Track server that matches the current project artifactId and version or
+Depends on a project existing in the Dependency-Track server that matches the current project artifactId and version or
 whatever overridden values that are supplied.
 
 #### Configuration
-See common configuration above
+
+|Property                  |Required|Default Value|Description                                                                                     |
+|--------------------------|--------|-------------|------------------------------------------------------------------------------------------------|
+|metricsThresholds         |false   |N/A          |If present with no child elements, any issues found in any category will cause the build to fail|
+|metricsThresholds.critical|false   |0            |The build will fail if the issue count is higher than the configured value for this category    |
+|metricsThresholds.high    |false   |0            |The build will fail if the issue count is higher than the configured value for this category    |
+|metricsThresholds.medium  |false   |0            |The build will fail if the issue count is higher than the configured value for this category    |
+|metricsThresholds.low     |false   |0            |The build will fail if the issue count is higher than the configured value for this category    |
+
+#### Examples
+The following configuration will cause the build to fail if there are any critical or high issues found, more than 5 
+medium issues or more than 10 low issues. 
+```xml
+<metricsThresholds>
+    <critical>0</critical>
+    <high>0</high>
+    <medium>5</medium>
+    <low>10</low>
+</metricsThresholds>
+```
+You can enable the build to fail on any issues in any category by using the following configuration:
+```xml
+<metricsThresholds />
+```
 
 ### Delete Project
-Delete the current or any arbitrary project from the Dependency Track server.
+Delete the current or any arbitrary project from the Dependency-Track server.
 
 #### POM Usage
 Does not bind by default to any Phase in the Maven lifecycle.  This goal can be run independently any time to delete a 
@@ -157,7 +181,7 @@ mvn dependency-track:delete-project
 ```
 
 #### Dependencies
-Depends on a project existing in the Dependency Track server that matches the current project artifactId and version or
+Depends on a project existing in the Dependency-Track server that matches the current project artifactId and version or
 whatever overridden values that are supplied.
 
 #### Configuration
