@@ -14,7 +14,7 @@ import static io.github.pmckeown.dependencytrack.Constants.MEDIUM;
 @Singleton
 public class MetricsAnalyser {
 
-    static final String ERROR_TEMPLATE = "Number of %s issues in metrics [%d] exceeds the maximum allowed [%d]";
+    static final String ERROR_TEMPLATE = "Number of %s issues [%d] exceeds the maximum allowed [%d]";
 
     private Logger logger;
 
