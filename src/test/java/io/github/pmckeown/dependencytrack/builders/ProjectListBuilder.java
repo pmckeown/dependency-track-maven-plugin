@@ -1,7 +1,5 @@
 package io.github.pmckeown.dependencytrack.builders;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.pmckeown.dependencytrack.project.Project;
 
 import java.util.ArrayList;
@@ -20,7 +18,7 @@ public class ProjectListBuilder {
         return this;
     }
 
-    public String asJson() throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(this.projects);
+    public List<Project> build() {
+        return this.projects;
     }
 }

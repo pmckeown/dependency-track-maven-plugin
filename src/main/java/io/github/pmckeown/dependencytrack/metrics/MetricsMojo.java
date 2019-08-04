@@ -23,14 +23,14 @@ import javax.inject.Inject;
  * For example the following configuration with fail the build if there are any Critical or High issues found in the
  * scan, more than 10 medium issues or more than 20 low issues.
  *
- * <configuration>
- *     <metricsThresholds>
- *         <critical>0</critical>
- *         <high>0</high>
- *         <medium>10</medium>
- *         <low>20</low>
- *     </metricsThresholds>
- * </configuration>
+ * &lt;configuration&gt;
+ *     &lt;metricsThresholds&gt;
+ *         &lt;critical&gt;0&lt;/critical&gt;
+ *         &lt;high&gt;0&lt;/high&gt;
+ *         &lt;medium&gt;10&lt;/medium&gt;
+ *         &lt;low&gt;20&lt;/low&gt;
+ *     &lt;/metricsThresholds&gt;
+ * &lt;/configuration&gt;
  *
  * This allows you to tune build failures to your risk appetite.
  *

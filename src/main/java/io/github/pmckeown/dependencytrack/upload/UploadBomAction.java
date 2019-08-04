@@ -18,23 +18,30 @@ import java.util.Optional;
 @Singleton
 public class UploadBomAction {
 
-    private UploadBomClient uploadBomClient;
+    private static final int SLEEP_MILLISECONDS = 500;
+    private static final int MAX_POLLS = 30;
+
+    private BomClient bomClient;
     private BomEncoder bomEncoder;
     private CommonConfig commonConfig;
     private Logger logger;
+    private Sleeper sleeper;
 
     @Inject
-    public UploadBomAction(UploadBomClient uploadBomClient, BomEncoder bomEncoder, CommonConfig commonConfig,
-           Logger logger) {
-        this.uploadBomClient = uploadBomClient;
+    public UploadBomAction(BomClient bomClient, BomEncoder bomEncoder, Sleeper sleeper, CommonConfig commonConfig,
+               Logger logger) {
+        this.bomClient = bomClient;
         this.bomEncoder = bomEncoder;
+        this.sleeper = sleeper;
         this.commonConfig = commonConfig;
         this.logger = logger;
     }
 
-    boolean upload(String bomLocation) throws DependencyTrackException {
+    public boolean upload(String bomLocation, boolean pollingEnabled) throws DependencyTrackException {
         logger.info("Project Name: %s", commonConfig.getProjectName());
         logger.info("Project Version: %s", commonConfig.getProjectVersion());
+        logger.info("Plugin %s configured to wait for BOM processing to complete",
+                pollingEnabled ? "is" : "is not");
 
         Optional<String> encodedBomOptional = bomEncoder.encodeBom(bomLocation, logger);
         if (!encodedBomOptional.isPresent()) {
@@ -42,16 +49,68 @@ public class UploadBomAction {
             return false;
         }
 
-        try {
-            Response response = uploadBomClient.uploadBom(new Bom(commonConfig.getProjectName(),
-                    commonConfig.getProjectVersion(), true, encodedBomOptional.get()));
-            if (response.isSuccess()) {
-                logger.info("Bom uploaded to Dependency Track server");
-            } else {
-                logger.error("Failure integrating with Dependency Track: %d %s", response.getStatus(),
-                        response.getStatusText());
+        Optional<UploadBomResponse> uploadBomResponse = upload(encodedBomOptional.get());
+
+        if (pollingEnabled && uploadBomResponse.isPresent()) {
+            try {
+                pollUntilBomIsProcessed(uploadBomResponse.get());
+            } catch (InterruptedException ex) {
+                logger.error("Polling for processing completion was interrupted so continuing: %s",
+                        ex.getMessage());
+                Thread.currentThread().interrupt();
             }
-            return response.isSuccess();
+        }
+
+        return true;
+    }
+
+    private void pollUntilBomIsProcessed(UploadBomResponse uploadBomResponse) throws InterruptedException {
+        logger.info("Checking for BOM analysis completion");
+        int counter = 0;
+        isBomProcessed(uploadBomResponse.getToken(), counter);
+    }
+
+    /**
+     * Recursive method to handle calling the server and checking whether processing is finished.  Will only execute
+     * {@link UploadBomAction#MAX_POLLS} times and sleeps for {@link UploadBomAction#SLEEP_MILLISECONDS} each loop.
+     *
+     * @param bomToken the token used to check if the BOM is completely processed
+     * @param counter an incrementing integer to cap the total number of calls
+     * @throws InterruptedException if the thread performing the sleep is interrupted
+     */
+    private void isBomProcessed(String bomToken, int counter) throws InterruptedException {
+        Response<BomProcessingResponse> response = bomClient.isBomBeingProcessed(bomToken);
+
+        Optional<BomProcessingResponse> bomProcessingResponse = response.getBody();
+        if (response.isSuccess() && bomProcessingResponse.isPresent()) {
+            boolean stillProcessing = bomProcessingResponse.get().isProcessing();
+            logger.info("Still processing: %b", stillProcessing);
+
+            if (stillProcessing) {
+                sleeper.sleep(SLEEP_MILLISECONDS);
+                if (counter < MAX_POLLS) {
+                    isBomProcessed(bomToken, counter + 1);
+                } else {
+                    logger.info("Max number of polling attempts reached, continuing with plugin execution");
+                }
+            }
+        }
+    }
+
+    private Optional<UploadBomResponse> upload(String encodedBom) throws DependencyTrackException {
+        try {
+            Response<UploadBomResponse> response = bomClient.uploadBom(new UploadBomRequest(
+                    commonConfig.getProjectName(), commonConfig.getProjectVersion(), true, encodedBom));
+            
+            if (response.isSuccess()) {
+                logger.info("BOM uploaded to Dependency Track server");
+                return response.getBody();
+            } else {
+                String message = String.format("Failure integrating with Dependency Track: %d %s", response.getStatus(),
+                        response.getStatusText());
+                logger.error(message);
+                throw new DependencyTrackException(message);
+            }
         } catch (Exception ex) {
             throw new DependencyTrackException(ex.getMessage(), ex);
         }

@@ -8,14 +8,14 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  *
  * @author Paul McKeown
  */
-public class Bom {
+public class UploadBomRequest {
 
     private String projectName;
     private String projectVersion;
     private boolean autoCreate;
     private String base64EncodedBom;
 
-    Bom(String projectName, String projectVersion, boolean autoCreate, String base64EncodedBom) {
+    UploadBomRequest(String projectName, String projectVersion, boolean autoCreate, String base64EncodedBom) {
         this.projectName = projectName;
         this.projectVersion = projectVersion;
         this.autoCreate = autoCreate;
