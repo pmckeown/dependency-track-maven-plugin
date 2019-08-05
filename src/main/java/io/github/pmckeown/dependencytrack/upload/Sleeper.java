@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 class Sleeper {
 
-    void sleep(int milliseconds) throws InterruptedException {
-        TimeUnit.MILLISECONDS.sleep(milliseconds);
+    void sleep(int seconds) throws InterruptedException {
+        TimeUnit.SECONDS.sleep(seconds);
     }
 }

@@ -8,7 +8,6 @@ import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -39,9 +38,6 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Parameter(property = "dependency-track.bomLocation")
     private String bomLocation;
 
-    @Parameter(required = true, defaultValue = "true", property = "dependency-track.waitUntilBomProcessingComplete")
-    private String waitUntilBomProcessingComplete;
-
     @Parameter(property = "project", readonly = true, required = true)
     private MavenProject mavenProject;
 
@@ -63,7 +59,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
         try {
-            if (!uploadBomAction.upload(getBomLocation(), BooleanUtils.toBoolean(waitUntilBomProcessingComplete))) {
+            if (!uploadBomAction.upload(getBomLocation())) {
                 handleFailure("Bom upload failed");
             }
             Project project = projectAction.getProject(projectName, projectVersion);
@@ -94,7 +90,4 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         this.mavenProject = mp;
     }
 
-    void setWaitUntilBomProcessingComplete(String waitUntilBomProcessingComplete) {
-        this.waitUntilBomProcessingComplete = waitUntilBomProcessingComplete;
-    }
 }

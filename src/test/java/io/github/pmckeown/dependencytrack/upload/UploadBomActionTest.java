@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.builders.BomProcessingResponseBuilder;
 import io.github.pmckeown.util.BomEncoder;
@@ -22,7 +23,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -54,9 +54,10 @@ public class UploadBomActionTest {
 
     @Test
     public void thatWhenNoBomIsFoundThenFalseIsReturned() throws Exception {
+        doReturn(new PollingConfig(false, 1, 1)).when(commonConfig).getPollingConfig();
         doReturn(Optional.empty()).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
 
-        boolean success = uploadBomAction.upload(BOM_LOCATION, false);
+        boolean success = uploadBomAction.upload(BOM_LOCATION);
 
         assertThat(success, is(equalTo(false)));
     }
@@ -64,9 +65,10 @@ public class UploadBomActionTest {
     @Test
     public void thatBomCanBeUploadedSuccessfully() throws Exception {
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
+        doReturn(new PollingConfig(false, 1, 1)).when(commonConfig).getPollingConfig();
         doReturn(anUploadBomSuccessResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class));
 
-        boolean success = uploadBomAction.upload(BOM_LOCATION, false);
+        boolean success = uploadBomAction.upload(BOM_LOCATION);
 
         assertThat(success, is(equalTo(true)));
     }
@@ -74,10 +76,11 @@ public class UploadBomActionTest {
     @Test
     public void thatBomUploadFailureReturnsFalse() throws Exception {
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
+        doReturn(new PollingConfig(false, 1, 1)).when(commonConfig).getPollingConfig();
         doReturn(aNotFoundResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class));
 
         try {
-            uploadBomAction.upload(BOM_LOCATION, false);
+            uploadBomAction.upload(BOM_LOCATION);
             fail("DependencyTrackException expected");
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
@@ -87,10 +90,11 @@ public class UploadBomActionTest {
     @Test
     public void thatBomUploadExceptionResultsInException() throws Exception {
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
+        doReturn(new PollingConfig(false, 1, 1)).when(commonConfig).getPollingConfig();
         doThrow(UnirestException.class).when(bomClient).uploadBom(any(UploadBomRequest.class));
 
         try {
-            uploadBomAction.upload(BOM_LOCATION, false);
+            uploadBomAction.upload(BOM_LOCATION);
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
@@ -100,31 +104,15 @@ public class UploadBomActionTest {
     public void thatWhenPollingIsEnabledThatTheServerIsQueriedUntilBomIsFullyProcessed() throws Exception {
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
         doReturn(anUploadBomSuccessResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class));
+        doReturn(new PollingConfig(true, 1, 3)).when(commonConfig).getPollingConfig();
         doReturn(aBomProcessingResponse(true))
                 .doReturn(aBomProcessingResponse(true))
                 .doReturn(aBomProcessingResponse(false))
                 .when(bomClient).isBomBeingProcessed(anyString());
 
-        uploadBomAction.upload(BOM_LOCATION, true);
+        uploadBomAction.upload(BOM_LOCATION);
 
         verify(bomClient, times(3)).isBomBeingProcessed(anyString());
-    }
-
-    @Test
-    public void thatSleepInterruptionCausesPluginToContinue() throws Exception {
-        doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
-        doReturn(anUploadBomSuccessResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class));
-        doReturn(aBomProcessingResponse(true)).when(bomClient).isBomBeingProcessed(anyString());
-        doThrow(new InterruptedException("Wakey wakey")).when(sleeper).sleep(anyInt());
-
-        try {
-            uploadBomAction.upload(BOM_LOCATION, true);
-        } catch (DependencyTrackException ex) {
-            fail("No exception expected");
-        }
-
-        verify(bomClient, times(1)).uploadBom(any(UploadBomRequest.class));
-        verify(bomClient, times(1)).isBomBeingProcessed(anyString());
     }
 
     /*
@@ -132,12 +120,12 @@ public class UploadBomActionTest {
      */
 
     private Response<BomProcessingResponse> aBomProcessingResponse(boolean processing) {
-        return new Response<BomProcessingResponse>(200, "OK", true,
+        return new Response<>(200, "OK", true,
                 Optional.of(BomProcessingResponseBuilder.aBomProcessingResponse().withProcessing(processing).build()));
     }
 
     private Response<UploadBomResponse> anUploadBomSuccessResponse() {
-        return new Response<UploadBomResponse>(200, "OK", true,
+        return new Response<>(200, "OK", true,
                 Optional.of(anUploadBomResponse().build()));
     }
 

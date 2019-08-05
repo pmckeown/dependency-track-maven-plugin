@@ -1,8 +1,6 @@
 package io.github.pmckeown.dependencytrack.upload;
 
-import io.github.pmckeown.dependencytrack.CommonConfig;
-import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.Response;
+import io.github.pmckeown.dependencytrack.*;
 import io.github.pmckeown.util.BomEncoder;
 import io.github.pmckeown.util.Logger;
 
@@ -37,11 +35,11 @@ public class UploadBomAction {
         this.logger = logger;
     }
 
-    public boolean upload(String bomLocation, boolean pollingEnabled) throws DependencyTrackException {
+    public boolean upload(String bomLocation) throws DependencyTrackException {
         logger.info("Project Name: %s", commonConfig.getProjectName());
         logger.info("Project Version: %s", commonConfig.getProjectVersion());
         logger.info("Plugin %s configured to wait for BOM processing to complete",
-                pollingEnabled ? "is" : "is not");
+                commonConfig.getPollingConfig().isEnabled() ? "is" : "is not");
 
         Optional<String> encodedBomOptional = bomEncoder.encodeBom(bomLocation, logger);
         if (!encodedBomOptional.isPresent()) {
@@ -49,9 +47,9 @@ public class UploadBomAction {
             return false;
         }
 
-        Optional<UploadBomResponse> uploadBomResponse = upload(encodedBomOptional.get());
+        Optional<UploadBomResponse> uploadBomResponse = doUpload(encodedBomOptional.get());
 
-        if (pollingEnabled && uploadBomResponse.isPresent()) {
+        if (commonConfig.getPollingConfig().isEnabled() && uploadBomResponse.isPresent()) {
             try {
                 pollUntilBomIsProcessed(uploadBomResponse.get());
             } catch (InterruptedException ex) {
@@ -87,17 +85,19 @@ public class UploadBomAction {
             logger.info("Still processing: %b", stillProcessing);
 
             if (stillProcessing) {
-                sleeper.sleep(SLEEP_MILLISECONDS);
-                if (counter < MAX_POLLS) {
+                PollingConfig polling = commonConfig.getPollingConfig();
+                sleeper.sleep(polling.getPause());
+                if (counter < polling.getAttempts()) {
                     isBomProcessed(bomToken, counter + 1);
                 } else {
-                    logger.info("Max number of polling attempts reached, continuing with plugin execution");
+                    logger.info("Max number of polling attempts [%d] reached, continuing with plugin execution",
+                            polling.getAttempts());
                 }
             }
         }
     }
 
-    private Optional<UploadBomResponse> upload(String encodedBom) throws DependencyTrackException {
+    private Optional<UploadBomResponse> doUpload(String encodedBom) throws DependencyTrackException {
         try {
             Response<UploadBomResponse> response = bomClient.uploadBom(new UploadBomRequest(
                     commonConfig.getProjectName(), commonConfig.getProjectVersion(), true, encodedBom));

@@ -1,6 +1,7 @@
 package io.github.pmckeown.util;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
+import io.github.pmckeown.dependencytrack.PollingConfig;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -15,6 +16,7 @@ public class CommonConfigBuilder {
     private String dependencyTrackBaseUrl;
     private String apiKey;
     private boolean failOnError;
+    private PollingConfig pollingConfig;
 
     private CommonConfigBuilder() {
         // Use builder methods
@@ -25,7 +27,8 @@ public class CommonConfigBuilder {
     }
 
     public CommonConfig build() {
-        return new CommonConfig(projectName, projectVersion, dependencyTrackBaseUrl, apiKey, failOnError);
+        return new CommonConfig(projectName, projectVersion, dependencyTrackBaseUrl, apiKey, failOnError,
+                pollingConfig);
     }
 
     public CommonConfigBuilder withProjectName(String name) {
@@ -45,6 +48,11 @@ public class CommonConfigBuilder {
 
     public CommonConfigBuilder withApiKey(String key) {
         this.apiKey = key;
+        return this;
+    }
+
+    public CommonConfigBuilder withPollingConfig(PollingConfig pollingConfig) {
+        this.pollingConfig = pollingConfig;
         return this;
     }
 

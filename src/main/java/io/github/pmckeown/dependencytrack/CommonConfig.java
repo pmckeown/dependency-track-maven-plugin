@@ -15,18 +15,20 @@ public class CommonConfig {
     private String dependencyTrackBaseUrl;
     private String apiKey;
     private boolean failOnError;
+    private PollingConfig pollingConfig;
 
     public CommonConfig() {
         // For dependency injection
     }
 
     public CommonConfig(String projectName, String projectVersion, String dependencyTrackBaseUrl, String apiKey,
-            boolean failOnError) {
+            boolean failOnError, PollingConfig pollingConfig) {
         this.projectName = projectName;
         this.projectVersion = projectVersion;
         this.dependencyTrackBaseUrl = dependencyTrackBaseUrl;
         this.apiKey = apiKey;
         this.failOnError = failOnError;
+        this.pollingConfig = this.pollingConfig;
     }
 
     public String getProjectName() {
@@ -43,6 +45,10 @@ public class CommonConfig {
 
     public String getApiKey() {
         return apiKey;
+    }
+
+    public PollingConfig getPollingConfig() {
+        return this.pollingConfig;
     }
 
     public boolean isFailOnError() {
@@ -67,5 +73,9 @@ public class CommonConfig {
 
     public void setFailOnError(boolean failOnError) {
         this.failOnError = failOnError;
+    }
+
+    public void setPollingConfig(PollingConfig pollingConfig) {
+        this.pollingConfig = pollingConfig;
     }
 }
