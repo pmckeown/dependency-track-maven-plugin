@@ -1,6 +1,7 @@
 package io.github.pmckeown.dependencytrack.score;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import io.github.pmckeown.dependencytrack.PollingConfig;
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.Before;
 import org.junit.Test;
@@ -114,7 +115,7 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    public void thatWhenNoMetricsHaveBeenCalculatedTheGoalFails() throws Exception {
+    public void thatWhenNoMetricsHaveBeenTheTheCallIsRetriedTheCorrectNumberOfTimes() throws Exception {
         // The current project score in the JSON file is 3
         stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
@@ -124,6 +125,7 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
         scoreMojo.setProjectName("noMetrics");
         scoreMojo.setProjectVersion("1.0.0");
         scoreMojo.setFailOnError(true);
+        scoreMojo.setPollingConfig(new PollingConfig(true, 1, 1));
 
         try {
             scoreMojo.execute();
@@ -131,6 +133,8 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(MojoFailureException.class)));
         }
+
+        verify(exactly(1), getRequestedFor(urlPathMatching(V1_METRICS_PROJECT_CURRENT)));
     }
 
     @Test

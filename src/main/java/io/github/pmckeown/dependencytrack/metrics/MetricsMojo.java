@@ -95,7 +95,7 @@ public class MetricsMojo extends AbstractDependencyTrackMojo {
         }
     }
 
-    public void setMetricsThresholds(MetricsThresholds thresholds) {
+    void setMetricsThresholds(MetricsThresholds thresholds) {
         this.metricsThresholds = thresholds;
     }
 }

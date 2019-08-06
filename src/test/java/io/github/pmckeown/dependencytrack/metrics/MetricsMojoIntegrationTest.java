@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack.metrics;
 
 import com.github.tomakehurst.wiremock.http.Fault;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.ResourceConstants;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -46,7 +47,7 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
     }
 
     @Test
-    public void thatMetricsAreNotInProjectTheyAreRetrievedExplicitly() throws Exception {
+    public void thatWhenMetricsAreNotInProjectTheyAreRetrievedExplicitly() throws Exception {
         stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT)).willReturn(
@@ -57,6 +58,7 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
         metricsMojo.setApiKey("abc123");
         metricsMojo.setProjectName("noMetrics");
         metricsMojo.setProjectVersion("1.0.0");
+        metricsMojo.setPollingConfig(PollingConfig.disabled());
 
         metricsMojo.execute();
 
@@ -76,6 +78,7 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
         metricsMojo.setApiKey("abc123");
         metricsMojo.setProjectName("noMetrics");
         metricsMojo.setProjectVersion("1.0.0");
+        metricsMojo.setPollingConfig(new PollingConfig(false, 1, 1));
 
         try {
             metricsMojo.execute();

@@ -29,6 +29,30 @@ in the `pluginManagement` section of your POM to avoid repetition.
 </pluginManagement>
 ```
 
+#### Polling Configuration
+The plugin is configured to poll for results from the Dependency-Track server by default.  The polling configuration by 
+be modified by modifying the `pollingConfig` element in the plugin configuration.  The available options are:
+
+|Property |Required |Default Value |Support Values  |
+|---------|---------|--------------|----------------|
+|enabled  |false    |true          |                |
+|pause    |false    |1             |                |
+|attempts |false    |20            |                |
+|timeUnit |false    |SECONDS       |MILLIS / SECONDS|
+
+**XML Configuration Example**
+```xml
+<configuration>
+    <pollingConfig>
+        <enabled>true</enabled>
+        <pause>500</pause>
+        <attempts>40</attempts>
+        <timeUnit>MILLIS</timeUnit>
+    </pollingConfig>
+</configuration>
+```
+
+
 #### Dependency-Track Configuration
 Your Dependency-Track server must be configured with an `Automation` team whose API Key should be provided
 in the `apiKey` configuration parameter to this plugin.
@@ -50,7 +74,7 @@ of this plugin:
 |apiKey                |true    |N/A                  |
 |projectName           |false   |${project.artifactId}|
 |projectVersion        |false   |${project.version}   |
-|failOnError           |false   |false                |
+|failOnError           |false   |false                |  
 
 
 ## Features
