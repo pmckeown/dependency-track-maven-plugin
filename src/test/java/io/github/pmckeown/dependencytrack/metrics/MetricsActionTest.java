@@ -1,7 +1,6 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
-import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.Response;
+import io.github.pmckeown.dependencytrack.*;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.UnirestException;
@@ -9,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
@@ -39,12 +39,19 @@ public class MetricsActionTest {
     private MetricsClient metricsClient;
 
     @Mock
+    private CommonConfig commonConfig;
+
+    @Spy
+    private Poller<Metrics> poller = new Poller<>();
+
+    @Mock
     private Logger logger;
 
     @Test
     public void thatMetricsCanBeRetrieved() throws Exception {
         Response<Metrics> response = new Response<>(200, "OK", true, anOptionalMetrics());
         doReturn(response).when(metricsClient).getMetrics(any(Project.class));
+        doReturn(PollingConfig.defaults()).when(commonConfig).getPollingConfig();
 
         Metrics metrics = metricsAction.getMetrics(aProject());
 
@@ -56,6 +63,7 @@ public class MetricsActionTest {
     public void thatAnExceptionOccursWhenNoMetricsCanBeFound() {
         Response<Metrics> response = new Response<>(200, "Not Found", false, Optional.empty());
         doReturn(response).when(metricsClient).getMetrics(any(Project.class));
+        doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
         try {
             metricsAction.getMetrics(aProject());
@@ -66,8 +74,9 @@ public class MetricsActionTest {
     }
 
     @Test
-    public void thatAnExceptionOccursResultsInAnException() {
+    public void thatAnExceptionOccurringResultsInAnException() {
         doThrow(UnirestException.class).when(metricsClient).getMetrics(any(Project.class));
+        doReturn(PollingConfig.defaults()).when(commonConfig).getPollingConfig();
 
         try {
             metricsAction.getMetrics(aProject());

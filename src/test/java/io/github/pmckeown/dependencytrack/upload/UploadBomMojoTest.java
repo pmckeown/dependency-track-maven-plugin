@@ -60,13 +60,13 @@ public class UploadBomMojoTest {
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
         doReturn(new File(".")).when(project).getBasedir();
         doReturn(aProject()).when(projectAction).getProject(PROJECT_NAME, PROJECT_VERSION);
-        doReturn(true).when(uploadBomAction).upload(anyString(), anyBoolean());
+        doReturn(true).when(uploadBomAction).upload(anyString());
 
         uploadBomMojo.setProjectName(PROJECT_NAME);
         uploadBomMojo.setProjectVersion(PROJECT_VERSION);
         uploadBomMojo.execute();
 
-        verify(uploadBomAction).upload(argumentCaptor.capture(), anyBoolean());
+        verify(uploadBomAction).upload(argumentCaptor.capture());
         assertThat(argumentCaptor.getValue(), is(equalTo("./target/bom.xml")));
     }
 

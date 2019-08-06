@@ -37,6 +37,9 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     @Parameter(defaultValue = "false", property = "dependency-track.failOnError")
     private boolean failOnError;
 
+    @Parameter
+    private PollingConfig pollingConfig;
+
     protected Logger logger;
 
     protected CommonConfig commonConfig;
@@ -53,14 +56,14 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
      * Then performs the action defined by the subclass.
      */
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public final void execute() throws MojoExecutionException, MojoFailureException {
         // Set up Mojo environment
         this.logger.setLog(getLog());
         this.commonConfig.setProjectName(projectName);
         this.commonConfig.setProjectVersion(projectVersion);
         this.commonConfig.setDependencyTrackBaseUrl(dependencyTrackBaseUrl);
         this.commonConfig.setApiKey(apiKey);
-        this.commonConfig.setFailOnError(failOnError);
+        this.commonConfig.setPollingConfig(this.pollingConfig != null ? this.pollingConfig : PollingConfig.defaults());
 
         // Perform the requested action
         this.performAction();
@@ -92,6 +95,10 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
 
     public void setFailOnError(boolean fail) {
         this.failOnError = fail;
+    }
+
+    public void setPollingConfig(PollingConfig commonConfig) {
+        this.pollingConfig = commonConfig;
     }
 
     protected void handleFailure(String message) throws MojoFailureException {

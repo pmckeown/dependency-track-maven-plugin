@@ -1,10 +1,9 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
-import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.Response;
+
+import io.github.pmckeown.dependencytrack.*;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
-import kong.unirest.UnirestException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -22,29 +21,35 @@ public class MetricsAction {
 
     private MetricsClient metricsClient;
 
+    private Poller<Metrics> poller;
+
+    private CommonConfig commonConfig;
+
     private Logger logger;
 
     @Inject
-    public MetricsAction(MetricsClient metricsClient, Logger logger) {
+    public MetricsAction(MetricsClient metricsClient, Poller poller, CommonConfig commonConfig, Logger logger) {
         this.metricsClient = metricsClient;
+        this.poller = poller;
+        this.commonConfig = commonConfig;
         this.logger = logger;
     }
 
     public Metrics getMetrics(Project project) throws DependencyTrackException {
         try {
-            Response<Metrics> response = metricsClient.getMetrics(project);
-
-            Optional<Metrics> body = response.getBody();
+            Optional<Metrics> body = poller.poll(commonConfig.getPollingConfig(), () -> {
+                logger.info("Polling for metrics from the Dependency-Track server");
+                Response<Metrics> response = metricsClient.getMetrics(project);
+                return response.getBody();
+            });
             if (body.isPresent()) {
                 logger.debug("Metrics found for project: %s", project.getUuid());
-                logger.info(body.get().toString());
                 return body.get();
             } else {
                 throw new DependencyTrackException("No metrics have yet been calculated. Request a metrics analysis " +
                         "in the Dependency Track UI.");
             }
-
-        } catch (UnirestException ex) {
+        } catch (Exception ex) {
             logger.error(ex.getMessage());
             throw new DependencyTrackException(format("Failed to get Metrics for project: %s", project.getUuid()));
         }
