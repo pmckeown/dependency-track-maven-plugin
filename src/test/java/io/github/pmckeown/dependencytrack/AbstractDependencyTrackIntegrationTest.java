@@ -23,8 +23,7 @@ public abstract class AbstractDependencyTrackIntegrationTest {
                 PROJECT_NAME,
                 PROJECT_VERSION,
                 HOST + wireMockRule.port(),
-                API_KEY,
-                false);
+                API_KEY);
     }
 
 }

@@ -63,7 +63,6 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         this.commonConfig.setProjectVersion(projectVersion);
         this.commonConfig.setDependencyTrackBaseUrl(dependencyTrackBaseUrl);
         this.commonConfig.setApiKey(apiKey);
-        this.commonConfig.setFailOnError(failOnError);
         if (this.pollingConfig == null) {
             this.pollingConfig = PollingConfig.defaults();
         }
