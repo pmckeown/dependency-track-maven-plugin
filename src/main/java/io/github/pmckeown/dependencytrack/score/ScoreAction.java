@@ -39,7 +39,6 @@ class ScoreAction {
         this.logger = logger;
     }
 
-    // # TODO Refactor this to accept a Project
     Integer determineScore(Integer inheritedRiskScoreThreshold) throws DependencyTrackException {
         try {
             Response<List<Project>> response = projectClient.getProjects();

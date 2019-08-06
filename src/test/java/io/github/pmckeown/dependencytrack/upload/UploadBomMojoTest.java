@@ -1,7 +1,9 @@
 package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
+import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.Project;
+import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
@@ -36,11 +38,11 @@ public class UploadBomMojoTest {
     @Mock
     private UploadBomAction uploadBomAction;
 
-//    @Mock
-//    private MetricsAction metricsAction;
-//
-//    @Mock
-//    private ProjectAction projectAction;
+    @Mock
+    private MetricsAction metricsAction;
+
+    @Mock
+    private ProjectAction projectAction;
 
     @Mock
     private Logger logger;
@@ -57,7 +59,7 @@ public class UploadBomMojoTest {
     public void thatTheBomLocationIsDefaultedWhenNotSupplied() throws Exception {
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
         doReturn(new File(".")).when(project).getBasedir();
-//        doReturn(aProject()).when(projectAction).getProject(PROJECT_NAME, PROJECT_VERSION);
+        doReturn(aProject()).when(projectAction).getProject(PROJECT_NAME, PROJECT_VERSION);
         doReturn(true).when(uploadBomAction).upload(anyString(), anyBoolean());
 
         uploadBomMojo.setProjectName(PROJECT_NAME);
