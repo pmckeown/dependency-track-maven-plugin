@@ -21,24 +21,20 @@ public class MetricsAction {
 
     private MetricsClient metricsClient;
 
-    private PollingConfig pollingConfig;
-
-    private CommonConfig commonConfig;
+    private Poller<Metrics> poller;
 
     private Logger logger;
 
     @Inject
-    public MetricsAction(MetricsClient metricsClient, PollingConfig pollingConfig, CommonConfig commonConfig,
-             Logger logger) {
+    public MetricsAction(MetricsClient metricsClient, Poller poller, Logger logger) {
         this.metricsClient = metricsClient;
-        this.pollingConfig = pollingConfig;
-        this.commonConfig = commonConfig;
+        this.poller = poller;
         this.logger = logger;
     }
 
     public Metrics getMetrics(Project project) throws DependencyTrackException {
         try {
-            Optional<Metrics> body = new Poller<Metrics>(pollingConfig).poll(() -> {
+            Optional<Metrics> body = poller.poll(() -> {
                 logger.info("Polling for metrics from the Dependency-Track server");
                 Response<Metrics> response = metricsClient.getMetrics(project);
                 return response.getBody();

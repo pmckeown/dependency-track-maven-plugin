@@ -1,6 +1,7 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.Poller;
 import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.project.Project;
@@ -41,7 +42,7 @@ public class MetricsActionTest {
     private MetricsClient metricsClient;
 
     @Spy
-    private PollingConfig pollingConfig = PollingConfig.disabled();
+    private Poller<Metrics> poller = new Poller<>(PollingConfig.disabled());
 
     @Mock
     private Logger logger;
@@ -71,7 +72,7 @@ public class MetricsActionTest {
     }
 
     @Test
-    public void thatAnExceptionOccursResultsInAnException() {
+    public void thatAnExceptionOccuringResultsInAnException() {
         doThrow(UnirestException.class).when(metricsClient).getMetrics(any(Project.class));
 
         try {
