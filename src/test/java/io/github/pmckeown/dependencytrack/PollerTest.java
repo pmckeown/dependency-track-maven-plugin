@@ -23,9 +23,9 @@ public class PollerTest {
     public void thatThatPopulatedOptionalExitsThePollingLoop() {
         String returnValue = "Returned from callable";
 
-        Poller<String> poller = new Poller<>(PollingConfig.defaults());
+        Poller<String> poller = new Poller<>();
 
-        Optional<String> optionalString = poller.poll(() -> Optional.of(returnValue));
+        Optional<String> optionalString = poller.poll(PollingConfig.defaults(), () -> Optional.of(returnValue));
 
         if (!optionalString.isPresent()) {
             fail("No random string generated");
@@ -37,11 +37,11 @@ public class PollerTest {
     @Test
     public void thatThatEmptyOptionalLoopsTheMaximumNumberOfTimesThenThrowsException() {
         PollingConfig pollingConfig = new PollingConfig(true, 1 ,5, MILLIS);
-        Poller<String> poller = new Poller<>(pollingConfig);
+        Poller<String> poller = new Poller<>();
         final int[] pollLoopCounter = {0};
 
         try {
-            Optional<String> optionalString = poller.poll(() -> {
+            Optional<String> optionalString = poller.poll(pollingConfig, () -> {
                     pollLoopCounter[0]++;
                     return Optional.empty();
             });
@@ -55,10 +55,10 @@ public class PollerTest {
     @Test
     public void thatThatExceptionDuringPollingExitsWithException() {
         PollingConfig pollingConfig = new PollingConfig(true, 1 ,1, MILLIS);
-        Poller<String> poller = new Poller<>(pollingConfig);
+        Poller<String> poller = new Poller<>();
 
         try {
-            poller.poll(() -> {
+            poller.poll(pollingConfig, () -> {
                 throw new DependencyTrackException("Boom");
             });
             fail("UnexpectedException expected");
@@ -71,11 +71,11 @@ public class PollerTest {
     @Test
     public void IfPollingDisabledTheCallableIsExecutedOnlyOnce() {
         PollingConfig pollingConfig = new PollingConfig(false, 1 ,5, MILLIS);
-        Poller<String> poller = new Poller<>(pollingConfig);
+        Poller<String> poller = new Poller<>();
         final int[] pollLoopCounter = {0};
 
         try {
-            Optional<String> optionalString = poller.poll(() -> {
+            Optional<String> optionalString = poller.poll(pollingConfig, () -> {
                 pollLoopCounter[0]++;
                 return Optional.empty();
             });

@@ -23,7 +23,8 @@ public abstract class AbstractDependencyTrackIntegrationTest {
                 PROJECT_NAME,
                 PROJECT_VERSION,
                 HOST + wireMockRule.port(),
-                API_KEY);
+                API_KEY,
+                PollingConfig.disabled());
     }
 
 }

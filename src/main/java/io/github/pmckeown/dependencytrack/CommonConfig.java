@@ -14,16 +14,19 @@ public class CommonConfig {
     private String projectVersion;
     private String dependencyTrackBaseUrl;
     private String apiKey;
+    private PollingConfig pollingConfig;
 
     public CommonConfig() {
         // For dependency injection
     }
 
-    public CommonConfig(String projectName, String projectVersion, String dependencyTrackBaseUrl, String apiKey) {
+    public CommonConfig(String projectName, String projectVersion, String dependencyTrackBaseUrl, String apiKey,
+            PollingConfig pollingConfig) {
         this.projectName = projectName;
         this.projectVersion = projectVersion;
         this.dependencyTrackBaseUrl = dependencyTrackBaseUrl;
         this.apiKey = apiKey;
+        this.pollingConfig = pollingConfig;
     }
 
     public String getProjectName() {
@@ -42,6 +45,10 @@ public class CommonConfig {
         return apiKey;
     }
 
+    public PollingConfig getPollingConfig() {
+        return pollingConfig;
+    }
+
     public void setProjectName(String projectName) {
         this.projectName = projectName;
     }
@@ -58,4 +65,7 @@ public class CommonConfig {
         this.apiKey = apiKey;
     }
 
+    public void setPollingConfig(PollingConfig pollingConfig) {
+        this.pollingConfig = pollingConfig;
+    }
 }

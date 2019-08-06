@@ -1,9 +1,6 @@
 package io.github.pmckeown.dependencytrack.upload;
 
-import io.github.pmckeown.dependencytrack.CommonConfig;
-import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.PollingConfig;
-import io.github.pmckeown.dependencytrack.Response;
+import io.github.pmckeown.dependencytrack.*;
 import io.github.pmckeown.dependencytrack.builders.BomProcessingResponseBuilder;
 import io.github.pmckeown.util.BomEncoder;
 import io.github.pmckeown.util.Logger;
@@ -49,17 +46,15 @@ public class UploadBomActionTest {
     private CommonConfig commonConfig;
 
     @Spy
-    private PollingConfig pollingConfig = PollingConfig.disabled();
+    private Poller<Boolean> poller = new Poller<>();
 
     @Mock
     private Logger logger;
 
-    @Mock
-    private Sleeper sleeper;
-
     @Test
     public void thatWhenNoBomIsFoundThenFalseIsReturned() throws Exception {
         doReturn(Optional.empty()).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
+        doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
         boolean success = uploadBomAction.upload(BOM_LOCATION);
 
@@ -70,6 +65,7 @@ public class UploadBomActionTest {
     public void thatBomCanBeUploadedSuccessfully() throws Exception {
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
         doReturn(anUploadBomSuccessResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class));
+        doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
         boolean success = uploadBomAction.upload(BOM_LOCATION);
 
@@ -77,9 +73,10 @@ public class UploadBomActionTest {
     }
 
     @Test
-    public void thatBomUploadFailureReturnsFalse() throws Exception {
+    public void thatBomUploadFailureReturnsFalse() {
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
         doReturn(aNotFoundResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class));
+        doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
         try {
             uploadBomAction.upload(BOM_LOCATION);
@@ -90,9 +87,10 @@ public class UploadBomActionTest {
     }
 
     @Test
-    public void thatBomUploadExceptionResultsInException() throws Exception {
+    public void thatBomUploadExceptionResultsInException() {
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
         doThrow(UnirestException.class).when(bomClient).uploadBom(any(UploadBomRequest.class));
+        doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
         try {
             uploadBomAction.upload(BOM_LOCATION);
@@ -105,10 +103,10 @@ public class UploadBomActionTest {
     public void thatWhenPollingIsEnabledThatTheServerIsQueriedUntilBomIsFullyProcessed() throws Exception {
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
         doReturn(anUploadBomSuccessResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class));
-        PollingConfig pollingConfig = new PollingConfig(true, 1, 3, MILLIS);
+        doReturn(new PollingConfig(true, 1, 3, MILLIS)).when(commonConfig).getPollingConfig();
 
         // Create a new candidate as the polling behaviour needs to change for this test
-        UploadBomAction uploadBomAction = new UploadBomAction(bomClient, bomEncoder, pollingConfig, sleeper,
+        UploadBomAction uploadBomAction = new UploadBomAction(bomClient, bomEncoder, new Poller<Boolean>(),
                 commonConfig, logger);
 
         doReturn(aBomProcessingResponse(true))

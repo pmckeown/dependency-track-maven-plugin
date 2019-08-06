@@ -47,7 +47,7 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
     }
 
     @Test
-    public void thatMetricsAreNotInProjectTheyAreRetrievedExplicitly() throws Exception {
+    public void thatWhenMetricsAreNotInProjectTheyAreRetrievedExplicitly() throws Exception {
         stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT)).willReturn(
@@ -58,6 +58,7 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
         metricsMojo.setApiKey("abc123");
         metricsMojo.setProjectName("noMetrics");
         metricsMojo.setProjectVersion("1.0.0");
+        metricsMojo.setPollingConfig(PollingConfig.disabled());
 
         metricsMojo.execute();
 
