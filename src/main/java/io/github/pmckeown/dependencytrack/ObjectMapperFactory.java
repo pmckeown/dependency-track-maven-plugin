@@ -16,7 +16,7 @@ public class ObjectMapperFactory {
 
     /**
      * Get an {@link ObjectMapper} instance that is configured to
-     * @return
+     * @return a preconfigured ObjectMapper
      */
     public static ObjectMapper relaxedObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
