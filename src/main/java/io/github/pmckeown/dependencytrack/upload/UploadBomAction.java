@@ -16,20 +16,19 @@ import java.util.Optional;
 @Singleton
 public class UploadBomAction {
 
-    private static final int SLEEP_MILLISECONDS = 500;
-    private static final int MAX_POLLS = 30;
-
     private BomClient bomClient;
     private BomEncoder bomEncoder;
+    private PollingConfig pollingConfig;
     private CommonConfig commonConfig;
     private Logger logger;
     private Sleeper sleeper;
 
     @Inject
-    public UploadBomAction(BomClient bomClient, BomEncoder bomEncoder, Sleeper sleeper, CommonConfig commonConfig,
-               Logger logger) {
+    public UploadBomAction(BomClient bomClient, BomEncoder bomEncoder, PollingConfig pollingConfig, Sleeper sleeper,
+               CommonConfig commonConfig, Logger logger) {
         this.bomClient = bomClient;
         this.bomEncoder = bomEncoder;
+        this.pollingConfig = pollingConfig;
         this.sleeper = sleeper;
         this.commonConfig = commonConfig;
         this.logger = logger;
@@ -39,7 +38,7 @@ public class UploadBomAction {
         logger.info("Project Name: %s", commonConfig.getProjectName());
         logger.info("Project Version: %s", commonConfig.getProjectVersion());
         logger.info("Plugin %s configured to wait for BOM processing to complete",
-                commonConfig.getPollingConfig().isEnabled() ? "is" : "is not");
+                pollingConfig.isEnabled() ? "is" : "is not");
 
         Optional<String> encodedBomOptional = bomEncoder.encodeBom(bomLocation, logger);
         if (!encodedBomOptional.isPresent()) {
@@ -49,7 +48,7 @@ public class UploadBomAction {
 
         Optional<UploadBomResponse> uploadBomResponse = doUpload(encodedBomOptional.get());
 
-        if (commonConfig.getPollingConfig().isEnabled() && uploadBomResponse.isPresent()) {
+        if (pollingConfig.isEnabled() && uploadBomResponse.isPresent()) {
             try {
                 pollUntilBomIsProcessed(uploadBomResponse.get());
             } catch (InterruptedException ex) {
@@ -69,8 +68,7 @@ public class UploadBomAction {
     }
 
     /**
-     * Recursive method to handle calling the server and checking whether processing is finished.  Will only execute
-     * {@link UploadBomAction#MAX_POLLS} times and sleeps for {@link UploadBomAction#SLEEP_MILLISECONDS} each loop.
+     * Recursive method to handle calling the server and checking whether processing is finished.
      *
      * @param bomToken the token used to check if the BOM is completely processed
      * @param counter an incrementing integer to cap the total number of calls
@@ -85,13 +83,12 @@ public class UploadBomAction {
             logger.info("Still processing: %b", stillProcessing);
 
             if (stillProcessing) {
-                PollingConfig polling = commonConfig.getPollingConfig();
-                sleeper.sleep(polling.getPause());
-                if (counter < polling.getAttempts()) {
+                sleeper.sleep(pollingConfig.getPause(), pollingConfig.getTimeUnit());
+                if (counter < pollingConfig.getAttempts()) {
                     isBomProcessed(bomToken, counter + 1);
                 } else {
                     logger.info("Max number of polling attempts [%d] reached, continuing with plugin execution",
-                            polling.getAttempts());
+                            pollingConfig.getAttempts());
                 }
             }
         }

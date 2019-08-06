@@ -1,22 +1,13 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
 
-import com.evanlennick.retry4j.CallExecutorBuilder;
-import com.evanlennick.retry4j.Status;
-import com.evanlennick.retry4j.config.RetryConfig;
-import com.evanlennick.retry4j.config.RetryConfigBuilder;
-import io.github.pmckeown.dependencytrack.CommonConfig;
-import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.PollingConfig;
-import io.github.pmckeown.dependencytrack.Response;
+import io.github.pmckeown.dependencytrack.*;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
-import java.util.concurrent.Callable;
 
 import static java.lang.String.format;
 
@@ -30,32 +21,28 @@ public class MetricsAction {
 
     private MetricsClient metricsClient;
 
+    private PollingConfig pollingConfig;
+
     private CommonConfig commonConfig;
 
     private Logger logger;
 
     @Inject
-    public MetricsAction(MetricsClient metricsClient, CommonConfig commonConfig, Logger logger) {
+    public MetricsAction(MetricsClient metricsClient, PollingConfig pollingConfig, CommonConfig commonConfig,
+             Logger logger) {
         this.metricsClient = metricsClient;
+        this.pollingConfig = pollingConfig;
         this.commonConfig = commonConfig;
         this.logger = logger;
     }
 
-    @SuppressWarnings("unchecked")
     public Metrics getMetrics(Project project) throws DependencyTrackException {
-        Callable<Optional<Metrics>> getMetricsCallable = () -> {
-            logger.info("Polling for metrics from the Dependency-Track server");
-            Response<Metrics> response = metricsClient.getMetrics(project);
-            return response.getBody();
-        };
-
         try {
-            Status<Optional<Metrics>> status = new CallExecutorBuilder<Optional<Metrics>>()
-                    .config(getRetryConfig())
-                    .build()
-                    .execute(getMetricsCallable);
-
-            Optional<Metrics> body = status.getResult();
+            Optional<Metrics> body = new Poller<Metrics>(pollingConfig).poll(() -> {
+                logger.info("Polling for metrics from the Dependency-Track server");
+                Response<Metrics> response = metricsClient.getMetrics(project);
+                return response.getBody();
+            });
             if (body.isPresent()) {
                 logger.debug("Metrics found for project: %s", project.getUuid());
                 return body.get();
@@ -67,16 +54,6 @@ public class MetricsAction {
             logger.error(ex.getMessage());
             throw new DependencyTrackException(format("Failed to get Metrics for project: %s", project.getUuid()));
         }
-    }
-
-    private RetryConfig getRetryConfig() {
-        PollingConfig pollingConfig = commonConfig.getPollingConfig();
-        return new RetryConfigBuilder()
-                .withMaxNumberOfTries(pollingConfig.getAttempts())
-                .withDelayBetweenTries(pollingConfig.getPause(), ChronoUnit.SECONDS)
-                .retryOnReturnValue(Optional.empty())
-                .withFixedBackoff()
-                .build();
     }
 
     public void refreshMetrics(Project project) {

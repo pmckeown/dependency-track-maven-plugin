@@ -1,6 +1,5 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
-import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.Response;
@@ -11,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
@@ -40,8 +40,8 @@ public class MetricsActionTest {
     @Mock
     private MetricsClient metricsClient;
 
-    @Mock
-    private CommonConfig commonConfig;
+    @Spy
+    private PollingConfig pollingConfig = PollingConfig.disabled();
 
     @Mock
     private Logger logger;
@@ -50,7 +50,6 @@ public class MetricsActionTest {
     public void thatMetricsCanBeRetrieved() throws Exception {
         Response<Metrics> response = new Response<>(200, "OK", true, anOptionalMetrics());
         doReturn(response).when(metricsClient).getMetrics(any(Project.class));
-        doReturn(new PollingConfig(true, 1, 1)).when(commonConfig).getPollingConfig();
 
         Metrics metrics = metricsAction.getMetrics(aProject());
 
@@ -61,7 +60,6 @@ public class MetricsActionTest {
     @Test
     public void thatAnExceptionOccursWhenNoMetricsCanBeFound() {
         Response<Metrics> response = new Response<>(200, "Not Found", false, Optional.empty());
-        doReturn(new PollingConfig(true, 1, 1)).when(commonConfig).getPollingConfig();
         doReturn(response).when(metricsClient).getMetrics(any(Project.class));
 
         try {
@@ -74,7 +72,6 @@ public class MetricsActionTest {
 
     @Test
     public void thatAnExceptionOccursResultsInAnException() {
-        doReturn(new PollingConfig(true, 1, 1)).when(commonConfig).getPollingConfig();
         doThrow(UnirestException.class).when(metricsClient).getMetrics(any(Project.class));
 
         try {
