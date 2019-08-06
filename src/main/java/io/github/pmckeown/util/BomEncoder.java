@@ -23,7 +23,7 @@ public class BomEncoder {
      * location.  An empty {@link Optional} will be returned if the file location if invalid or the file cannot be read.
      *
      * @param bomLocation the location to find the file to encode
-     * @param logger
+     * @param logger Common logging wrapper
      * @return an optional that will contain the Base64 encoded file or an empty optional
      */
     public Optional<String> encodeBom(String bomLocation, Logger logger) {

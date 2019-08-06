@@ -12,7 +12,7 @@ import java.util.concurrent.Callable;
 /**
  * Class for polling a remote server.
  *
- * Polling will continue until the provide callable returns a populated {@link Optional<T>} instance.
+ * Polling will continue until the provide callable returns a populated {@link Optional} instance.
  *
  * {@link Optional#empty()} will continue the loop until the configured retry limit is me when a
  * {@link com.evanlennick.retry4j.exception.RetriesExhaustedException} will be thrown.
@@ -28,8 +28,9 @@ public class Poller<T> {
     /**
      * Execute the supplied {@link Callable} until a non-empty Optional value is returned from the Callable.
      *
+     * @param pollingConfig The polling configuration
      * @param callable The {@link Callable} function to execute one or more times
-     * @return An {@link Optional} wrapping the result of the callable
+     * @return An Optional wrapping the result of the callable
      * @throws UnexpectedException if an Exception occurs while polling
      */
     @SuppressWarnings("unchecked")
@@ -51,9 +52,10 @@ public class Poller<T> {
     /**
      * Execute the supplied {@link Callable} while the retry value is returned from the Callable.
      *
+     * @param pollingConfig The polling configuration
      * @param retryValue Keep retrying if one of these is returned
      * @param callable The {@link Callable} function to execute one or more times
-     * @return An {@link Optional} wrapping the result of the callable
+     * @return An Optional wrapping the result of the callable
      * @throws UnexpectedException if an Exception occurs while polling
      */
     @SuppressWarnings("unchecked")
