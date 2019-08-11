@@ -10,4 +10,6 @@ public class TestResourceConstants {
     public static final String V1_METRICS_PROJECT_REFRESH = "/api/v1/metrics/project/(.*)/refresh";
     public static final String V1_PROJECT_UUID = "/api/v1/project/(.*)";
     public static final String V1_BOM_TOKEN_UUID = "/api/v1/bom/token/(.*)";
+    public static final String V1_FINDING_PROJECT_UUID = "/api/v1/finding/project/(.*)";
+
 }

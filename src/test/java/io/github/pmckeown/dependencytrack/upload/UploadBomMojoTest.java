@@ -16,6 +16,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
 
+import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -58,7 +59,7 @@ public class UploadBomMojoTest {
     public void thatTheBomLocationIsDefaultedWhenNotSupplied() throws Exception {
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
         doReturn(new File(".")).when(project).getBasedir();
-        doReturn(aProject()).when(projectAction).getProject(PROJECT_NAME, PROJECT_VERSION);
+        doReturn(aProject().build()).when(projectAction).getProject(PROJECT_NAME, PROJECT_VERSION);
         doReturn(true).when(uploadBomAction).upload(anyString());
 
         uploadBomMojo.setProjectName(PROJECT_NAME);
@@ -69,7 +70,7 @@ public class UploadBomMojoTest {
         assertThat(argumentCaptor.getValue(), is(equalTo("./target/bom.xml")));
     }
 
-    private Project aProject() {
+    private Project asProject() {
         return new Project("1234", PROJECT_NAME, PROJECT_VERSION, null);
     }
 }

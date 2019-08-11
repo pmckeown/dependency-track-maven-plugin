@@ -1,6 +1,4 @@
-package io.github.pmckeown.dependencytrack.builders;
-
-import io.github.pmckeown.dependencytrack.upload.BomProcessingResponse;
+package io.github.pmckeown.dependencytrack.upload;
 
 public class BomProcessingResponseBuilder {
 
