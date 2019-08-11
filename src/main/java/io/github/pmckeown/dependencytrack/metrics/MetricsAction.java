@@ -37,21 +37,26 @@ public class MetricsAction {
 
     public Metrics getMetrics(Project project) throws DependencyTrackException {
         try {
-            Optional<Metrics> body = poller.poll(commonConfig.getPollingConfig(), () -> {
-                logger.info("Polling for metrics from the Dependency-Track server");
-                Response<Metrics> response = metricsClient.getMetrics(project);
-                return response.getBody();
-            });
-            if (body.isPresent()) {
-                logger.debug("Metrics found for project: %s", project.getUuid());
-                return body.get();
-            } else {
-                throw new DependencyTrackException("No metrics have yet been calculated. Request a metrics analysis " +
-                        "in the Dependency Track UI.");
-            }
+            Metrics metrics = pollForMetrics(project);
+            return metrics;
         } catch (Exception ex) {
             logger.error(ex.getMessage());
             throw new DependencyTrackException(format("Failed to get Metrics for project: %s", project.getUuid()));
+        }
+    }
+
+    private Metrics pollForMetrics(Project project) throws DependencyTrackException {
+        Optional<Metrics> body = poller.poll(commonConfig.getPollingConfig(), () -> {
+            logger.info("Polling for metrics from the Dependency-Track server");
+            Response<Metrics> response = metricsClient.getMetrics(project);
+            return response.getBody();
+        });
+        if (body.isPresent()) {
+            logger.debug("Metrics found for project: %s", project.getUuid());
+            return body.get();
+        } else {
+            throw new DependencyTrackException("No metrics have yet been calculated. Request a metrics analysis " +
+                    "in the Dependency Track UI.");
         }
     }
 
