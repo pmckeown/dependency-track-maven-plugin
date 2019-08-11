@@ -3,7 +3,6 @@ package io.github.pmckeown.dependencytrack.metrics;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
-import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,6 +21,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_METRICS_PROJECT_CURRENT;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_METRICS_PROJECT_REFRESH;
+import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -50,8 +50,7 @@ public class MetricsClientTest {
         stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT)).willReturn(
                 aResponse().withBodyFile("api/v1/metrics/project/project-metrics.json")));
 
-        Response<Metrics> metricsResponse = metricsClient.getMetrics(
-                aProject());
+        Response<Metrics> metricsResponse = metricsClient.getMetrics(aProject().build());
 
         Optional<Metrics> metricsOptional = metricsResponse.getBody();
         assertThat(metricsOptional.isPresent(), is(equalTo(true)));
@@ -80,14 +79,10 @@ public class MetricsClientTest {
         doReturn("api123").when(commonConfig).getApiKey();
         stubFor(get(urlPathMatching(V1_METRICS_PROJECT_REFRESH)).willReturn(ok()));
 
-        Response<Void> response = metricsClient.refreshMetrics(aProject());
+        Response<Void> response = metricsClient.refreshMetrics(aProject().build());
 
         assertThat(response.isSuccess(), is(equalTo(true)));
         assertThat(response.getStatus(), is(equalTo(200)));
         assertThat(response.getBody().isPresent(), is(equalTo(false)));
-    }
-
-    private Project aProject() {
-        return new Project("uuid", "name", "version", null);
     }
 }

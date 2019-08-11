@@ -117,6 +117,62 @@ parameter to `false`.
 |bomLocation                   |false   |target/bom.xml|
 |waitUntilBomProcessingComplete|false   |true          |
 
+### Get Project Findings
+After a BOM upload, the best way to determine if there are any vulnerabilities is to use the `findings` goal which is 
+usable immediately after an upload.  Other goals, such as `metrics` and `score` pull down information from the
+Dependency-Track server that is analysed asynchronously and as such may not be available when invoked immediately after 
+a BOM upload.
+  
+The `findings` goal prints out some details of all of the current issues found in the scan, including: component 
+details, vulnerability description and suppression status.
+
+The `findings` goal can be configured to fail the build if the number of findings in a given category are higher than 
+the threshold set for that category.
+
+#### POM Usage
+Binds by default to the Verify Phase in the Maven lifecycle in line with 
+[cyclonedx-maven-plugin](https://github.com/CycloneDX/cyclonedx-maven-plugin).
+
+#### Direct Usage
+```
+mvn dependency-track:findings
+```
+
+#### Direct Usage with Overrides
+```
+mvn dependency-track:findings -Ddependency-track.projectName=arbitrary-name -Ddependency-track.projectVersion=99.99
+```
+
+#### Dependencies
+Depends on a project existing in the Dependency-Track server that matches the current project artifactId and version or
+whatever overridden values that are supplied.
+
+#### Configuration
+
+|Property                  |Required|Default Value|Description                                                                                           |
+|--------------------------|--------|-------------|------------------------------------------------------------------------------------------------------|
+|findingThresholds         |false   |N/A          |If present with no child elements, any issues found in any category will cause the build to fail      |
+|findingThresholds.critical|false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
+|findingThresholds.high    |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
+|findingThresholds.medium  |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
+|findingThresholds.low     |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
+
+#### Examples
+The following configuration will cause the build to fail if there are any critical or high issues found, more than 5 
+medium issues or more than 10 low issues. 
+```xml
+<findingThresholds>
+    <critical>0</critical>
+    <high>0</high>
+    <medium>5</medium>
+    <low>10</low>
+</findingThresholds>
+```
+You can enable the build to fail on any issues in any category by using the following configuration:
+```xml
+<findingThresholds />
+```
+
 ### Get Inherited Risk Score
 Get the Inherited Risk Score from the Dependency-Track server for the current project or any arbitrary project.
 The Risk Score per vulnerability tells you about a specific vulnerability in a dependency in your application and how 

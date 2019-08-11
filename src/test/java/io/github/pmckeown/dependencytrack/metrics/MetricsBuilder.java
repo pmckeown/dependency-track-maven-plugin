@@ -1,6 +1,4 @@
-package io.github.pmckeown.dependencytrack.builders;
-
-import io.github.pmckeown.dependencytrack.metrics.Metrics;
+package io.github.pmckeown.dependencytrack.metrics;
 
 import java.util.Date;
 
