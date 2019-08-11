@@ -3,7 +3,6 @@ package io.github.pmckeown.dependencytrack.finding;
 import com.github.tomakehurst.wiremock.http.Fault;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackIntegrationTest;
 import io.github.pmckeown.dependencytrack.Response;
-import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.UnirestException;
 import org.junit.Before;
@@ -15,7 +14,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
@@ -26,7 +24,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_FINDING_PROJECT_UUID;
 import static io.github.pmckeown.dependencytrack.TestUtils.asJson;
-import static io.github.pmckeown.dependencytrack.builders.ProjectBuilder.aProject;
+import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
 import static io.github.pmckeown.dependencytrack.finding.FindingBuilder.aFinding;
 import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aListOfFindings;

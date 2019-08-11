@@ -1,6 +1,4 @@
-package io.github.pmckeown.dependencytrack.builders;
-
-import io.github.pmckeown.dependencytrack.Response;
+package io.github.pmckeown.dependencytrack;
 
 import java.util.Optional;
 

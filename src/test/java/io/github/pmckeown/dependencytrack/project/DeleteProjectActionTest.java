@@ -9,9 +9,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static io.github.pmckeown.dependencytrack.builders.ProjectBuilder.aProject;
-import static io.github.pmckeown.dependencytrack.builders.ResponseBuilder.aNotFoundResponse;
-import static io.github.pmckeown.dependencytrack.builders.ResponseBuilder.aSuccessResponse;
+import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
+import static io.github.pmckeown.dependencytrack.ResponseBuilder.aNotFoundResponse;
+import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;

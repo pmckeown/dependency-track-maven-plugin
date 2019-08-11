@@ -1,7 +1,6 @@
 package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.*;
-import io.github.pmckeown.dependencytrack.builders.BomProcessingResponseBuilder;
 import io.github.pmckeown.util.BomEncoder;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.UnirestException;
@@ -15,7 +14,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Optional;
 
 import static io.github.pmckeown.dependencytrack.PollingConfig.TimeUnit.MILLIS;
-import static io.github.pmckeown.dependencytrack.builders.UploadBomResponseBuilder.anUploadBomResponse;
+import static io.github.pmckeown.dependencytrack.upload.UploadBomResponseBuilder.anUploadBomResponse;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;

@@ -13,7 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.List;
 
-import static io.github.pmckeown.dependencytrack.builders.ResponseBuilder.aSuccessResponse;
+import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;

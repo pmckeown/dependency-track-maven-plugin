@@ -1,7 +1,7 @@
-package io.github.pmckeown.dependencytrack.builders;
+package io.github.pmckeown.dependencytrack.project;
 
 import io.github.pmckeown.dependencytrack.metrics.Metrics;
-import io.github.pmckeown.dependencytrack.project.Project;
+import io.github.pmckeown.dependencytrack.metrics.MetricsBuilder;
 
 import java.util.UUID;
 

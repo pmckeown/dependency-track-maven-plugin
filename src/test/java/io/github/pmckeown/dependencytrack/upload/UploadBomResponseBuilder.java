@@ -1,6 +1,4 @@
-package io.github.pmckeown.dependencytrack.builders;
-
-import io.github.pmckeown.dependencytrack.upload.UploadBomResponse;
+package io.github.pmckeown.dependencytrack.upload;
 
 public class UploadBomResponseBuilder {
 

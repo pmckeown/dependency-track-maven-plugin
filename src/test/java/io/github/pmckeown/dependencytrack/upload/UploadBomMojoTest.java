@@ -16,7 +16,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
 
-import static io.github.pmckeown.dependencytrack.builders.ProjectBuilder.aProject;
+import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

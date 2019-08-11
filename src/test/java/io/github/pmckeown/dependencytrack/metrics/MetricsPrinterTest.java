@@ -30,7 +30,7 @@ import static io.github.pmckeown.dependencytrack.Constants.SUPPRESSED;
 import static io.github.pmckeown.dependencytrack.Constants.UNASSIGNED;
 import static io.github.pmckeown.dependencytrack.Constants.VULNERABILITIES;
 import static io.github.pmckeown.dependencytrack.Constants.VULNERABLE_COMPONENTS;
-import static io.github.pmckeown.dependencytrack.builders.MetricsBuilder.aMetrics;
+import static io.github.pmckeown.dependencytrack.metrics.MetricsBuilder.aMetrics;
 import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
