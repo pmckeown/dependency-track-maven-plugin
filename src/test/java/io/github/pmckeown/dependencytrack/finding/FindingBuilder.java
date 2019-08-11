@@ -1,5 +1,6 @@
 package io.github.pmckeown.dependencytrack.finding;
 
+import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
 import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
 
@@ -21,22 +22,22 @@ public class FindingBuilder {
         FindingBuilder findingBuilder = new FindingBuilder();
         findingBuilder.withComponent(aComponent());
         findingBuilder.withVulnerability(aVulnerability());
-        findingBuilder.withAnalysis(false);
+        findingBuilder.withAnalysis(anAnalysis());
         return findingBuilder;
     }
 
-    public FindingBuilder withComponent(ComponentBuilder componentBuilder) {
+    FindingBuilder withComponent(ComponentBuilder componentBuilder) {
         this.component = componentBuilder.build();
         return this;
     }
 
-    public FindingBuilder withVulnerability(VulnerabilityBuilder vulnerabilityBuilder) {
+    FindingBuilder withVulnerability(VulnerabilityBuilder vulnerabilityBuilder) {
         this.vulnerability = vulnerabilityBuilder.build();
         return this;
     }
 
-    public FindingBuilder withAnalysis(boolean isSuppressed) {
-        this.analysis = new Analysis(isSuppressed, null);
+    FindingBuilder withAnalysis(AnalysisBuilder analysisBuilder) {
+        this.analysis = analysisBuilder.build();
         return this;
     }
 

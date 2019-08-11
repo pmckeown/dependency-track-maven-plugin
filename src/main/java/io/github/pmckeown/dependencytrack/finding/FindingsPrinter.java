@@ -2,11 +2,16 @@ package io.github.pmckeown.dependencytrack.finding;
 
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
+import static io.github.pmckeown.dependencytrack.Constants.DELIMITER;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.joinWith;
 
 @Singleton
@@ -25,12 +30,32 @@ class FindingsPrinter {
         }
 
         logger.info("Printing findings for project %s-%s", project.getName(), project.getVersion());
-        for (Finding finding : findings) {
-            logger.info("========== Vulnerable component ==========");
-            logger.info("Component: %s", getComponentDetails(finding));
-            logger.info("Vulnerability: %s", getVulnerabilityDetails(finding));
-            logger.info("Analysis: %s", getAnalysis(finding));
+        findings.forEach(finding -> {
+            Vulnerability vulnerability = finding.getVulnerability();
+            logger.info(DELIMITER);
+            logger.info("%s: %s", vulnerability.getSeverity().name(), getComponentDetails(finding));
+            logger.info(""); // Spacer
+            List<String> wrappedDescriptionParts = splitString(vulnerability.getDescription());
+            if (wrappedDescriptionParts != null && !wrappedDescriptionParts.isEmpty()) {
+                wrappedDescriptionParts.forEach(s -> logger.info(s));
+            }
+            if (finding.getAnalysis().isSuppressed()) {
+                logger.info("");
+                logger.info("Suppressed - %s", finding.getAnalysis().getState().name());
+            }
+        });
+    }
+
+    private List<String> splitString(final String string) {
+        if (StringUtils.isEmpty(string)) {
+            return Collections.emptyList();
         }
+
+        int chunkSize = DELIMITER.length();
+        final int numberOfChunks = (string.length() + chunkSize - 1) / chunkSize;
+        return IntStream.range(0, numberOfChunks)
+                .mapToObj(i -> string.substring(i * chunkSize, Math.min((i + 1) * chunkSize, string.length())))
+                .collect(toList());
     }
 
     private String getComponentDetails(Finding finding) {
@@ -38,15 +63,4 @@ class FindingsPrinter {
         return joinWith(":", component.getGroup(), component.getName(), component.getVersion());
     }
 
-    private String getVulnerabilityDetails(Finding finding) {
-        Vulnerability vulnerability = finding.getVulnerability();
-        return joinWith(" - ", vulnerability.getSeverity(), vulnerability.getSource(),
-                vulnerability.getVulnId(), vulnerability.getDescription());
-    }
-
-    private String getAnalysis(Finding finding) {
-        Analysis analysis = finding.getAnalysis();
-        return joinWith(" - ", analysis.isSuppressed(),
-                analysis.getState() != null ? analysis.getState().name() : null);
-    }
 }

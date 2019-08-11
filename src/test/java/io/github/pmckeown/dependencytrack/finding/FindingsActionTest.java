@@ -12,6 +12,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
+import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
 import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aNotFoundResponse;
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
@@ -44,7 +45,7 @@ public class FindingsActionTest {
         Project project = aProject().build();
         List<Finding> findings = aListOfFindings()
                 .withFinding(aFinding()
-                        .withAnalysis(true)
+                        .withAnalysis(anAnalysis())
                         .withVulnerability(aVulnerability())
                         .withComponent(aComponent()))
                 .build();
@@ -53,20 +54,16 @@ public class FindingsActionTest {
         List<Finding> returnedFindings = findingAction.getFindings(project);
 
         assertThat(returnedFindings.size(), is(equalTo(1)));
-        assertThat(returnedFindings.get(0).getAnalysis().isSuppressed(), is(equalTo(true)));
+        assertThat(returnedFindings.get(0).getAnalysis().isSuppressed(), is(equalTo(false)));
     }
 
     @Test
-    public void thatWhenNoFindingsAreReturnedThenAExceptionIsThrown() {
+    public void thatWhenNoFindingsAreReturnedThenAnEmptyListIsReturned() throws Exception {
         Project project = aProject().build();
         doReturn(aSuccessResponse().build()).when(findingClient).getFindingsForProject(project);
 
-        try {
-            findingAction.getFindings(project);
-            fail("Exception expected");
-        } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(DependencyTrackException.class)));
-        }
+        List<Finding> findings = findingAction.getFindings(project);
+        assertThat(findings.isEmpty(), is(equalTo(true)));
     }
 
     @Test

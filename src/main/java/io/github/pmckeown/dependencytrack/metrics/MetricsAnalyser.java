@@ -49,7 +49,7 @@ public class MetricsAnalyser {
         }
 
         if (failed) {
-            throw new MojoFailureException("Project metrics exceeded defined metrics");
+            throw new MojoFailureException("Project metrics exceeded defined metric thresholds");
         }
     }
 }

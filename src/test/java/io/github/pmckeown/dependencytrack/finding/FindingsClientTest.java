@@ -24,6 +24,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_FINDING_PROJECT_UUID;
 import static io.github.pmckeown.dependencytrack.TestUtils.asJson;
+import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
+import static io.github.pmckeown.dependencytrack.finding.Vulnerability.Severity.LOW;
 import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
 import static io.github.pmckeown.dependencytrack.finding.FindingBuilder.aFinding;
@@ -59,8 +61,8 @@ public class FindingsClientTest extends AbstractDependencyTrackIntegrationTest {
                                 .withFinding(
                                         aFinding()
                                                 .withComponent(aComponent().withName("dodgy"))
-                                                .withVulnerability(aVulnerability().withSeverity("LOW"))
-                                                .withAnalysis(false)).build()))));
+                                                .withVulnerability(aVulnerability().withSeverity(LOW))
+                                                .withAnalysis(anAnalysis())).build()))));
 
         Response<List<Finding>> response = findingClient.getFindingsForProject(aProject().build());
 
@@ -71,7 +73,7 @@ public class FindingsClientTest extends AbstractDependencyTrackIntegrationTest {
             List<Finding> findingList = body.get();
             assertThat(findingList.get(0), is(not(nullValue())));
             assertThat(findingList.get(0).getComponent().getName(), is(equalTo("dodgy")));
-            assertThat(findingList.get(0).getVulnerability().getSeverity(), is(equalTo("LOW")));
+            assertThat(findingList.get(0).getVulnerability().getSeverity(), is(equalTo(LOW)));
             assertThat(findingList.get(0).getAnalysis().isSuppressed(), is(equalTo(false)));
         } else {
             fail("Body missing");

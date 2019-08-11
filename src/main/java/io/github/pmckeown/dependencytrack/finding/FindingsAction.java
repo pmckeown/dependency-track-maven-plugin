@@ -8,6 +8,7 @@ import kong.unirest.UnirestException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,11 +31,16 @@ public class FindingsAction {
         try {
             Response<List<Finding>> response = findingClient.getFindingsForProject(project);
             Optional<List<Finding>> body = response.getBody();
-            if (body.isPresent()) {
-                return body.get();
+            if (response.isSuccess()) {
+                if (body.isPresent()) {
+                    return body.get();
+                } else {
+                    logger.info("No findings available for project %s-%s", project.getName(),
+                            project.getVersion());
+                    return Collections.emptyList();
+                }
             } else {
-                logger.info("No findings available for project %s-%s", project.getName(), project.getVersion());
-                throw new DependencyTrackException("No findings for project");
+                throw new DependencyTrackException("Error received from server");
             }
         } catch (UnirestException ex) {
             logger.error(ex.getMessage());

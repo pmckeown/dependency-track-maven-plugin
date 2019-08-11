@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack.finding;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.junit.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -18,9 +19,12 @@ import static io.github.pmckeown.TestMojoLoader.loadFindingsMojo;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_FINDING_PROJECT_UUID;
 import static io.github.pmckeown.dependencytrack.TestUtils.asJson;
+import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
 import static io.github.pmckeown.dependencytrack.finding.FindingBuilder.aFinding;
 import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aListOfFindings;
+import static io.github.pmckeown.dependencytrack.finding.Vulnerability.Severity.LOW;
+import static io.github.pmckeown.dependencytrack.finding.Vulnerability.Severity.UNASSIGNED;
 import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -39,8 +43,8 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
                                 .withFinding(
                                         aFinding()
                                                 .withComponent(aComponent().withName("dodgy"))
-                                                .withVulnerability(aVulnerability().withSeverity("LOW"))
-                                                .withAnalysis(false)).build()))));
+                                                .withVulnerability(aVulnerability().withSeverity(LOW))
+                                                .withAnalysis(anAnalysis())).build()))));
 
         FindingsMojo findingsMojo = loadFindingsMojo(mojoRule);
         findingsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
@@ -65,7 +69,6 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
         findingsMojo.setApiKey("abc123");
         findingsMojo.setProjectName("testName");
         findingsMojo.setProjectVersion("99.99");
-        findingsMojo.setFailOnError(false);
 
         try {
             findingsMojo.execute();
@@ -77,7 +80,7 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
     }
 
     @Test
-    public void thatWhenExceptionOccursWhileGettIngFindingsAndFailOnErrorIsTrueTheMojoErrors() throws Exception {
+    public void thatWhenExceptionOccursWhileGettingFindingsAndFailOnErrorIsTrueTheMojoErrors() throws Exception {
         stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(aResponse().withFault(RANDOM_DATA_THEN_CLOSE)));
@@ -94,6 +97,61 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
             fail("Exception expected");
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(MojoExecutionException.class)));
+        }
+    }
+
+    @Test
+    public void thatBuildFailsWhenFindingsNumberBreachesDefinedThresholds() throws Exception {
+        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(
+                aResponse().withBody(asJson(
+                        aListOfFindings()
+                                .withFinding(
+                                        aFinding()
+                                                .withComponent(aComponent().withName("dodgy"))
+                                                .withVulnerability(aVulnerability().withSeverity(LOW))
+                                                .withAnalysis(anAnalysis())).build()))));
+
+        FindingsMojo findingsMojo = loadFindingsMojo(mojoRule);
+        findingsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
+        findingsMojo.setApiKey("abc123");
+        findingsMojo.setProjectName("testName");
+        findingsMojo.setProjectVersion("99.99");
+        findingsMojo.setFindingThresholds(new FindingThresholds());
+
+        try {
+            findingsMojo.execute();
+            fail("Exception expected");
+        } catch (Exception ex) {
+            assertThat(ex, is(instanceOf(MojoFailureException.class)));
+        }
+    }
+
+    @Test
+    public void thatBuildDoesNotFailWhenOnlyUnassignedFindingExists() throws Exception {
+        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(
+                aResponse().withBody(asJson(
+                        aListOfFindings()
+                                .withFinding(
+                                        aFinding()
+                                                .withComponent(aComponent().withName("dodgy"))
+                                                .withVulnerability(aVulnerability().withSeverity(UNASSIGNED))
+                                                .withAnalysis(anAnalysis())).build()))));
+
+        FindingsMojo findingsMojo = loadFindingsMojo(mojoRule);
+        findingsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
+        findingsMojo.setApiKey("abc123");
+        findingsMojo.setProjectName("testName");
+        findingsMojo.setProjectVersion("99.99");
+        findingsMojo.setFindingThresholds(new FindingThresholds());
+
+        try {
+            findingsMojo.execute();
+        } catch (Exception ex) {
+            fail("Exception not expected");
         }
     }
 }
