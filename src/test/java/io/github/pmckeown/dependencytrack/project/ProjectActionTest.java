@@ -12,9 +12,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.*;
+import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -40,8 +44,7 @@ public class ProjectActionTest {
 
     @Test
     public void thatProjectCanBeRetrievedByNameAndVersion() throws Exception {
-        Response<List<Project>> response = aSuccessfulResponse();
-        doReturn(response).when(projectClient).getProjects();
+        doReturn(aSuccessResponse().withBody(aProjectList()).build()).when(projectClient).getProjects();
 
         Project project = getProjectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
 
@@ -51,7 +54,6 @@ public class ProjectActionTest {
 
     @Test
     public void thatExceptionIsThrownWhenConnectionFails() {
-        Response<List<Project>> response = aSuccessfulResponse();
         doThrow(UnirestException.class).when(projectClient).getProjects();
 
         try {
@@ -74,7 +76,7 @@ public class ProjectActionTest {
 
     @Test
     public void thatNoProjectsAreFoundAnExceptionIsThrown() {
-        doReturn(anEmptySuccessResponse()).when(projectClient).getProjects();
+        doReturn(aSuccessResponse().build()).when(projectClient).getProjects();
 
         try {
             getProjectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
@@ -85,8 +87,7 @@ public class ProjectActionTest {
 
     @Test
     public void thatRequestedProjectCannotBeFoundAnExceptionIsThrown() {
-        Response<List<Project>> response = aSuccessfulResponse();
-        doReturn(response).when(projectClient).getProjects();
+        doReturn(aSuccessResponse().withBody(aProjectList()).build()).when(projectClient).getProjects();
 
         try {
             getProjectAction.getProject("missing-project", "unknown-version");
@@ -95,22 +96,13 @@ public class ProjectActionTest {
         }
     }
 
-    private Response<List<Project>> aSuccessfulResponse() {
-        return new Response<>(200, "OK", true, anOptionalProjectList());
-    }
-
-    private Response<List<Project>> anEmptySuccessResponse() {
-        return new Response<>(200, "OK", true);
-    }
-
     private Response aNotFoundResponse() {
         return new Response(404, "Not Found", false);
     }
 
-    private Optional<List<Project>> anOptionalProjectList() {
-        return Optional.of(
-                Arrays.asList(new Project(UUID_1, PROJECT_NAME_1, PROJECT_VERSION_1, null),
-                        new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null)));
+    private List<Project> aProjectList() {
+        return Arrays.asList(new Project(UUID_1, PROJECT_NAME_1, PROJECT_VERSION_1, null),
+                    new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null));
     }
 
 }

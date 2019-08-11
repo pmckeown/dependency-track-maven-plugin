@@ -1,6 +1,4 @@
-package io.github.pmckeown.dependencytrack.builders;
-
-import io.github.pmckeown.dependencytrack.project.Project;
+package io.github.pmckeown.dependencytrack.project;
 
 import java.util.ArrayList;
 import java.util.List;

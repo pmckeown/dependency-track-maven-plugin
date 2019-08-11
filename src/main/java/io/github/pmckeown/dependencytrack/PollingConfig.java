@@ -62,9 +62,5 @@ public class PollingConfig {
         }
     }
 
-    public TimeUnit getTimeUnit() {
-        return timeUnit;
-    }
-
     public enum TimeUnit {SECONDS, MILLIS}
 }
