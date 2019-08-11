@@ -30,10 +30,14 @@ public class FindingsAnalyser {
 
         boolean failed = false;
 
-        long critical = findings.stream().filter(f -> f.getVulnerability().getSeverity() == CRITICAL).count();
-        long high = findings.stream().filter(f -> f.getVulnerability().getSeverity() == HIGH).count();
-        long medium = findings.stream().filter(f -> f.getVulnerability().getSeverity() == MEDIUM).count();
-        long low = findings.stream().filter(f -> f.getVulnerability().getSeverity() == LOW).count();
+        long critical = findings.stream().filter(f -> f.getVulnerability().getSeverity() == CRITICAL
+                && !f.getAnalysis().isSuppressed()).count();
+        long high = findings.stream().filter(f -> f.getVulnerability().getSeverity() == HIGH
+                && !f.getAnalysis().isSuppressed()).count();
+        long medium = findings.stream().filter(f -> f.getVulnerability().getSeverity() == MEDIUM
+                && !f.getAnalysis().isSuppressed()).count();
+        long low = findings.stream().filter(f -> f.getVulnerability().getSeverity() == LOW
+                && !f.getAnalysis().isSuppressed()).count();
 
         if (critical > findingThresholds.getCritical()) {
             logger.warn(ERROR_TEMPLATE, Constants.CRITICAL, critical, findingThresholds.getCritical());
