@@ -29,12 +29,12 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
  * scan, more than 10 medium issues or more than 20 low issues.
  *
  * &lt;configuration&gt;
- *     &lt;metricsThresholds&gt;
+ *     &lt;findingThresholds&gt;
  *         &lt;critical&gt;0&lt;/critical&gt;
  *         &lt;high&gt;0&lt;/high&gt;
  *         &lt;medium&gt;10&lt;/medium&gt;
  *         &lt;low&gt;20&lt;/low&gt;
- *     &lt;/metricsThresholds&gt;
+ *     &lt;/findingThresholds&gt;
  * &lt;/configuration&gt;
  *
  * This allows you to tune build failures to your risk appetite.
