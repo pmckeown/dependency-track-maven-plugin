@@ -14,10 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.List;
-import java.util.Optional;
-
 import static io.github.pmckeown.dependencytrack.builders.MetricsBuilder.aMetrics;
+import static io.github.pmckeown.dependencytrack.builders.ProjectBuilder.aProject;
+import static io.github.pmckeown.dependencytrack.builders.ResponseBuilder.aSuccessResponse;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -79,7 +78,10 @@ public class ScoreActionTest {
 
     @Test
     public void thatWhenCurrentProjectsIsNotFoundInListThenAnExceptionIsThrown() {
-        doReturn(aProjectListResponseWithMetrics()).when(projectClient).getProjects();
+        doReturn(aSuccessResponse().withBody(
+                singletonList(
+                        aProject().withMetrics(aMetrics().withInheritedRiskScore(100)).build()
+                )).build()).when(projectClient).getProjects();
         doReturn("unknown-project").when(commonConfig).getProjectName();
         doReturn("1.2.3").when(commonConfig).getProjectVersion();
 
@@ -93,9 +95,11 @@ public class ScoreActionTest {
 
     @Test
     public void thatWhenTheCurrentProjectHasMetricsInItThenTheScoreIsReturned() throws Exception {
-        doReturn(aProjectListResponseWithMetrics()).when(projectClient).getProjects();
-        doReturn(PROJECT_NAME).when(commonConfig).getProjectName();
-        doReturn(PROJECT_VERSION).when(commonConfig).getProjectVersion();
+        Project project = aProject().withMetrics(aMetrics().withInheritedRiskScore(100)).build();
+        doReturn(aSuccessResponse().withBody(
+                singletonList(project)).build()).when(projectClient).getProjects();
+        doReturn(project.getName()).when(commonConfig).getProjectName();
+        doReturn(project.getVersion()).when(commonConfig).getProjectVersion();
 
         Integer score = scoreAction.determineScore(INHERITED_RISK_SCORE_THRESHOLD);
         assertThat(score, is(equalTo(100)));
@@ -105,11 +109,13 @@ public class ScoreActionTest {
 
     @Test
     public void thatWhenTheCurrentProjectHasNoMetricsInItTheyAreRequestedAndThenTheScoreIsReturned() throws Exception {
-        doReturn(aProjectListResponseWithoutMetrics()).when(projectClient).getProjects();
+        Project project = aProject().build();
+        doReturn(aSuccessResponse().withBody(
+                singletonList(project)).build()).when(projectClient).getProjects();
         doReturn(aMetrics().withInheritedRiskScore(100).build()).when(metricsAction).getMetrics(
                 any(Project.class));
-        doReturn(PROJECT_NAME).when(commonConfig).getProjectName();
-        doReturn(PROJECT_VERSION).when(commonConfig).getProjectVersion();
+        doReturn(project.getName()).when(commonConfig).getProjectName();
+        doReturn(project.getVersion()).when(commonConfig).getProjectVersion();
 
         Integer score = scoreAction.determineScore(INHERITED_RISK_SCORE_THRESHOLD);
         assertThat(score, is(equalTo(100)));
@@ -119,35 +125,18 @@ public class ScoreActionTest {
 
     @Test
     public void thatWhenTheCurrentProjectScoreIsZeroThenTheScoreIsReturned() throws Exception {
-        doReturn(aProjectListResponseWithoutMetrics()).when(projectClient).getProjects();
+        Project project = aProject().build();
+        doReturn(aSuccessResponse().withBody(
+                singletonList(project)).build()).when(projectClient).getProjects();
         doReturn(aMetrics().withInheritedRiskScore(0).build()).when(metricsAction).getMetrics(
                 any(Project.class));
-        doReturn(PROJECT_NAME).when(commonConfig).getProjectName();
-        doReturn(PROJECT_VERSION).when(commonConfig).getProjectVersion();
+        doReturn(project.getName()).when(commonConfig).getProjectName();
+        doReturn(project.getVersion()).when(commonConfig).getProjectVersion();
 
         Integer score = scoreAction.determineScore(INHERITED_RISK_SCORE_THRESHOLD);
         assertThat(score, is(equalTo(0)));
 
         verify(metricsAction, times(1)).getMetrics(any(Project.class));
-    }
-
-    private Response<List<Project>> aProjectListResponseWithMetrics() {
-        return new Response<List<Project>>(200, "OK", true,
-                Optional.of(singletonList(aProjectWithMetrics())));
-    }
-
-    private Response<List<Project>> aProjectListResponseWithoutMetrics() {
-        return new Response<List<Project>>(200, "OK", true,
-                Optional.of(singletonList(aProjectWithoutMetrics())));
-    }
-
-    private Project aProjectWithMetrics() {
-        return new Project("uuid", PROJECT_NAME, PROJECT_VERSION,
-                aMetrics().withInheritedRiskScore(100).build());
-    }
-
-    private Project aProjectWithoutMetrics() {
-        return new Project("uuid", PROJECT_NAME, PROJECT_VERSION, null);
     }
 
 }

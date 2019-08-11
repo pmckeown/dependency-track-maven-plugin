@@ -26,6 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_FINDING_PROJECT_UUID;
 import static io.github.pmckeown.dependencytrack.TestUtils.asJson;
+import static io.github.pmckeown.dependencytrack.builders.ProjectBuilder.aProject;
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
 import static io.github.pmckeown.dependencytrack.finding.FindingBuilder.aFinding;
 import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aListOfFindings;
@@ -63,7 +64,7 @@ public class FindingClientTest extends AbstractDependencyTrackIntegrationTest {
                                                 .withVulnerability(aVulnerability().withSeverity("LOW"))
                                                 .withAnalysis(false)).build()))));
 
-        Response<List<Finding>> response = findingClient.getFindingsForProject(aProject());
+        Response<List<Finding>> response = findingClient.getFindingsForProject(aProject().build());
 
         verify(1, getRequestedFor(urlPathMatching(V1_FINDING_PROJECT_UUID)));
         assertThat(response.isSuccess(), is(equalTo(true)));
@@ -83,7 +84,7 @@ public class FindingClientTest extends AbstractDependencyTrackIntegrationTest {
     public void thatFailureToGetFindingsReturnsAnErrorResponse() {
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(badRequest()));
 
-        Response<List<Finding>> response = findingClient.getFindingsForProject(aProject());
+        Response<List<Finding>> response = findingClient.getFindingsForProject(aProject().build());
 
         verify(1, getRequestedFor(urlPathMatching(V1_FINDING_PROJECT_UUID)));
         assertThat(response.isSuccess(), is(equalTo(false)));
@@ -96,15 +97,11 @@ public class FindingClientTest extends AbstractDependencyTrackIntegrationTest {
                 aResponse().withFault(Fault.RANDOM_DATA_THEN_CLOSE)));
 
         try {
-            findingClient.getFindingsForProject(aProject());
+            findingClient.getFindingsForProject(aProject().build());
             fail("Exception expected");
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(UnirestException.class)));
         }
-    }
-
-    private Project aProject() {
-        return new Project(UUID.randomUUID().toString(), PROJECT_NAME, PROJECT_VERSION, null);
     }
 
 }

@@ -1,6 +1,10 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
-import io.github.pmckeown.dependencytrack.*;
+import io.github.pmckeown.dependencytrack.CommonConfig;
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.Poller;
+import io.github.pmckeown.dependencytrack.PollingConfig;
+import io.github.pmckeown.dependencytrack.builders.MetricsBuilder;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.UnirestException;
@@ -11,9 +15,9 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Optional;
-
-import static io.github.pmckeown.dependencytrack.builders.MetricsBuilder.aMetrics;
+import static io.github.pmckeown.dependencytrack.builders.ProjectBuilder.aProject;
+import static io.github.pmckeown.dependencytrack.builders.ResponseBuilder.aNotFoundResponse;
+import static io.github.pmckeown.dependencytrack.builders.ResponseBuilder.aSuccessResponse;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -49,11 +53,10 @@ public class MetricsActionTest {
 
     @Test
     public void thatMetricsCanBeRetrieved() throws Exception {
-        Response<Metrics> response = new Response<>(200, "OK", true, anOptionalMetrics());
-        doReturn(response).when(metricsClient).getMetrics(any(Project.class));
+        doReturn(aSuccessResponse().withBody(aMetrics()).build()).when(metricsClient).getMetrics(any(Project.class));
         doReturn(PollingConfig.defaults()).when(commonConfig).getPollingConfig();
 
-        Metrics metrics = metricsAction.getMetrics(aProject());
+        Metrics metrics = metricsAction.getMetrics(aProject().build());
 
         assertThat(metrics, is(not(nullValue())));
         assertThat(metrics.getInheritedRiskScore(), is(equalTo(INHERITED_RISK_SCORE)));
@@ -61,12 +64,11 @@ public class MetricsActionTest {
 
     @Test
     public void thatAnExceptionOccursWhenNoMetricsCanBeFound() {
-        Response<Metrics> response = new Response<>(200, "Not Found", false, Optional.empty());
-        doReturn(response).when(metricsClient).getMetrics(any(Project.class));
+        doReturn(aSuccessResponse().build()).when(metricsClient).getMetrics(any(Project.class));
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
         try {
-            metricsAction.getMetrics(aProject());
+            metricsAction.getMetrics(aProject().build());
             fail("Exception expected");
         } catch (DependencyTrackException ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
@@ -79,7 +81,7 @@ public class MetricsActionTest {
         doReturn(PollingConfig.defaults()).when(commonConfig).getPollingConfig();
 
         try {
-            metricsAction.getMetrics(aProject());
+            metricsAction.getMetrics(aProject().build());
             fail("Exception expected");
         } catch (DependencyTrackException ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
@@ -88,9 +90,9 @@ public class MetricsActionTest {
 
     @Test
     public void thatRefreshMetricsCanBeCalled() {
-        doReturn(aSuccessResponse()).when(metricsClient).refreshMetrics(any(Project.class));
+        doReturn(aSuccessResponse().build()).when(metricsClient).refreshMetrics(any(Project.class));
         try {
-            metricsAction.refreshMetrics(aProject());
+            metricsAction.refreshMetrics(aProject().build());
         } catch (Exception e) {
             fail("No exception expected");
         }
@@ -99,9 +101,9 @@ public class MetricsActionTest {
 
     @Test
     public void thatRefreshMetricsDoesNotErrorWhenProjectNotFound() {
-        doReturn(aNotFoundResponse()).when(metricsClient).refreshMetrics(any(Project.class));
+        doReturn(aNotFoundResponse().build()).when(metricsClient).refreshMetrics(any(Project.class));
         try {
-            metricsAction.refreshMetrics(aProject());
+            metricsAction.refreshMetrics(aProject().build());
         } catch (Exception e) {
             fail("No exception expected");
         }
@@ -113,27 +115,15 @@ public class MetricsActionTest {
         doThrow(new UnirestException("Boom")).when(metricsClient).refreshMetrics(any(Project.class));
 
         try {
-            metricsAction.refreshMetrics(aProject());
+            metricsAction.refreshMetrics(aProject().build());
         } catch (Exception e) {
             fail("No exception expected");
         }
         verify(logger).error(anyString(), anyString());
     }
 
-    private Response<Void> aSuccessResponse() {
-        return new Response<>(200, "OK", true);
-    }
-
-    private Response<Void> aNotFoundResponse() {
-        return new Response<>(404, "Not Found", false);
-    }
-
-    private Project aProject() {
-        return new Project("123", "p", "1", null);
-    }
-
-    private Optional<Metrics> anOptionalMetrics() {
-        return Optional.of(aMetrics()
+    private Metrics aMetrics() {
+        return MetricsBuilder.aMetrics()
                 .withInheritedRiskScore(INHERITED_RISK_SCORE)
                 .withCritical(100)
                 .withHigh(200)
@@ -146,6 +136,6 @@ public class MetricsActionTest {
                 .withFindingsAudited(900)
                 .withFirstOccurrence(Long.MIN_VALUE)
                 .withLastOccurrence(Long.MAX_VALUE)
-                .build());
+                .build();
     }
 }
