@@ -41,7 +41,7 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
             List<Finding> findings = findingsAction.getFindings(project);
             findingsPrinter.printFindings(project, findings);
         } catch (DependencyTrackException ex) {
-            logger.error(ex.getMessage());
+            handleFailure("Error occurred when getting findings", ex);
         }
     }
 }
