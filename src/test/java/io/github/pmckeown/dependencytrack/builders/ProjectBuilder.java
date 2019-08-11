@@ -3,11 +3,13 @@ package io.github.pmckeown.dependencytrack.builders;
 import io.github.pmckeown.dependencytrack.metrics.Metrics;
 import io.github.pmckeown.dependencytrack.project.Project;
 
+import java.util.UUID;
+
 public class ProjectBuilder {
 
-    private String uuid;
-    private String name;
-    private String version;
+    private String uuid = UUID.randomUUID().toString();
+    private String name = "test-project";
+    private String version = "2.0.0";
     private Metrics metrics;
 
     public static ProjectBuilder aProject() {
@@ -34,7 +36,7 @@ public class ProjectBuilder {
         return this;
     }
 
-    Project build() {
+    public Project build() {
         return new Project(uuid, name, version, metrics);
     }
 }
