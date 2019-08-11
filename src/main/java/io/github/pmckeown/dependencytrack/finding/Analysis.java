@@ -2,6 +2,8 @@ package io.github.pmckeown.dependencytrack.finding;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class Analysis {
 
@@ -27,5 +29,10 @@ public class Analysis {
 
     public State getState() {
         return state;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }
 }

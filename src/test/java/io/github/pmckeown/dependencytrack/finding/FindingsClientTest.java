@@ -38,17 +38,17 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FindingClientTest extends AbstractDependencyTrackIntegrationTest {
+public class FindingsClientTest extends AbstractDependencyTrackIntegrationTest {
 
     @InjectMocks
-    private FindingClient findingClient;
+    private FindingsClient findingClient;
 
     @Mock
     private Logger logger;
 
     @Before
     public void setup() {
-        findingClient = new FindingClient(getCommonConfig(), logger);
+        findingClient = new FindingsClient(getCommonConfig(), logger);
     }
 
     @Test

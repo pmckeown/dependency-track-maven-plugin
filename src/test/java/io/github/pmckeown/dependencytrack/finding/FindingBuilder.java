@@ -1,5 +1,8 @@
 package io.github.pmckeown.dependencytrack.finding;
 
+import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
+import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
+
 public class FindingBuilder {
 
     private Component component;
@@ -12,6 +15,14 @@ public class FindingBuilder {
 
     public static FindingBuilder aFinding() {
         return new FindingBuilder();
+    }
+
+    public static FindingBuilder aDefaultFinding() {
+        FindingBuilder findingBuilder = new FindingBuilder();
+        findingBuilder.withComponent(aComponent());
+        findingBuilder.withVulnerability(aVulnerability());
+        findingBuilder.withAnalysis(false);
+        return findingBuilder;
     }
 
     public FindingBuilder withComponent(ComponentBuilder componentBuilder) {

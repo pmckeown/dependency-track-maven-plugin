@@ -28,13 +28,13 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FindingActionTest {
+public class FindingsActionTest {
 
     @InjectMocks
-    private FindingAction findingAction;
+    private FindingsAction findingAction;
 
     @Mock
-    private FindingClient findingClient;
+    private FindingsClient findingClient;
 
     @Mock
     private Logger logger;

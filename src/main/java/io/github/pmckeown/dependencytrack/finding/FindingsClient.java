@@ -21,14 +21,14 @@ import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
 import static kong.unirest.Unirest.get;
 
 @Singleton
-public class FindingClient {
+public class FindingsClient {
 
     private CommonConfig commonConfig;
 
     private Logger logger;
 
     @Inject
-    FindingClient(CommonConfig commonConfig, Logger logger) {
+    FindingsClient(CommonConfig commonConfig, Logger logger) {
         this.commonConfig = commonConfig;
         this.logger = logger;
     }

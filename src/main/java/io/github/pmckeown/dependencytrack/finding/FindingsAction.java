@@ -12,14 +12,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Singleton
-public class FindingAction {
+public class FindingsAction {
 
-    private FindingClient findingClient;
+    private FindingsClient findingClient;
 
     private Logger logger;
 
     @Inject
-    public FindingAction(FindingClient findingClient, Logger logger) {
+    public FindingsAction(FindingsClient findingClient, Logger logger) {
         this.findingClient = findingClient;
         this.logger = logger;
     }
