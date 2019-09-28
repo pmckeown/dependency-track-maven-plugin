@@ -14,10 +14,10 @@ import static io.github.pmckeown.dependencytrack.finding.Analysis.State.FALSE_PO
 import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
 import static io.github.pmckeown.dependencytrack.finding.FindingBuilder.aDefaultFinding;
 import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aListOfFindings;
-import static io.github.pmckeown.dependencytrack.finding.Vulnerability.Severity.CRITICAL;
-import static io.github.pmckeown.dependencytrack.finding.Vulnerability.Severity.HIGH;
-import static io.github.pmckeown.dependencytrack.finding.Vulnerability.Severity.LOW;
-import static io.github.pmckeown.dependencytrack.finding.Vulnerability.Severity.MEDIUM;
+import static io.github.pmckeown.dependencytrack.finding.Severity.CRITICAL;
+import static io.github.pmckeown.dependencytrack.finding.Severity.HIGH;
+import static io.github.pmckeown.dependencytrack.finding.Severity.LOW;
+import static io.github.pmckeown.dependencytrack.finding.Severity.MEDIUM;
 import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;

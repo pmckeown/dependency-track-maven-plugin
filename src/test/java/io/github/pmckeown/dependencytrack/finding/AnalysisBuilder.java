@@ -1,6 +1,6 @@
 package io.github.pmckeown.dependencytrack.finding;
 
-class AnalysisBuilder {
+public class AnalysisBuilder {
 
     private boolean suppressed = false;
     private Analysis.State state = null;

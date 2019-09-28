@@ -3,6 +3,8 @@ package io.github.pmckeown.dependencytrack.finding;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.finding.report.FindingsReport;
+import io.github.pmckeown.dependencytrack.finding.report.FindingsReportWriter;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
@@ -13,6 +15,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.xml.bind.JAXBException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
@@ -65,31 +69,44 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     private FindingsAction findingsAction;
     private FindingsPrinter findingsPrinter;
     private FindingsAnalyser findingsAnalyser;
+    private FindingsReportWriter findingsReportWriter;
 
     @Inject
     public FindingsMojo(ProjectAction projectAction, FindingsAction findingsAction, FindingsPrinter findingsPrinter,
-            FindingsAnalyser findingsAnalyser, CommonConfig commonConfig, Logger logger) {
+            FindingsAnalyser findingsAnalyser, FindingsReportWriter findingsReportWriter, CommonConfig commonConfig,
+            Logger logger) {
         super(commonConfig, logger);
         this.projectAction = projectAction;
         this.findingsAction = findingsAction;
         this.findingsPrinter = findingsPrinter;
         this.findingsAnalyser = findingsAnalyser;
+        this.findingsReportWriter = findingsReportWriter;
     }
 
     @Override
     protected void performAction() throws MojoExecutionException, MojoFailureException {
+        List<Finding> findings = new ArrayList<>();
         try {
             Project project = projectAction.getProject(commonConfig.getProjectName(), commonConfig.getProjectVersion());
-            List<Finding> findings = findingsAction.getFindings(project);
+            findings = findingsAction.getFindings(project);
             findingsPrinter.printFindings(project, findings);
 
             if (findingThresholds != null) {
                 findingsAnalyser.analyse(findings, findingThresholds);
             }
-
         } catch (DependencyTrackException ex) {
             handleFailure("Error occurred when getting findings", ex);
+        } finally {
+            // TODO move this to the analyser class
+            try {
+                FindingsReport findingsReport = new FindingsReport(findingThresholds, findings);
+                findingsReportWriter.write(findingsReport);
+            }
+            catch (JAXBException ex) {
+                handleFailure("Error occurred when generating report", ex);
+            }
         }
+
     }
 
     /*

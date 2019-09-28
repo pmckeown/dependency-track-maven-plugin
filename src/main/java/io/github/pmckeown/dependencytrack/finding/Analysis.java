@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import javax.xml.bind.annotation.XmlElement;
+
 public class Analysis {
 
     public enum State {
@@ -23,10 +25,12 @@ public class Analysis {
         this.state = state;
     }
 
+    @XmlElement
     public boolean isSuppressed() {
         return isSuppressed;
     }
 
+    @XmlElement
     public State getState() {
         return state;
     }
