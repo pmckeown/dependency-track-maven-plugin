@@ -97,16 +97,18 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
         } catch (DependencyTrackException ex) {
             handleFailure("Error occurred when getting findings", ex);
         } finally {
-            // TODO move this to the analyser class
-            try {
-                FindingsReport findingsReport = new FindingsReport(findingThresholds, findings);
-                findingsReportWriter.write(findingsReport);
-            }
-            catch (JAXBException ex) {
-                handleFailure("Error occurred when generating report", ex);
-            }
+            generateReport(findings);
         }
+    }
 
+    private void generateReport(List<Finding> findings) throws MojoExecutionException {
+        try {
+            FindingsReport findingsReport = new FindingsReport(findingThresholds, findings);
+            findingsReportWriter.write(findingsReport);
+        }
+        catch (JAXBException ex) {
+            handleFailure("Error occurred when generating report", ex);
+        }
     }
 
     /*
