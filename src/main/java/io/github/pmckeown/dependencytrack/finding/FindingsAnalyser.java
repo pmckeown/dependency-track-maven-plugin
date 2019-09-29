@@ -39,22 +39,22 @@ public class FindingsAnalyser {
         long low = findings.stream().filter(f -> f.getVulnerability().getSeverity() == LOW
                 && !f.getAnalysis().isSuppressed()).count();
 
-        if (critical > nullableInteger(findingThresholds.getCritical())) {
+        if (critical > findingThresholds.getCritical()) {
             logger.warn(ERROR_TEMPLATE, Constants.CRITICAL, critical, findingThresholds.getCritical());
             failed = true;
         }
 
-        if (high > nullableInteger(findingThresholds.getHigh())) {
+        if (high > findingThresholds.getHigh()) {
             logger.warn(ERROR_TEMPLATE, Constants.HIGH, high, findingThresholds.getHigh());
             failed = true;
         }
 
-        if (medium > nullableInteger(findingThresholds.getMedium())) {
+        if (medium > findingThresholds.getMedium()) {
             logger.warn(ERROR_TEMPLATE, Constants.MEDIUM, medium, findingThresholds.getMedium());
             failed = true;
         }
 
-        if (low > nullableInteger(findingThresholds.getLow())) {
+        if (low > findingThresholds.getLow()) {
             logger.warn(ERROR_TEMPLATE, Constants.LOW, low, findingThresholds.getLow());
             failed = true;
         }
@@ -62,9 +62,5 @@ public class FindingsAnalyser {
         if (failed) {
             throw new MojoFailureException("Number of findings exceeded defined thresholds");
         }
-    }
-
-    private int nullableInteger(Integer value) {
-        return value == null ? 0 : value;
     }
 }

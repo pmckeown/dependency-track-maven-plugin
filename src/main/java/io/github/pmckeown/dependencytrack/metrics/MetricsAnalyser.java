@@ -28,33 +28,28 @@ public class MetricsAnalyser {
 
         boolean failed = false;
 
-        if (metrics.getCritical() > nullableInteger(metricThresholds.getCritical())) {
-            logger.warn(ERROR_TEMPLATE, CRITICAL, metrics.getCritical(),
-                    nullableInteger(metricThresholds.getCritical()));
+        if (metrics.getCritical() > metricThresholds.getCritical()) {
+            logger.warn(ERROR_TEMPLATE, CRITICAL, metrics.getCritical(), metricThresholds.getCritical());
             failed = true;
         }
 
-        if (metrics.getHigh() > nullableInteger(metricThresholds.getHigh())) {
-            logger.warn(ERROR_TEMPLATE, HIGH, metrics.getHigh(), nullableInteger(metricThresholds.getHigh()));
+        if (metrics.getHigh() > metricThresholds.getHigh()) {
+            logger.warn(ERROR_TEMPLATE, HIGH, metrics.getHigh(), metricThresholds.getHigh());
             failed = true;
         }
 
-        if (metrics.getMedium() > nullableInteger(metricThresholds.getMedium())) {
-            logger.warn(ERROR_TEMPLATE, MEDIUM, metrics.getMedium(), nullableInteger(metricThresholds.getMedium()));
+        if (metrics.getMedium() > metricThresholds.getMedium()) {
+            logger.warn(ERROR_TEMPLATE, MEDIUM, metrics.getMedium(), metricThresholds.getMedium());
             failed = true;
         }
 
-        if (metrics.getLow() > nullableInteger(metricThresholds.getLow())) {
-            logger.warn(ERROR_TEMPLATE, LOW, metrics.getLow(), nullableInteger(metricThresholds.getLow()));
+        if (metrics.getLow() > metricThresholds.getLow()) {
+            logger.warn(ERROR_TEMPLATE, LOW, metrics.getLow(), metricThresholds.getLow());
             failed = true;
         }
 
         if (failed) {
             throw new MojoFailureException("Project metrics exceeded defined metric thresholds");
         }
-    }
-
-    private int nullableInteger(Integer value) {
-        return value == null ? 0 : value;
     }
 }

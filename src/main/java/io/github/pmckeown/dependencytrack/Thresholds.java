@@ -12,7 +12,10 @@ public class Thresholds {
     private Integer low;
 
     public Thresholds() {
-        // Initialises metric levels to all zero
+        this.critical = 0;
+        this.high = 0;
+        this.medium = 0;
+        this.low = 0;
     }
 
     public Thresholds(int critical, int high, int medium, int low) {
