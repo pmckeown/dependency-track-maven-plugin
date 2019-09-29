@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import javax.xml.bind.annotation.XmlElement;
+
 public class Component {
 
     private String uuid;
@@ -21,18 +23,22 @@ public class Component {
         this.version = version;
     }
 
+    @XmlElement
     public String getUuid() {
         return uuid;
     }
 
+    @XmlElement
     public String getName() {
         return name;
     }
 
+    @XmlElement
     public String getGroup() {
         return group;
     }
 
+    @XmlElement
     public String getVersion() {
         return version;
     }

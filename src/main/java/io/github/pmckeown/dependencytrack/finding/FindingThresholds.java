@@ -8,7 +8,7 @@ public class FindingThresholds extends Thresholds {
         super();
     }
 
-    public FindingThresholds(int critical, int high, int medium, int low) {
+    public FindingThresholds(Integer critical, Integer high, Integer medium, Integer low) {
         super(critical, high, medium, low);
     }
 }

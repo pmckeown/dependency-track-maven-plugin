@@ -26,17 +26,17 @@ public class FindingBuilder {
         return findingBuilder;
     }
 
-    FindingBuilder withComponent(ComponentBuilder componentBuilder) {
+    public FindingBuilder withComponent(ComponentBuilder componentBuilder) {
         this.component = componentBuilder.build();
         return this;
     }
 
-    FindingBuilder withVulnerability(VulnerabilityBuilder vulnerabilityBuilder) {
+    public FindingBuilder withVulnerability(VulnerabilityBuilder vulnerabilityBuilder) {
         this.vulnerability = vulnerabilityBuilder.build();
         return this;
     }
 
-    FindingBuilder withAnalysis(AnalysisBuilder analysisBuilder) {
+    public FindingBuilder withAnalysis(AnalysisBuilder analysisBuilder) {
         this.analysis = analysisBuilder.build();
         return this;
     }

@@ -7,7 +7,7 @@
 
     <groupId>io.github.pmckeown</groupId>
     <artifactId>dependency-track-maven-plugin</artifactId>
-    <version>0.6.0</version>
+    <version>0.7.0</version>
     <packaging>maven-plugin</packaging>
 
     <name>Dependency Track Maven Plugin</name>
@@ -126,6 +126,11 @@
             <groupId>com.evanlennick</groupId>
             <artifactId>retry4j</artifactId>
             <version>0.15.0</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
         </dependency>
 
         <!-- Test dependencies -->
@@ -444,11 +449,15 @@
                                 <id>print-metrics</id>
                                 <phase>verify</phase>
                                 <goals>
-                                    <goal>metrics</goal>
+                                    <goal>findings</goal>
                                 </goals>
                                 <configuration>
-                                    <!-- Enables all metrics thresholds with a value of 0 -->
-                                    <metricsThresholds />
+                                    <findingThresholds>
+                                        <critical>0</critical>
+                                        <high>0</high>
+                                        <medium>0</medium>
+                                        <low>0</low>
+                                    </findingThresholds>
                                 </configuration>
                             </execution>
                         </executions>
