@@ -5,6 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlType
 public class Finding {
 
     private Component component;
@@ -19,14 +23,17 @@ public class Finding {
         this.analysis = analysis;
     }
 
+    @XmlElement
     public Component getComponent() {
         return component;
     }
 
+    @XmlElement
     public Vulnerability getVulnerability() {
         return vulnerability;
     }
 
+    @XmlElement
     public Analysis getAnalysis() {
         return analysis;
     }

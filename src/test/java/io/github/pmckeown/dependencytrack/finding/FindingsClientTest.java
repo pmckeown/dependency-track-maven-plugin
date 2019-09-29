@@ -25,7 +25,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_FINDING_PROJECT_UUID;
 import static io.github.pmckeown.dependencytrack.TestUtils.asJson;
 import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
-import static io.github.pmckeown.dependencytrack.finding.Vulnerability.Severity.LOW;
+import static io.github.pmckeown.dependencytrack.finding.Severity.LOW;
 import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
 import static io.github.pmckeown.dependencytrack.finding.FindingBuilder.aFinding;

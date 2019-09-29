@@ -16,7 +16,7 @@ import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnaly
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
 import static io.github.pmckeown.dependencytrack.finding.FindingBuilder.aFinding;
 import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aListOfFindings;
-import static io.github.pmckeown.dependencytrack.finding.Vulnerability.Severity.HIGH;
+import static io.github.pmckeown.dependencytrack.finding.Severity.HIGH;
 import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
 import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static org.apache.commons.lang3.StringUtils.repeat;

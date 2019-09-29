@@ -28,22 +28,22 @@ public class MetricsAnalyser {
 
         boolean failed = false;
 
-        if (metrics.getCritical() > metricThresholds.getCritical()) {
+        if (metricThresholds.getCritical() != null && metrics.getCritical() > metricThresholds.getCritical()) {
             logger.warn(ERROR_TEMPLATE, CRITICAL, metrics.getCritical(), metricThresholds.getCritical());
             failed = true;
         }
 
-        if (metrics.getHigh() > metricThresholds.getHigh()) {
+        if (metricThresholds.getHigh() != null && metrics.getHigh() > metricThresholds.getHigh()) {
             logger.warn(ERROR_TEMPLATE, HIGH, metrics.getHigh(), metricThresholds.getHigh());
             failed = true;
         }
 
-        if (metrics.getMedium() > metricThresholds.getMedium()) {
+        if (metricThresholds.getMedium() != null && metrics.getMedium() > metricThresholds.getMedium()) {
             logger.warn(ERROR_TEMPLATE, MEDIUM, metrics.getMedium(), metricThresholds.getMedium());
             failed = true;
         }
 
-        if (metrics.getLow() > metricThresholds.getLow()) {
+        if (metricThresholds.getLow() != null && metrics.getLow() > metricThresholds.getLow()) {
             logger.warn(ERROR_TEMPLATE, LOW, metrics.getLow(), metricThresholds.getLow());
             failed = true;
         }

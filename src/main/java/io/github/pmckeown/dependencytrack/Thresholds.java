@@ -2,35 +2,42 @@ package io.github.pmckeown.dependencytrack;
 
 public class Thresholds {
 
-    private int critical;
-    private int high;
-    private int medium;
-    private int low;
+    private Integer critical;
+    private Integer high;
+    private Integer medium;
+    private Integer low;
 
     public Thresholds() {
-        // Initialises metric levels to all zero
+        this.critical = null;
+        this.high = null;
+        this.medium = null;
+        this.low = null;
     }
 
-    public Thresholds(int critical, int high, int medium, int low) {
+    public Thresholds(Integer critical, Integer high, Integer medium, Integer low) {
         this.critical = critical;
         this.high = high;
         this.medium = medium;
         this.low = low;
     }
 
-    public int getCritical() {
+    public Integer getCritical() {
         return critical;
     }
 
-    public int getHigh() {
+    public Integer getHigh() {
         return high;
     }
 
-    public int getMedium() {
+    public Integer getMedium() {
         return medium;
     }
 
-    public int getLow() {
+    public Integer getLow() {
         return low;
+    }
+
+    public boolean isEmpty() {
+        return critical == null && high == null && medium == null && low == null;
     }
 }

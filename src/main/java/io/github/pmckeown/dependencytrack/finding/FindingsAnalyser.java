@@ -8,10 +8,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
 
-import static io.github.pmckeown.dependencytrack.finding.Vulnerability.Severity.CRITICAL;
-import static io.github.pmckeown.dependencytrack.finding.Vulnerability.Severity.HIGH;
-import static io.github.pmckeown.dependencytrack.finding.Vulnerability.Severity.LOW;
-import static io.github.pmckeown.dependencytrack.finding.Vulnerability.Severity.MEDIUM;
+import static io.github.pmckeown.dependencytrack.finding.Severity.CRITICAL;
+import static io.github.pmckeown.dependencytrack.finding.Severity.HIGH;
+import static io.github.pmckeown.dependencytrack.finding.Severity.LOW;
+import static io.github.pmckeown.dependencytrack.finding.Severity.MEDIUM;
 
 @Singleton
 public class FindingsAnalyser {
@@ -39,22 +39,22 @@ public class FindingsAnalyser {
         long low = findings.stream().filter(f -> f.getVulnerability().getSeverity() == LOW
                 && !f.getAnalysis().isSuppressed()).count();
 
-        if (critical > findingThresholds.getCritical()) {
+        if (findingThresholds.getCritical() != null && critical > findingThresholds.getCritical()) {
             logger.warn(ERROR_TEMPLATE, Constants.CRITICAL, critical, findingThresholds.getCritical());
             failed = true;
         }
 
-        if (high > findingThresholds.getHigh()) {
+        if (findingThresholds.getHigh() != null && high > findingThresholds.getHigh()) {
             logger.warn(ERROR_TEMPLATE, Constants.HIGH, high, findingThresholds.getHigh());
             failed = true;
         }
 
-        if (medium > findingThresholds.getMedium()) {
+        if (findingThresholds.getMedium() != null && medium > findingThresholds.getMedium()) {
             logger.warn(ERROR_TEMPLATE, Constants.MEDIUM, medium, findingThresholds.getMedium());
             failed = true;
         }
 
-        if (low > findingThresholds.getLow()) {
+        if (findingThresholds.getLow() != null && low > findingThresholds.getLow()) {
             logger.warn(ERROR_TEMPLATE, Constants.LOW, low, findingThresholds.getLow());
             failed = true;
         }

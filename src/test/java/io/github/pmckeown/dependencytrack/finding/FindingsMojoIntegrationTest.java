@@ -23,8 +23,8 @@ import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnaly
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
 import static io.github.pmckeown.dependencytrack.finding.FindingBuilder.aFinding;
 import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aListOfFindings;
-import static io.github.pmckeown.dependencytrack.finding.Vulnerability.Severity.LOW;
-import static io.github.pmckeown.dependencytrack.finding.Vulnerability.Severity.UNASSIGNED;
+import static io.github.pmckeown.dependencytrack.finding.Severity.LOW;
+import static io.github.pmckeown.dependencytrack.finding.Severity.UNASSIGNED;
 import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -118,7 +118,7 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
         findingsMojo.setApiKey("abc123");
         findingsMojo.setProjectName("testName");
         findingsMojo.setProjectVersion("99.99");
-        findingsMojo.setFindingThresholds(new FindingThresholds());
+        findingsMojo.setFindingThresholds(new FindingThresholds(0, 0, 0, 0));
 
         try {
             findingsMojo.execute();
