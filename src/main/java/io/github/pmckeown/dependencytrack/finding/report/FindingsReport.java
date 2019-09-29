@@ -17,7 +17,6 @@ public class FindingsReport {
 
     private PolicyApplied policyApplied;
     private List<Finding> findings;
-    private String error;
 
     public FindingsReport() {
         // For JAXB
@@ -26,7 +25,6 @@ public class FindingsReport {
     public FindingsReport(FindingThresholds findingThresholds, List<Finding> findings) {
         this.policyApplied = new PolicyApplied(findingThresholds);
         this.findings = findings;
-        this.error = null;
     }
 
     @XmlElement(name = "policyApplied")

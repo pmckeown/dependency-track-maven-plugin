@@ -27,7 +27,6 @@ public class FindingsReportWriter {
         if (!targetDir.exists()) {
             targetDir.mkdir();
         }
-        File outputFile = new File("target/dependency-track-findings.xml");
-        return outputFile;
+        return new File("target/dependency-track-findings.xml");
     }
 }
