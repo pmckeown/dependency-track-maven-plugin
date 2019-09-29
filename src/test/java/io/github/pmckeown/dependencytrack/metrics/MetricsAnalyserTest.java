@@ -33,7 +33,7 @@ public class MetricsAnalyserTest {
         Metrics metrics = aMetrics().withCritical(100).build();
 
         try {
-            metricsAnalyser.analyse(metrics, new MetricsThresholds());
+            metricsAnalyser.analyse(metrics, new MetricsThresholds(0, null, null, null));
             fail("MojoFailureException expected");
         } catch (Exception ex) {
             assertThat(ex, instanceOf(MojoFailureException.class));
@@ -47,7 +47,7 @@ public class MetricsAnalyserTest {
         Metrics metrics = aMetrics().withHigh(200).build();
 
         try {
-            metricsAnalyser.analyse(metrics, new MetricsThresholds());
+            metricsAnalyser.analyse(metrics, new MetricsThresholds(null, 0, null, null));
             fail("MojoFailureException expected");
         } catch (Exception ex) {
             assertThat(ex, instanceOf(MojoFailureException.class));
@@ -61,7 +61,7 @@ public class MetricsAnalyserTest {
         Metrics metrics = aMetrics().withMedium(300).build();
 
         try {
-            metricsAnalyser.analyse(metrics, new MetricsThresholds());
+            metricsAnalyser.analyse(metrics, new MetricsThresholds(null, null, 0, null));
             fail("MojoFailureException expected");
         } catch (Exception ex) {
             assertThat(ex, instanceOf(MojoFailureException.class));
@@ -75,7 +75,7 @@ public class MetricsAnalyserTest {
         Metrics metrics = aMetrics().withLow(400).build();
 
         try {
-            metricsAnalyser.analyse(metrics, new MetricsThresholds());
+            metricsAnalyser.analyse(metrics, new MetricsThresholds(null, null, null, 0));
             fail("MojoFailureException expected");
         } catch (Exception ex) {
             assertThat(ex, instanceOf(MojoFailureException.class));
@@ -93,7 +93,7 @@ public class MetricsAnalyserTest {
                 .withLow(400).build();
 
         try {
-            metricsAnalyser.analyse(metrics, new MetricsThresholds());
+            metricsAnalyser.analyse(metrics, new MetricsThresholds(0, 0, 0, 0));
             fail("MojoFailureException expected");
         } catch (Exception ex) {
             assertThat(ex, instanceOf(MojoFailureException.class));

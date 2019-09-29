@@ -39,7 +39,7 @@ public class FindingsAnalyserTest {
                 aDefaultFinding().withVulnerability(aVulnerability().withSeverity(CRITICAL))).build();
 
         try {
-            findingAnalyser.analyse(findings, new FindingThresholds());
+            findingAnalyser.analyse(findings, new FindingThresholds(0, null, null, null));
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(MojoFailureException.class)));
         }
@@ -65,7 +65,7 @@ public class FindingsAnalyserTest {
                         .withAnalysis(anAnalysis().withSuppressed(true).withState(FALSE_POSITIVE))).build();
 
         try {
-            findingAnalyser.analyse(findings, new FindingThresholds());
+            findingAnalyser.analyse(findings, new FindingThresholds(0, null, null, null));
         } catch (Exception ex) {
             fail("No exception expected");
         }
@@ -77,7 +77,7 @@ public class FindingsAnalyserTest {
                 aDefaultFinding().withVulnerability(aVulnerability().withSeverity(HIGH))).build();
 
         try {
-            findingAnalyser.analyse(findings, new FindingThresholds());
+            findingAnalyser.analyse(findings, new FindingThresholds(null, 0, null, null));
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(MojoFailureException.class)));
         }
@@ -103,7 +103,7 @@ public class FindingsAnalyserTest {
                         .withAnalysis(anAnalysis().withSuppressed(true).withState(FALSE_POSITIVE))).build();
 
         try {
-            findingAnalyser.analyse(findings, new FindingThresholds());
+            findingAnalyser.analyse(findings, new FindingThresholds(null, 0, null, null));
         } catch (Exception ex) {
             fail("No exception expected");
         }
@@ -115,7 +115,7 @@ public class FindingsAnalyserTest {
                 aDefaultFinding().withVulnerability(aVulnerability().withSeverity(MEDIUM))).build();
 
         try {
-            findingAnalyser.analyse(findings, new FindingThresholds());
+            findingAnalyser.analyse(findings, new FindingThresholds(null, null, 0, null));
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(MojoFailureException.class)));
         }
@@ -141,7 +141,7 @@ public class FindingsAnalyserTest {
                         .withAnalysis(anAnalysis().withSuppressed(true).withState(FALSE_POSITIVE))).build();
 
         try {
-            findingAnalyser.analyse(findings, new FindingThresholds());
+            findingAnalyser.analyse(findings, new FindingThresholds(null, null, 0, null));
         } catch (Exception ex) {
             fail("No exception expected");
         }
@@ -153,7 +153,7 @@ public class FindingsAnalyserTest {
                 aDefaultFinding().withVulnerability(aVulnerability().withSeverity(LOW))).build();
 
         try {
-            findingAnalyser.analyse(findings, new FindingThresholds());
+            findingAnalyser.analyse(findings, new FindingThresholds(null, null, null, 0));
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(MojoFailureException.class)));
         }
@@ -179,7 +179,7 @@ public class FindingsAnalyserTest {
                         .withAnalysis(anAnalysis().withSuppressed(true).withState(FALSE_POSITIVE))).build();
 
         try {
-            findingAnalyser.analyse(findings, new FindingThresholds());
+            findingAnalyser.analyse(findings, new FindingThresholds(null, null, null, 0));
         } catch (Exception ex) {
             fail("No exception expected");
         }

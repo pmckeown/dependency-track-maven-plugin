@@ -1,9 +1,5 @@
 package io.github.pmckeown.dependencytrack;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType(propOrder = { "critical", "high", "medium", "low" })
 public class Thresholds {
 
     private Integer critical;
@@ -12,36 +8,36 @@ public class Thresholds {
     private Integer low;
 
     public Thresholds() {
-        this.critical = 0;
-        this.high = 0;
-        this.medium = 0;
-        this.low = 0;
+        this.critical = null;
+        this.high = null;
+        this.medium = null;
+        this.low = null;
     }
 
-    public Thresholds(int critical, int high, int medium, int low) {
+    public Thresholds(Integer critical, Integer high, Integer medium, Integer low) {
         this.critical = critical;
         this.high = high;
         this.medium = medium;
         this.low = low;
     }
 
-    @XmlElement(name = "maximumCriticalIssueCount")
     public Integer getCritical() {
         return critical;
     }
 
-    @XmlElement(name = "maximumHighIssueCount")
     public Integer getHigh() {
         return high;
     }
 
-    @XmlElement(name = "maximumMediumIssueCount")
     public Integer getMedium() {
         return medium;
     }
 
-    @XmlElement(name = "maximumLowIssueCount")
     public Integer getLow() {
         return low;
+    }
+
+    public boolean isEmpty() {
+        return critical == null && high == null && medium == null && low == null;
     }
 }

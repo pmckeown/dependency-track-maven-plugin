@@ -452,8 +452,12 @@
                                     <goal>findings</goal>
                                 </goals>
                                 <configuration>
-                                    <!-- Enables all finding thresholds with a value of 0 -->
-                                    <findingThresholds />
+                                    <findingThresholds>
+                                        <critical>0</critical>
+                                        <high>0</high>
+                                        <medium>0</medium>
+                                        <low>0</low>
+                                    </findingThresholds>
                                 </configuration>
                             </execution>
                         </executions>
