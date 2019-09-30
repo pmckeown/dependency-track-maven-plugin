@@ -106,7 +106,7 @@ public class MetricsAnalyserTest {
                 .withHigh(200)
                 .withMedium(300)
                 .withLow(400)
-                .withUnassigned.build();
+                .withUnassigned(500).build();
 
         try {
             metricsAnalyser.analyse(metrics, new MetricsThresholds(0, 0, 0, 0, 0));
