@@ -8,7 +8,7 @@ public class MetricsThresholds extends Thresholds {
         super();
     }
 
-    public MetricsThresholds(Integer critical, Integer high, Integer medium, Integer low) {
-        super(critical, high, medium, low);
+    public MetricsThresholds(Integer critical, Integer high, Integer medium, Integer low, Integer unassigned) {
+        super(critical, high, medium, low, unassigned);
     }
 }

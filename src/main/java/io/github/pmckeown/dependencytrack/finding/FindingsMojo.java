@@ -38,6 +38,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
  *         &lt;high&gt;0&lt;/high&gt;
  *         &lt;medium&gt;10&lt;/medium&gt;
  *         &lt;low&gt;20&lt;/low&gt;
+ *         &lt;unassigned&gt;30&lt;/unassigned&gt;
  *     &lt;/findingThresholds&gt;
  * &lt;/configuration&gt;
  *
@@ -52,6 +53,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
  *              <li>high</li>
  *              <li>medium</li>
  *              <li>low</li>
+ *              <li>unassigned</li>
  *          </ol>
  *     </li>
  * </ol>

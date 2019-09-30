@@ -45,6 +45,6 @@ public class Thresholds {
     }
 
     public boolean isEmpty() {
-        return critical == null && high == null && medium == null && low == null;
+        return critical == null && high == null && medium == null && low == null && unassigned == null;
     }
 }

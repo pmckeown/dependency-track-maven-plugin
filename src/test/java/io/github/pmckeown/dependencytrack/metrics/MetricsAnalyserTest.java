@@ -33,7 +33,7 @@ public class MetricsAnalyserTest {
         Metrics metrics = aMetrics().withCritical(100).build();
 
         try {
-            metricsAnalyser.analyse(metrics, new MetricsThresholds(0, null, null, null));
+            metricsAnalyser.analyse(metrics, new MetricsThresholds(0, null, null, null, null));
             fail("MojoFailureException expected");
         } catch (Exception ex) {
             assertThat(ex, instanceOf(MojoFailureException.class));
@@ -47,7 +47,7 @@ public class MetricsAnalyserTest {
         Metrics metrics = aMetrics().withHigh(200).build();
 
         try {
-            metricsAnalyser.analyse(metrics, new MetricsThresholds(null, 0, null, null));
+            metricsAnalyser.analyse(metrics, new MetricsThresholds(null, 0, null, null, null));
             fail("MojoFailureException expected");
         } catch (Exception ex) {
             assertThat(ex, instanceOf(MojoFailureException.class));
@@ -61,7 +61,7 @@ public class MetricsAnalyserTest {
         Metrics metrics = aMetrics().withMedium(300).build();
 
         try {
-            metricsAnalyser.analyse(metrics, new MetricsThresholds(null, null, 0, null));
+            metricsAnalyser.analyse(metrics, new MetricsThresholds(null, null, 0, null, null));
             fail("MojoFailureException expected");
         } catch (Exception ex) {
             assertThat(ex, instanceOf(MojoFailureException.class));
@@ -75,7 +75,7 @@ public class MetricsAnalyserTest {
         Metrics metrics = aMetrics().withLow(400).build();
 
         try {
-            metricsAnalyser.analyse(metrics, new MetricsThresholds(null, null, null, 0));
+            metricsAnalyser.analyse(metrics, new MetricsThresholds(null, null, null, 0, null));
             fail("MojoFailureException expected");
         } catch (Exception ex) {
             assertThat(ex, instanceOf(MojoFailureException.class));
@@ -85,12 +85,27 @@ public class MetricsAnalyserTest {
     }
 
     @Test
+    public void thatIfUnassignedIssuesExistThenAnErrorIsReturned() throws Exception {
+        Metrics metrics = aMetrics().withLow(400).build();
+
+        try {
+            metricsAnalyser.analyse(metrics, new MetricsThresholds(null, null, null, null, 0));
+            fail("MojoFailureException expected");
+        } catch (Exception ex) {
+            assertThat(ex, instanceOf(MojoFailureException.class));
+        }
+
+        verify(logger).warn(ERROR_TEMPLATE, UNASSIGNED, 500, 0);
+    }
+
+    @Test
     public void thatIfIssuesExistInMultipleCategoriesThenAllAreLogged() throws Exception {
         Metrics metrics = aMetrics()
                 .withCritical(100)
                 .withHigh(200)
                 .withMedium(300)
-                .withLow(400).build();
+                .withLow(400)
+                .withUnassigned.build();
 
         try {
             metricsAnalyser.analyse(metrics, new MetricsThresholds(0, 0, 0, 0));
@@ -103,5 +118,6 @@ public class MetricsAnalyserTest {
         verify(logger).warn(ERROR_TEMPLATE, HIGH, 200, 0);
         verify(logger).warn(ERROR_TEMPLATE, MEDIUM, 300, 0);
         verify(logger).warn(ERROR_TEMPLATE, LOW, 400, 0);
+        verify(logger).warn(ERROR_TEMPLATE, UNASSIGNED, 500, 0);
     }
 }
