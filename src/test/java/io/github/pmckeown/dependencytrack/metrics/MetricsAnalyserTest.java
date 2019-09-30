@@ -87,7 +87,7 @@ public class MetricsAnalyserTest {
 
     @Test
     public void thatIfUnassignedIssuesExistThenAnErrorIsReturned() throws Exception {
-        Metrics metrics = aMetrics().withLow(400).build();
+        Metrics metrics = aMetrics().withUnassigned(500).build();
 
         try {
             metricsAnalyser.analyse(metrics, new MetricsThresholds(null, null, null, null, 0));
@@ -109,7 +109,7 @@ public class MetricsAnalyserTest {
                 .withUnassigned.build();
 
         try {
-            metricsAnalyser.analyse(metrics, new MetricsThresholds(0, 0, 0, 0));
+            metricsAnalyser.analyse(metrics, new MetricsThresholds(0, 0, 0, 0, 0));
             fail("MojoFailureException expected");
         } catch (Exception ex) {
             assertThat(ex, instanceOf(MojoFailureException.class));
