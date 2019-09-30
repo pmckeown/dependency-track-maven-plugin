@@ -10,8 +10,9 @@ import java.util.List;
 
 import static io.github.pmckeown.dependencytrack.finding.Severity.CRITICAL;
 import static io.github.pmckeown.dependencytrack.finding.Severity.HIGH;
-import static io.github.pmckeown.dependencytrack.finding.Severity.LOW;
 import static io.github.pmckeown.dependencytrack.finding.Severity.MEDIUM;
+import static io.github.pmckeown.dependencytrack.finding.Severity.LOW;
+import static io.github.pmckeown.dependencytrack.finding.Severity.UNASSIGNED;
 
 @Singleton
 public class FindingsAnalyser {
@@ -38,6 +39,8 @@ public class FindingsAnalyser {
                 && !f.getAnalysis().isSuppressed()).count();
         long low = findings.stream().filter(f -> f.getVulnerability().getSeverity() == LOW
                 && !f.getAnalysis().isSuppressed()).count();
+        long unassigned = findings.stream().filter(f -> f.getVulnerability().getSeverity() == UNASSIGNED
+                && !f.getAnalysis().isSuppressed()).count();
 
         if (findingThresholds.getCritical() != null && critical > findingThresholds.getCritical()) {
             logger.warn(ERROR_TEMPLATE, Constants.CRITICAL, critical, findingThresholds.getCritical());
@@ -56,6 +59,10 @@ public class FindingsAnalyser {
 
         if (findingThresholds.getLow() != null && low > findingThresholds.getLow()) {
             logger.warn(ERROR_TEMPLATE, Constants.LOW, low, findingThresholds.getLow());
+            failed = true;
+        }
+        if (findingThresholds.getUnassigned() != null && unassigned > findingThresholds.getUnassigned()) {
+            logger.warn(ERROR_TEMPLATE, Constants.UNASSIGNED, unassigned, findingThresholds.getUnassigned());
             failed = true;
         }
 

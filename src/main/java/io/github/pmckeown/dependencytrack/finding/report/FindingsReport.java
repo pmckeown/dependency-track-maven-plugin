@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @XmlRootElement(name = "findingsReport")
-@XmlType(propOrder = {"policyApplied", "critical", "high", "medium", "low"})
+@XmlType(propOrder = {"policyApplied", "critical", "high", "medium", "low", "unassigned"})
 public class FindingsReport {
 
     private PolicyApplied policyApplied;
@@ -52,13 +52,18 @@ public class FindingsReport {
         return filterFindings(findings, Severity.LOW);
     }
 
+    @XmlElement(name = "unassigned")
+    public FindingsWrapper getUnassigned() {
+        return filterFindings(findings, Severity.UNASSIGNED);
+    }
+
     private FindingsWrapper filterFindings(List<Finding> findings, Severity severity) {
         List<Finding> filteredFindings = findings.stream().filter(
                 finding -> finding.getVulnerability().getSeverity() ==  severity).collect(Collectors.toList());
         return new FindingsWrapper(filteredFindings.size(), filteredFindings);
     }
 
-    @XmlType(propOrder = { "info", "critical", "high", "medium", "low" }, name = "policyApplied")
+    @XmlType(propOrder = { "info", "critical", "high", "medium", "low", "unassigned" }, name = "policyApplied")
     static class PolicyApplied {
 
         private static final String NO_POLICY_APPLIED_MESSAGE = "No policy was applied";
@@ -66,6 +71,7 @@ public class FindingsReport {
         private Integer high;
         private Integer medium;
         private Integer low;
+        private Integer unassigned;
         private String info;
 
         PolicyApplied(FindingThresholds findingThresholds) {
@@ -77,6 +83,7 @@ public class FindingsReport {
                 this.high = findingThresholds.getHigh();
                 this.medium = findingThresholds.getMedium();
                 this.low = findingThresholds.getLow();
+                this.unassigned = findingThresholds.getUnassigned();
             }
         }
 
@@ -103,6 +110,11 @@ public class FindingsReport {
         @XmlElement(name = "maximumLowIssueCount", required = false)
         public Integer getLow() {
             return low;
+        }
+
+        @XmlElement(name = "maximumUnassignedIssueCount", required = false)
+        public Integer getUnassigned() {
+            return unassigned;
         }
     }
 }

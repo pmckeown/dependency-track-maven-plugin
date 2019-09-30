@@ -65,7 +65,7 @@ public class FindingsReportWriterTest {
     }
 
     private FindingThresholds someFindingThresholds() {
-        return new FindingThresholds(1, 2, 3, 4);
+        return new FindingThresholds(1, 2, 3, 4, 5);
     }
 
     private List<Finding> someFindings() {

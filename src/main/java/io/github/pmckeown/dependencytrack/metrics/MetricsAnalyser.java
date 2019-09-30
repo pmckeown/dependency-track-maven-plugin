@@ -8,8 +8,9 @@ import javax.inject.Singleton;
 
 import static io.github.pmckeown.dependencytrack.Constants.CRITICAL;
 import static io.github.pmckeown.dependencytrack.Constants.HIGH;
-import static io.github.pmckeown.dependencytrack.Constants.LOW;
 import static io.github.pmckeown.dependencytrack.Constants.MEDIUM;
+import static io.github.pmckeown.dependencytrack.Constants.LOW;
+import static io.github.pmckeown.dependencytrack.Constants.UNASSIGNED;
 
 @Singleton
 public class MetricsAnalyser {
@@ -45,6 +46,11 @@ public class MetricsAnalyser {
 
         if (metricThresholds.getLow() != null && metrics.getLow() > metricThresholds.getLow()) {
             logger.warn(ERROR_TEMPLATE, LOW, metrics.getLow(), metricThresholds.getLow());
+            failed = true;
+        }
+
+        if (metricThresholds.getUnassigned() != null && metrics.getUnassigned() > metricThresholds.getUnassigned()) {
+            logger.warn(ERROR_TEMPLATE, LOW, metrics.getUnassigned(), metricThresholds.getUnassigned());
             failed = true;
         }
 
