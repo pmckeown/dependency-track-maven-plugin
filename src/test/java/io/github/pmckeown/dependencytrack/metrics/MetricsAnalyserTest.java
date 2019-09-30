@@ -10,8 +10,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static io.github.pmckeown.dependencytrack.Constants.CRITICAL;
 import static io.github.pmckeown.dependencytrack.Constants.HIGH;
-import static io.github.pmckeown.dependencytrack.Constants.LOW;
 import static io.github.pmckeown.dependencytrack.Constants.MEDIUM;
+import static io.github.pmckeown.dependencytrack.Constants.LOW;
+import static io.github.pmckeown.dependencytrack.Constants.UNASSIGNED;
 import static io.github.pmckeown.dependencytrack.metrics.MetricsBuilder.aMetrics;
 import static io.github.pmckeown.dependencytrack.metrics.MetricsAnalyser.ERROR_TEMPLATE;
 import static org.hamcrest.CoreMatchers.instanceOf;
