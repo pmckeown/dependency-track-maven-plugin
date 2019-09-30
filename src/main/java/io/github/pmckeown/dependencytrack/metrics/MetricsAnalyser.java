@@ -50,7 +50,7 @@ public class MetricsAnalyser {
         }
 
         if (metricThresholds.getUnassigned() != null && metrics.getUnassigned() > metricThresholds.getUnassigned()) {
-            logger.warn(ERROR_TEMPLATE, LOW, metrics.getUnassigned(), metricThresholds.getUnassigned());
+            logger.warn(ERROR_TEMPLATE, UNASSIGNED, metrics.getUnassigned(), metricThresholds.getUnassigned());
             failed = true;
         }
 
