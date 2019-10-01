@@ -359,11 +359,21 @@
             </build>
         </profile>
 
+        <!--
+            This profile activates integration with the Sonarcloud project for static analysis of the codebase.
+            It is only enabled if the SONAR_TOKEN environment variable is set in the build environment.
+        -->
         <profile>
             <id>sonar</id>
+            <activation>
+                <property>
+                    <name>env.SONAR_TOKEN</name>
+                </property>
+            </activation>
             <properties>
                 <sonar.host.url>https://sonarcloud.io</sonar.host.url>
                 <sonar.organization>pmckeown</sonar.organization>
+                <sonar.projectKey>pmckeown_dependency-track-maven-plugin</sonar.projectKey>
                 <!--suppress UnresolvedMavenProperty -->
                 <sonar.login>${env.SONAR_TOKEN}</sonar.login>
             </properties>
