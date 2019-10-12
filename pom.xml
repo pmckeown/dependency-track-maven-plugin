@@ -7,7 +7,7 @@
 
     <groupId>io.github.pmckeown</groupId>
     <artifactId>dependency-track-maven-plugin</artifactId>
-    <version>0.7.0</version>
+    <version>0.8.0</version>
     <packaging>maven-plugin</packaging>
 
     <name>Dependency Track Maven Plugin</name>
@@ -71,13 +71,13 @@
         <dependency>
             <groupId>com.konghq</groupId>
             <artifactId>unirest-java</artifactId>
-            <version>2.3.14</version>
+            <version>3.1.00</version>
             <classifier>standalone</classifier>
         </dependency>
         <dependency>
             <groupId>com.konghq</groupId>
             <artifactId>unirest-objectmapper-jackson</artifactId>
-            <version>2.3.14</version>
+            <version>3.1.00</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -131,6 +131,21 @@
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
             <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>javax.activation</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>2.3.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.3.2</version>
         </dependency>
 
         <!-- Test dependencies -->
@@ -359,11 +374,21 @@
             </build>
         </profile>
 
+        <!--
+            This profile activates integration with the Sonarcloud project for static analysis of the codebase.
+            It is only enabled if the SONAR_TOKEN environment variable is set in the build environment.
+        -->
         <profile>
             <id>sonar</id>
+            <activation>
+                <property>
+                    <name>env.SONAR_TOKEN</name>
+                </property>
+            </activation>
             <properties>
                 <sonar.host.url>https://sonarcloud.io</sonar.host.url>
                 <sonar.organization>pmckeown</sonar.organization>
+                <sonar.projectKey>pmckeown_dependency-track-maven-plugin</sonar.projectKey>
                 <!--suppress UnresolvedMavenProperty -->
                 <sonar.login>${env.SONAR_TOKEN}</sonar.login>
             </properties>

@@ -20,7 +20,7 @@ public class FindingsReportTest {
 
     @Test
     public void thatAFindingsReportCanBeGenerated() {
-        FindingThresholds findingThresholds = new FindingThresholds(1, null, null, null);
+        FindingThresholds findingThresholds = new FindingThresholds(1, null, null, null, null);
         List<Finding> findings = aListOfFindings()
                 .withFinding(aFinding()
                         .withAnalysis(anAnalysis())
@@ -28,7 +28,7 @@ public class FindingsReportTest {
                         .withComponent(aComponent()
                                 .withName("shonky-lib")))
                 .build();
-        FindingsReport findingsReport = new FindingsReport(findingThresholds, findings);
+        FindingsReport findingsReport = new FindingsReport(findingThresholds, findings, true);
 
         assertThat(findingsReport.getCritical().getCount(), is(equalTo(1)));
         assertThat(findingsReport.getCritical().getFindings().get(0).getComponent().getName(),
@@ -37,7 +37,7 @@ public class FindingsReportTest {
 
     @Test
     public void thatAFindingsAreSortedIntoSeparateBuckets() {
-        FindingThresholds findingThresholds = new FindingThresholds(1, null, null, null);
+        FindingThresholds findingThresholds = new FindingThresholds(1, null, null, null, null);
         List<Finding> findings = aListOfFindings()
                 .withFinding(aFinding()
                         .withAnalysis(anAnalysis())
@@ -55,13 +55,18 @@ public class FindingsReportTest {
                         .withAnalysis(anAnalysis())
                         .withVulnerability(aVulnerability().withSeverity(Severity.LOW))
                         .withComponent(aComponent()))
+                .withFinding(aFinding()
+                        .withAnalysis(anAnalysis())
+                        .withVulnerability(aVulnerability().withSeverity(Severity.UNASSIGNED))
+                        .withComponent(aComponent()))
                 .build();
-        FindingsReport findingsReport = new FindingsReport(findingThresholds, findings);
+        FindingsReport findingsReport = new FindingsReport(findingThresholds, findings, true);
 
         assertThat(findingsReport.getCritical().getCount(), is(equalTo(1)));
         assertThat(findingsReport.getHigh().getCount(), is(equalTo(1)));
         assertThat(findingsReport.getMedium().getCount(), is(equalTo(1)));
         assertThat(findingsReport.getLow().getCount(), is(equalTo(1)));
+        assertThat(findingsReport.getUnassigned().getCount(), is(equalTo(1)));
     }
 
 }

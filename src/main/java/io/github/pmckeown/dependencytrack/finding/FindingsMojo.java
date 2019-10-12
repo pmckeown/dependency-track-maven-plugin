@@ -4,7 +4,7 @@ import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.finding.report.FindingsReport;
-import io.github.pmckeown.dependencytrack.finding.report.FindingsReportWriter;
+import io.github.pmckeown.dependencytrack.finding.report.XmlReportWriter;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
@@ -38,6 +38,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
  *         &lt;high&gt;0&lt;/high&gt;
  *         &lt;medium&gt;10&lt;/medium&gt;
  *         &lt;low&gt;20&lt;/low&gt;
+ *         &lt;unassigned&gt;30&lt;/unassigned&gt;
  *     &lt;/findingThresholds&gt;
  * &lt;/configuration&gt;
  *
@@ -52,6 +53,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
  *              <li>high</li>
  *              <li>medium</li>
  *              <li>low</li>
+ *              <li>unassigned</li>
  *          </ol>
  *     </li>
  * </ol>
@@ -69,18 +71,18 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     private FindingsAction findingsAction;
     private FindingsPrinter findingsPrinter;
     private FindingsAnalyser findingsAnalyser;
-    private FindingsReportWriter findingsReportWriter;
+    private XmlReportWriter xmlReportWriter;
 
     @Inject
     public FindingsMojo(ProjectAction projectAction, FindingsAction findingsAction, FindingsPrinter findingsPrinter,
-            FindingsAnalyser findingsAnalyser, FindingsReportWriter findingsReportWriter, CommonConfig commonConfig,
-            Logger logger) {
+                        FindingsAnalyser findingsAnalyser, XmlReportWriter xmlReportWriter, CommonConfig commonConfig,
+                        Logger logger) {
         super(commonConfig, logger);
         this.projectAction = projectAction;
         this.findingsAction = findingsAction;
         this.findingsPrinter = findingsPrinter;
         this.findingsAnalyser = findingsAnalyser;
-        this.findingsReportWriter = findingsReportWriter;
+        this.xmlReportWriter = xmlReportWriter;
     }
 
     @Override
@@ -92,19 +94,22 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
             findingsPrinter.printFindings(project, findings);
 
             if (findingThresholds != null) {
-                findingsAnalyser.analyse(findings, findingThresholds);
+                boolean policyBreached = findingsAnalyser.doNumberOfFindingsBreachPolicy(findings, findingThresholds);
+                generateReport(findings, policyBreached);
+
+                if (policyBreached) {
+                    throw new MojoFailureException("Number of findings exceeded defined thresholds");
+                }
             }
         } catch (DependencyTrackException ex) {
             handleFailure("Error occurred when getting findings", ex);
-        } finally {
-            generateReport(findings);
         }
     }
 
-    private void generateReport(List<Finding> findings) throws MojoExecutionException {
+    private void generateReport(List<Finding> findings, boolean policyBreached) throws MojoExecutionException {
         try {
-            FindingsReport findingsReport = new FindingsReport(findingThresholds, findings);
-            findingsReportWriter.write(findingsReport);
+            FindingsReport findingsReport = new FindingsReport(findingThresholds, findings, policyBreached);
+            xmlReportWriter.write(findingsReport);
         }
         catch (JAXBException ex) {
             handleFailure("Error occurred when generating report", ex);

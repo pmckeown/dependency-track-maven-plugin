@@ -7,12 +7,12 @@ import javax.xml.bind.Marshaller;
 import java.io.File;
 
 @Singleton
-public class FindingsReportWriter {
+public class XmlReportWriter {
 
     private FindingsReportMarshallerService marshallerService;
 
     @Inject
-    public FindingsReportWriter(FindingsReportMarshallerService marshallerService) {
+    public XmlReportWriter(FindingsReportMarshallerService marshallerService) {
         this.marshallerService = marshallerService;
     }
 
@@ -23,10 +23,10 @@ public class FindingsReportWriter {
     }
 
     private File getFile() {
-        File targetDir = new File("target");
+        File targetDir = new File(FindingsReportConstants.OUTPUT_DIRECTORY);
         if (!targetDir.exists()) {
             targetDir.mkdir();
         }
-        return new File("target/dependency-track-findings.xml");
+        return new File(FindingsReportConstants.XML_REPORT_FILENAME);
     }
 }

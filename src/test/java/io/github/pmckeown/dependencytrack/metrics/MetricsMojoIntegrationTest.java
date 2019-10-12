@@ -101,7 +101,8 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
                                                         .withCritical(101)
                                                         .withHigh(201)
                                                         .withMedium(301)
-                                                        .withLow(401)))
+                                                        .withLow(401)
+                                                        .withUnassigned(501)))
                         .build()))));
 
         MetricsMojo metricsMojo = loadMetricsMojo(mojoRule);
@@ -109,7 +110,7 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
         metricsMojo.setApiKey("abc123");
         metricsMojo.setProjectName("test-project");
         metricsMojo.setProjectVersion("1.2.3");
-        metricsMojo.setMetricsThresholds(new MetricsThresholds(100, 200, 300, 400));
+        metricsMojo.setMetricsThresholds(new MetricsThresholds(100, 200, 300, 400, 500));
 
         try {
             metricsMojo.execute();
