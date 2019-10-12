@@ -17,7 +17,7 @@ import static io.github.pmckeown.dependencytrack.finding.Severity.UNASSIGNED;
 @Singleton
 public class FindingsAnalyser {
 
-    static final String ERROR_TEMPLATE = "Number of %s issues [%d] exceeds the maximum allowed [%d]";
+    private static final String ERROR_TEMPLATE = "Number of %s issues [%d] exceeds the maximum allowed [%d]";
 
     private Logger logger;
 
@@ -31,16 +31,11 @@ public class FindingsAnalyser {
 
         boolean policyBreached = false;
 
-        long critical = findings.stream().filter(f -> f.getVulnerability().getSeverity() == CRITICAL
-                && !f.getAnalysis().isSuppressed()).count();
-        long high = findings.stream().filter(f -> f.getVulnerability().getSeverity() == HIGH
-                && !f.getAnalysis().isSuppressed()).count();
-        long medium = findings.stream().filter(f -> f.getVulnerability().getSeverity() == MEDIUM
-                && !f.getAnalysis().isSuppressed()).count();
-        long low = findings.stream().filter(f -> f.getVulnerability().getSeverity() == LOW
-                && !f.getAnalysis().isSuppressed()).count();
-        long unassigned = findings.stream().filter(f -> f.getVulnerability().getSeverity() == UNASSIGNED
-                && !f.getAnalysis().isSuppressed()).count();
+        long critical = getCount(findings, CRITICAL);
+        long high = getCount(findings, HIGH);
+        long medium = getCount(findings, MEDIUM);
+        long low = getCount(findings, LOW);
+        long unassigned = getCount(findings, UNASSIGNED);
 
         if (findingThresholds.getCritical() != null && critical > findingThresholds.getCritical()) {
             logger.warn(ERROR_TEMPLATE, Constants.CRITICAL, critical, findingThresholds.getCritical());
@@ -67,5 +62,10 @@ public class FindingsAnalyser {
         }
 
         return policyBreached;
+    }
+
+    private long getCount(List<Finding> findings, Severity severity) {
+        return findings.stream().filter(f -> f.getVulnerability().getSeverity() == severity
+                && !f.getAnalysis().isSuppressed()).count();
     }
 }
