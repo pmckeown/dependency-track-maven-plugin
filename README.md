@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.com/pmckeown/dependency-track-maven-plugin.svg?branch=master)](https://travis-ci.com/pmckeown/dependency-track-maven-plugin)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.pmckeown/dependency-track-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.pmckeown/dependency-track-maven-plugin)
-[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=pmckeown_dependency-track-maven-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=pmckeown_dependency-track-maven-plugin)
-[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=pmckeown_dependency-track-maven-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=pmckeown_dependency-track-maven-plugin)
+[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=io.github.pmckeown%3Adependency-track-maven-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=io.github.pmckeown%3Adependency-track-maven-plugin)
+[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=io.github.pmckeown%3Adependency-track-maven-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=io.github.pmckeown%3Adependency-track-maven-plugin)
 
 # dependency-track-maven-plugin
 Maven plugin to integrate with a [Dependency-Track](https://dependencytrack.org/) server to submit dependency manifests 
