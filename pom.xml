@@ -71,13 +71,13 @@
         <dependency>
             <groupId>com.konghq</groupId>
             <artifactId>unirest-java</artifactId>
-            <version>2.3.14</version>
+            <version>3.1.00</version>
             <classifier>standalone</classifier>
         </dependency>
         <dependency>
             <groupId>com.konghq</groupId>
             <artifactId>unirest-objectmapper-jackson</artifactId>
-            <version>2.3.14</version>
+            <version>3.1.00</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
