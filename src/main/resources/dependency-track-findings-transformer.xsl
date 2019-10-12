@@ -22,11 +22,24 @@
                         font-variant: normal;
                         text-transform: none;
                     }
+
+                    #policy-breached{color: red;}
+                    #policy-not-breached{color: green;}
                 </style>
             </head>
             <body>
                 <h1>Dependency Track Findings Report</h1>
                 <h2>Policy</h2>
+                <xsl:if test="findingsReport/policyBreached = 'true'">
+                    <div id="policy-breached">
+                        Policy Breached
+                    </div>
+                </xsl:if>
+                <xsl:if test="findingsReport/policyBreached = 'false'">
+                    <div id="policy-not-breached">
+                        Policy Not Breached
+                    </div>
+                </xsl:if>
                 <div>
                     The following Policy was applied when the report was generated.
                 </div>
