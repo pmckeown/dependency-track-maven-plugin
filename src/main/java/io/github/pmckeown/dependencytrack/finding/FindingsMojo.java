@@ -4,7 +4,7 @@ import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.finding.report.FindingsReport;
-import io.github.pmckeown.dependencytrack.finding.report.FindingsReportWriter;
+import io.github.pmckeown.dependencytrack.finding.report.XmlReportWriter;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
@@ -71,18 +71,18 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     private FindingsAction findingsAction;
     private FindingsPrinter findingsPrinter;
     private FindingsAnalyser findingsAnalyser;
-    private FindingsReportWriter findingsReportWriter;
+    private XmlReportWriter xmlReportWriter;
 
     @Inject
     public FindingsMojo(ProjectAction projectAction, FindingsAction findingsAction, FindingsPrinter findingsPrinter,
-            FindingsAnalyser findingsAnalyser, FindingsReportWriter findingsReportWriter, CommonConfig commonConfig,
-            Logger logger) {
+                        FindingsAnalyser findingsAnalyser, XmlReportWriter xmlReportWriter, CommonConfig commonConfig,
+                        Logger logger) {
         super(commonConfig, logger);
         this.projectAction = projectAction;
         this.findingsAction = findingsAction;
         this.findingsPrinter = findingsPrinter;
         this.findingsAnalyser = findingsAnalyser;
-        this.findingsReportWriter = findingsReportWriter;
+        this.xmlReportWriter = xmlReportWriter;
     }
 
     @Override
@@ -106,7 +106,7 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     private void generateReport(List<Finding> findings) throws MojoExecutionException {
         try {
             FindingsReport findingsReport = new FindingsReport(findingThresholds, findings);
-            findingsReportWriter.write(findingsReport);
+            xmlReportWriter.write(findingsReport);
         }
         catch (JAXBException ex) {
             handleFailure("Error occurred when generating report", ex);
