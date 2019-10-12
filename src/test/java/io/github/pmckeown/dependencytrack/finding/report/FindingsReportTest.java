@@ -28,7 +28,7 @@ public class FindingsReportTest {
                         .withComponent(aComponent()
                                 .withName("shonky-lib")))
                 .build();
-        FindingsReport findingsReport = new FindingsReport(findingThresholds, findings);
+        FindingsReport findingsReport = new FindingsReport(findingThresholds, findings, true);
 
         assertThat(findingsReport.getCritical().getCount(), is(equalTo(1)));
         assertThat(findingsReport.getCritical().getFindings().get(0).getComponent().getName(),
@@ -60,7 +60,7 @@ public class FindingsReportTest {
                         .withVulnerability(aVulnerability().withSeverity(Severity.UNASSIGNED))
                         .withComponent(aComponent()))
                 .build();
-        FindingsReport findingsReport = new FindingsReport(findingThresholds, findings);
+        FindingsReport findingsReport = new FindingsReport(findingThresholds, findings, true);
 
         assertThat(findingsReport.getCritical().getCount(), is(equalTo(1)));
         assertThat(findingsReport.getHigh().getCount(), is(equalTo(1)));

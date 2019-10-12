@@ -47,7 +47,7 @@ public class XmlReportWriterTest {
     @Test
     public void thatFindingReportCanBeMarshalled() {
         try {
-            xmlReportWriter.write(new FindingsReport(someFindingThresholds(), someFindings()));
+            xmlReportWriter.write(new FindingsReport(someFindingThresholds(), someFindings(), true));
         } catch (Exception ex) {
             fail(format("No exception expected but got: %s", ex.getMessage()));
         }
@@ -57,7 +57,7 @@ public class XmlReportWriterTest {
     public void thatAnExceptionIsThrownWhenMarshallingFails() throws Exception {
         doThrow(JAXBException.class).when(marshaller).marshal(any(FindingsReport.class), any(File.class));
         try {
-            xmlReportWriter.write(new FindingsReport(someFindingThresholds(), someFindings()));
+            xmlReportWriter.write(new FindingsReport(someFindingThresholds(), someFindings(), true));
             fail("Exception expected but none occurred");
         } catch (Exception ex) {
             assertThat(ex, instanceOf(JAXBException.class));

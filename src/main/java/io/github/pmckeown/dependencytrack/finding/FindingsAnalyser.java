@@ -26,10 +26,10 @@ public class FindingsAnalyser {
         this.logger = logger;
     }
 
-    void analyse(List<Finding> findings, FindingThresholds findingThresholds) throws MojoFailureException {
+    boolean doNumberOfFindingsBreachPolicy(List<Finding> findings, FindingThresholds findingThresholds) {
         logger.info("Comparing findings against defined thresholds");
 
-        boolean failed = false;
+        boolean policyBreached = false;
 
         long critical = findings.stream().filter(f -> f.getVulnerability().getSeverity() == CRITICAL
                 && !f.getAnalysis().isSuppressed()).count();
@@ -44,30 +44,28 @@ public class FindingsAnalyser {
 
         if (findingThresholds.getCritical() != null && critical > findingThresholds.getCritical()) {
             logger.warn(ERROR_TEMPLATE, Constants.CRITICAL, critical, findingThresholds.getCritical());
-            failed = true;
+            policyBreached = true;
         }
 
         if (findingThresholds.getHigh() != null && high > findingThresholds.getHigh()) {
             logger.warn(ERROR_TEMPLATE, Constants.HIGH, high, findingThresholds.getHigh());
-            failed = true;
+            policyBreached = true;
         }
 
         if (findingThresholds.getMedium() != null && medium > findingThresholds.getMedium()) {
             logger.warn(ERROR_TEMPLATE, Constants.MEDIUM, medium, findingThresholds.getMedium());
-            failed = true;
+            policyBreached = true;
         }
 
         if (findingThresholds.getLow() != null && low > findingThresholds.getLow()) {
             logger.warn(ERROR_TEMPLATE, Constants.LOW, low, findingThresholds.getLow());
-            failed = true;
+            policyBreached = true;
         }
         if (findingThresholds.getUnassigned() != null && unassigned > findingThresholds.getUnassigned()) {
             logger.warn(ERROR_TEMPLATE, Constants.UNASSIGNED, unassigned, findingThresholds.getUnassigned());
-            failed = true;
+            policyBreached = true;
         }
 
-        if (failed) {
-            throw new MojoFailureException("Number of findings exceeded defined thresholds");
-        }
+        return policyBreached;
     }
 }

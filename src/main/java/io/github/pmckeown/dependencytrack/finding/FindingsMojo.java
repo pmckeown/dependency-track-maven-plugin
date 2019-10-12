@@ -94,18 +94,21 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
             findingsPrinter.printFindings(project, findings);
 
             if (findingThresholds != null) {
-                findingsAnalyser.analyse(findings, findingThresholds);
+                boolean policyBreached = findingsAnalyser.doNumberOfFindingsBreachPolicy(findings, findingThresholds);
+                generateReport(findings, policyBreached);
+
+                if (policyBreached) {
+                    throw new MojoFailureException("Number of findings exceeded defined thresholds");
+                }
             }
         } catch (DependencyTrackException ex) {
             handleFailure("Error occurred when getting findings", ex);
-        } finally {
-            generateReport(findings);
         }
     }
 
-    private void generateReport(List<Finding> findings) throws MojoExecutionException {
+    private void generateReport(List<Finding> findings, boolean policyBreached) throws MojoExecutionException {
         try {
-            FindingsReport findingsReport = new FindingsReport(findingThresholds, findings);
+            FindingsReport findingsReport = new FindingsReport(findingThresholds, findings, policyBreached);
             xmlReportWriter.write(findingsReport);
         }
         catch (JAXBException ex) {

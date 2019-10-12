@@ -34,7 +34,7 @@ public class FindingsReportIntegrationTest {
     @Test
     public void thatXmlFileCanBeGenerated() {
         try {
-            xmlReportWriter.write(new FindingsReport(thresholds(), findings()));
+            xmlReportWriter.write(new FindingsReport(thresholds(), findings(), true));
             assertThat(new File(FindingsReportConstants.XML_REPORT_FILENAME).exists(), is(true));
         } catch (Exception ex) {
             fail("Exception not expected");
@@ -44,7 +44,7 @@ public class FindingsReportIntegrationTest {
     @Test
     public void thatXmlFileCanBeTransformed() {
         try {
-            xmlReportWriter.write(new FindingsReport(thresholds(), findings()));
+            xmlReportWriter.write(new FindingsReport(thresholds(), findings(), true));
             htmlReportWriter.write();
             assertThat(new File(FindingsReportConstants.HTML_REPORT_FILENAME).exists(), is(true));
         } catch (Exception ex) {
