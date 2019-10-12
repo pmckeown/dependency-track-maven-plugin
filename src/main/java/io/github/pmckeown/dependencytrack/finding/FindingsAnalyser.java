@@ -2,7 +2,6 @@ package io.github.pmckeown.dependencytrack.finding;
 
 import io.github.pmckeown.dependencytrack.Constants;
 import io.github.pmckeown.util.Logger;
-import org.apache.maven.plugin.MojoFailureException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
