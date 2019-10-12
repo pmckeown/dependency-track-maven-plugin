@@ -28,10 +28,10 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FindingsReportWriterTest {
+public class XmlReportWriterTest {
 
     @InjectMocks
-    private FindingsReportWriter findingsReportWriter;
+    private XmlReportWriter xmlReportWriter;
 
     @Mock
     private FindingsReportMarshallerService marshallerService;
@@ -47,7 +47,7 @@ public class FindingsReportWriterTest {
     @Test
     public void thatFindingReportCanBeMarshalled() {
         try {
-            findingsReportWriter.write(new FindingsReport(someFindingThresholds(), someFindings()));
+            xmlReportWriter.write(new FindingsReport(someFindingThresholds(), someFindings(), true));
         } catch (Exception ex) {
             fail(format("No exception expected but got: %s", ex.getMessage()));
         }
@@ -57,7 +57,7 @@ public class FindingsReportWriterTest {
     public void thatAnExceptionIsThrownWhenMarshallingFails() throws Exception {
         doThrow(JAXBException.class).when(marshaller).marshal(any(FindingsReport.class), any(File.class));
         try {
-            findingsReportWriter.write(new FindingsReport(someFindingThresholds(), someFindings()));
+            xmlReportWriter.write(new FindingsReport(someFindingThresholds(), someFindings(), true));
             fail("Exception expected but none occurred");
         } catch (Exception ex) {
             assertThat(ex, instanceOf(JAXBException.class));

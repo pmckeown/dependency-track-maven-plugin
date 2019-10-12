@@ -12,24 +12,31 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @XmlRootElement(name = "findingsReport")
-@XmlType(propOrder = {"policyApplied", "critical", "high", "medium", "low", "unassigned"})
+@XmlType(propOrder = {"policyApplied", "policyBreached", "critical", "high", "medium", "low", "unassigned"})
 public class FindingsReport {
 
     private PolicyApplied policyApplied;
+    private Boolean policyBreached;
     private List<Finding> findings;
 
     public FindingsReport() {
         // For JAXB
     }
 
-    public FindingsReport(FindingThresholds findingThresholds, List<Finding> findings) {
+    public FindingsReport(FindingThresholds findingThresholds, List<Finding> findings, boolean policyBreached) {
         this.policyApplied = new PolicyApplied(findingThresholds);
         this.findings = findings;
+        this.policyBreached = policyBreached;
     }
 
     @XmlElement(name = "policyApplied")
     public PolicyApplied getPolicyApplied() {
         return policyApplied;
+    }
+
+    @XmlElement(name = "policyBreached")
+    public boolean getPolicyBreached() {
+        return policyBreached;
     }
 
     @XmlElement(name="critical")
