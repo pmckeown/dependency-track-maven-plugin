@@ -10,7 +10,7 @@
                     table {border-collapse: collapse;}
                     td {padding: 4px;border: 1px black solid;}
                     th {text-align: left;padding: 4px;border: 1px black solid;}
-                    div {margin-bottom: 10px}
+                    div {margin-bottom: 20px}
 
                     body{
                         font-family: Verdana, Geneva, sans-serif;
@@ -23,8 +23,8 @@
                         text-transform: none;
                     }
 
-                    #policy-breached{color: red;}
-                    #policy-not-breached{color: green;}
+                    #policy-breached{color: red; font-size: 16px;}
+                    #policy-not-breached{color: green; font-size: 16px;}
                 </style>
             </head>
             <body>
