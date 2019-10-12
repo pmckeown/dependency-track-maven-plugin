@@ -1,5 +1,6 @@
 package io.github.pmckeown.dependencytrack.finding.report;
 
+import io.github.pmckeown.dependencytrack.finding.Analysis;
 import io.github.pmckeown.dependencytrack.finding.Finding;
 import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
 import io.github.pmckeown.dependencytrack.finding.Severity;
@@ -33,7 +34,7 @@ public class FindingsReportIntegrationTest {
     @Test
     public void thatXmlFileCanBeGenerated() {
         try {
-            xmlReportWriter.write(new FindingsReport(thresholds(), findingsOfEverySeverity()));
+            xmlReportWriter.write(new FindingsReport(thresholds(), findings()));
             assertThat(new File(FindingsReportConstants.XML_REPORT_FILENAME).exists(), is(true));
         } catch (Exception ex) {
             fail("Exception not expected");
@@ -43,7 +44,7 @@ public class FindingsReportIntegrationTest {
     @Test
     public void thatXmlFileCanBeTransformed() {
         try {
-            xmlReportWriter.write(new FindingsReport(thresholds(), findingsOfEverySeverity()));
+            xmlReportWriter.write(new FindingsReport(thresholds(), findings()));
             htmlReportWriter.write();
             assertThat(new File(FindingsReportConstants.HTML_REPORT_FILENAME).exists(), is(true));
         } catch (Exception ex) {
@@ -53,15 +54,19 @@ public class FindingsReportIntegrationTest {
     }
 
     private FindingThresholds thresholds() {
-        return new FindingThresholds(1, 2, 3, 4, 5);
+        return new FindingThresholds(1, 2, 3, 4, null);
     }
 
-    private List<Finding> findingsOfEverySeverity() {
+    private List<Finding> findings() {
         return aListOfFindings()
                 .withFinding(aFinding()
                         .withVulnerability(aVulnerability().withSeverity(Severity.CRITICAL))
                         .withComponent(aComponent())
                         .withAnalysis(anAnalysis()))
+                .withFinding(aFinding()
+                        .withVulnerability(aVulnerability().withSeverity(Severity.CRITICAL))
+                        .withComponent(aComponent().withName("suppressed"))
+                        .withAnalysis(anAnalysis().withState(Analysis.State.FALSE_POSITIVE).withSuppressed(true)))
                 .withFinding(aFinding()
                         .withVulnerability(aVulnerability().withSeverity(Severity.HIGH))
                         .withComponent(aComponent())
