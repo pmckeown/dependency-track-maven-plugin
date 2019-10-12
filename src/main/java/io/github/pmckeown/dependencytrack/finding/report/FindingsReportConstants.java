@@ -1,12 +1,16 @@
 package io.github.pmckeown.dependencytrack.finding.report;
 
-public class FindingsReportConstants {
+class FindingsReportConstants {
 
-    public static final String OUTPUT_DIRECTORY = "target";
+    private FindingsReportConstants() {
+        // Do no instantiate
+    }
 
-    public static final String XSL_STYLESHEET_FILENAME = "src/main/resources/dependency-track-findings-transformer.xsl";
+    static final String OUTPUT_DIRECTORY = "target";
 
-    public static final String XML_REPORT_FILENAME = OUTPUT_DIRECTORY + "/dependency-track-findings.xml";
+    static final String XSL_STYLESHEET_FILENAME = "src/main/resources/dependency-track-findings-transformer.xsl";
 
-    public static final String HTML_REPORT_FILENAME = OUTPUT_DIRECTORY + "/dependency-track-findings.html";
+    static final String XML_REPORT_FILENAME = OUTPUT_DIRECTORY + "/dependency-track-findings.xml";
+
+    static final String HTML_REPORT_FILENAME = OUTPUT_DIRECTORY + "/dependency-track-findings.html";
 }
