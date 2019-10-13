@@ -149,13 +149,14 @@ whatever overridden values that are supplied.
 
 #### Configuration
 
-|Property                  |Required|Default Value|Description                                                                                           |
-|--------------------------|--------|-------------|------------------------------------------------------------------------------------------------------|
-|findingThresholds         |false   |N/A          |If present with no child elements, any issues found in any category will cause the build to fail      |
-|findingThresholds.critical|false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
-|findingThresholds.high    |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
-|findingThresholds.medium  |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
-|findingThresholds.low     |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
+|Property                    |Required|Default Value|Description                                                                                           |
+|----------------------------|--------|-------------|------------------------------------------------------------------------------------------------------|
+|findingThresholds           |false   |N/A          |If not set or no child elements set then no policy will be applied and the goal will always succeed   |
+|findingThresholds.critical  |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
+|findingThresholds.high      |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
+|findingThresholds.medium    |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
+|findingThresholds.low       |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
+|findingThresholds.unassigned|false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
 
 #### Examples
 The following configuration will cause the build to fail if there are any critical or high issues found, more than 5 

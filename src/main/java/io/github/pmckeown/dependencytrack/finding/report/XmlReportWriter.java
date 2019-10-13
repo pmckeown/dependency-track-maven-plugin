@@ -1,5 +1,7 @@
 package io.github.pmckeown.dependencytrack.finding.report;
 
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.xml.bind.JAXBException;
@@ -7,19 +9,23 @@ import javax.xml.bind.Marshaller;
 import java.io.File;
 
 @Singleton
-public class XmlReportWriter {
+class XmlReportWriter {
 
     private FindingsReportMarshallerService marshallerService;
 
     @Inject
-    public XmlReportWriter(FindingsReportMarshallerService marshallerService) {
+    XmlReportWriter(FindingsReportMarshallerService marshallerService) {
         this.marshallerService = marshallerService;
     }
 
-    public void write(FindingsReport findingsReport) throws JAXBException {
-        Marshaller marshaller = marshallerService.getMarshaller();
-        File outputFile = getFile();
-        marshaller.marshal(findingsReport, outputFile);
+    void write(FindingsReport findingsReport) throws DependencyTrackException {
+        try {
+            Marshaller marshaller = marshallerService.getMarshaller();
+            File outputFile = getFile();
+            marshaller.marshal(findingsReport, outputFile);
+        } catch (JAXBException ex) {
+            throw new DependencyTrackException("Error occurred while generating XML report", ex);
+        }
     }
 
     private File getFile() {
