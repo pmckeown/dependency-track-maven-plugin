@@ -43,10 +43,6 @@ class HtmlReportWriter {
         return new File(FindingsReportConstants.HTML_REPORT_FILENAME);
     }
 
-    private File getStylesheetFile() {
-        return new File(FindingsReportConstants.XSL_STYLESHEET_FILENAME);
-    }
-
     private InputStream getStylesheetInputStream() {
         return HtmlReportWriter.class.getResourceAsStream(FindingsReportConstants.XSL_STYLESHEET_FILENAME);
     }

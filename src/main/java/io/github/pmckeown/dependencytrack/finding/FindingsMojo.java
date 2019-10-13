@@ -14,7 +14,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
@@ -85,7 +84,7 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
 
     @Override
     protected void performAction() throws MojoExecutionException, MojoFailureException {
-        List<Finding> findings = new ArrayList<>();
+        List<Finding> findings;
         try {
             Project project = projectAction.getProject(commonConfig.getProjectName(), commonConfig.getProjectVersion());
             findings = findingsAction.getFindings(project);
