@@ -412,7 +412,7 @@
             <properties>
                 <sonar.host.url>https://sonarcloud.io</sonar.host.url>
                 <sonar.organization>pmckeown</sonar.organization>
-                <sonar.projectKey>pmckeown_dependency-track-maven-plugin</sonar.projectKey>
+                <sonar.projectKey>io.github.pmckeown:dependency-track-maven-plugin</sonar.projectKey>
                 <!--suppress UnresolvedMavenProperty -->
                 <sonar.login>${env.SONAR_TOKEN}</sonar.login>
             </properties>
