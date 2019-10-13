@@ -1,5 +1,6 @@
 package io.github.pmckeown.dependencytrack.finding.report;
 
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.finding.Finding;
 import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
 import org.junit.Before;
@@ -60,7 +61,7 @@ public class XmlReportWriterTest {
             xmlReportWriter.write(new FindingsReport(someFindingThresholds(), someFindings(), true));
             fail("Exception expected but none occurred");
         } catch (Exception ex) {
-            assertThat(ex, instanceOf(JAXBException.class));
+            assertThat(ex, instanceOf(DependencyTrackException.class));
         }
     }
 

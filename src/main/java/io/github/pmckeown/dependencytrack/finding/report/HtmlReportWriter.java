@@ -1,27 +1,32 @@
 package io.github.pmckeown.dependencytrack.finding.report;
 
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
+
 import javax.inject.Singleton;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.InputStream;
 
 @Singleton
 class HtmlReportWriter {
 
-    void write() throws IOException, TransformerException {
-        StreamSource stylesheet = new StreamSource(getStylesheetFile());
-        StreamSource input = new StreamSource(getInputFile());
-        StreamResult output = new StreamResult(new FileOutputStream(getOutputFile()));
+    void write() throws DependencyTrackException {
+        try {
+            StreamSource stylesheet = new StreamSource(getStylesheetInputStream());
+            StreamSource input = new StreamSource(getInputFile());
+            StreamResult output = new StreamResult(new FileOutputStream(getOutputFile()));
 
-        Transformer transformer = getSecureTransformerFactory().newTransformer(stylesheet);
-        transformer.transform(input, output);
+            Transformer transformer = getSecureTransformerFactory().newTransformer(stylesheet);
+            transformer.transform(input, output);
+        } catch (Exception ex) {
+            throw new DependencyTrackException("Error occurred when creating HTML report", ex);
+        }
     }
 
     private TransformerFactory getSecureTransformerFactory() throws TransformerConfigurationException {
@@ -40,6 +45,10 @@ class HtmlReportWriter {
 
     private File getStylesheetFile() {
         return new File(FindingsReportConstants.XSL_STYLESHEET_FILENAME);
+    }
+
+    private InputStream getStylesheetInputStream() {
+        return HtmlReportWriter.class.getResourceAsStream(FindingsReportConstants.XSL_STYLESHEET_FILENAME);
     }
 
 }
