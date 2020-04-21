@@ -35,7 +35,7 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
 
     @Test
     public void thatFindingMojoCanRetrieveFindingsAndPrintThem() throws Exception {
-        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(
                 aResponse().withBody(asJson(
@@ -60,7 +60,7 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
 
     @Test
     public void thatWhenNoFindingsAreFoundTheMojoDoesNotFail() throws Exception {
-        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(ok()));
 
@@ -81,7 +81,7 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
 
     @Test
     public void thatWhenExceptionOccursWhileGettingFindingsAndFailOnErrorIsTrueTheMojoErrors() throws Exception {
-        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(aResponse().withFault(RANDOM_DATA_THEN_CLOSE)));
 
@@ -102,7 +102,7 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
 
     @Test
     public void thatBuildFailsWhenFindingsNumberBreachesDefinedThresholds() throws Exception {
-        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(
                 aResponse().withBody(asJson(
@@ -130,7 +130,7 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
 
     @Test
     public void thatBuildDoesNotFailWhenOnlyUnassignedFindingExists() throws Exception {
-        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(
                 aResponse().withBody(asJson(

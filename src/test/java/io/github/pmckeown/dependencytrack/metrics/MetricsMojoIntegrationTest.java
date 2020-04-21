@@ -32,7 +32,7 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
 
     @Test
     public void thatMetricsCanBeRetrievedForCurrentProject() throws Exception {
-        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
 
         MetricsMojo metricsMojo = loadMetricsMojo(mojoRule);
@@ -48,7 +48,7 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
 
     @Test
     public void thatWhenMetricsAreNotInProjectTheyAreRetrievedExplicitly() throws Exception {
-        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT)).willReturn(
                 aResponse().withBodyFile("api/v1/metrics/project/project-metrics.json")));
@@ -68,7 +68,7 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
 
     @Test
     public void thatExceptionIsThrownWhenMetricsCannotBeRetrievedForCurrentProject() throws Exception {
-        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT)).willReturn(
                 aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK)));
@@ -89,7 +89,7 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
 
     @Test
     public void thatAnyCriticalIssuesPresentCanFailTheBuild() throws Exception {
-        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBody(asJson(
                         aListOfProjects()
                                 .withProject(aProject()
