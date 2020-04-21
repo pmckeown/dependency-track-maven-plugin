@@ -7,8 +7,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_PROJECT_WITHOUT_PAGINATION;
-import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_PROJECT_WITH_PAGINATION;
+import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_PROJECT_WITH_ONE_MILLION_LIMIT;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -35,15 +34,14 @@ public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTes
 	}
 
 	@Test
-	public void thatCallingGetProjectsCallsApiWithoutPaginationAndReturnsAllProjects() {
-		stubFor(get(urlEqualTo(V1_PROJECT_WITHOUT_PAGINATION)).willReturn(
+	public void thatCallingDependencyTrackWithAHighResponseLimitReturnsAllProjects() {
+
+		stubFor(get(urlEqualTo(V1_PROJECT_WITH_ONE_MILLION_LIMIT)).willReturn(
 				aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
-		stubFor(get(urlEqualTo(V1_PROJECT_WITH_PAGINATION)).willReturn(
-				aResponse().withBodyFile("api/v1/project/get-all-projects-with-pagination.json")));
 
 		List<Project> projects = projectClient.getProjects().getBody().orElse(Collections.emptyList());
 
+		verify(exactly(1), getRequestedFor(urlEqualTo(V1_PROJECT_WITH_ONE_MILLION_LIMIT)));
 		assertThat(projects.size(), is(COUNT_ALL_PROJECTS));
-		verify(exactly(1), getRequestedFor(urlEqualTo(V1_PROJECT_WITHOUT_PAGINATION)));
 	}
 }
