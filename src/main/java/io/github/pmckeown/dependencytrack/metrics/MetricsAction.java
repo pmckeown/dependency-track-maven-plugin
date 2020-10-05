@@ -28,10 +28,10 @@ public class MetricsAction {
     private Logger logger;
 
     @Inject
-    public MetricsAction(MetricsClient metricsClient, Poller poller, CommonConfig commonConfig, Logger logger) {
+    public MetricsAction(MetricsClient metricsClient, Poller<Metrics> poller, CommonConfig config, Logger logger) {
         this.metricsClient = metricsClient;
         this.poller = poller;
-        this.commonConfig = commonConfig;
+        this.commonConfig = config;
         this.logger = logger;
     }
 
@@ -62,7 +62,7 @@ public class MetricsAction {
     public void refreshMetrics(Project project) {
         logger.info("Requesting Metrics analysis for project: %s-%s", project.getName(), project.getVersion());
         try {
-            Response response = metricsClient.refreshMetrics(project);
+            Response<Void> response = metricsClient.refreshMetrics(project);
             if (response.isSuccess()) {
                 logger.debug("Metrics refreshed");
             } else {

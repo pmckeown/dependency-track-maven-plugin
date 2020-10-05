@@ -25,8 +25,8 @@ public class UploadBomAction {
     private Poller<Boolean> poller;
 
     @Inject
-    public UploadBomAction(BomClient bomClient, BomEncoder bomEncoder, Poller poller, CommonConfig commonConfig,
-            Logger logger) {
+    public UploadBomAction(BomClient bomClient, BomEncoder bomEncoder, Poller<Boolean> poller,
+            CommonConfig commonConfig, Logger logger) {
         this.bomClient = bomClient;
         this.bomEncoder = bomEncoder;
         this.poller = poller;

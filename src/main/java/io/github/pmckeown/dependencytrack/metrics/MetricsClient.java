@@ -63,7 +63,7 @@ class MetricsClient {
 
     public Response<Void> refreshMetrics(Project project) {
         logger.info("Refreshing Metrics for project: %s-%s", project.getName(), project.getVersion());
-        final HttpResponse httpResponse = get(
+        final HttpResponse<?> httpResponse = get(
                 commonConfig.getDependencyTrackBaseUrl() + V1_METRICS_PROJECT_UUID_REFRESH)
                 .header("X-Api-Key", commonConfig.getApiKey())
                 .routeParam("uuid", project.getUuid())

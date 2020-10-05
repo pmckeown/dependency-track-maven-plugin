@@ -70,10 +70,16 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     public void thatWhenFailOnErrorIsTrueAFailureFromToDependencyTrackDoesFailTheBuild() throws Exception {
         stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(notFound()));
 
+        UploadBomMojo uploadBomMojo = null;
         try {
-            UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
+            uploadBomMojo = uploadBomMojo(BOM_LOCATION);
             uploadBomMojo.setDependencyTrackBaseUrl("http://localghost:80");
             uploadBomMojo.setFailOnError(true);
+        } catch (Exception ex) {
+            fail("Exception not expected yet");
+        }
+
+        try {
             uploadBomMojo.execute();
             fail("Exception expected");
         } catch (Exception ex) {
@@ -99,10 +105,17 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     public void thatWhenFailOnErrorIsTrueAFailureToConnectToDependencyTrackDoesFailTheBuild() throws Exception {
         // No Wiremock Stubbing
 
+        UploadBomMojo uploadBomMojo = null;
+
         try {
-            UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
+            uploadBomMojo = uploadBomMojo(BOM_LOCATION);
             uploadBomMojo.setDependencyTrackBaseUrl("http://localghost:80");
             uploadBomMojo.setFailOnError(true);
+        } catch (Exception ex) {
+            fail("Exception not expected yet");
+        }
+
+        try {
             uploadBomMojo.execute();
             fail("Exception expected");
         } catch (Exception ex) {
