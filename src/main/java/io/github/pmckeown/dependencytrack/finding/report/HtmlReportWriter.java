@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack.finding.report;
 
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Transformer;
@@ -16,6 +17,13 @@ import java.io.InputStream;
 @Singleton
 class HtmlReportWriter {
 
+    private TransformerFactoryProvider transformerFactoryProvider;
+
+    @Inject
+    HtmlReportWriter(TransformerFactoryProvider transformerFactoryProvider) {
+        this.transformerFactoryProvider = transformerFactoryProvider;
+    }
+
     void write() throws DependencyTrackException {
         try {
             StreamSource stylesheet = new StreamSource(getStylesheetInputStream());
@@ -29,15 +37,9 @@ class HtmlReportWriter {
         }
     }
 
-    private TransformerFactory getSecureTransformerFactory() throws TransformerConfigurationException {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    TransformerFactory getSecureTransformerFactory() throws TransformerConfigurationException {
+        TransformerFactory transformerFactory = transformerFactoryProvider.provide();
         transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-
-        // Issue 79 - Protect against XXE attacks
-        // https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
-        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
-
         return transformerFactory;
     }
 
