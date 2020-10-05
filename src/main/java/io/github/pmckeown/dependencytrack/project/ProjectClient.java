@@ -54,7 +54,7 @@ public class ProjectClient {
     }
 
     Response<Void> deleteProject(Project project) {
-        HttpResponse httpResponse = delete(commonConfig.getDependencyTrackBaseUrl() + V1_PROJECT_UUID)
+        HttpResponse<?> httpResponse = delete(commonConfig.getDependencyTrackBaseUrl() + V1_PROJECT_UUID)
                 .routeParam("uuid", project.getUuid())
                 .header("X-Api-Key", commonConfig.getApiKey())
                 .asEmpty();

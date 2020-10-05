@@ -28,7 +28,7 @@ public class FindingsReportIntegrationTest {
     public void setUp() {
         FindingsReportMarshallerService findingsReportMarshallerService = new FindingsReportMarshallerService();
         xmlReportWriter = new XmlReportWriter(findingsReportMarshallerService);
-        htmlReportWriter = new HtmlReportWriter();
+        htmlReportWriter = new HtmlReportWriter(new TransformerFactoryProvider());
     }
 
     @Test

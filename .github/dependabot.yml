@@ -1,0 +1,8 @@
+# Basic dependabot.yml file with configuration for maven
+
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "daily"
