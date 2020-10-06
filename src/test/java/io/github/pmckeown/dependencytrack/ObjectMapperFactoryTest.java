@@ -2,7 +2,7 @@ package io.github.pmckeown.dependencytrack;
 
 import io.github.pmckeown.dependencytrack.project.Project;
 import kong.unirest.GenericType;
-import kong.unirest.JacksonObjectMapper;
+import kong.unirest.jackson.JacksonObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
