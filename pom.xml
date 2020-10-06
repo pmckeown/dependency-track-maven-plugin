@@ -7,7 +7,7 @@
 
     <groupId>io.github.pmckeown</groupId>
     <artifactId>dependency-track-maven-plugin</artifactId>
-    <version>0.8.4</version>
+    <version>0.8.5-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Dependency Track Maven Plugin</name>
@@ -421,6 +421,7 @@
                 <sonar.projectKey>io.github.pmckeown:dependency-track-maven-plugin</sonar.projectKey>
                 <!--suppress UnresolvedMavenProperty -->
                 <sonar.login>${env.SONAR_TOKEN}</sonar.login>
+                <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/jacoco.exec</sonar.coverage.jacoco.xmlReportPaths>
             </properties>
             <build>
                 <plugins>
