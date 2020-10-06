@@ -90,7 +90,7 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
             findings = findingsAction.getFindings(project);
             findingsPrinter.printFindings(project, findings);
 
-            if (findingThresholds != null) {
+            if (findingThresholds != null && !findings.isEmpty()) {
                 boolean policyBreached = findingsAnalyser.doNumberOfFindingsBreachPolicy(findings, findingThresholds);
                 findingsReportGenerator.generate(findings, findingThresholds, policyBreached);
 
