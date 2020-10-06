@@ -2,7 +2,11 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
-import kong.unirest.*;
+import kong.unirest.GenericType;
+import kong.unirest.HttpResponse;
+import kong.unirest.RequestBodyEntity;
+import kong.unirest.Unirest;
+import kong.unirest.jackson.JacksonObjectMapper;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

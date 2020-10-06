@@ -26,9 +26,10 @@ class FindingsPrinter {
 
     void printFindings(Project project, List<Finding> findings) {
         if (findings == null || findings.isEmpty()) {
+            logger.info("No findings were retrieved for project: %s", project.getName());
             return;
         }
-
+        logger.info("%d finding(s) were retrieved for project: %s", findings.size(), project.getName());
         logger.info("Printing findings for project %s-%s", project.getName(), project.getVersion());
         findings.forEach(finding -> {
             Vulnerability vulnerability = finding.getVulnerability();

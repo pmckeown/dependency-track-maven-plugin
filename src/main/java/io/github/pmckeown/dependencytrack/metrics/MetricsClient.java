@@ -6,7 +6,7 @@ import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
-import kong.unirest.JacksonObjectMapper;
+import kong.unirest.jackson.JacksonObjectMapper;
 import kong.unirest.Unirest;
 
 import javax.inject.Inject;

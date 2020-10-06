@@ -6,7 +6,7 @@ import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
-import kong.unirest.JacksonObjectMapper;
+import kong.unirest.jackson.JacksonObjectMapper;
 import kong.unirest.Unirest;
 
 import javax.inject.Inject;
@@ -21,7 +21,7 @@ import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
 import static kong.unirest.Unirest.get;
 
 @Singleton
-public class FindingsClient {
+class FindingsClient {
 
     private CommonConfig commonConfig;
 
@@ -40,7 +40,7 @@ public class FindingsClient {
     }
 
 
-    public Response<List<Finding>> getFindingsForProject(Project project) {
+    Response<List<Finding>> getFindingsForProject(Project project) {
         logger.debug("Getting findings for project: %s-%s", project.getName(), project.getVersion());
         final HttpResponse<List<Finding>> httpResponse = get(
                 commonConfig.getDependencyTrackBaseUrl() + V1_FINDING_PROJECT_UUID)
