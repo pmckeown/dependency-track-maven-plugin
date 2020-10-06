@@ -33,11 +33,56 @@ public class FindingsPrinterTest {
     private Logger logger;
 
     @Test
+    public void thatWhenNoFindingsAreRetrievedThatIsLogged() throws Exception {
+        // Act
+        Project project = aProject().withName("X").build();
+        findingsPrinter.printFindings(project, null);
+
+        // Assert
+        verify(logger).info("No findings were retrieved for project: %s", "X");
+    }
+
+    @Test
+    public void thatWhenSomeFindingsAreRetrievedThatIsLogged() throws Exception {
+        // Act
+        Project project = aProject().withName("X").build();
+        List<Finding> findings = findingsList("whatever", true);
+        findingsPrinter.printFindings(project, findings);
+
+        // Assert
+        verify(logger).info("%d finding(s) were retrieved for project: %s", 1, "X");
+    }
+
+    @Test
     public void thatAUnsuppressedSingleFindingIsPrintedCorrectly() {
         String descriptionPart = repeat("x", DELIMITER.length());
         String longDescription = repeat(descriptionPart, 4);
         Project project = aProject().withName("a").withVersion("1").build();
-        List<Finding> findings = aListOfFindings()
+        List<Finding> findings = findingsList(longDescription, false);
+        findingsPrinter.printFindings(project, findings);
+
+        verify(logger).info("Printing findings for project %s-%s", "a", "1"); // Intro
+        verify(logger).info(DELIMITER);
+        verify(logger).info("%s: %s", "HIGH", "nz.co.dodgy:insecure-encrypter:20.0");
+        verify(logger).info("");
+        verify(logger, times(4)).info(descriptionPart);
+    }
+
+    @Test
+    public void thatASuppressedSingleFindingIsPrintedCorrectly() {
+        Project project = aProject().withName("a").withVersion("1").build();
+        List<Finding> findings = findingsList(null, true);
+        findingsPrinter.printFindings(project, findings);
+
+        verify(logger).info("Printing findings for project %s-%s", "a", "1");
+        verify(logger).info(DELIMITER);
+        verify(logger).info("%s: %s", "HIGH", "nz.co.dodgy:insecure-encrypter:20.0");
+        verify(logger, times(2)).info("");
+        verify(logger).info("Suppressed - %s", FALSE_POSITIVE.name());
+    }
+
+    private List<Finding> findingsList(String longDescription, boolean isSuppressed) {
+        return aListOfFindings()
                 .withFinding(
                         aFinding()
                                 .withComponent(
@@ -51,42 +96,8 @@ public class FindingsPrinterTest {
                                                 .withDescription(longDescription))
                                 .withAnalysis(
                                         anAnalysis()
-                                                .withSuppressed(false))).build();
-        findingsPrinter.printFindings(project, findings);
-
-        verify(logger).info("Printing findings for project %s-%s", "a", "1"); // Intro
-        verify(logger).info(DELIMITER);
-        verify(logger).info("%s: %s", "HIGH", "nz.co.dodgy:insecure-encrypter:20.0");
-        verify(logger).info("");
-        verify(logger, times(4)).info(descriptionPart);
-    }
-
-    @Test
-    public void thatASuppressedSingleFindingIsPrintedCorrectly() {
-        Project project = aProject().withName("a").withVersion("1").build();
-        List<Finding> findings = aListOfFindings()
-                .withFinding(
-                        aFinding()
-                                .withComponent(
-                                        aComponent()
-                                                .withGroup("nz.co.dodgy")
-                                                .withName("insecure-encrypter")
-                                                .withVersion("20.0"))
-                                .withVulnerability(
-                                        aVulnerability()
-                                                .withSeverity(HIGH)
-                                                .withDescription(null))
-                                .withAnalysis(
-                                        anAnalysis()
-                                                .withSuppressed(true)
-                                                .withState(FALSE_POSITIVE))).build();
-        findingsPrinter.printFindings(project, findings);
-
-        verify(logger).info("Printing findings for project %s-%s", "a", "1");
-        verify(logger).info(DELIMITER);
-        verify(logger).info("%s: %s", "HIGH", "nz.co.dodgy:insecure-encrypter:20.0");
-        verify(logger, times(2)).info("");
-        verify(logger).info("Suppressed - %s", FALSE_POSITIVE.name());
+                                                .withSuppressed(isSuppressed)
+                                                .withState(Analysis.State.FALSE_POSITIVE))).build();
     }
 
 }
