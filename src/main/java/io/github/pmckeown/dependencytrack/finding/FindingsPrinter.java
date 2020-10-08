@@ -52,10 +52,12 @@ class FindingsPrinter {
             return Collections.emptyList();
         }
 
+        String percentEscaped = StringUtils.replace(string, "%", "%%");
+        String cleaned = StringUtils.replace(percentEscaped, "\n", "");
         int chunkSize = DELIMITER.length();
         final int numberOfChunks = (string.length() + chunkSize - 1) / chunkSize;
         return IntStream.range(0, numberOfChunks)
-                .mapToObj(i -> string.substring(i * chunkSize, Math.min((i + 1) * chunkSize, string.length())))
+                .mapToObj(i -> cleaned.substring(i * chunkSize, Math.min((i + 1) * chunkSize, cleaned.length())))
                 .collect(toList());
     }
 
