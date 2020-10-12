@@ -33,7 +33,7 @@ public class FindingsPrinterTest {
     private Logger logger;
 
     @Test
-    public void thatWhenNoFindingsAreRetrievedThatIsLogged() throws Exception {
+    public void thatWhenNoFindingsAreRetrievedThatIsLogged() {
         // Act
         Project project = aProject().withName("X").build();
         findingsPrinter.printFindings(project, null);
@@ -43,7 +43,7 @@ public class FindingsPrinterTest {
     }
 
     @Test
-    public void thatWhenSomeFindingsAreRetrievedThatIsLogged() throws Exception {
+    public void thatWhenSomeFindingsAreRetrievedThatIsLogged() {
         // Act
         Project project = aProject().withName("X").build();
         List<Finding> findings = findingsList("whatever", true);
@@ -79,6 +79,34 @@ public class FindingsPrinterTest {
         verify(logger).info("%s: %s", "HIGH", "nz.co.dodgy:insecure-encrypter:20.0");
         verify(logger, times(2)).info("");
         verify(logger).info("Suppressed - %s", FALSE_POSITIVE.name());
+    }
+
+    /**
+     * Regression test for issue: https://github.com/pmckeown/dependency-track-maven-plugin/issues/89
+     */
+    @Test
+    public void thatPercentCharactersInFindingsOutputAreEscapedForFormatting() {
+        String findingContent = "crafted value that contains both ${} and %{} sequences, which causes";
+        Project project = aProject().withName("a").withVersion("1").build();
+        List<Finding> findings = findingsList(findingContent, false);
+
+        findingsPrinter.printFindings(project, findings);
+
+        verify(logger).info("crafted value that contains both ${} and %%{} sequences, which causes");
+    }
+
+    /**
+     * Regression test for issue: https://github.com/pmckeown/dependency-track-maven-plugin/issues/89
+     */
+    @Test
+    public void thatNewLineCharactersInFindingsOutputAreRemovedForFormatting() {
+        String findingContent = "be vulnerable.\n> \n> -- [redhat.com](https://bugzilla.redhat.com/show_bug";
+        Project project = aProject().withName("a").withVersion("1").build();
+        List<Finding> findings = findingsList(findingContent, false);
+
+        findingsPrinter.printFindings(project, findings);
+
+        verify(logger).info("be vulnerable.> > -- [redhat.com](https://bugzilla.redhat.com/show_bug");
     }
 
     private List<Finding> findingsList(String longDescription, boolean isSuppressed) {

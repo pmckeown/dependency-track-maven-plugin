@@ -378,7 +378,7 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.7</version>
+                        <version>1.6.8</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>
@@ -389,7 +389,7 @@
                     <plugin>
                         <groupId>org.eclipse.sisu</groupId>
                         <artifactId>sisu-maven-plugin</artifactId>
-                        <version>0.3.3</version>
+                        <version>0.3.4</version>
                         <executions>
                             <execution>
                                 <id>generate-index</id>
