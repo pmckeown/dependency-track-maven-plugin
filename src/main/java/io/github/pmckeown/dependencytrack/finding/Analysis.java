@@ -13,7 +13,8 @@ public class Analysis {
         NOT_AFFECTED,
         FALSE_POSITIVE,
         IN_TRIAGE,
-        EXPLOITABLE
+        EXPLOITABLE,
+        NOT_SET
     }
 
     private boolean isSuppressed;
