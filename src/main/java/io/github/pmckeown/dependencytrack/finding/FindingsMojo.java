@@ -11,9 +11,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import java.io.File;
 import java.util.List;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
@@ -64,6 +67,9 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     @Parameter(name = "findingThresholds")
     private FindingThresholds findingThresholds;
 
+    @Parameter(defaultValue = "${project}", readonly = true, required = false)
+    private MavenProject mavenProject;
+
     private ProjectAction projectAction;
     private FindingsAction findingsAction;
     private FindingsPrinter findingsPrinter;
@@ -92,7 +98,7 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
 
             if (findingThresholds != null && !findings.isEmpty()) {
                 boolean policyBreached = findingsAnalyser.doNumberOfFindingsBreachPolicy(findings, findingThresholds);
-                findingsReportGenerator.generate(findings, findingThresholds, policyBreached);
+                findingsReportGenerator.generate(getOutputDirectory(), findings, findingThresholds, policyBreached);
 
                 if (policyBreached) {
                     throw new MojoFailureException("Number of findings exceeded defined thresholds");
@@ -108,5 +114,14 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
      */
     void setFindingThresholds(FindingThresholds findingThresholds) {
         this.findingThresholds = findingThresholds;
+    }
+
+    private File getOutputDirectory() {
+        if (mavenProject == null) {
+            return null;
+        }
+        else {
+            return new File(mavenProject.getBuild().getDirectory());
+        }
     }
 }
