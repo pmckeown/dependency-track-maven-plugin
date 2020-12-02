@@ -18,21 +18,20 @@ class XmlReportWriter {
         this.marshallerService = marshallerService;
     }
 
-    void write(FindingsReport findingsReport) throws DependencyTrackException {
+    void write(File buildDirectory, FindingsReport findingsReport) throws DependencyTrackException {
         try {
             Marshaller marshaller = marshallerService.getMarshaller();
-            File outputFile = getFile();
+            File outputFile = getFile(buildDirectory);
             marshaller.marshal(findingsReport, outputFile);
         } catch (JAXBException ex) {
             throw new DependencyTrackException("Error occurred while generating XML report", ex);
         }
     }
 
-    private File getFile() {
-        File targetDir = new File(FindingsReportConstants.OUTPUT_DIRECTORY);
-        if (!targetDir.exists()) {
-            targetDir.mkdir();
+    private File getFile(File buildDirectory) {
+        if (buildDirectory != null && !buildDirectory.exists()) {
+            buildDirectory.mkdir();
         }
-        return new File(FindingsReportConstants.XML_REPORT_FILENAME);
+        return new File(buildDirectory, FindingsReportConstants.XML_REPORT_FILENAME);
     }
 }

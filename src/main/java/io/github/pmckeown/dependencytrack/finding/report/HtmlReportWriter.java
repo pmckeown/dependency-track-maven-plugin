@@ -24,11 +24,11 @@ class HtmlReportWriter {
         this.transformerFactoryProvider = transformerFactoryProvider;
     }
 
-    void write() throws DependencyTrackException {
+    void write(File buildDirectory) throws DependencyTrackException {
         try {
             StreamSource stylesheet = new StreamSource(getStylesheetInputStream());
-            StreamSource input = new StreamSource(getInputFile());
-            StreamResult output = new StreamResult(new FileOutputStream(getOutputFile()));
+            StreamSource input = new StreamSource(getInputFile(buildDirectory));
+            StreamResult output = new StreamResult(new FileOutputStream(getOutputFile(buildDirectory)));
 
             Transformer transformer = getSecureTransformerFactory().newTransformer(stylesheet);
             transformer.transform(input, output);
@@ -43,12 +43,12 @@ class HtmlReportWriter {
         return transformerFactory;
     }
 
-    private File getInputFile() {
-        return new File(FindingsReportConstants.XML_REPORT_FILENAME);
+    private File getInputFile(File buildDirectory) {
+        return new File(buildDirectory, FindingsReportConstants.XML_REPORT_FILENAME);
     }
 
-    private File getOutputFile() {
-        return new File(FindingsReportConstants.HTML_REPORT_FILENAME);
+    private File getOutputFile(File buildDirectory) {
+        return new File(buildDirectory, FindingsReportConstants.HTML_REPORT_FILENAME);
     }
 
     private InputStream getStylesheetInputStream() {
