@@ -34,7 +34,7 @@ public class FindingsReportIntegrationTest {
     @Test
     public void thatXmlFileCanBeGenerated() {
         try {
-        	File outputDirectory = new File("target");
+            File outputDirectory = new File("target");
             xmlReportWriter.write(outputDirectory, new FindingsReport(thresholds(), findings(), true));
             assertThat(new File(outputDirectory, FindingsReportConstants.XML_REPORT_FILENAME).exists(), is(true));
         } catch (Exception ex) {
