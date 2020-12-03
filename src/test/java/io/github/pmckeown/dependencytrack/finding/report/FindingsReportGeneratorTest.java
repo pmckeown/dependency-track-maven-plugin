@@ -17,6 +17,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -37,10 +38,10 @@ public class FindingsReportGeneratorTest {
     public void thatBothReportsAreGenerated() throws Exception {
         FindingThresholds findingThresholds = new FindingThresholds(1, null, null, null, null);
         List<Finding> findings = aListOfFindings().build();
-        findingsReportGenerator.generate(findings, findingThresholds, false);
+        findingsReportGenerator.generate(null, findings, findingThresholds, false);
 
-        verify(xmlReportWriter).write(any(FindingsReport.class));
-        verify(htmlReportWriter).write();
+        verify(xmlReportWriter).write(isNull(), any(FindingsReport.class));
+        verify(htmlReportWriter).write(isNull());
     }
 
     @Test
@@ -48,10 +49,10 @@ public class FindingsReportGeneratorTest {
         FindingThresholds findingThresholds = new FindingThresholds(1, null, null, null, null);
         List<Finding> findings = aListOfFindings().build();
 
-        doThrow(DependencyTrackException.class).when(xmlReportWriter).write(any(FindingsReport.class));
+        doThrow(DependencyTrackException.class).when(xmlReportWriter).write(isNull(), any(FindingsReport.class));
 
         try {
-            findingsReportGenerator.generate(findings, findingThresholds, false);
+            findingsReportGenerator.generate(null, findings, findingThresholds, false);
             fail("Exception expected");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(DependencyTrackException.class)));
@@ -65,15 +66,15 @@ public class FindingsReportGeneratorTest {
         FindingThresholds findingThresholds = new FindingThresholds(1, null, null, null, null);
         List<Finding> findings = aListOfFindings().build();
 
-        doThrow(DependencyTrackException.class).when(htmlReportWriter).write();
+        doThrow(DependencyTrackException.class).when(htmlReportWriter).write(isNull());
 
         try {
-            findingsReportGenerator.generate(findings, findingThresholds, false);
+            findingsReportGenerator.generate(null, findings, findingThresholds, false);
             fail("Exception expected");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(DependencyTrackException.class)));
         }
 
-        verify(xmlReportWriter).write(any(FindingsReport.class));
+        verify(xmlReportWriter).write(isNull(), any(FindingsReport.class));
     }
 }
