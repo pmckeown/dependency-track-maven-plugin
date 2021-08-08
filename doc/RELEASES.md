@@ -18,7 +18,7 @@ The following steps should be followed when creating a release of this plugin.
 **Note these should be performed on the _master_ branch only**
 
 1. `mvn clean deploy -Prelease`
-2. `git tag -a -s v<VERSION_NUMBER> -m 'Release version v<VERSION_NUMBER> - <BRIEF_DESCRIPTION_OF_CHANGES>'`
+2. `git tag -a -s <VERSION_NUMBER> -m 'Release version <VERSION_NUMBER> - <BRIEF_DESCRIPTION_OF_CHANGES>'`
 3. `git push origin --tags`
 
 After these steps remember to set the next SNAPSHOT version release number and commit that to the `master` branch.
