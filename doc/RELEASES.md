@@ -21,13 +21,11 @@ The following steps should be followed when creating a release of this plugin.
 2. `git tag -a -s v<VERSION_NUMBER> -m 'Release version v<VERSION_NUMBER> - <BRIEF_DESCRIPTION_OF_CHANGES>'`
 3. `git push origin --tags`
 
-After these steps remember to set the next SNAPSHOT version release number and commit that to the `develop` branch.
+After these steps remember to set the next SNAPSHOT version release number and commit that to the `master` branch.
 
-1. `git co develop`
-2. `git merge master` 
-3. change pom.xml version number
-4. `git commit -m 'Bumping to next SNAPSHOT release version'`
-5. `git push`
+1. change pom.xml version number
+2. `git commit -am 'Bumping to next SNAPSHOT release version'`
+3. `git push`
 
 # Notes
 

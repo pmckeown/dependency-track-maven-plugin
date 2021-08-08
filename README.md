@@ -22,7 +22,7 @@ in the `pluginManagement` section of your POM to avoid repetition.
             <artifactId>dependency-track-maven-plugin</artifactId>
             <version>${dependency-track-maven-plugin.version}</version>
             <configuration>
-                <dependencyTrackBaseUrl>http://localhost:8080</dependencyTrackBaseUrl>
+                <dependencyTrackBaseUrl>http://localhost:8081</dependencyTrackBaseUrl>
                 <apiKey>API_KEY</apiKey>
             </configuration>
         </plugin>
@@ -30,9 +30,12 @@ in the `pluginManagement` section of your POM to avoid repetition.
 </pluginManagement>
 ```
 
+**IMPORTANT** Recent releases of Dependency Track include multiple components, so you must ensure that you target
+the api server component URL and not the front-end component URL.
+
 #### Polling Configuration
-The plugin is configured to poll for results from the Dependency-Track server by default.  The polling configuration by 
-be modified by modifying the `pollingConfig` element in the plugin configuration.  The available options are:
+The plugin is configured to poll for results from the Dependency-Track server by default.  The polling configuration
+can be changed by modifying the `pollingConfig` element in the plugin configuration.  The available options are:
 
 |Property |Required |Default Value |Support Values  |
 |---------|---------|--------------|----------------|

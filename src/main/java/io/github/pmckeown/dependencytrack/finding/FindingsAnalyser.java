@@ -28,6 +28,10 @@ public class FindingsAnalyser {
     boolean doNumberOfFindingsBreachPolicy(List<Finding> findings, FindingThresholds findingThresholds) {
         logger.info("Comparing findings against defined thresholds");
 
+        if (findingThresholds == null) {
+            return false;
+        }
+
         boolean policyBreached = false;
 
         long critical = getCount(findings, CRITICAL);

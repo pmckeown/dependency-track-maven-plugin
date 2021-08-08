@@ -16,12 +16,13 @@ import static io.github.pmckeown.dependencytrack.finding.FindingBuilder.aDefault
 import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aListOfFindings;
 import static io.github.pmckeown.dependencytrack.finding.Severity.CRITICAL;
 import static io.github.pmckeown.dependencytrack.finding.Severity.HIGH;
-import static io.github.pmckeown.dependencytrack.finding.Severity.MEDIUM;
 import static io.github.pmckeown.dependencytrack.finding.Severity.LOW;
+import static io.github.pmckeown.dependencytrack.finding.Severity.MEDIUM;
 import static io.github.pmckeown.dependencytrack.finding.Severity.UNASSIGNED;
 import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -33,6 +34,14 @@ public class FindingsAnalyserTest {
 
     @Mock
     private Logger logger;
+
+    @Test
+    public void thatWhenNoThresholdIsProvidedThePolicyCannotBeBreached() {
+        boolean isPolicyBreached = findingAnalyser.doNumberOfFindingsBreachPolicy(
+                aListOfFindings().build(), null);
+
+        assertFalse(isPolicyBreached);
+    }
 
     @Test
     public void thatACriticalIssueCountGreaterThanTheDefinedThresholdWillThrowMojoFailureException() {
