@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+@SuppressWarnings("unused")
 @RunWith(MockitoJUnitRunner.class)
 public class FindingsMojoTest {
 
@@ -26,14 +27,12 @@ public class FindingsMojoTest {
     @Mock
     private FindingsAction findingsAction;
 
-    @SuppressWarnings("unused")
     @Mock
     private FindingsPrinter findingsPrinter;
 
     @Mock
     private FindingsAnalyser findingsAnalyser;
 
-    @SuppressWarnings("unused")
     @Mock
     private CommonConfig commonConfig;
 
