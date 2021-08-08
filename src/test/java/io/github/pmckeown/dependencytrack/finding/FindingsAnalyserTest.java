@@ -36,7 +36,7 @@ public class FindingsAnalyserTest {
     private Logger logger;
 
     @Test
-    public void thatWhenWhenNoThresholdIsProvidedThePolicyCannotBeBreached() {
+    public void thatWhenNoThresholdIsProvidedThePolicyCannotBeBreached() {
         boolean isPolicyBreached = findingAnalyser.doNumberOfFindingsBreachPolicy(
                 aListOfFindings().build(), null);
 
