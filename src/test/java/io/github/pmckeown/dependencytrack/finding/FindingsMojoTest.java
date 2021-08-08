@@ -44,7 +44,7 @@ public class FindingsMojoTest {
     private FindingsReportGenerator findingsReportGenerator;
 
     @Test
-    public void thatReportIsAlwaysGenerated() throws Exception {
+    public void thatReportIsAlwaysGeneratedEvenWhenNoFindingsArePresent() throws Exception {
         doReturn(ProjectBuilder.aProject().build()).when(projectAction).getProject(anyString(), anyString());
         List<Finding> findings = FindingListBuilder.aListOfFindings().build();
         doReturn(findings).when(findingsAction).getFindings(any(Project.class));
