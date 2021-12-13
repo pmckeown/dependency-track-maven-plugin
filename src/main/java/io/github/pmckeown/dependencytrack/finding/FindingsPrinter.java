@@ -34,6 +34,7 @@ class FindingsPrinter {
         findings.forEach(finding -> {
             Vulnerability vulnerability = finding.getVulnerability();
             logger.info(DELIMITER);
+            logger.info("%s (%s)", vulnerability.getVulnId(), vulnerability.getSource());
             logger.info("%s: %s", vulnerability.getSeverity().name(), getComponentDetails(finding));
             logger.info(""); // Spacer
             List<String> wrappedDescriptionParts = splitString(vulnerability.getDescription());
