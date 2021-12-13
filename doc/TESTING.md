@@ -1,5 +1,5 @@
 # Testing dependency-track-maven-plugin
-The project contauns a number of unit and in-memory integration tests that verify the codebase.  
+The project contains a number of unit and in-memory integration tests that verify the codebase.  
 
 However, it is also useful to be able to test the project against a real Dependency Track server.  
 
