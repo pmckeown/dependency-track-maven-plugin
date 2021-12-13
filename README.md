@@ -280,5 +280,5 @@ See common configuration above
 
 ## Documentation
 Further docs can be found in [doc/](doc/):
-- [Testing](./doc/TESTING.md)
-- [Releases](./doc/RELEASES.md)
+*   [Testing](./doc/TESTING.md)
+*   [Releases](./doc/RELEASES.md)
