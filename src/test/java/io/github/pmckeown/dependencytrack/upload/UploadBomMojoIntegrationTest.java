@@ -192,7 +192,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
 
         uploadBomMojo.execute();
 
-        verify(exactly(0), putRequestedFor(urlEqualTo(ResourceConstants.V1_BOM)));
+        verify(exactly(0), putRequestedFor(urlEqualTo(V1_BOM)));
     }
 
     /*

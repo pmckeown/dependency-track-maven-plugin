@@ -128,6 +128,6 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
 
         metricsMojo.execute();
 
-        verify(exactly(0), getRequestedFor(urlEqualTo(ResourceConstants.V1_PROJECT)));
+        verify(exactly(0), getRequestedFor(urlEqualTo(V1_PROJECT)));
     }
 }
