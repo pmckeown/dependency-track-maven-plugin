@@ -1,6 +1,6 @@
 package io.github.pmckeown.dependencytrack;
 
-public class Constants {
+public final class Constants {
 
     private Constants() {
         // Hiding implicit constructor

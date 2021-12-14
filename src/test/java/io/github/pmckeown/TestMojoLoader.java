@@ -17,9 +17,13 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Paul McKeown
  */
-public class TestMojoLoader {
+public final class TestMojoLoader {
 
-    private static final String TEST_RESOURCES = "target/test-classes/project-to-test/";
+    private static final String TEST_RESOURCES = "target/test-classes/projects/run/";
+
+    private TestMojoLoader() {
+
+    }
 
     public static UploadBomMojo loadUploadBomMojo(MojoRule mojoRule) throws Exception {
         UploadBomMojo uploadBomMojo = (UploadBomMojo) mojoRule.lookupConfiguredMojo(getPomFile(), "upload-bom");

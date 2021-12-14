@@ -190,4 +190,16 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
             assertThat(ex, is(instanceOf(MojoFailureException.class)));
         }
     }
+
+    @Test
+    public void thatTheScoreIsSkippedWhenSkipIsTrue() throws Exception {
+        scoreMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
+        scoreMojo.setProjectName("dependency-track");
+        scoreMojo.setProjectVersion("3.6.0-SNAPSHOT");
+        scoreMojo.setSkip(true);
+
+        scoreMojo.execute();
+
+        verify(exactly(0), getRequestedFor(urlEqualTo(V1_PROJECT)));
+    }
 }

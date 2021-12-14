@@ -6,6 +6,7 @@ import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.ResourceConstants;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.junit.Before;
 import org.junit.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -30,14 +31,20 @@ import static org.junit.Assert.fail;
 
 public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
+    private MetricsMojo metricsMojo;
+
+    @Before
+    public void setup() throws Exception {
+        metricsMojo = loadMetricsMojo(mojoRule);
+        metricsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
+        metricsMojo.setApiKey("abc123");
+    }
+
     @Test
     public void thatMetricsCanBeRetrievedForCurrentProject() throws Exception {
         stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
 
-        MetricsMojo metricsMojo = loadMetricsMojo(mojoRule);
-        metricsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
-        metricsMojo.setApiKey("abc123");
         metricsMojo.setProjectName("testName");
         metricsMojo.setProjectVersion("99.99");
 
@@ -53,9 +60,6 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
         stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT)).willReturn(
                 aResponse().withBodyFile("api/v1/metrics/project/project-metrics.json")));
 
-        MetricsMojo metricsMojo = loadMetricsMojo(mojoRule);
-        metricsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
-        metricsMojo.setApiKey("abc123");
         metricsMojo.setProjectName("noMetrics");
         metricsMojo.setProjectVersion("1.0.0");
         metricsMojo.setPollingConfig(PollingConfig.disabled());
@@ -73,9 +77,6 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
         stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT)).willReturn(
                 aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK)));
 
-        MetricsMojo metricsMojo = loadMetricsMojo(mojoRule);
-        metricsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
-        metricsMojo.setApiKey("abc123");
         metricsMojo.setProjectName("noMetrics");
         metricsMojo.setProjectVersion("1.0.0");
         metricsMojo.setPollingConfig(new PollingConfig(false, 1, 1));
@@ -105,9 +106,6 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
                                                         .withUnassigned(501)))
                         .build()))));
 
-        MetricsMojo metricsMojo = loadMetricsMojo(mojoRule);
-        metricsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
-        metricsMojo.setApiKey("abc123");
         metricsMojo.setProjectName("test-project");
         metricsMojo.setProjectVersion("1.2.3");
         metricsMojo.setMetricsThresholds(new MetricsThresholds(100, 200, 300, 400, 500));
@@ -118,5 +116,18 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(MojoFailureException.class)));
         }
+    }
+
+    @Test
+    public void thatTheMetricsIsSkippedWhenSkipIsTrue() throws Exception {
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        metricsMojo.setSkip(true);
+        metricsMojo.setProjectName("testName");
+        metricsMojo.setProjectVersion("99.99");
+
+        metricsMojo.execute();
+
+        verify(exactly(0), getRequestedFor(urlEqualTo(ResourceConstants.V1_PROJECT)));
     }
 }
