@@ -71,7 +71,7 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
 
         // Perform the requested action
         if (skip) {
-            logger.info("depenency-track.skip = true: Skipping analysis.");
+            logger.info("dependency-track.skip = true: Skipping analysis.");
             return;
         }
         this.performAction();
