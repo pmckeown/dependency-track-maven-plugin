@@ -15,7 +15,7 @@ option.
 
 The following steps should be followed when creating a release of this plugin.
 
-**Note these should be performed on the _master_ branch only**
+**Note these should be performed on the _master_ branch only where that branch is up to date with the remote**
 
 1. `mvn clean deploy -Prelease`
 2. `git tag -a -s <VERSION_NUMBER> -m 'Release version <VERSION_NUMBER> - <BRIEF_DESCRIPTION_OF_CHANGES>'`
