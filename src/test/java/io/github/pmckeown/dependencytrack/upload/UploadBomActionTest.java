@@ -30,7 +30,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class UploadBomActionTest {
 
-    private static final String BOM_LOCATION = "target/test-classes/project-to-test/bom.xml";
+    private static final String BOM_LOCATION = "target/test-classes/projects/run/bom.xml";
 
     @InjectMocks
     private UploadBomAction uploadBomAction;

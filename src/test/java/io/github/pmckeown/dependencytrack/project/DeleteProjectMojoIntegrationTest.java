@@ -128,5 +128,19 @@ public class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMoj
             fail("No exception expected");
         }
     }
+
+    @Test
+    public void thatDeleteIsSkippedWhenSkipIsTrue() throws Exception {
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(delete(urlPathMatching(V1_PROJECT_UUID)).willReturn(
+                aResponse().withStatus(200)));
+
+        deleteProjectMojo.setSkip(true);
+
+        deleteProjectMojo.execute();
+
+        verify(exactly(0), deleteRequestedFor(urlPathMatching(V1_PROJECT_UUID)));
+    }
 }
 

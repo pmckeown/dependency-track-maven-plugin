@@ -2,7 +2,6 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
-import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
 import org.apache.maven.project.MavenProject;
@@ -23,12 +22,15 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UploadBomMojoTest {
 
     private static final String PROJECT_NAME = "test";
+
     private static final String PROJECT_VERSION = "1.0";
+
     @InjectMocks
     private UploadBomMojo uploadBomMojo;
 
@@ -70,7 +72,18 @@ public class UploadBomMojoTest {
         assertThat(argumentCaptor.getValue(), is(equalTo("./target/bom.xml")));
     }
 
-    private Project asProject() {
-        return new Project("1234", PROJECT_NAME, PROJECT_VERSION, null);
+    @Test
+    public void thatTheUploadBomIsSkippedWhenSkipIsTrue() throws Exception {
+        uploadBomMojo.setSkip(true);
+        uploadBomMojo.setProjectName(PROJECT_NAME);
+        uploadBomMojo.setProjectVersion(PROJECT_VERSION);
+
+        uploadBomMojo.execute();
+
+        verify(commonConfig).setProjectName(PROJECT_NAME);
+        verify(commonConfig).setProjectVersion(PROJECT_VERSION);
+        verifyNoInteractions(uploadBomAction);
+        verifyNoInteractions(metricsAction);
+        verifyNoInteractions(projectAction);
     }
 }

@@ -5,7 +5,7 @@ package io.github.pmckeown.dependencytrack;
  *
  * @author Paul McKeown
  */
-public class ResourceConstants {
+public final class ResourceConstants {
 
     public static final String V1_BOM = "/api/v1/bom";
     public static final String V1_BOM_TOKEN_UUID = "/api/v1/bom/token/{uuid}";

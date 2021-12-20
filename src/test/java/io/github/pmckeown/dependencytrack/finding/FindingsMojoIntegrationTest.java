@@ -3,6 +3,7 @@ package io.github.pmckeown.dependencytrack.finding;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.junit.Before;
 import org.junit.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -33,6 +34,17 @@ import static org.junit.Assert.fail;
 
 public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
+    private FindingsMojo findingsMojo;
+
+    @Before
+    public void setup() throws Exception {
+        findingsMojo = loadFindingsMojo(mojoRule);
+        findingsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
+        findingsMojo.setApiKey("abc123");
+        findingsMojo.setProjectName("testName");
+        findingsMojo.setProjectVersion("99.99");
+    }
+
     @Test
     public void thatFindingMojoCanRetrieveFindingsAndPrintThem() throws Exception {
         stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
@@ -46,12 +58,6 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
                                                 .withVulnerability(aVulnerability().withSeverity(LOW))
                                                 .withAnalysis(anAnalysis())).build()))));
 
-        FindingsMojo findingsMojo = loadFindingsMojo(mojoRule);
-        findingsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
-        findingsMojo.setApiKey("abc123");
-        findingsMojo.setProjectName("testName");
-        findingsMojo.setProjectVersion("99.99");
-
         findingsMojo.execute();
 
         verify(exactly(1), getRequestedFor(urlEqualTo(V1_PROJECT)));
@@ -63,12 +69,6 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
         stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(ok()));
-
-        FindingsMojo findingsMojo = loadFindingsMojo(mojoRule);
-        findingsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
-        findingsMojo.setApiKey("abc123");
-        findingsMojo.setProjectName("testName");
-        findingsMojo.setProjectVersion("99.99");
 
         try {
             findingsMojo.execute();
@@ -85,11 +85,6 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(aResponse().withFault(RANDOM_DATA_THEN_CLOSE)));
 
-        FindingsMojo findingsMojo = loadFindingsMojo(mojoRule);
-        findingsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
-        findingsMojo.setApiKey("abc123");
-        findingsMojo.setProjectName("testName");
-        findingsMojo.setProjectVersion("99.99");
         findingsMojo.setFailOnError(true);
 
         try {
@@ -113,11 +108,6 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
                                                 .withVulnerability(aVulnerability().withSeverity(LOW))
                                                 .withAnalysis(anAnalysis())).build()))));
 
-        FindingsMojo findingsMojo = loadFindingsMojo(mojoRule);
-        findingsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
-        findingsMojo.setApiKey("abc123");
-        findingsMojo.setProjectName("testName");
-        findingsMojo.setProjectVersion("99.99");
         findingsMojo.setFindingThresholds(new FindingThresholds(0, 0, 0, 0, 0));
 
         try {
@@ -141,11 +131,6 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
                                                 .withVulnerability(aVulnerability().withSeverity(UNASSIGNED))
                                                 .withAnalysis(anAnalysis())).build()))));
 
-        FindingsMojo findingsMojo = loadFindingsMojo(mojoRule);
-        findingsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
-        findingsMojo.setApiKey("abc123");
-        findingsMojo.setProjectName("testName");
-        findingsMojo.setProjectVersion("99.99");
         findingsMojo.setFindingThresholds(new FindingThresholds());
 
         try {
@@ -153,5 +138,26 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
         } catch (Exception ex) {
             fail("Exception not expected");
         }
+    }
+
+    @Test
+    public void thatFindingsIsSkippedWhenSkipIsTrue() throws Exception {
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(
+                aResponse().withBody(asJson(
+                        aListOfFindings()
+                                .withFinding(
+                                        aFinding()
+                                                .withComponent(aComponent().withName("dodgy"))
+                                                .withVulnerability(aVulnerability().withSeverity(LOW))
+                                                .withAnalysis(anAnalysis())).build()))));
+
+        findingsMojo.setSkip(true);
+
+        findingsMojo.execute();
+
+        verify(exactly(0), getRequestedFor(urlEqualTo(V1_PROJECT)));
+        verify(exactly(0), getRequestedFor(urlPathMatching(V1_FINDING_PROJECT_UUID)));
     }
 }

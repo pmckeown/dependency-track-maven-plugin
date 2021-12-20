@@ -16,6 +16,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  *     <li>dependencyTrackBaseUrl</li>
  *     <li>apiKey</li>
  *     <li>failOnError</li>
+ *     <li>skip</li>
  * </ol>
  *
  * @author Paul McKeown
@@ -39,6 +40,9 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
 
     @Parameter
     private PollingConfig pollingConfig;
+
+    @Parameter(defaultValue = "false", property = "dependency-track.skip", alias = "dependency-track.skip")
+    private boolean skip;
 
     protected Logger logger;
 
@@ -66,6 +70,10 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         this.commonConfig.setPollingConfig(this.pollingConfig != null ? this.pollingConfig : PollingConfig.defaults());
 
         // Perform the requested action
+        if (skip) {
+            logger.info("dependency-track.skip = true: Skipping analysis.");
+            return;
+        }
         this.performAction();
     }
 
@@ -95,6 +103,10 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
 
     public void setFailOnError(boolean fail) {
         this.failOnError = fail;
+    }
+
+    public void setSkip(boolean skip) {
+        this.skip = skip;
     }
 
     public void setPollingConfig(PollingConfig commonConfig) {

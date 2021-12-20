@@ -1,7 +1,5 @@
 package io.github.pmckeown.dependencytrack.upload;
 
-
-import io.github.pmckeown.TestMojoLoader;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.ResourceConstants;
 import io.github.pmckeown.util.BomEncoder;
@@ -15,6 +13,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.Optional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static io.github.pmckeown.TestMojoLoader.loadUploadBomMojo;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_BOM;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -27,7 +26,7 @@ import static org.mockito.Mockito.doReturn;
 
 public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
-    private static final String BOM_LOCATION = "target/test-classes/project-to-test/bom.xml";
+    private static final String BOM_LOCATION = "target/test-classes/projects/run/bom.xml";
 
     @Mock
     private BomEncoder bomEncoder;
@@ -182,12 +181,26 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
                         matchingJsonPath("$.projectVersion", equalTo("0.0.1-SNAPSHOT"))));
     }
 
+    @Test
+    public void thatTheUploadIsSkippedWhenSkipIsTrue() throws Exception {
+        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(ok()));
+
+        UploadBomMojo uploadBomMojo = uploadBomMojo("target/test-classes/projects/skip/bom.xml");
+        uploadBomMojo.setSkip(true);
+
+        uploadBomMojo.execute();
+
+        verify(exactly(0), putRequestedFor(urlEqualTo(V1_BOM)));
+    }
+
     /*
      * Helper methods
      */
 
     private UploadBomMojo uploadBomMojo(String bomLocation) throws Exception {
-        UploadBomMojo uploadBomMojo = TestMojoLoader.loadUploadBomMojo(mojoRule);
+        UploadBomMojo uploadBomMojo = loadUploadBomMojo(mojoRule);
         uploadBomMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
         if (bomLocation != null) {
             uploadBomMojo.setBomLocation(bomLocation);

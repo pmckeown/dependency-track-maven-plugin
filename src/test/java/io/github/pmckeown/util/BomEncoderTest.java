@@ -19,7 +19,7 @@ public class BomEncoderTest {
 
     @Test
     public void thatABomFileCanBeBase64Encoded() {
-        Optional<String> encodedBom = bomEncoder.encodeBom("target/test-classes/project-to-test/bom.xml", logger);
+        Optional<String> encodedBom = bomEncoder.encodeBom("target/test-classes/projects/run/bom.xml", logger);
 
         assertThat(encodedBom.isPresent(), is(true));
     }
