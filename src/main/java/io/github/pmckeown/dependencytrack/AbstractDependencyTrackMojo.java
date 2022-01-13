@@ -70,7 +70,7 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         this.commonConfig.setPollingConfig(this.pollingConfig != null ? this.pollingConfig : PollingConfig.defaults());
 
         // Perform the requested action
-        if (skip) {
+        if (getSkip()) {
             logger.info("dependency-track.skip = true: Skipping analysis.");
             return;
         }
@@ -127,4 +127,7 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         }
     }
 
+    private boolean getSkip() {
+        return Boolean.parseBoolean(System.getProperty("dependency-track.skip", Boolean.toString(skip)));
+    }
 }
