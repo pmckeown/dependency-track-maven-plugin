@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/pmckeown/dependency-track-maven-plugin.svg?branch=main)](https://travis-ci.com/pmckeown/dependency-track-maven-plugin)
+[![Build Status](https://github.com/pmckeown/dependency-track-maven-plugin/actions/workflows/maven.yml/badge.svg)](https://github.com/pmckeown/dependency-track-maven-plugin/actions/workflows/maven/badge.svg)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.pmckeown/dependency-track-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.pmckeown/dependency-track-maven-plugin)
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=io.github.pmckeown%3Adependency-track-maven-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=io.github.pmckeown%3Adependency-track-maven-plugin)
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=io.github.pmckeown%3Adependency-track-maven-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=io.github.pmckeown%3Adependency-track-maven-plugin)
