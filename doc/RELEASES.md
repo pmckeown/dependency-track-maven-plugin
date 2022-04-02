@@ -1,6 +1,6 @@
 # Releasing the Dependency Track Maven Plugin
 
-To initiate a new release, raise a Pull Request to the master branch which contains the requested change(s) and sets the 
+To initiate a new release, raise a Pull Request to the main branch which contains the requested change(s) and sets the 
 POM version number to the next release version.
 
 This project follows semantic versioning principles laid out at [SemVer](https://semver.org/).  As such please follow 
@@ -15,13 +15,13 @@ option.
 
 The following steps should be followed when creating a release of this plugin.
 
-**Note these should be performed on the _master_ branch only where that branch is up to date with the remote**
+**Note these should be performed on the _main_ branch only where that branch is up to date with the remote**
 
 1. `mvn clean deploy -Prelease`
 2. `git tag -a -s <VERSION_NUMBER> -m 'Release version <VERSION_NUMBER> - <BRIEF_DESCRIPTION_OF_CHANGES>'`
 3. `git push origin --tags`
 
-After these steps remember to set the next SNAPSHOT version release number and commit that to the `master` branch.
+After these steps remember to set the next SNAPSHOT version release number and commit that to the `main` branch.
 
 1. change pom.xml version number
 2. `git commit -am 'Bumping to next SNAPSHOT release version'`
