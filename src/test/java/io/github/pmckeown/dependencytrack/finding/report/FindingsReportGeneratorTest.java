@@ -20,7 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FindingsReportGeneratorTest {
@@ -58,7 +58,7 @@ public class FindingsReportGeneratorTest {
             assertThat(e, is(instanceOf(DependencyTrackException.class)));
         }
 
-        verifyZeroInteractions(htmlReportWriter);
+        verifyNoInteractions(htmlReportWriter);
     }
 
     @Test

@@ -28,7 +28,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ScoreActionTest {
@@ -104,7 +104,7 @@ public class ScoreActionTest {
         Integer score = scoreAction.determineScore(INHERITED_RISK_SCORE_THRESHOLD);
         assertThat(score, is(equalTo(100)));
 
-        verifyZeroInteractions(metricsAction);
+        verifyNoInteractions(metricsAction);
     }
 
     @Test
