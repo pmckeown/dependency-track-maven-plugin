@@ -15,7 +15,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '11'
-            distribution: 'temurin'
+          distribution: 'temurin'
           cache: maven
       - name: Analyze with SonarCloud
         run: mvn -B verify sonar:sonar -Dsonar.projectKey=dependency-track-maven-plugin -Dsonar.organization=pmckeown -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
