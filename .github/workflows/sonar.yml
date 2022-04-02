@@ -1,0 +1,22 @@
+name: SonarCloud
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-16.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+      - name: Analyze with SonarCloud
+        run: ./mvnw -B verify sonar:sonar -Dsonar.projectKey=dependency-track-maven-plugin -Dsonar.organization=pmckeown -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
