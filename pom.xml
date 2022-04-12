@@ -71,7 +71,7 @@
         <dependency>
             <groupId>com.konghq</groupId>
             <artifactId>unirest-java</artifactId>
-            <version>3.13.7</version>
+            <version>3.13.8</version>
             <classifier>standalone</classifier>
         </dependency>
         <dependency>
