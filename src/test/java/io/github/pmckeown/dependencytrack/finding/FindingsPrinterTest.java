@@ -111,6 +111,19 @@ public class FindingsPrinterTest {
         verify(logger).info("be vulnerable.> > -- [redhat.com](https://bugzilla.redhat.com/show_bug");
     }
 
+    /**
+     * Test for issue: https://github.com/pmckeown/dependency-track-maven-plugin/issues/281
+     */
+    @Test
+    public void thatSanitisedContentPrintableWhenItShrinksAcrossAChunkBoundary() {
+        int chunkSize = findingsPrinter.getPrintWidth();
+        String findingContent = repeat("x", chunkSize - 1) + repeat("\n", 3) + repeat("y", chunkSize - 1);
+        Project project = aProject().withName("a").withVersion("1").build();
+        List<Finding> findings = findingsList(findingContent, false);
+
+        findingsPrinter.printFindings(project, findings);
+    }
+
     private List<Finding> findingsList(boolean isSuppressed, final VulnerabilityBuilder vulnerabilityBuilder) {
         return aListOfFindings()
                 .withFinding(
