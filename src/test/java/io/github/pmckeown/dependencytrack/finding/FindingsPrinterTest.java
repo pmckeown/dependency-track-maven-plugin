@@ -122,6 +122,9 @@ public class FindingsPrinterTest {
         List<Finding> findings = findingsList(findingContent, false);
 
         findingsPrinter.printFindings(project, findings);
+
+        verify(logger).info(repeat("x", chunkSize - 1) + "y");
+        verify(logger).info(repeat("y", chunkSize - 2));
     }
 
     private List<Finding> findingsList(boolean isSuppressed, final VulnerabilityBuilder vulnerabilityBuilder) {
