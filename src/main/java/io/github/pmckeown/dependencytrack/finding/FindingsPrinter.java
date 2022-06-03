@@ -48,6 +48,11 @@ class FindingsPrinter {
         });
     }
 
+    int getPrintWidth() {
+        // We wrap printed lines to match the delimiter string width
+        return DELIMITER.length();
+    }
+
     private List<String> splitString(final String string) {
         if (StringUtils.isEmpty(string)) {
             return Collections.emptyList();
@@ -55,8 +60,8 @@ class FindingsPrinter {
 
         String percentEscaped = StringUtils.replace(string, "%", "%%");
         String cleaned = StringUtils.replace(percentEscaped, "\n", "");
-        int chunkSize = DELIMITER.length();
-        final int numberOfChunks = (string.length() + chunkSize - 1) / chunkSize;
+        int chunkSize = getPrintWidth();
+        final int numberOfChunks = (cleaned.length() + chunkSize - 1) / chunkSize;
         return IntStream.range(0, numberOfChunks)
                 .mapToObj(i -> cleaned.substring(i * chunkSize, Math.min((i + 1) * chunkSize, cleaned.length())))
                 .collect(toList());
