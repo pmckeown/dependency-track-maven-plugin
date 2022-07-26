@@ -15,6 +15,8 @@ public class PolicyViolation {
     private PolicyCondition policyCondition;
     private Component component;
 
+    private String type;
+
     @JsonCreator
     public PolicyViolation(@JsonProperty("component") Component component,
                            @JsonProperty("analysis") PolicyCondition policyCondition) {
@@ -35,5 +37,10 @@ public class PolicyViolation {
     @XmlElement
     public PolicyCondition getPolicyCondition() {
         return policyCondition;
+    }
+
+    @XmlElement
+    public String getType() {
+        return type;
     }
 }

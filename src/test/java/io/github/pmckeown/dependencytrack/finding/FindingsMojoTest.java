@@ -2,6 +2,8 @@ package io.github.pmckeown.dependencytrack.finding;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.finding.report.FindingsReportGenerator;
+import io.github.pmckeown.dependencytrack.policy.PolicyAction;
+import io.github.pmckeown.dependencytrack.policy.PolicyViolationsPrinter;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
 import org.junit.Test;
@@ -30,7 +32,13 @@ public class FindingsMojoTest {
     private FindingsAction findingsAction;
 
     @Mock
+    private PolicyAction policyAction;
+
+    @Mock
     private FindingsPrinter findingsPrinter;
+
+    @Mock
+    private PolicyViolationsPrinter policyViolationsPrinter;
 
     @Mock
     private FindingsAnalyser findingsAnalyser;
@@ -49,7 +57,7 @@ public class FindingsMojoTest {
         findingsMojo.performAction();
 
         verify(findingsReportGenerator, times(1)).generate(
-                null, new ArrayList<>(), null, false);
+                null, new ArrayList<>(), null, false, new ArrayList<>());
     }
 
     @Test

@@ -107,8 +107,7 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
             findingsPrinter.printFindings(project, findings);
             policyViolationsPrinter.printPolicyViolations(project, policyViolations);
             boolean policyBreached = findingsAnalyser.doNumberOfFindingsBreachPolicy(findings, findingThresholds);
-            findingsReportGenerator.generate(getOutputDirectory(), findings, findingThresholds, policyBreached);
-            // TODO add policy violations in the report?
+            findingsReportGenerator.generate(getOutputDirectory(), findings, findingThresholds, policyBreached, policyViolations);
 
             if (policyBreached) {
                 throw new MojoFailureException("Number of findings exceeded defined thresholds");

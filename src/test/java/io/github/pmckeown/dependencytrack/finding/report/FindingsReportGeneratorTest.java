@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aListOfFindings;
@@ -38,7 +39,7 @@ public class FindingsReportGeneratorTest {
     public void thatBothReportsAreGenerated() throws Exception {
         FindingThresholds findingThresholds = new FindingThresholds(1, null, null, null, null);
         List<Finding> findings = aListOfFindings().build();
-        findingsReportGenerator.generate(null, findings, findingThresholds, false);
+        findingsReportGenerator.generate(null, findings, findingThresholds, false, new ArrayList<>());
 
         verify(xmlReportWriter).write(isNull(), any(FindingsReport.class));
         verify(htmlReportWriter).write(isNull());
@@ -52,7 +53,7 @@ public class FindingsReportGeneratorTest {
         doThrow(DependencyTrackException.class).when(xmlReportWriter).write(isNull(), any(FindingsReport.class));
 
         try {
-            findingsReportGenerator.generate(null, findings, findingThresholds, false);
+            findingsReportGenerator.generate(null, findings, findingThresholds, false, new ArrayList<>());
             fail("Exception expected");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(DependencyTrackException.class)));
@@ -69,7 +70,7 @@ public class FindingsReportGeneratorTest {
         doThrow(DependencyTrackException.class).when(htmlReportWriter).write(isNull());
 
         try {
-            findingsReportGenerator.generate(null, findings, findingThresholds, false);
+            findingsReportGenerator.generate(null, findings, findingThresholds, false, new ArrayList<>());
             fail("Exception expected");
         } catch (Exception e) {
             assertThat(e, is(instanceOf(DependencyTrackException.class)));
