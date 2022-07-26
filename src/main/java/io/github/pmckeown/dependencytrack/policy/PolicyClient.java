@@ -1,14 +1,14 @@
-package io.github.pmckeown.dependencytrack.finding;
+package io.github.pmckeown.dependencytrack.policy;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
-import io.github.pmckeown.dependencytrack.policy.PolicyViolation;
+import io.github.pmckeown.dependencytrack.finding.Finding;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
-import kong.unirest.jackson.JacksonObjectMapper;
 import kong.unirest.Unirest;
+import kong.unirest.jackson.JacksonObjectMapper;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -23,14 +23,14 @@ import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
 import static kong.unirest.Unirest.get;
 
 @Singleton
-class FindingsClient {
+class PolicyClient {
 
     private CommonConfig commonConfig;
 
     private Logger logger;
 
     @Inject
-    FindingsClient(CommonConfig commonConfig, Logger logger) {
+    PolicyClient(CommonConfig commonConfig, Logger logger) {
         this.commonConfig = commonConfig;
         this.logger = logger;
     }
@@ -41,16 +41,15 @@ class FindingsClient {
                 .addDefaultHeader(ACCEPT, "application/json");
     }
 
-
-    Response<List<Finding>> getFindingsForProject(Project project) {
-        logger.debug("Getting findings for project: %s-%s", project.getName(), project.getVersion());
-        final HttpResponse<List<Finding>> httpResponse = get(
-                commonConfig.getDependencyTrackBaseUrl() + V1_FINDING_PROJECT_UUID)
+    Response<List<PolicyViolation>> getPolicyViolationsForProject(Project project) {
+        logger.debug("Getting policy violations for project: %s-%s", project.getName(), project.getVersion());
+        final HttpResponse<List<PolicyViolation>> httpResponse = get(
+                commonConfig.getDependencyTrackBaseUrl() + V1_POLICY_VIOLATION_PROJECT_UUID)
                 .header("X-Api-Key", commonConfig.getApiKey())
                 .routeParam("uuid", project.getUuid())
-                .asObject(new GenericType<List<Finding>>(){});
+                .asObject(new GenericType<List<PolicyViolation>>(){});
 
-        Optional<List<Finding>> body;
+        Optional<List<PolicyViolation>> body;
         if (httpResponse.isSuccess()) {
             body = Optional.of(httpResponse.getBody());
         } else {

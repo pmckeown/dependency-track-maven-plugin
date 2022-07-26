@@ -4,6 +4,9 @@ import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.finding.report.FindingsReportGenerator;
+import io.github.pmckeown.dependencytrack.policy.PolicyAction;
+import io.github.pmckeown.dependencytrack.policy.PolicyViolation;
+import io.github.pmckeown.dependencytrack.policy.PolicyViolationsPrinter;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
@@ -75,29 +78,37 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     private FindingsPrinter findingsPrinter;
     private FindingsAnalyser findingsAnalyser;
     private FindingsReportGenerator findingsReportGenerator;
+    private PolicyAction policyAction;
+    private PolicyViolationsPrinter policyViolationsPrinter;
 
     @Inject
     public FindingsMojo(ProjectAction projectAction, FindingsAction findingsAction, FindingsPrinter findingsPrinter,
                         FindingsAnalyser findingsAnalyser, FindingsReportGenerator findingsReportGenerator,
-                        CommonConfig commonConfig, Logger logger) {
+                        CommonConfig commonConfig, Logger logger, PolicyAction policyAction,
+                        PolicyViolationsPrinter policyViolationsPrinter) {
         super(commonConfig, logger);
         this.projectAction = projectAction;
         this.findingsAction = findingsAction;
         this.findingsPrinter = findingsPrinter;
         this.findingsAnalyser = findingsAnalyser;
         this.findingsReportGenerator = findingsReportGenerator;
+        this.policyAction = policyAction;
+        this.policyViolationsPrinter = policyViolationsPrinter;
     }
 
     @Override
     protected void performAction() throws MojoExecutionException, MojoFailureException {
         List<Finding> findings;
+        List<PolicyViolation> policyViolations;
         try {
             Project project = projectAction.getProject(commonConfig.getProjectName(), commonConfig.getProjectVersion());
             findings = findingsAction.getFindings(project);
+            policyViolations = policyAction.getPolicyViolations(project);
             findingsPrinter.printFindings(project, findings);
-
+            policyViolationsPrinter.printPolicyViolations(project, policyViolations);
             boolean policyBreached = findingsAnalyser.doNumberOfFindingsBreachPolicy(findings, findingThresholds);
             findingsReportGenerator.generate(getOutputDirectory(), findings, findingThresholds, policyBreached);
+            // TODO add policy violations in the report?
 
             if (policyBreached) {
                 throw new MojoFailureException("Number of findings exceeded defined thresholds");
