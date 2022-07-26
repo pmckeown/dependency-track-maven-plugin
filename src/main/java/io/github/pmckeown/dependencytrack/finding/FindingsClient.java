@@ -2,13 +2,12 @@ package io.github.pmckeown.dependencytrack.finding;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
-import io.github.pmckeown.dependencytrack.policy.PolicyViolation;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
-import kong.unirest.jackson.JacksonObjectMapper;
 import kong.unirest.Unirest;
+import kong.unirest.jackson.JacksonObjectMapper;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -17,7 +16,6 @@ import java.util.Optional;
 
 import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_FINDING_PROJECT_UUID;
-import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_POLICY_VIOLATION_PROJECT_UUID;
 import static kong.unirest.HeaderNames.ACCEPT;
 import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
 import static kong.unirest.Unirest.get;
