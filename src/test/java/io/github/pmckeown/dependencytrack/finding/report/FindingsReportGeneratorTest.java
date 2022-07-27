@@ -3,6 +3,7 @@ package io.github.pmckeown.dependencytrack.finding.report;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.finding.Finding;
 import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
+import io.github.pmckeown.dependencytrack.policy.PolicyViolation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aListOfFindings;
+import static io.github.pmckeown.dependencytrack.policy.PolicyViolationListBuilder.aListOfPolicyViolations;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -39,7 +41,8 @@ public class FindingsReportGeneratorTest {
     public void thatBothReportsAreGenerated() throws Exception {
         FindingThresholds findingThresholds = new FindingThresholds(1, null, null, null, null);
         List<Finding> findings = aListOfFindings().build();
-        findingsReportGenerator.generate(null, findings, findingThresholds, false, new ArrayList<>());
+        List<PolicyViolation> policyViolations = aListOfPolicyViolations().build();
+        findingsReportGenerator.generate(null, findings, findingThresholds, false, policyViolations);
 
         verify(xmlReportWriter).write(isNull(), any(FindingsReport.class));
         verify(htmlReportWriter).write(isNull());

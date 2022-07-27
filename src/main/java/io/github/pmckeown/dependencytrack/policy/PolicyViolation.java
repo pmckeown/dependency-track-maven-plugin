@@ -19,9 +19,11 @@ public class PolicyViolation {
 
     @JsonCreator
     public PolicyViolation(@JsonProperty("component") Component component,
-                           @JsonProperty("analysis") PolicyCondition policyCondition) {
+                           @JsonProperty("analysis") PolicyCondition policyCondition,
+                           @JsonProperty("type") String type) {
         this.component = component;
         this.policyCondition = policyCondition;
+        this.type = type;
     }
 
     @XmlElement

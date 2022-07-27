@@ -51,7 +51,7 @@ public class FindingsReport {
     }
 
     @XmlElement(name = "policyViolations")
-    public PolicyViolationsWrapper getViolations() { return new PolicyViolationsWrapper(policyViolations.size(), policyViolations); }
+    public PolicyViolationsWrapper getPolicyViolationWrapper() { return new PolicyViolationsWrapper(policyViolations.size(), policyViolations); }
 
     @XmlElement(name="critical")
     public FindingsWrapper getCritical() {
