@@ -34,7 +34,7 @@ class PolicyViolationsPrinter {
             logger.info(DELIMITER);
             logger.info("Policy name: %s (%s)", policy.getName(), policy.getViolationState());
             logger.info("Policy condition: \"subject == %s && value %s %s\"", policyCondition.getSubject(), policyCondition.getOperator(), policyCondition.getValue());
-            logger.info("Risk type: %s, Component: %s %s", policyViolation.getType(), policyViolation.getComponent());
+            logger.info("Risk type: %s, Component: %s %s", policyViolation.getType(), policyViolation.getComponent().getName(), policyViolation.getComponent().getVersion());
             logger.info(""); // Spacer
         });
     }
