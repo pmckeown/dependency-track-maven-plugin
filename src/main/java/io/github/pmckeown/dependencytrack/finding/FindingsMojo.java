@@ -7,6 +7,8 @@ import io.github.pmckeown.dependencytrack.finding.report.FindingsReportGenerator
 import io.github.pmckeown.dependencytrack.policy.PolicyAction;
 import io.github.pmckeown.dependencytrack.policy.PolicyViolation;
 import io.github.pmckeown.dependencytrack.policy.PolicyViolationsPrinter;
+import io.github.pmckeown.dependencytrack.policy.PolicyConfig;
+import io.github.pmckeown.dependencytrack.policy.PolicyAnalyser;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
@@ -70,6 +72,9 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     @Parameter(name = "findingThresholds")
     private FindingThresholds findingThresholds;
 
+    @Parameter(name = "policyConfig")
+    private PolicyConfig policyConfig;
+
     @Parameter(defaultValue = "${project}", readonly = true, required = false)
     private MavenProject mavenProject;
 
@@ -80,12 +85,13 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     private FindingsReportGenerator findingsReportGenerator;
     private PolicyAction policyAction;
     private PolicyViolationsPrinter policyViolationsPrinter;
+    private PolicyAnalyser policyAnalyser;
 
     @Inject
     public FindingsMojo(ProjectAction projectAction, FindingsAction findingsAction, FindingsPrinter findingsPrinter,
                         FindingsAnalyser findingsAnalyser, FindingsReportGenerator findingsReportGenerator,
                         CommonConfig commonConfig, Logger logger, PolicyAction policyAction,
-                        PolicyViolationsPrinter policyViolationsPrinter) {
+                        PolicyViolationsPrinter policyViolationsPrinter, PolicyAnalyser policyAnalyser) {
         super(commonConfig, logger);
         this.projectAction = projectAction;
         this.findingsAction = findingsAction;
@@ -94,6 +100,7 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
         this.findingsReportGenerator = findingsReportGenerator;
         this.policyAction = policyAction;
         this.policyViolationsPrinter = policyViolationsPrinter;
+        this.policyAnalyser = policyAnalyser;
     }
 
     @Override
@@ -107,10 +114,14 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
             findingsPrinter.printFindings(project, findings);
             policyViolationsPrinter.printPolicyViolations(project, policyViolations);
             boolean policyBreached = findingsAnalyser.doNumberOfFindingsBreachPolicy(findings, findingThresholds);
+            boolean policyViolationBreached = policyAnalyser.isAnyPolicyViolationBreached(policyViolations, policyConfig);
             findingsReportGenerator.generate(getOutputDirectory(), findings, findingThresholds, policyBreached, policyViolations);
 
             if (policyBreached) {
                 throw new MojoFailureException("Number of findings exceeded defined thresholds");
+            }
+            if(policyViolationBreached) {
+                throw new MojoFailureException("Policy violations breached");
             }
         } catch (DependencyTrackException ex) {
             handleFailure("Error occurred when getting findings", ex);
