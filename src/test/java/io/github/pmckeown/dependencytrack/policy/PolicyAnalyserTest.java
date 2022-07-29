@@ -31,7 +31,7 @@ public class PolicyAnalyserTest {
     private Logger logger;
 
     @Before
-    public void PolicyAnalyserSetup() {
+    public void policyAnalyserSetup() {
         policyViolations = aListOfPolicyViolations()
                 .withPolicyViolation(aPolicyViolation()
                         .withType("SEVERITY")
