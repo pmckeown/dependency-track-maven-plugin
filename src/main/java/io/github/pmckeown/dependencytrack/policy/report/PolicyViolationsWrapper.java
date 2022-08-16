@@ -1,4 +1,4 @@
-package io.github.pmckeown.dependencytrack.finding.report;
+package io.github.pmckeown.dependencytrack.policy.report;
 
 import io.github.pmckeown.dependencytrack.policy.PolicyViolation;
 

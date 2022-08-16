@@ -15,7 +15,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 @Singleton
-class HtmlReportWriter {
+public class HtmlReportWriter {
 
     private TransformerFactoryProvider transformerFactoryProvider;
 
@@ -24,7 +24,7 @@ class HtmlReportWriter {
         this.transformerFactoryProvider = transformerFactoryProvider;
     }
 
-    void write(File buildDirectory) throws DependencyTrackException {
+    public void write(File buildDirectory) throws DependencyTrackException {
         try {
             StreamSource stylesheet = new StreamSource(getStylesheetInputStream());
             StreamSource input = new StreamSource(getInputFile(buildDirectory));

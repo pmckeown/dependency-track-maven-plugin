@@ -24,15 +24,52 @@ public class PolicyAnalyserTest {
     @InjectMocks
     private PolicyAnalyser policyAnalyser;
 
-    List<PolicyViolation> policyViolations;
-    boolean isPolicyBreached;
-
     @Mock
     private Logger logger;
 
-    @Before
-    public void policyAnalyserSetup() {
-        policyViolations = aListOfPolicyViolations()
+    @Test
+    public void thatWhenNoConfigIsProvidedThePolicyViolationsCannotBeBreached() {
+        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
+                aListOfPolicyViolations().build(), null);
+        assertFalse(isPolicyBreached);
+    }
+
+    @Test
+    public void thatPolicyViolationCountGreaterThanTheDefinedThresholdWillLogWarning() {
+        List<PolicyViolation> policyViolations = setupPolicyViolations();
+        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(policyViolations, new PolicyConfig(null, null, null, 1));
+        verify(logger).warn("Number of policy violations [%d] exceeds the maximum allowed [%d]", 2, 1);
+        assertTrue(isPolicyBreached);
+    }
+
+    @Test
+    public void thatPolicyViolationCountLessThanTheDefinedThresholdWillReturnFalse() {
+        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
+                aListOfPolicyViolations().build(), new PolicyConfig(null, null, null, 1));
+        assertFalse(isPolicyBreached);
+    }
+
+    @Test
+    public void thatPolicyViolationNameMatchingOneWillLogWarning() {
+        PolicyConfig policyConfig = new PolicyConfig();
+        policyConfig.setPolicyName("testPolicy1");
+        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(setupPolicyViolations(), policyConfig);
+        assertTrue(isPolicyBreached);
+        verify(logger).warn("Policy [%s] is violated under component [%s] [%s]", "testPolicy1", "password-printer", "1.0.0");
+    }
+
+    @Test
+    public void thatPolicyViolationNameMatchingMultipleWillLogWarning() {
+        PolicyConfig policyConfig = new PolicyConfig();
+        policyConfig.setPolicyName("testPolicy");
+        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(setupPolicyViolations(), policyConfig);
+        assertTrue(isPolicyBreached);
+        verify(logger).warn("Policy [%s] is violated under component [%s] [%s]", "testPolicy1", "password-printer", "1.0.0");
+        verify(logger).warn("Policy [%s] is violated under component [%s] [%s]", "testPolicy2", "password-printer", "1.0.0");
+    }
+
+    public List<PolicyViolation> setupPolicyViolations() {
+        return aListOfPolicyViolations()
                 .withPolicyViolation(aPolicyViolation()
                         .withType("SEVERITY")
                         .withPolicyCondition(aPolicyCondition()
@@ -44,45 +81,5 @@ public class PolicyAnalyserTest {
                                 .withPolicy(new Policy("testPolicy2", "WARN")))
                         .withComponent(aComponent()))
                 .build();
-    }
-
-    @Test
-    public void thatWhenNoConfigIsProvidedThePolicyViolationsCannotBeBreached() {
-        isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
-                aListOfPolicyViolations().build(), null);
-        assertFalse(isPolicyBreached);
-    }
-
-    @Test
-    public void thatPolicyViolationCountGreaterThanTheDefinedThresholdWillLogWarning() {
-        isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(policyViolations, new PolicyConfig(null, null, null, 1));
-        verify(logger).warn("Number of policy violations [%d] exceeds the maximum allowed [%d]", 2, 1);
-        assertTrue(isPolicyBreached);
-    }
-
-    @Test
-    public void thatPolicyViolationCountLessThanTheDefinedThresholdWillReturnFalse() {
-        isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
-                aListOfPolicyViolations().build(), new PolicyConfig(null, null, null, 1));
-        assertFalse(isPolicyBreached);
-    }
-
-    @Test
-    public void thatPolicyViolationNameMatchingOneWillLogWarning() {
-        PolicyConfig policyConfig = new PolicyConfig();
-        policyConfig.setPolicyName("testPolicy1");
-        isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(policyViolations, policyConfig);
-        assertTrue(isPolicyBreached);
-        verify(logger).warn("Policy [%s] is violated under component [%s] [%s]", "testPolicy1", "password-printer", "1.0.0");
-    }
-
-    @Test
-    public void thatPolicyViolationNameMatchingMultipleWillLogWarning() {
-        PolicyConfig policyConfig = new PolicyConfig();
-        policyConfig.setPolicyName("testPolicy");
-        isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(policyViolations, policyConfig);
-        assertTrue(isPolicyBreached);
-        verify(logger).warn("Policy [%s] is violated under component [%s] [%s]", "testPolicy1", "password-printer", "1.0.0");
-        verify(logger).warn("Policy [%s] is violated under component [%s] [%s]", "testPolicy2", "password-printer", "1.0.0");
     }
 }

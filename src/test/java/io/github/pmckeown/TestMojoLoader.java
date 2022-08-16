@@ -2,6 +2,7 @@ package io.github.pmckeown;
 
 import io.github.pmckeown.dependencytrack.finding.FindingsMojo;
 import io.github.pmckeown.dependencytrack.metrics.MetricsMojo;
+import io.github.pmckeown.dependencytrack.policy.PolicyMojo;
 import io.github.pmckeown.dependencytrack.project.DeleteProjectMojo;
 import io.github.pmckeown.dependencytrack.upload.UploadBomMojo;
 import io.github.pmckeown.dependencytrack.score.ScoreMojo;
@@ -53,6 +54,12 @@ public final class TestMojoLoader {
         FindingsMojo findingsMojo = (FindingsMojo) mojoRule.lookupConfiguredMojo(getPomFile(), "findings");
         assertNotNull(findingsMojo);
         return findingsMojo;
+    }
+
+    public static PolicyMojo loadPolicyMojo(MojoRule mojoRule) throws Exception {
+        PolicyMojo policyMojo = (PolicyMojo) mojoRule.lookupConfiguredMojo(getPomFile(), "policy-violations");
+        assertNotNull(policyMojo);
+        return policyMojo;
     }
 
     private static File getPomFile() {

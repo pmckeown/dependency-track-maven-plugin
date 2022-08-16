@@ -185,7 +185,7 @@ You can enable the build to fail on any issues in any category by using the foll
 | policyConfig                    |false   | N/A           | If not set or no child elements set then no policy config will be applied and the goal will always succeed |
 | policyConfig.policyName         |false   | null          | The build will fail if the policy name in violations contains the configured value for this category       |
 | policyConfig.violationState     |false   | null          | The build will fail if the policy state matches the configured value for this category                     |
-| policyConfig.riskType           |false   | null          | The build will fail if the policy type matches the configured value for this category                      |
+| policyConfig.riskType           |false   | null          | The build will fail if the policy risk type matches the configured value for this category                 |
 | policyConfig.threshold          |false   | 0             | The build will fail if the violation count is higher than the configured threshold value for this category |
 
 #### Examples

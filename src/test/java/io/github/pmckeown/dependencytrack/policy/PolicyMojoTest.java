@@ -1,7 +1,7 @@
-package io.github.pmckeown.dependencytrack.finding;
+package io.github.pmckeown.dependencytrack.policy;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
-import io.github.pmckeown.dependencytrack.finding.report.FindingsReportGenerator;
+import io.github.pmckeown.dependencytrack.policy.report.PolicyViolationReportGenerator;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
 import org.junit.Test;
@@ -18,47 +18,47 @@ import static org.mockito.Mockito.verifyNoInteractions;
 
 @SuppressWarnings("unused")
 @RunWith(MockitoJUnitRunner.class)
-public class FindingsMojoTest {
+public class PolicyMojoTest {
 
     @InjectMocks
-    private FindingsMojo findingsMojo;
+    private PolicyMojo policyMojo;
 
     @Mock
     private ProjectAction projectAction;
 
     @Mock
-    private FindingsAction findingsAction;
+    private PolicyAction policyAction;
 
     @Mock
-    private FindingsPrinter findingsPrinter;
+    private PolicyViolationsPrinter policyViolationsPrinter;
 
     @Mock
-    private FindingsAnalyser findingsAnalyser;
+    private PolicyAnalyser policyAnalyser;
 
     @Mock
     private CommonConfig commonConfig;
 
     @Mock
-    private FindingsReportGenerator findingsReportGenerator;
+    private PolicyViolationReportGenerator policyViolationReportGenerator;
 
     @Mock
     private Logger logger;
 
     @Test
     public void thatReportIsAlwaysGeneratedEvenWhenNoFindingsArePresent() throws Exception {
-        findingsMojo.performAction();
+        policyMojo.performAction();
 
-        verify(findingsReportGenerator, times(1)).generate(
-                null, new ArrayList<>(), null, false);
+        verify(policyViolationReportGenerator, times(1)).generate(
+                null, new ArrayList<>());
     }
 
     @Test
     public void thatReportIsNotGeneratedWhenSkipIsTrue() throws Exception {
-        findingsMojo.setSkip(true);
+        policyMojo.setSkip(true);
 
-        findingsMojo.execute();
+        policyMojo.execute();
 
-        verifyNoInteractions(findingsReportGenerator);
+        verifyNoInteractions(policyViolationReportGenerator);
     }
 
 }

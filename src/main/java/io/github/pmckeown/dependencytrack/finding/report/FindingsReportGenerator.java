@@ -3,7 +3,6 @@ package io.github.pmckeown.dependencytrack.finding.report;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.finding.Finding;
 import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
-import io.github.pmckeown.dependencytrack.policy.PolicyViolation;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -24,8 +23,8 @@ public class FindingsReportGenerator {
     }
 
     public void generate(File buildDirectory, List<Finding> findings, FindingThresholds findingThresholds,
-                         boolean policyBreached, List<PolicyViolation> policyViolations) throws DependencyTrackException {
-        FindingsReport findingsReport = new FindingsReport(findingThresholds, findings, policyBreached, policyViolations);
+                         boolean policyBreached) throws DependencyTrackException {
+        FindingsReport findingsReport = new FindingsReport(findingThresholds, findings, policyBreached);
         xmlReportWriter.write(buildDirectory, findingsReport);
         htmlReportWriter.write(buildDirectory);
     }

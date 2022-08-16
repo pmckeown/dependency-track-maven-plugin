@@ -3,7 +3,6 @@ package io.github.pmckeown.dependencytrack.finding.report;
 import io.github.pmckeown.dependencytrack.finding.Finding;
 import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
 import io.github.pmckeown.dependencytrack.finding.Severity;
-import io.github.pmckeown.dependencytrack.policy.PolicyViolation;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -13,14 +12,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @XmlRootElement(name = "findingsReport")
-@XmlType(propOrder = {"policyApplied", "policyBreached", "policyViolations", "critical", "high", "medium", "low", "unassigned"})
+@XmlType(propOrder = {"policyApplied", "policyBreached", "critical", "high", "medium", "low", "unassigned"})
 public class FindingsReport {
 
     private PolicyApplied policyApplied;
     private Boolean policyBreached;
     private List<Finding> findings;
-
-    private List<PolicyViolation> policyViolations;
 
     public FindingsReport() {
         // For JAXB
@@ -32,14 +29,6 @@ public class FindingsReport {
         this.policyBreached = policyBreached;
     }
 
-    public FindingsReport(FindingThresholds findingThresholds, List<Finding> findings, boolean policyBreached,
-                          List<PolicyViolation> policyViolations) {
-        this.policyApplied = new PolicyApplied(findingThresholds);
-        this.findings = findings;
-        this.policyBreached = policyBreached;
-        this.policyViolations = policyViolations;
-    }
-
     @XmlElement(name = "policyApplied")
     public PolicyApplied getPolicyApplied() {
         return policyApplied;
@@ -49,9 +38,6 @@ public class FindingsReport {
     public boolean getPolicyBreached() {
         return policyBreached;
     }
-
-    @XmlElement(name = "policyViolations")
-    public PolicyViolationsWrapper getPolicyViolationWrapper() { return new PolicyViolationsWrapper(policyViolations.size(), policyViolations); }
 
     @XmlElement(name="critical")
     public FindingsWrapper getCritical() {
