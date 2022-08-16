@@ -1,7 +1,6 @@
 package io.github.pmckeown.dependencytrack.policy;
 
 import io.github.pmckeown.util.Logger;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
