@@ -30,8 +30,9 @@ in the `pluginManagement` section of your POM to avoid repetition.
 </pluginManagement>
 ```
 
-**IMPORTANT** Recent releases of Dependency Track include multiple components, so you must ensure that you target
-the api server component URL and not the front-end component URL.
+**IMPORTANT** Dependency Track includes a front-end and an api-server component on different ports (defaulting to
+8080 and 8081 respectively). You must ensure that you target the api server component (8081) and not the front-end
+component URL in the `dependencyTrackBaseUrl` property.
 
 #### Polling Configuration
 The plugin is configured to poll for results from the Dependency-Track server by default.  The polling configuration
@@ -55,6 +56,44 @@ can be changed by modifying the `pollingConfig` element in the plugin configurat
     </pollingConfig>
 </configuration>
 ```
+
+To set these options on the Command Line, you need to set the PollingConfig in your POM file to be set by a property
+when running a command.  
+
+Note that when doing this, **the defaults are change to the primitive defaults**, so polling is not enabled unless you
+provide these properties.
+
+**XML Configuration Example**
+```xml
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.github.pmckeown</groupId>
+                <artifactId>dependency-track-maven-plugin</artifactId>
+                <version>${dependency-track-maven-plugin.version}</version>
+                <inherited>false</inherited>
+                <configuration>
+                    <dependencyTrackBaseUrl>${env.DEPENDENCY_TRACK_BASE_URL}</dependencyTrackBaseUrl>
+                    <apiKey>${env.DEPENDENCY_TRACK_API_KEY}</apiKey>
+                    <pollingConfig>
+                        <enabled>${polling.enabled}</enabled>
+                        <attempts>${polling.attempts}</attempts>
+                        <pause>${polling.pause}</pause>
+                        <timeUnit>${polling.timeUnit}</timeUnit>
+                    </pollingConfig>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+Then in your `mvn` command, you can override the default values for polling like this:
+```shell script
+mvn dependency-track -Dpolling.enabled=false -Dpolling.attempts=100 -Dpolling.pause=2 -Dpolling.timeUnit=MILLIS
+``` 
+
 
 
 #### Dependency-Track Configuration
@@ -121,14 +160,14 @@ first in your POM to ensure that it runs first.
 
 #### Configuration
 
-By default this goal will poll the Dependency-Track server after a BOM upload to ensure that it has been analysed 
-before continuing with plugin execution.  This can be disabled by setting the `waitUntilBomProcessingComplete` 
-parameter to `false`.
+By default, the plugin will poll the Dependency-Track server after a BOM upload to ensure it has been completed before 
+continuing with plugin execution. This can be disabled by updating the [Polling Configuration](#polling-configuration). 
+
+The BOM Location can be modified if you generate it to a folder that is not the default of `target/`.
 
 |Property                      |Required|Default Value |
 |------------------------------|--------|--------------|
 |bomLocation                   |false   |target/bom.xml|
-|waitUntilBomProcessingComplete|false   |true          |
 
 ### Get Project Findings
 After a BOM upload, the best way to determine if there are any vulnerabilities is to use the `findings` goal which is 
