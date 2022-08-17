@@ -26,7 +26,7 @@ public class PolicyViolationsReportTest {
                                 .withPolicy(new Policy("testPolicy1", "INFO")))
                         .withComponent(aComponent())).build();
         PolicyViolationsReport policyViolationReport = new PolicyViolationsReport(policyViolations);
-        assertThat(policyViolationReport.getPolicyViolationWrapper().getPolicyViolations().get(0).getPolicyCondition().getPolicy().getName(),
+        assertThat(policyViolationReport.getPolicyViolations().getPolicyViolations().get(0).getPolicyCondition().getPolicy().getName(),
                 is(equalTo("testPolicy1")));
     }
 
@@ -45,7 +45,7 @@ public class PolicyViolationsReportTest {
                         .withComponent(aComponent()))
                 .build();
         PolicyViolationsReport policyViolationReport = new PolicyViolationsReport(policyViolations);
-        assertThat(policyViolationReport.getPolicyViolationWrapper().getCount(), is(equalTo(2)));
+        assertThat(policyViolationReport.getPolicyViolations().getCount(), is(equalTo(2)));
     }
 
 }

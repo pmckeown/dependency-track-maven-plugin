@@ -28,7 +28,8 @@ public class PolicyViolationsHtmlReportWriter extends AbstractHtmlReportWriter {
 
     @Override
     protected InputStream getStylesheetInputStream() {
-        return PolicyViolationsHtmlReportWriter.class.getResourceAsStream(PolicyViolationsReportConstants.XSL_STYLESHEET_FILENAME);
+        return PolicyViolationsHtmlReportWriter.class.getResourceAsStream(
+                PolicyViolationsReportConstants.XSL_STYLESHEET_FILENAME);
     }
 
 }

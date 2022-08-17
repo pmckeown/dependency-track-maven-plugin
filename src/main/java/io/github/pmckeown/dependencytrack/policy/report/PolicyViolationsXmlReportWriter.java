@@ -1,6 +1,5 @@
 package io.github.pmckeown.dependencytrack.policy.report;
 
-import io.github.pmckeown.dependencytrack.finding.report.FindingsReportMarshallerService;
 import io.github.pmckeown.dependencytrack.report.AbstractXmlReportWriter;
 
 import javax.inject.Inject;
@@ -10,17 +9,18 @@ import java.io.File;
 
 public class PolicyViolationsXmlReportWriter extends AbstractXmlReportWriter {
 
-    private FindingsReportMarshallerService findingsReportMarshallerService;
+    private PolicyViolationsReportMarshallerService policyViolationsReportMarshallerService;
 
     @Inject
-    public PolicyViolationsXmlReportWriter(FindingsReportMarshallerService findingsReportMarshallerService) {
+    public PolicyViolationsXmlReportWriter(PolicyViolationsReportMarshallerService
+                policyViolationsReportMarshallerService) {
         super();
-        this.findingsReportMarshallerService = findingsReportMarshallerService;
+        this.policyViolationsReportMarshallerService = policyViolationsReportMarshallerService;
     }
 
     @Override
     protected Marshaller getMarshaller() throws JAXBException {
-        return this.findingsReportMarshallerService.getMarshaller();
+        return this.policyViolationsReportMarshallerService.getMarshaller();
     }
 
     @Override

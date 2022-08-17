@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import java.util.List;
 
-@XmlRootElement(name = "policyViolationReport")
+@XmlRootElement(name = "policyViolationsReport")
 @XmlType(propOrder = {"policyViolations"})
 public class PolicyViolationsReport implements Report {
 
@@ -23,7 +23,7 @@ public class PolicyViolationsReport implements Report {
     }
 
     @XmlElement(name = "policyViolations")
-    public PolicyViolationsWrapper getPolicyViolationWrapper() {
+    public PolicyViolationsWrapper getPolicyViolations() {
         return new PolicyViolationsWrapper(policyViolations.size(), policyViolations);
     }
 }

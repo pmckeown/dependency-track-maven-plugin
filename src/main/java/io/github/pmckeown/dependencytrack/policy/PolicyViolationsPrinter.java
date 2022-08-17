@@ -26,15 +26,18 @@ class PolicyViolationsPrinter {
             return;
         }
         logger.info(DELIMITER);
-        logger.info("%d policy violation(s) were retrieved for project: %s", policyViolations.size(), project.getName());
+        logger.info("%d policy violation(s) were retrieved for project: %s", policyViolations.size(),
+                project.getName());
         logger.info("Printing policy violations for project %s-%s", project.getName(), project.getVersion());
         policyViolations.forEach(policyViolation -> {
             PolicyCondition policyCondition = policyViolation.getPolicyCondition();
             Policy policy = policyCondition.getPolicy();
             logger.info(DELIMITER);
             logger.info("Policy name: %s (%s)", policy.getName(), policy.getViolationState());
-            logger.info("Policy condition: \"subject == %s && value %s %s\"", policyCondition.getSubject(), policyCondition.getOperator(), policyCondition.getValue());
-            logger.info("Risk type: %s, Component: %s %s", policyViolation.getType(), policyViolation.getComponent().getName(), policyViolation.getComponent().getVersion());
+            logger.info("Policy condition: \"subject == %s && value %s %s\"", policyCondition.getSubject(),
+                    policyCondition.getOperator(), policyCondition.getValue());
+            logger.info("Risk type: %s, Component: %s %s", policyViolation.getType(),
+                    policyViolation.getComponent().getName(), policyViolation.getComponent().getVersion());
             logger.info(""); // Spacer
         });
     }

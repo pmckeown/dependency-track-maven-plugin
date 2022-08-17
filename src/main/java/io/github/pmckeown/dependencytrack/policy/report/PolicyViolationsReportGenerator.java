@@ -24,6 +24,6 @@ public class PolicyViolationsReportGenerator {
     public void generate(File buildDirectory, List<PolicyViolation> policyViolations) throws DependencyTrackException {
         PolicyViolationsReport policyViolationReport = new PolicyViolationsReport(policyViolations);
         xmlReportWriter.write(buildDirectory, policyViolationReport);
-        htmlReportWriter.write(buildDirectory);
+//        htmlReportWriter.write(buildDirectory); TODO
     }
 }
