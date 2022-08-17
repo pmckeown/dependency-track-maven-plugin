@@ -178,6 +178,23 @@ You can enable the build to fail on any issues in any category by using the foll
 ```xml
 <findingThresholds />
 ```
+#### Policy Configuration
+
+| Property                        |Required| Default Value | Description                                                                                                |
+|---------------------------------|--------|---------------|------------------------------------------------------------------------------------------------------------|
+| policyConfig                    |false   | N/A           | If not set or no child elements set then no policy config will be applied and the goal will always succeed |
+| policyConfig.policyName         |false   | null          | The build will fail if the policy name in violations contains the configured value for this category       |
+| policyConfig.violationState     |false   | null          | The build will fail if the policy state matches the configured value for this category                     |
+| policyConfig.riskType           |false   | null          | The build will fail if the policy risk type matches the configured value for this category                 |
+| policyConfig.threshold          |false   | 0             | The build will fail if the violation count is higher than the configured threshold value for this category |
+
+#### Examples
+The following configuration will cause the build to fail if there is any policy violation having policy name with prefix "test"
+```xml
+<policyConfig>
+    <policyName>test-policy</policyName>
+</policyConfig>
+```
 
 ### Get Inherited Risk Score
 Get the Inherited Risk Score from the Dependency-Track server for the current project or any arbitrary project.
