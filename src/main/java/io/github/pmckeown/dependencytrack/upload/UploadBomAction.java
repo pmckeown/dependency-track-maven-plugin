@@ -37,8 +37,7 @@ public class UploadBomAction {
     public boolean upload(String bomLocation) throws DependencyTrackException {
         logger.info("Project Name: %s", commonConfig.getProjectName());
         logger.info("Project Version: %s", commonConfig.getProjectVersion());
-        logger.info("Plugin %s configured to wait for BOM processing to complete",
-                commonConfig.getPollingConfig().isEnabled() ? "is" : "is not");
+        logger.info("%s", commonConfig.getPollingConfig());
 
         Optional<String> encodedBomOptional = bomEncoder.encodeBom(bomLocation, logger);
         if (!encodedBomOptional.isPresent()) {
