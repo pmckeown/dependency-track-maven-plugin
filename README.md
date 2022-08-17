@@ -61,13 +61,21 @@ can be changed by modifying the `pollingConfig` element in the plugin configurat
 Your Dependency-Track server must be configured with an `Automation` team whose API Key should be provided
 in the `apiKey` configuration parameter to this plugin.
 
-The Automation team in Dependency-Track needs the following permissions:
-* BOM_UPLOAD
-* PORTFOLIO_MANAGEMENT
-* PROJECT_CREATION_UPLOAD
-* SCAN_UPLOAD
-* VIEW_PORTFOLIO
-* VULNERABILITY_ANALYSIS
+The Automation team needs the following permissions:
+
+* In Dependency Track v4.3.x and earlier: 
+  * BOM_UPLOAD
+  * PORTFOLIO_MANAGEMENT
+  * PROJECT_CREATION_UPLOAD
+  * VIEW_PORTFOLIO
+  * VULNERABILITY_ANALYSIS
+
+* In Dependency Track v4.4.x and later: 
+  * BOM_UPLOAD
+  * PORTFOLIO_MANAGEMENT
+  * PROJECT_CREATION_UPLOAD
+  * VIEW_PORTFOLIO
+  * VIEW_VULNERABILITY
 
 The following options are common to all goals and can be declared centrally in the plugin management definition 
 of this plugin:
