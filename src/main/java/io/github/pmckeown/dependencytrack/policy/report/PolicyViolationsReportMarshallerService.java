@@ -1,4 +1,4 @@
-package io.github.pmckeown.dependencytrack.finding.report;
+package io.github.pmckeown.dependencytrack.policy.report;
 
 import javax.inject.Singleton;
 import javax.xml.bind.JAXBContext;
@@ -6,10 +6,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 @Singleton
-public class FindingsReportMarshallerService {
+public class PolicyViolationsReportMarshallerService {
 
     public Marshaller getMarshaller() throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(FindingsReport.class);
+        JAXBContext jaxbContext = JAXBContext.newInstance(PolicyViolationsReport.class);
         Marshaller marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         return marshaller;

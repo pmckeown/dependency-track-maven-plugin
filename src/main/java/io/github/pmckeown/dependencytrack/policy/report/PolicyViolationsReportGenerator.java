@@ -1,8 +1,6 @@
 package io.github.pmckeown.dependencytrack.policy.report;
 
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.finding.report.HtmlReportWriter;
-import io.github.pmckeown.dependencytrack.finding.report.XmlReportWriter;
 import io.github.pmckeown.dependencytrack.policy.PolicyViolation;
 
 import javax.inject.Inject;
@@ -11,19 +9,20 @@ import java.io.File;
 import java.util.List;
 
 @Singleton
-public class PolicyViolationReportGenerator {
+public class PolicyViolationsReportGenerator {
 
-    private XmlReportWriter xmlReportWriter;
-    private HtmlReportWriter htmlReportWriter;
+    private PolicyViolationsXmlReportWriter xmlReportWriter;
+    private PolicyViolationsHtmlReportWriter htmlReportWriter;
 
     @Inject
-    public PolicyViolationReportGenerator(XmlReportWriter xmlReportWriter, HtmlReportWriter htmlReportWriter) {
+    public PolicyViolationsReportGenerator(PolicyViolationsXmlReportWriter xmlReportWriter,
+            PolicyViolationsHtmlReportWriter htmlReportWriter) {
         this.xmlReportWriter = xmlReportWriter;
         this.htmlReportWriter = htmlReportWriter;
     }
 
     public void generate(File buildDirectory, List<PolicyViolation> policyViolations) throws DependencyTrackException {
-        PolicyViolationReport policyViolationReport = new PolicyViolationReport(policyViolations);
+        PolicyViolationsReport policyViolationReport = new PolicyViolationsReport(policyViolations);
         xmlReportWriter.write(buildDirectory, policyViolationReport);
         htmlReportWriter.write(buildDirectory);
     }

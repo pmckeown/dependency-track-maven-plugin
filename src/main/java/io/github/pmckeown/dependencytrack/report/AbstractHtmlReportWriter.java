@@ -1,9 +1,7 @@
-package io.github.pmckeown.dependencytrack.finding.report;
+package io.github.pmckeown.dependencytrack.report;
 
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -14,13 +12,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
-@Singleton
-public class HtmlReportWriter {
+public abstract class AbstractHtmlReportWriter {
+    protected TransformerFactoryProvider transformerFactoryProvider;
 
-    private TransformerFactoryProvider transformerFactoryProvider;
-
-    @Inject
-    HtmlReportWriter(TransformerFactoryProvider transformerFactoryProvider) {
+    public AbstractHtmlReportWriter(TransformerFactoryProvider transformerFactoryProvider) {
         this.transformerFactoryProvider = transformerFactoryProvider;
     }
 
@@ -37,22 +32,15 @@ public class HtmlReportWriter {
         }
     }
 
-    TransformerFactory getSecureTransformerFactory() throws TransformerConfigurationException {
+    protected abstract File getInputFile(File buildDirectory);
+
+    protected abstract File getOutputFile(File buildDirectory);
+
+    protected abstract InputStream getStylesheetInputStream();
+
+    public TransformerFactory getSecureTransformerFactory() throws TransformerConfigurationException {
         TransformerFactory transformerFactory = transformerFactoryProvider.provide();
         transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         return transformerFactory;
     }
-
-    private File getInputFile(File buildDirectory) {
-        return new File(buildDirectory, FindingsReportConstants.XML_REPORT_FILENAME);
-    }
-
-    private File getOutputFile(File buildDirectory) {
-        return new File(buildDirectory, FindingsReportConstants.HTML_REPORT_FILENAME);
-    }
-
-    private InputStream getStylesheetInputStream() {
-        return HtmlReportWriter.class.getResourceAsStream(FindingsReportConstants.XSL_STYLESHEET_FILENAME);
-    }
-
 }

@@ -3,7 +3,7 @@ package io.github.pmckeown.dependencytrack.policy;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.policy.report.PolicyViolationReportGenerator;
+import io.github.pmckeown.dependencytrack.policy.report.PolicyViolationsReportGenerator;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
@@ -65,15 +65,15 @@ public class PolicyMojo extends AbstractDependencyTrackMojo {
     private MavenProject mavenProject;
 
     private ProjectAction projectAction;
-    private PolicyViolationReportGenerator policyViolationReportGenerator;
+    private PolicyViolationsReportGenerator policyViolationReportGenerator;
     private PolicyAction policyAction;
     private PolicyViolationsPrinter policyViolationsPrinter;
     private PolicyAnalyser policyAnalyser;
 
     @Inject
-    public PolicyMojo(ProjectAction projectAction, PolicyViolationReportGenerator policyViolationReportGenerator,
-                      CommonConfig commonConfig, Logger logger, PolicyAction policyAction,
-                      PolicyViolationsPrinter policyViolationsPrinter, PolicyAnalyser policyAnalyser) {
+    public PolicyMojo(ProjectAction projectAction, PolicyViolationsReportGenerator policyViolationReportGenerator,
+            CommonConfig commonConfig, Logger logger, PolicyAction policyAction,
+            PolicyViolationsPrinter policyViolationsPrinter, PolicyAnalyser policyAnalyser) {
         super(commonConfig, logger);
         this.projectAction = projectAction;
         this.policyViolationReportGenerator = policyViolationReportGenerator;

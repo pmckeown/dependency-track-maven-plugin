@@ -16,7 +16,7 @@ public class PolicyCondition {
 
     @JsonCreator
     public PolicyCondition(@JsonProperty("policy") Policy policy, @JsonProperty("subject") String subject,
-                         @JsonProperty("operator") String operator, @JsonProperty("value") String value) {
+            @JsonProperty("operator") String operator, @JsonProperty("value") String value) {
         this.policy = policy;
         this.subject = subject;
         this.operator = operator;

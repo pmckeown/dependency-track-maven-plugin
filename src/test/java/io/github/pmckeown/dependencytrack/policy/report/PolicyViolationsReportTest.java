@@ -14,7 +14,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class PolicyViolationReportTest {
+public class PolicyViolationsReportTest {
 
     @Test
     public void thatAPolicyViolationReportCanBeGenerated() {
@@ -25,7 +25,7 @@ public class PolicyViolationReportTest {
                         .withPolicyCondition(aPolicyCondition()
                                 .withPolicy(new Policy("testPolicy1", "INFO")))
                         .withComponent(aComponent())).build();
-        PolicyViolationReport policyViolationReport = new PolicyViolationReport(policyViolations);
+        PolicyViolationsReport policyViolationReport = new PolicyViolationsReport(policyViolations);
         assertThat(policyViolationReport.getPolicyViolationWrapper().getPolicyViolations().get(0).getPolicyCondition().getPolicy().getName(),
                 is(equalTo("testPolicy1")));
     }
@@ -44,7 +44,7 @@ public class PolicyViolationReportTest {
                                 .withPolicy(new Policy("testPolicy2", "WARN")))
                         .withComponent(aComponent()))
                 .build();
-        PolicyViolationReport policyViolationReport = new PolicyViolationReport(policyViolations);
+        PolicyViolationsReport policyViolationReport = new PolicyViolationsReport(policyViolations);
         assertThat(policyViolationReport.getPolicyViolationWrapper().getCount(), is(equalTo(2)));
     }
 

@@ -1,13 +1,13 @@
-package io.github.pmckeown.dependencytrack.finding.report;
+package io.github.pmckeown.dependencytrack.report;
 
 import javax.inject.Singleton;
 import javax.xml.XMLConstants;
 import javax.xml.transform.TransformerFactory;
 
 @Singleton
-class TransformerFactoryProvider {
+public class TransformerFactoryProvider {
 
-    TransformerFactory provide() {
+    public TransformerFactory provide() {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
         // Issue 79 - Protect against XXE attacks

@@ -29,10 +29,10 @@ public class FindingsReportGeneratorTest {
     private FindingsReportGenerator findingsReportGenerator;
 
     @Mock
-    private XmlReportWriter xmlReportWriter;
+    private FindingsReportXmlReportWriter xmlReportWriter;
 
     @Mock
-    private HtmlReportWriter htmlReportWriter;
+    private FindingsReportHtmlReportWriter htmlReportWriter;
 
     @Test
     public void thatBothReportsAreGenerated() throws Exception {

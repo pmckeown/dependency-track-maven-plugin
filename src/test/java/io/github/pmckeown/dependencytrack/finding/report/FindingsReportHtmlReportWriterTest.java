@@ -1,5 +1,6 @@
 package io.github.pmckeown.dependencytrack.finding.report;
 
+import io.github.pmckeown.dependencytrack.report.TransformerFactoryProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -13,10 +14,10 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class HtmlReportWriterTest {
+public class FindingsReportHtmlReportWriterTest {
 
     @InjectMocks
-    private HtmlReportWriter candidate;
+    private FindingsReportHtmlReportWriter candidate;
 
     @Mock
     private TransformerFactoryProvider transformerFactoryProvider;

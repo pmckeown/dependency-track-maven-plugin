@@ -1,6 +1,7 @@
 package io.github.pmckeown.dependencytrack.policy.report;
 
 import io.github.pmckeown.dependencytrack.policy.PolicyViolation;
+import io.github.pmckeown.dependencytrack.report.Report;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -9,15 +10,15 @@ import java.util.List;
 
 @XmlRootElement(name = "policyViolationReport")
 @XmlType(propOrder = {"policyViolations"})
-public class PolicyViolationReport {
+public class PolicyViolationsReport implements Report {
 
     private List<PolicyViolation> policyViolations;
 
-    public PolicyViolationReport() {
+    public PolicyViolationsReport() {
         // For JAXB
     }
 
-    public PolicyViolationReport(List<PolicyViolation> policyViolations) {
+    public PolicyViolationsReport(List<PolicyViolation> policyViolations) {
         this.policyViolations = policyViolations;
     }
 

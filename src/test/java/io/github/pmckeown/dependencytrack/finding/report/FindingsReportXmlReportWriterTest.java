@@ -29,10 +29,10 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
 @RunWith(MockitoJUnitRunner.class)
-public class XmlReportWriterTest {
+public class FindingsReportXmlReportWriterTest {
 
     @InjectMocks
-    private XmlReportWriter xmlReportWriter;
+    private FindingsReportXmlReportWriter xmlReportWriter;
 
     @Mock
     private FindingsReportMarshallerService marshallerService;

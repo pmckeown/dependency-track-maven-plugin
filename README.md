@@ -225,9 +225,26 @@ You can enable the build to fail on any issues in any category by using the foll
 ```xml
 <findingThresholds />
 ```
+
+### Policy Violations
+Dependency Track supports the definition of Policies which can be applied to Projects, Components or the entire
+portfolio.  
+ 
+This goal checks the supplied Project for any Policy Violations and optionally fails the build if 
+
+#### Additional Permissions
+Policy Violation requires your Automation Team to have additional permissions:
+
+* In Dependency Track v4.4.x and earlier: 
+  * VULNERABILITY_ANALYSIS [See defect resolved by this PR](https://github.com/DependencyTrack/frontend/issues/126)
+  * VIEW_POLICY_VIOLATION
+
+* In Dependency Track v4.5.x and later: 
+  * VIEW_POLICY_VIOLATION 
+
 #### Policy Configuration
 
-| Property                        |Required| Default Value | Description                                                                                                |
+| Property                        |Required| Default Value | Description                                          `                                                      |
 |---------------------------------|--------|---------------|------------------------------------------------------------------------------------------------------------|
 | policyConfig                    |false   | N/A           | If not set or no child elements set then no policy config will be applied and the goal will always succeed |
 | policyConfig.policyName         |false   | null          | The build will fail if the policy name in violations contains the configured value for this category       |

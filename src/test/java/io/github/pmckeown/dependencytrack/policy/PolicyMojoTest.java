@@ -1,7 +1,7 @@
 package io.github.pmckeown.dependencytrack.policy;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
-import io.github.pmckeown.dependencytrack.policy.report.PolicyViolationReportGenerator;
+import io.github.pmckeown.dependencytrack.policy.report.PolicyViolationsReportGenerator;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class PolicyMojoTest {
     private CommonConfig commonConfig;
 
     @Mock
-    private PolicyViolationReportGenerator policyViolationReportGenerator;
+    private PolicyViolationsReportGenerator policyViolationReportGenerator;
 
     @Mock
     private Logger logger;
