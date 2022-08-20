@@ -238,6 +238,7 @@ Policies can be given a Violation State that indicates the severity if that poli
  
 This goal checks the supplied Project for any Policy Violations.  Policies have a violation state which this plugin
 honours and so when a Policy is violated the plugin behaviour is as follows:
+
   * FAIL - the build will fail unless the Global `failOnError` option is set to true
   * WARN - the build will pass unless the `failOnWarn` option for this goal is set to true
   * INFO - the build will pass  
@@ -245,10 +246,10 @@ honours and so when a Policy is violated the plugin behaviour is as follows:
 #### Additional Permissions
 Policy Violation requires your Automation Team to have additional permissions:
 
-  * In Dependency Track v4.4.x and earlier: 
+  * In Dependency Track v4.4.x and earlier:
     * VIEW_POLICY_VIOLATION
     * VULNERABILITY_ANALYSIS [See this bug](https://github.com/DependencyTrack/frontend/issues/126)
-  * In Dependency Track v4.5.x and later: 
+  * In Dependency Track v4.5.x and later:
     * VIEW_POLICY_VIOLATION 
 
 #### Policy Configuration

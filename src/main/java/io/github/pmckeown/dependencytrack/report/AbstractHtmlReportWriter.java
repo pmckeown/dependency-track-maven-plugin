@@ -15,7 +15,7 @@ import java.io.InputStream;
 public abstract class AbstractHtmlReportWriter {
     protected TransformerFactoryProvider transformerFactoryProvider;
 
-    public AbstractHtmlReportWriter(TransformerFactoryProvider transformerFactoryProvider) {
+    protected AbstractHtmlReportWriter(TransformerFactoryProvider transformerFactoryProvider) {
         this.transformerFactoryProvider = transformerFactoryProvider;
     }
 
