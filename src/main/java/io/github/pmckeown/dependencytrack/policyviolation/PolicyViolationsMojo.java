@@ -48,13 +48,13 @@ public class PolicyViolationsMojo extends AbstractDependencyTrackMojo {
 
     private ProjectAction projectAction;
     private PolicyViolationsReportGenerator policyViolationReportGenerator;
-    private PolicyAction policyAction;
+    private PolicyViolationsAction policyAction;
     private PolicyViolationsPrinter policyViolationsPrinter;
     private PolicyViolationsAnalyser policyAnalyser;
 
     @Inject
     public PolicyViolationsMojo(ProjectAction projectAction, PolicyViolationsReportGenerator policyViolationReportGenerator,
-            CommonConfig commonConfig, Logger logger, PolicyAction policyAction,
+            CommonConfig commonConfig, Logger logger, PolicyViolationsAction policyAction,
             PolicyViolationsPrinter policyViolationsPrinter, PolicyViolationsAnalyser policyAnalyser) {
         super(commonConfig, logger);
         this.projectAction = projectAction;

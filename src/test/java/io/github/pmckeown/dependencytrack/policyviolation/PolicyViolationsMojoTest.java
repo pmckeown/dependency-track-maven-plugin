@@ -27,7 +27,7 @@ public class PolicyViolationsMojoTest {
     private ProjectAction projectAction;
 
     @Mock
-    private PolicyAction policyAction;
+    private PolicyViolationsAction policyAction;
 
     @Mock
     private PolicyViolationsPrinter policyViolationsPrinter;

@@ -13,14 +13,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Singleton
-public class PolicyAction {
+public class PolicyViolationsAction {
 
     private PolicyViolationsClient policyClient;
 
     private Logger logger;
 
     @Inject
-    public PolicyAction(PolicyViolationsClient policyClient, Logger logger) {
+    public PolicyViolationsAction(PolicyViolationsClient policyClient, Logger logger) {
         this.policyClient = policyClient;
         this.logger = logger;
     }

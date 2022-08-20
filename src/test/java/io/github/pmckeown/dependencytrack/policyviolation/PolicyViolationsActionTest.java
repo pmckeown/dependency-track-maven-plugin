@@ -28,10 +28,10 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PolicyActionTest {
+public class PolicyViolationsActionTest {
 
     @InjectMocks
-    private PolicyAction policyAction;
+    private PolicyViolationsAction policyAction;
 
     @Mock
     private PolicyViolationsClient policyClient;
