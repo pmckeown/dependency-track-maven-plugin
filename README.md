@@ -249,6 +249,7 @@ Policy Violation requires your Automation Team to have additional permissions:
   * In Dependency Track v4.4.x and earlier:
     * VIEW_POLICY_VIOLATION
     * VULNERABILITY_ANALYSIS [See this bug](https://github.com/DependencyTrack/frontend/issues/126)
+
   * In Dependency Track v4.5.x and later:
     * VIEW_POLICY_VIOLATION 
 
