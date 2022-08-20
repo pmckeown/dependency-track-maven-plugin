@@ -46,7 +46,7 @@ public class PolicyActionTest {
                 .withPolicyViolation(aPolicyViolation()
                         .withType("SEVERITY")
                         .withPolicyCondition(aPolicyCondition()
-                                .withPolicy(new Policy("testPolicy", "INFO")))
+                                .withPolicy(new Policy("testPolicy", ViolationState.INFO)))
                         .withComponent(aComponent()))
                 .build();
         doReturn(aSuccessResponse().withBody(policyViolations).build()).when(policyClient).getPolicyViolationsForProject(project);

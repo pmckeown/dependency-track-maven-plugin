@@ -7,15 +7,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.List;
-
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
 import static io.github.pmckeown.dependencytrack.policy.PolicyConditionBuilder.aPolicyCondition;
 import static io.github.pmckeown.dependencytrack.policy.PolicyViolationBuilder.aPolicyViolation;
 import static io.github.pmckeown.dependencytrack.policy.PolicyViolationListBuilder.aListOfPolicyViolations;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PolicyAnalyserTest {
@@ -27,58 +27,86 @@ public class PolicyAnalyserTest {
     private Logger logger;
 
     @Test
-    public void thatWhenNoConfigIsProvidedThePolicyViolationsCannotBeBreached() {
-        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
-                aListOfPolicyViolations().build(), null);
-        assertFalse(isPolicyBreached);
-    }
-
-    @Test
-    public void thatPolicyViolationCountGreaterThanTheDefinedThresholdWillLogWarning() {
-        List<PolicyViolation> policyViolations = setupPolicyViolations();
-        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(policyViolations, new PolicyConfig(null, null, null, 1));
-        verify(logger).warn("Number of policy violations [%d] exceeds the maximum allowed [%d]", 2, 1);
-        assertTrue(isPolicyBreached);
-    }
-
-    @Test
-    public void thatPolicyViolationCountLessThanTheDefinedThresholdWillReturnFalse() {
-        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
-                aListOfPolicyViolations().build(), new PolicyConfig(null, null, null, 1));
-        assertFalse(isPolicyBreached);
-    }
-
-    @Test
-    public void thatPolicyViolationNameMatchingOneWillLogWarning() {
-        PolicyConfig policyConfig = new PolicyConfig();
-        policyConfig.setPolicyName("testPolicy1");
-        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(setupPolicyViolations(), policyConfig);
-        assertTrue(isPolicyBreached);
-        verify(logger).warn("Policy [%s] is violated under component [%s] [%s]", "testPolicy1", "password-printer", "1.0.0");
-    }
-
-    @Test
-    public void thatPolicyViolationNameMatchingMultipleWillLogWarning() {
-        PolicyConfig policyConfig = new PolicyConfig();
-        policyConfig.setPolicyName("testPolicy");
-        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(setupPolicyViolations(), policyConfig);
-        assertTrue(isPolicyBreached);
-        verify(logger).warn("Policy [%s] is violated under component [%s] [%s]", "testPolicy1", "password-printer", "1.0.0");
-        verify(logger).warn("Policy [%s] is violated under component [%s] [%s]", "testPolicy2", "password-printer", "1.0.0");
-    }
-
-    public List<PolicyViolation> setupPolicyViolations() {
-        return aListOfPolicyViolations()
+    public void thatInfoLevelPolicyViolationsWithFailOnWarnFalseDoesNotResultInPolicyBreach() {
+        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(aListOfPolicyViolations()
                 .withPolicyViolation(aPolicyViolation()
                         .withType("SEVERITY")
                         .withPolicyCondition(aPolicyCondition()
-                                .withPolicy(new Policy("testPolicy1", "INFO")))
-                        .withComponent(aComponent()))
+                                .withPolicy(new Policy("Info Severity Policy", ViolationState.INFO)))
+                        .withComponent(aComponent())).build(), false);
+        assertFalse(isPolicyBreached);
+
+        verify(logger).info(anyString());
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    public void thatInfoLevelPolicyViolationsWithFailOnWarnTrueDoesNotResultInPolicyBreach() {
+        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(aListOfPolicyViolations()
                 .withPolicyViolation(aPolicyViolation()
                         .withType("SEVERITY")
                         .withPolicyCondition(aPolicyCondition()
-                                .withPolicy(new Policy("testPolicy2", "WARN")))
-                        .withComponent(aComponent()))
-                .build();
+                                .withPolicy(new Policy("Info Severity Policy", ViolationState.INFO)))
+                        .withComponent(aComponent())).build(), true);
+        assertFalse(isPolicyBreached);
+
+        verify(logger).info(anyString());
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    public void thatWarnLevelPolicyViolationsWithFailOnWarnFalseDoesNotResultInPolicyBreach() {
+        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(aListOfPolicyViolations()
+                .withPolicyViolation(aPolicyViolation()
+                        .withType("SEVERITY")
+                        .withPolicyCondition(aPolicyCondition()
+                                .withPolicy(new Policy("Warn Severity Policy", ViolationState.WARN)))
+                        .withComponent(aComponent())).build(), false);
+        assertFalse(isPolicyBreached);
+
+        verify(logger).info(anyString());
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    public void thatWarnLevelPolicyViolationsWithFailOnWarnTrueDoesResultInPolicyBreach() {
+        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(aListOfPolicyViolations()
+                .withPolicyViolation(aPolicyViolation()
+                        .withType("SEVERITY")
+                        .withPolicyCondition(aPolicyCondition()
+                                .withPolicy(new Policy("Warn Severity Policy", ViolationState.WARN)))
+                        .withComponent(aComponent())).build(), true);
+        assertTrue(isPolicyBreached);
+
+        verify(logger).info(anyString());
+        verify(logger).warn(PolicyAnalyser.ERROR_TEMPLATE, "Warn Severity Policy", "password-printer", "1.0.0");
+    }
+
+    @Test
+    public void thatFailLevelPolicyViolationsWithFailOnWarnFalseDoesResultInPolicyBreach() {
+        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(aListOfPolicyViolations()
+                .withPolicyViolation(aPolicyViolation()
+                        .withType("SEVERITY")
+                        .withPolicyCondition(aPolicyCondition()
+                                .withPolicy(new Policy("Fail Severity Policy", ViolationState.FAIL)))
+                        .withComponent(aComponent())).build(), false);
+        assertTrue(isPolicyBreached);
+
+        verify(logger).info(anyString());
+        verify(logger).warn(PolicyAnalyser.ERROR_TEMPLATE, "Fail Severity Policy", "password-printer", "1.0.0");
+    }
+
+    @Test
+    public void thatFailLevelPolicyViolationsWithFailOnWarnTrueDoesResultInPolicyBreach() {
+        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(aListOfPolicyViolations()
+                .withPolicyViolation(aPolicyViolation()
+                        .withType("SEVERITY")
+                        .withPolicyCondition(aPolicyCondition()
+                                .withPolicy(new Policy("Fail Severity Policy", ViolationState.FAIL)))
+                        .withComponent(aComponent())).build(), true);
+        assertTrue(isPolicyBreached);
+
+        verify(logger).info(anyString());
+        verify(logger).warn(PolicyAnalyser.ERROR_TEMPLATE, "Fail Severity Policy", "password-printer", "1.0.0");
     }
 }

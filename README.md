@@ -227,38 +227,46 @@ You can enable the build to fail on any issues in any category by using the foll
 ```
 
 ### Policy Violations
-Dependency Track supports the definition of Policies which can be applied to Projects, Components or the entire
-portfolio.  
+Dependency Track supports the definition of [Policies](https://docs.dependencytrack.org/usage/policy-compliance/) which 
+can be applied to Projects, Components or the entire portfolio.  
+
+Policies are applied when an SBOM is uploaded and can target various attributes about the software component's 
+dependencies including but not limited to specific versions of packages, linked vulnerabilities over a given severity
+threshold and which license they are distributed under.
+
+Policies can be given a Violation State that indicates the severity if that policy is violated.  
  
-This goal checks the supplied Project for any Policy Violations and optionally fails the build if 
+This goal checks the supplied Project for any Policy Violations.  Policies have a violation state which this plugin
+honours and so when a Policy is violated the plugin behaviour is as follows:
+* FAIL - the build will fail unless the Global `failOnError` option is set to true
+* WARN - the build will pass unless the `failOnWarn` option for this goal is set to true
+* INFO - the build will pass  
 
 #### Additional Permissions
 Policy Violation requires your Automation Team to have additional permissions:
 
 * In Dependency Track v4.4.x and earlier: 
-  * VULNERABILITY_ANALYSIS [See defect resolved by this PR](https://github.com/DependencyTrack/frontend/issues/126)
   * VIEW_POLICY_VIOLATION
-
+  * VULNERABILITY_ANALYSIS [See this bug](https://github.com/DependencyTrack/frontend/issues/126)
+  
 * In Dependency Track v4.5.x and later: 
   * VIEW_POLICY_VIOLATION 
 
 #### Policy Configuration
 
-| Property                        |Required| Default Value | Description                                          `                                                      |
-|---------------------------------|--------|---------------|------------------------------------------------------------------------------------------------------------|
-| policyConfig                    |false   | N/A           | If not set or no child elements set then no policy config will be applied and the goal will always succeed |
-| policyConfig.policyName         |false   | null          | The build will fail if the policy name in violations contains the configured value for this category       |
-| policyConfig.violationState     |false   | null          | The build will fail if the policy state matches the configured value for this category                     |
-| policyConfig.riskType           |false   | null          | The build will fail if the policy risk type matches the configured value for this category                 |
-| policyConfig.threshold          |false   | 0             | The build will fail if the violation count is higher than the configured threshold value for this category |
+|Property                      |Required|Default Value |
+|------------------------------|--------|--------------|
+|failOnWarn                    |false   |false         |
 
-#### Examples
-The following configuration will cause the build to fail if there is any policy violation having policy name with prefix "test"
-```xml
-<policyConfig>
-    <policyName>test-policy</policyName>
-</policyConfig>
-```
+
+#### Behaviour
+
+The Policy Violations associated with a Project is refreshed and up to date after a SBOM upload and after 
+a periodic server-side data refresh.
+
+It is recommended to generate and upload an SBOM when retrieving Policy Violations so that the Project is 
+evaluated against the most recent Policy.  Of the Policy has changed since the last SBOM upload for the Project,
+the data from the API may be inconsistent and result in null values in the printed output and reports.
 
 ### Get Inherited Risk Score
 Get the Inherited Risk Score from the Dependency-Track server for the current project or any arbitrary project.

@@ -10,10 +10,10 @@ import javax.xml.bind.annotation.XmlElement;
 public class Policy {
 
     private String name;
-    private String violationState;
+    private ViolationState violationState;
 
     @JsonCreator
-    public Policy(@JsonProperty("name") String name, @JsonProperty("violationState") String violationState) {
+    public Policy(@JsonProperty("name") String name, @JsonProperty("violationState") ViolationState violationState) {
         this.name = name;
         this.violationState = violationState;
     }
@@ -24,7 +24,7 @@ public class Policy {
     }
 
     @XmlElement
-    public String getViolationState() {
+    public ViolationState getViolationState() {
         return violationState;
     }
 

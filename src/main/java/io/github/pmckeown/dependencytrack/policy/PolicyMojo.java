@@ -58,8 +58,8 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
 @Singleton
 public class PolicyMojo extends AbstractDependencyTrackMojo {
 
-    @Parameter(name = "policyConfig")
-    private PolicyConfig policyConfig;
+    @Parameter(name = "failOnWarn")
+    private boolean failOnWarn;
 
     @Parameter(defaultValue = "${project}", readonly = true, required = false)
     private MavenProject mavenProject;
@@ -89,10 +89,11 @@ public class PolicyMojo extends AbstractDependencyTrackMojo {
             Project project = projectAction.getProject(commonConfig.getProjectName(), commonConfig.getProjectVersion());
             policyViolations = policyAction.getPolicyViolations(project);
             policyViolationsPrinter.printPolicyViolations(project, policyViolations);
-            boolean policyViolationBreached = policyAnalyser.isAnyPolicyViolationBreached(policyViolations, policyConfig);
+            boolean policyViolationsBreached = policyAnalyser.isAnyPolicyViolationBreached(policyViolations,
+                    failOnWarn);
             policyViolationReportGenerator.generate(getOutputDirectory(), policyViolations);
 
-            if (policyViolationBreached) {
+            if (policyViolationsBreached) {
                 throw new MojoFailureException("Policy violations breached");
             }
         } catch (DependencyTrackException ex) {
@@ -107,5 +108,9 @@ public class PolicyMojo extends AbstractDependencyTrackMojo {
         else {
             return new File(mavenProject.getBuild().getDirectory());
         }
+    }
+
+    public void setFailOnWarn(boolean failOnWarn) {
+        this.failOnWarn = failOnWarn;
     }
 }

@@ -1,10 +1,8 @@
 package io.github.pmckeown.dependencytrack.policy.report;
 
 import io.github.pmckeown.dependencytrack.policy.Policy;
-import io.github.pmckeown.dependencytrack.policy.PolicyViolation;
+import io.github.pmckeown.dependencytrack.policy.ViolationState;
 import org.junit.Test;
-
-import java.util.List;
 
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
 import static io.github.pmckeown.dependencytrack.policy.PolicyConditionBuilder.aPolicyCondition;
@@ -18,34 +16,22 @@ public class PolicyViolationsReportTest {
 
     @Test
     public void thatAPolicyViolationReportCanBeGenerated() {
-
-        List<PolicyViolation> policyViolations = aListOfPolicyViolations()
+        PolicyViolationsReport policyViolationReport = new PolicyViolationsReport(aListOfPolicyViolations()
                 .withPolicyViolation(aPolicyViolation()
                         .withType("SEVERITY")
                         .withPolicyCondition(aPolicyCondition()
-                                .withPolicy(new Policy("testPolicy1", "INFO")))
-                        .withComponent(aComponent())).build();
-        PolicyViolationsReport policyViolationReport = new PolicyViolationsReport(policyViolations);
-        assertThat(policyViolationReport.getPolicyViolations().getPolicyViolations().get(0).getPolicyCondition().getPolicy().getName(),
-                is(equalTo("testPolicy1")));
-    }
-
-    @Test
-    public void thatAFindingsAreSortedIntoSeparateBuckets() {
-        List<PolicyViolation> policyViolations = aListOfPolicyViolations()
-                .withPolicyViolation(aPolicyViolation()
-                        .withType("SEVERITY")
-                        .withPolicyCondition(aPolicyCondition()
-                                .withPolicy(new Policy("testPolicy1", "INFO")))
+                                .withPolicy(new Policy("Info Policy", ViolationState.INFO)))
                         .withComponent(aComponent()))
                 .withPolicyViolation(aPolicyViolation()
-                        .withType("SEVERITY")
+                        .withType("LICENSE")
                         .withPolicyCondition(aPolicyCondition()
-                                .withPolicy(new Policy("testPolicy2", "WARN")))
-                        .withComponent(aComponent()))
-                .build();
-        PolicyViolationsReport policyViolationReport = new PolicyViolationsReport(policyViolations);
+                                .withPolicy(new Policy("Warn Policy", ViolationState.WARN)))
+                        .withComponent(aComponent())).build());
+
         assertThat(policyViolationReport.getPolicyViolations().getCount(), is(equalTo(2)));
+        assertThat(policyViolationReport.getPolicyViolations().getPolicyViolations()
+                        .get(0).getPolicyCondition().getPolicy().getName(),
+                is(equalTo("Info Policy")));
     }
 
 }

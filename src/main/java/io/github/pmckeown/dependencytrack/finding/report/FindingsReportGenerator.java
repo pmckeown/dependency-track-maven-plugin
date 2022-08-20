@@ -16,7 +16,8 @@ public class FindingsReportGenerator {
     private FindingsReportHtmlReportWriter htmlReportWriter;
 
     @Inject
-    public FindingsReportGenerator(FindingsReportXmlReportWriter xmlReportWriter, FindingsReportHtmlReportWriter htmlReportWriter) {
+    public FindingsReportGenerator(FindingsReportXmlReportWriter xmlReportWriter,
+            FindingsReportHtmlReportWriter htmlReportWriter) {
         this.xmlReportWriter = xmlReportWriter;
         this.htmlReportWriter = htmlReportWriter;
     }

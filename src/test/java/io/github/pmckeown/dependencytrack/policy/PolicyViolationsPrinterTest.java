@@ -41,7 +41,7 @@ public class PolicyViolationsPrinterTest {
     @Test
     public void thatAPolicyViolationIsPrintedCorrectly() {
         Project project = aProject().withName("a").withVersion("1").build();
-        List<PolicyViolation> policyViolations = policyViolationsList("SEVERITY", "p1", "INFO");
+        List<PolicyViolation> policyViolations = policyViolationsList("SEVERITY", "p1", ViolationState.INFO);
         policyViolationsPrinter.printPolicyViolations(project, policyViolations);
 
         verify(logger, times(2)).info(DELIMITER);
@@ -53,9 +53,10 @@ public class PolicyViolationsPrinterTest {
     @Test
     public void thatMultiplePolicyViolationsArePrintedCorrectly() {
         Project project = aProject().withName("a").withVersion("1").build();
-        List<PolicyViolation> policyViolations = policyViolationsList("SEVERITY", "p1", "INFO");
-        policyViolations.addAll(policyViolationsList("SEVERITY", "p2", "WARN"));
-        policyViolationsPrinter.printPolicyViolations(project, policyViolations);
+        policyViolationsPrinter.printPolicyViolations(project, aListOfPolicyViolations()
+                .withPolicyViolation(policyViolation("SEVERITY", "p1", ViolationState.INFO))
+                .withPolicyViolation(policyViolation("SEVERITY", "p2", ViolationState.WARN))
+                .build());
 
         verify(logger, times(3)).info(DELIMITER);
         verify(logger).info("%d policy violation(s) were retrieved for project: %s", 2, "a");
@@ -64,7 +65,8 @@ public class PolicyViolationsPrinterTest {
         verify(logger).info("Policy name: %s (%s)", "p2", "WARN");
     }
 
-    private List<PolicyViolation> policyViolationsList(String riskType, String policyName, String violationState) {
+    private List<PolicyViolation> policyViolationsList(String riskType, String policyName,
+            ViolationState violationState) {
         return aListOfPolicyViolations()
                 .withPolicyViolation(aPolicyViolation()
                         .withType(riskType)
@@ -72,5 +74,13 @@ public class PolicyViolationsPrinterTest {
                                 .withPolicy(new Policy(policyName, violationState)))
                         .withComponent(aComponent()))
                 .build();
+    }
+
+    private PolicyViolationBuilder policyViolation(String riskType, String policyName, ViolationState violationState) {
+        return aPolicyViolation()
+                .withType(riskType)
+                .withPolicyCondition(aPolicyCondition()
+                    .withPolicy(new Policy(policyName, violationState)))
+                .withComponent(aComponent());
     }
 }

@@ -1,11 +1,8 @@
 package io.github.pmckeown.dependencytrack.policy.report;
 
-import io.github.pmckeown.dependencytrack.finding.Analysis;
-import io.github.pmckeown.dependencytrack.finding.Finding;
-import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
-import io.github.pmckeown.dependencytrack.finding.Severity;
 import io.github.pmckeown.dependencytrack.policy.Policy;
 import io.github.pmckeown.dependencytrack.policy.PolicyViolation;
+import io.github.pmckeown.dependencytrack.policy.ViolationState;
 import io.github.pmckeown.dependencytrack.report.TransformerFactoryProvider;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -14,11 +11,7 @@ import org.junit.Test;
 import java.io.File;
 import java.util.List;
 
-import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
-import static io.github.pmckeown.dependencytrack.finding.FindingBuilder.aFinding;
-import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aListOfFindings;
-import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
 import static io.github.pmckeown.dependencytrack.policy.PolicyConditionBuilder.aPolicyCondition;
 import static io.github.pmckeown.dependencytrack.policy.PolicyViolationBuilder.aPolicyViolation;
 import static io.github.pmckeown.dependencytrack.policy.PolicyViolationListBuilder.aListOfPolicyViolations;
@@ -71,41 +64,9 @@ public class PolicyViolationsReportIntegrationTest {
                 .withPolicyViolation(aPolicyViolation()
                         .withType("SEVERITY")
                         .withPolicyCondition(aPolicyCondition()
-                                .withPolicy(new Policy("testPolicy1", "INFO")))
+                                .withPolicy(new Policy("testPolicy1", ViolationState.INFO)))
                         .withComponent(aComponent())).build();
         return policyViolations;
     }
 
-    private FindingThresholds thresholds() {
-        return new FindingThresholds(1, 2, 3, 4, null);
-    }
-
-    private List<Finding> findings() {
-        return aListOfFindings()
-                .withFinding(aFinding()
-                        .withVulnerability(aVulnerability().withSeverity(Severity.CRITICAL))
-                        .withComponent(aComponent())
-                        .withAnalysis(anAnalysis()))
-                .withFinding(aFinding()
-                        .withVulnerability(aVulnerability().withSeverity(Severity.CRITICAL))
-                        .withComponent(aComponent().withName("suppressed"))
-                        .withAnalysis(anAnalysis().withState(Analysis.State.FALSE_POSITIVE).withSuppressed(true)))
-                .withFinding(aFinding()
-                        .withVulnerability(aVulnerability().withSeverity(Severity.HIGH))
-                        .withComponent(aComponent())
-                        .withAnalysis(anAnalysis()))
-                .withFinding(aFinding()
-                        .withVulnerability(aVulnerability().withSeverity(Severity.MEDIUM))
-                        .withComponent(aComponent())
-                        .withAnalysis(anAnalysis()))
-                .withFinding(aFinding()
-                        .withVulnerability(aVulnerability().withSeverity(Severity.LOW))
-                        .withComponent(aComponent())
-                        .withAnalysis(anAnalysis()))
-                .withFinding(aFinding()
-                        .withVulnerability(aVulnerability().withSeverity(Severity.UNASSIGNED))
-                        .withComponent(aComponent())
-                        .withAnalysis(anAnalysis()))
-                .build();
-    }
 }

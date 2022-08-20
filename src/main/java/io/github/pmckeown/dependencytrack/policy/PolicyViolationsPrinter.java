@@ -33,7 +33,7 @@ class PolicyViolationsPrinter {
             PolicyCondition policyCondition = policyViolation.getPolicyCondition();
             Policy policy = policyCondition.getPolicy();
             logger.info(DELIMITER);
-            logger.info("Policy name: %s (%s)", policy.getName(), policy.getViolationState());
+            logger.info("Policy name: %s (%s)", policy.getName(), policy.getViolationState().name());
             logger.info("Policy condition: \"subject == %s && value %s %s\"", policyCondition.getSubject(),
                     policyCondition.getOperator(), policyCondition.getValue());
             logger.info("Risk type: %s, Component: %s %s", policyViolation.getType(),
