@@ -264,8 +264,9 @@ The Policy Violations associated with a Project is refreshed and up to date afte
 a periodic server-side data refresh.
 
 It is recommended to generate and upload an SBOM when retrieving Policy Violations so that the Project is 
-evaluated against the most recent Policy.  Of the Policy has changed since the last SBOM upload for the Project,
-the data from the API may be inconsistent and result in null values in the printed output and reports.
+evaluated against the most recent Policy.  If the Policy has changed since the last SBOM upload for the Project,
+the data from the API may be inconsistent and result in null values in the printed output and reports due to data
+changes since the policy was last applied.
 
 ### Get Inherited Risk Score
 Get the Inherited Risk Score from the Dependency-Track server for the current project or any arbitrary project.
