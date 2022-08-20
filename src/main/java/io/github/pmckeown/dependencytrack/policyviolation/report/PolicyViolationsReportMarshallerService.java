@@ -6,9 +6,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 @Singleton
-public class PolicyViolationsReportMarshallerService {
+class PolicyViolationsReportMarshallerService {
 
-    public Marshaller getMarshaller() throws JAXBException {
+    Marshaller getMarshaller() throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(PolicyViolationsReport.class);
         Marshaller marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
