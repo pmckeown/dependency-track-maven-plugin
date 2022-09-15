@@ -1,4 +1,4 @@
-package io.github.pmckeown.dependencytrack.finding;
+package io.github.pmckeown.dependencytrack.policyviolation;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
@@ -15,20 +15,20 @@ import java.util.List;
 import java.util.Optional;
 
 import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
-import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_FINDING_PROJECT_UUID;
+import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_POLICY_VIOLATION_PROJECT_UUID;
 import static kong.unirest.HeaderNames.ACCEPT;
 import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
 import static kong.unirest.Unirest.get;
 
 @Singleton
-class FindingsClient {
+class PolicyViolationsClient {
 
     private CommonConfig commonConfig;
 
     private Logger logger;
 
     @Inject
-    FindingsClient(CommonConfig commonConfig, Logger logger) {
+    PolicyViolationsClient(CommonConfig commonConfig, Logger logger) {
         this.commonConfig = commonConfig;
         this.logger = logger;
     }
@@ -39,16 +39,15 @@ class FindingsClient {
                 .addDefaultHeader(ACCEPT, "application/json");
     }
 
-
-    Response<List<Finding>> getFindingsForProject(Project project) {
-        logger.debug("Getting findings for project: %s-%s", project.getName(), project.getVersion());
-        final HttpResponse<List<Finding>> httpResponse = get(
-                commonConfig.getDependencyTrackBaseUrl() + V1_FINDING_PROJECT_UUID)
+    Response<List<PolicyViolation>> getPolicyViolationsForProject(Project project) {
+        logger.debug("Getting policy violations for project: %s-%s", project.getName(), project.getVersion());
+        final HttpResponse<List<PolicyViolation>> httpResponse = get(
+                commonConfig.getDependencyTrackBaseUrl() + V1_POLICY_VIOLATION_PROJECT_UUID)
                 .header("X-Api-Key", commonConfig.getApiKey())
                 .routeParam("uuid", project.getUuid())
-                .asObject(new GenericType<List<Finding>>(){});
+                .asObject(new GenericType<List<PolicyViolation>>(){});
 
-        Optional<List<Finding>> body;
+        Optional<List<PolicyViolation>> body;
         if (httpResponse.isSuccess()) {
             body = Optional.of(httpResponse.getBody());
         } else {

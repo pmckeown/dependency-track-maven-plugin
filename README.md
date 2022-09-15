@@ -226,6 +226,49 @@ You can enable the build to fail on any issues in any category by using the foll
 <findingThresholds />
 ```
 
+### Policy Violations
+Dependency Track supports the definition of [Policies](https://docs.dependencytrack.org/usage/policy-compliance/) which 
+can be applied to Projects, Components or the entire portfolio.  
+
+Policies are applied when an SBOM is uploaded and can target various attributes about the software component's 
+dependencies including but not limited to specific versions of packages, linked vulnerabilities over a given severity
+threshold and which license they are distributed under.
+
+Policies can be given a Violation State that indicates the severity if that policy is violated.  
+ 
+This goal checks the supplied Project for any Policy Violations.  This plugin honours the Violation State defined in 
+a Policy and so when a Policy is violated the plugin behaviour is as follows:
+
+  * FAIL - the build will fail unless the Global `failOnError` option is set to true
+  * WARN - the build will pass unless the `failOnWarn` option for this goal is set to true
+  * INFO - the build will pass  
+
+#### Additional Permissions
+Policy Violation requires your Automation Team to have additional permissions:
+
+  * In Dependency Track v4.4.x and earlier:
+    * VIEW_POLICY_VIOLATION
+    * VULNERABILITY_ANALYSIS [See this bug](https://github.com/DependencyTrack/frontend/issues/126)
+
+  * In Dependency Track v4.5.x and later:
+    * VIEW_POLICY_VIOLATION 
+
+#### Policy Configuration
+
+|Property                      |Required|Default Value |
+|------------------------------|--------|--------------|
+|failOnWarn                    |false   |false         |
+
+#### Behaviour
+
+The Policy Violations associated with a Project is refreshed and up to date after a SBOM upload and after 
+a periodic server-side data refresh.
+
+It is recommended to generate and upload an SBOM when retrieving Policy Violations so that the Project is 
+evaluated against the most recent SBOM.  If the Policy has changed since the last SBOM upload for the Project,
+the data from the API may be inconsistent and result in null values in the printed output and reports due to data
+changes since the policy was last applied.
+
 ### Get Inherited Risk Score
 Get the Inherited Risk Score from the Dependency-Track server for the current project or any arbitrary project.
 The Risk Score per vulnerability tells you about a specific vulnerability in a dependency in your application and how 

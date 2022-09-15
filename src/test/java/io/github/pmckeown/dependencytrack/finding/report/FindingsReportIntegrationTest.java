@@ -4,6 +4,7 @@ import io.github.pmckeown.dependencytrack.finding.Analysis;
 import io.github.pmckeown.dependencytrack.finding.Finding;
 import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
 import io.github.pmckeown.dependencytrack.finding.Severity;
+import io.github.pmckeown.dependencytrack.report.TransformerFactoryProvider;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,14 +22,14 @@ import static org.junit.Assert.fail;
 
 public class FindingsReportIntegrationTest {
 
-    private XmlReportWriter xmlReportWriter;
-    private HtmlReportWriter htmlReportWriter;
+    private FindingsReportXmlReportWriter xmlReportWriter;
+    private FindingsReportHtmlReportWriter htmlReportWriter;
 
     @Before
     public void setUp() {
         FindingsReportMarshallerService findingsReportMarshallerService = new FindingsReportMarshallerService();
-        xmlReportWriter = new XmlReportWriter(findingsReportMarshallerService);
-        htmlReportWriter = new HtmlReportWriter(new TransformerFactoryProvider());
+        xmlReportWriter = new FindingsReportXmlReportWriter(findingsReportMarshallerService);
+        htmlReportWriter = new FindingsReportHtmlReportWriter(new TransformerFactoryProvider());
     }
 
     @Test

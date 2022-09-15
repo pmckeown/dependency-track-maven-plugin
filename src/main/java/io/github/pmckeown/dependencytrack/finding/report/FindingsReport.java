@@ -3,6 +3,7 @@ package io.github.pmckeown.dependencytrack.finding.report;
 import io.github.pmckeown.dependencytrack.finding.Finding;
 import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
 import io.github.pmckeown.dependencytrack.finding.Severity;
+import io.github.pmckeown.dependencytrack.report.Report;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 
 @XmlRootElement(name = "findingsReport")
 @XmlType(propOrder = {"policyApplied", "policyBreached", "critical", "high", "medium", "low", "unassigned"})
-public class FindingsReport {
+public class FindingsReport implements Report {
 
     private PolicyApplied policyApplied;
     private Boolean policyBreached;

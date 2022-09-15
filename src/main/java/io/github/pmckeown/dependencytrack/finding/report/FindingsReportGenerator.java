@@ -6,23 +6,23 @@ import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import java.io.File;
 import java.util.List;
 
 @Singleton
 public class FindingsReportGenerator {
 
-    private XmlReportWriter xmlReportWriter;
-    private HtmlReportWriter htmlReportWriter;
+    private FindingsReportXmlReportWriter xmlReportWriter;
+    private FindingsReportHtmlReportWriter htmlReportWriter;
 
     @Inject
-    public FindingsReportGenerator(XmlReportWriter xmlReportWriter, HtmlReportWriter htmlReportWriter) {
+    public FindingsReportGenerator(FindingsReportXmlReportWriter xmlReportWriter,
+            FindingsReportHtmlReportWriter htmlReportWriter) {
         this.xmlReportWriter = xmlReportWriter;
         this.htmlReportWriter = htmlReportWriter;
     }
 
-    public void generate(File buildDirectory, List<Finding> findings, FindingThresholds findingThresholds, 
+    public void generate(File buildDirectory, List<Finding> findings, FindingThresholds findingThresholds,
             boolean policyBreached) throws DependencyTrackException {
         FindingsReport findingsReport = new FindingsReport(findingThresholds, findings, policyBreached);
         xmlReportWriter.write(buildDirectory, findingsReport);
