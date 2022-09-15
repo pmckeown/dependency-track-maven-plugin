@@ -236,8 +236,8 @@ threshold and which license they are distributed under.
 
 Policies can be given a Violation State that indicates the severity if that policy is violated.  
  
-This goal checks the supplied Project for any Policy Violations.  Policies have a violation state which this plugin
-honours and so when a Policy is violated the plugin behaviour is as follows:
+This goal checks the supplied Project for any Policy Violations.  This plugin honours the Violation State defined in 
+a Policy and so when a Policy is violated the plugin behaviour is as follows:
 
   * FAIL - the build will fail unless the Global `failOnError` option is set to true
   * WARN - the build will pass unless the `failOnWarn` option for this goal is set to true
@@ -265,7 +265,7 @@ The Policy Violations associated with a Project is refreshed and up to date afte
 a periodic server-side data refresh.
 
 It is recommended to generate and upload an SBOM when retrieving Policy Violations so that the Project is 
-evaluated against the most recent Policy.  If the Policy has changed since the last SBOM upload for the Project,
+evaluated against the most recent SBOM.  If the Policy has changed since the last SBOM upload for the Project,
 the data from the API may be inconsistent and result in null values in the printed output and reports due to data
 changes since the policy was last applied.
 
