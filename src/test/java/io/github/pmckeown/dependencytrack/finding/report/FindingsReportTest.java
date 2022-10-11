@@ -14,7 +14,7 @@ import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aLis
 import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class FindingsReportTest {
 

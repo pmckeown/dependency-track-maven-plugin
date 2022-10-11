@@ -12,7 +12,7 @@ import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_METRICS_PROJECT_CURRENT;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
 public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {

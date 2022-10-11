@@ -26,7 +26,7 @@ import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject
 import static io.github.pmckeown.dependencytrack.project.ProjectListBuilder.aListOfProjects;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
 public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {

@@ -18,7 +18,7 @@ import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_BOM;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -209,4 +209,3 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
         return uploadBomMojo;
     }
 }
-

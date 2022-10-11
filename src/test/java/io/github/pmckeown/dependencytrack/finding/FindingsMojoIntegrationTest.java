@@ -29,7 +29,7 @@ import static io.github.pmckeown.dependencytrack.finding.Severity.UNASSIGNED;
 import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
 public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
