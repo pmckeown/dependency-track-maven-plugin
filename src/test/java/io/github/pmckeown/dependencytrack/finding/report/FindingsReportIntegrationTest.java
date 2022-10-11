@@ -17,7 +17,7 @@ import static io.github.pmckeown.dependencytrack.finding.FindingBuilder.aFinding
 import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aListOfFindings;
 import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
 public class FindingsReportIntegrationTest {
