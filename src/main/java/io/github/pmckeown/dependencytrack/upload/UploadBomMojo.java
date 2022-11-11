@@ -10,7 +10,6 @@ import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.dependencytrack.project.ProjectInfo;
 import io.github.pmckeown.util.Logger;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -22,9 +21,9 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -106,7 +105,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     Optional<ProjectInfo> createProjectInfo() {
         Xpp3Dom dom;
         try {
-            dom = Xpp3DomBuilder.build(new FileReader(getBomLocation()));
+            dom = Xpp3DomBuilder.build(Files.newBufferedReader(Paths.get(getBomLocation())));
         } catch (XmlPullParserException | IOException e) {
             logger.warn("Failed to update project info. Failure processing bom.", e);
             return Optional.empty();
@@ -132,13 +131,14 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     }
 
     private Xpp3Dom getMetadataComponent(Xpp3Dom dom, String... path) {
+        Xpp3Dom child = dom;
         for (String segment : path) {
-            if (dom == null) {
+            if (child == null) {
                 break;
             }
-            dom = dom.getChild(segment);
+            child = child.getChild(segment);
         }
-        return dom;
+        return child;
     }
 
     private void setProjectInfoValue(Xpp3Dom component, String fieldName, Consumer<String> setter) {

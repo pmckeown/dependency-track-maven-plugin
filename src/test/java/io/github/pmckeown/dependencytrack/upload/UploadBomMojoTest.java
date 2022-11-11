@@ -10,7 +10,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
 import java.io.File;
-import java.util.Optional;
 
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
