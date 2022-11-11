@@ -165,9 +165,13 @@ continuing with plugin execution. This can be disabled by updating the [Polling 
 
 The BOM Location can be modified if you generate it to a folder that is not the default of `target/`.
 
+When setting `updateProjectInfo` to true an attempt will be made to update the project information in 
+Dependency-Track based on the metadata present in the BOM. This requires a CycloneDX BOM using Schema 1.2 or later.
+
 |Property                      |Required|Default Value |
 |------------------------------|--------|--------------|
 |bomLocation                   |false   |target/bom.xml|
+|updateProjectInfo             |false   |false         |
 
 ### Get Project Findings
 After a BOM upload, the best way to determine if there are any vulnerabilities is to use the `findings` goal which is 

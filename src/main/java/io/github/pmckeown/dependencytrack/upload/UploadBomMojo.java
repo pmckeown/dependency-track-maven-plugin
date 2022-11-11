@@ -103,7 +103,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         }
     }
 
-    private Optional<ProjectInfo> createProjectInfo() {
+    Optional<ProjectInfo> createProjectInfo() {
         Xpp3Dom dom;
         try {
             dom = Xpp3DomBuilder.build(new FileReader(getBomLocation()));
