@@ -51,6 +51,16 @@ public class ProjectAction {
         }
     }
 
+    public boolean updateProjectInfo(Project project, ProjectInfo info) throws DependencyTrackException {
+        try {
+            Response<?> response = projectClient.patchProject(project.getUuid(), info);
+            return response.isSuccess();
+        } catch (UnirestException ex) {
+            logger.error("Failed to update project info", ex);
+            throw new DependencyTrackException("Failed to update project info");
+        }
+    }
+
     boolean deleteProject(Project project) throws DependencyTrackException {
         try {
             logger.debug("Deleting project %s-%s", project.getName(), project.getVersion());

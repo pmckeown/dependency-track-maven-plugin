@@ -19,6 +19,7 @@ import static kong.unirest.HeaderNames.ACCEPT;
 import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
 import static kong.unirest.Unirest.delete;
 import static kong.unirest.Unirest.get;
+import static kong.unirest.Unirest.patch;
 
 /**
  * Client for getting Project details from Dependency Track
@@ -60,6 +61,17 @@ public class ProjectClient {
         HttpResponse<?> httpResponse = delete(commonConfig.getDependencyTrackBaseUrl() + V1_PROJECT_UUID)
                 .routeParam("uuid", project.getUuid())
                 .header("X-Api-Key", commonConfig.getApiKey())
+                .asEmpty();
+
+        return new Response<>(httpResponse.getStatus(), httpResponse.getStatusText(), httpResponse.isSuccess());
+    }
+
+    public Response<?> patchProject(String uuid, ProjectInfo info) {
+        HttpResponse<?> httpResponse = patch(commonConfig.getDependencyTrackBaseUrl() + V1_PROJECT_UUID)
+                .routeParam("uuid", uuid)
+                .header("X-Api-Key", commonConfig.getApiKey())
+                .contentType("application/json")
+                .body(info)
                 .asEmpty();
 
         return new Response<>(httpResponse.getStatus(), httpResponse.getStatusText(), httpResponse.isSuccess());
