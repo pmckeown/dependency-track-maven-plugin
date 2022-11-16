@@ -4,6 +4,7 @@ import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
+import kong.unirest.HttpStatus;
 import kong.unirest.Unirest;
 import kong.unirest.jackson.JacksonObjectMapper;
 
@@ -74,6 +75,7 @@ public class ProjectClient {
                 .body(info)
                 .asEmpty();
 
-        return new Response<>(httpResponse.getStatus(), httpResponse.getStatusText(), httpResponse.isSuccess());
+        boolean isSuccess = httpResponse.isSuccess() || httpResponse.getStatus() == HttpStatus.NOT_MODIFIED;
+        return new Response<>(httpResponse.getStatus(), httpResponse.getStatusText(), isSuccess);
     }
 }

@@ -1,6 +1,5 @@
 package io.github.pmckeown.dependencytrack.upload;
 
-
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
@@ -17,15 +16,13 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.cyclonedx.BomParserFactory;
+import org.cyclonedx.exception.ParseException;
+import org.cyclonedx.model.Bom;
+import org.cyclonedx.model.Component;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.File;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -103,49 +100,37 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     }
 
     Optional<ProjectInfo> createProjectInfo() {
-        Xpp3Dom dom;
+        File bomFile = new File(getBomLocation());
+        if (!bomFile.canRead()) {
+            return Optional.empty();
+        }
+        Bom bom;
         try {
-            dom = Xpp3DomBuilder.build(Files.newBufferedReader(Paths.get(getBomLocation())));
-        } catch (XmlPullParserException | IOException e) {
+            bom = BomParserFactory.createParser(bomFile).parse(bomFile);
+        }
+        catch (ParseException e) {
             logger.warn("Failed to update project info. Failure processing bom.", e);
             return Optional.empty();
         }
-        Xpp3Dom component = getMetadataComponent(dom, "metadata", "component");
-        if (component == null) {
-            logger.debug("BOM does not contain a metadata/component element");
+        if (bom.getMetadata() == null || bom.getMetadata().getComponent() == null) {
             return Optional.empty();
         }
+
+        Component component =  bom.getMetadata().getComponent();
         ProjectInfo info = new ProjectInfo();
-        String type = component.getAttribute("type");
-        if (type != null) {
-            info.setClassifier(type);
+        if (component.getType() != null) {
+            info.setClassifier(component.getType().name());
         }
-        setProjectInfoValue(component, "publisher", info::setPublisher);
-        setProjectInfoValue(component, "description", info::setDescription);
-        setProjectInfoValue(component, "group", info::setGroup);
-        setProjectInfoValue(component, "group", info::setGroup);
-        setProjectInfoValue(component, "purl", info::setPurl);
-        setProjectInfoValue(component, "cpe", info::setCpe);
-        setProjectInfoValue(component, "swid", info::setSwidTagId);
+        info.setAuthor(component.getAuthor());
+        info.setPublisher(component.getPublisher());
+        info.setDescription(component.getDescription());
+        info.setGroup(component.getGroup());
+        info.setPurl(component.getPurl());
+        info.setCpe(component.getCpe());
+        if (component.getSwid() != null) {
+            info.setSwidTagId(component.getSwid().getTagId());
+        }
         return Optional.of(info);
-    }
-
-    private Xpp3Dom getMetadataComponent(Xpp3Dom dom, String... path) {
-        Xpp3Dom child = dom;
-        for (String segment : path) {
-            if (child == null) {
-                break;
-            }
-            child = child.getChild(segment);
-        }
-        return child;
-    }
-
-    private void setProjectInfoValue(Xpp3Dom component, String fieldName, Consumer<String> setter) {
-        Xpp3Dom field = component.getChild(fieldName);
-        if (field != null) {
-            setter.accept(field.getValue());
-        }
     }
 
     /*

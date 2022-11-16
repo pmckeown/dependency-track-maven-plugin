@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public class ProjectInfo {
 
+    private String author;
     private String publisher;
     private String description;
     private String classifier;
@@ -16,6 +17,14 @@ public class ProjectInfo {
     private String purl;
     private String cpe;
     private String swidTagId;
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 
     public String getPublisher() {
         return publisher;
@@ -39,9 +48,6 @@ public class ProjectInfo {
 
     public void setClassifier(String classifier) {
         this.classifier = classifier;
-        if (this.classifier != null) {
-            this.classifier = this.classifier.toUpperCase();
-        }
     }
 
     public String getGroup() {
