@@ -16,10 +16,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.cyclonedx.BomParserFactory;
-import org.cyclonedx.exception.ParseException;
-import org.cyclonedx.model.Bom;
-import org.cyclonedx.model.Component;
 
 import java.io.File;
 import java.util.Optional;
@@ -75,7 +71,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
             }
             Project project = projectAction.getProject(projectName, projectVersion);
             if (updateProjectInfo) {
-                Optional<ProjectInfo> info = createProjectInfo();
+                Optional<ProjectInfo> info = projectAction.createProjectInfo(new File(getBomLocation()));
                 if (info.isPresent()) {
                     logger.info("Updating project info");
                     if (!projectAction.updateProjectInfo(project, info.get())) {
@@ -97,40 +93,6 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
             logger.debug("bomLocation not supplied so using: %s", defaultLocation);
             return defaultLocation;
         }
-    }
-
-    Optional<ProjectInfo> createProjectInfo() {
-        File bomFile = new File(getBomLocation());
-        if (!bomFile.canRead()) {
-            return Optional.empty();
-        }
-        Bom bom;
-        try {
-            bom = BomParserFactory.createParser(bomFile).parse(bomFile);
-        }
-        catch (ParseException e) {
-            logger.warn("Failed to update project info. Failure processing bom.", e);
-            return Optional.empty();
-        }
-        if (bom.getMetadata() == null || bom.getMetadata().getComponent() == null) {
-            return Optional.empty();
-        }
-
-        Component component =  bom.getMetadata().getComponent();
-        ProjectInfo info = new ProjectInfo();
-        if (component.getType() != null) {
-            info.setClassifier(component.getType().name());
-        }
-        info.setAuthor(component.getAuthor());
-        info.setPublisher(component.getPublisher());
-        info.setDescription(component.getDescription());
-        info.setGroup(component.getGroup());
-        info.setPurl(component.getPurl());
-        info.setCpe(component.getCpe());
-        if (component.getSwid() != null) {
-            info.setSwidTagId(component.getSwid().getTagId());
-        }
-        return Optional.of(info);
     }
 
     /*
