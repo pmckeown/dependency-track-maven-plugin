@@ -126,6 +126,7 @@ of this plugin:
 |projectName           |false   |${project.artifactId}|
 |projectVersion        |false   |${project.version}   |
 |failOnError           |false   |false                |  
+|validateCertificationPath           |false   |false                |  
 |skip                  |false   |false                |  
 
 
