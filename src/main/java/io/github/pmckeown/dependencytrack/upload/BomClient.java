@@ -33,10 +33,9 @@ class BomClient {
     @Inject
     BomClient(CommonConfig commonConfig) {
         this.commonConfig = commonConfig;
-    }
-
-    static {
-        Unirest.config().setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
+        Unirest.config()
+                .verifySsl(commonConfig.isValidateCertificationPath())
+                .setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
                 .addDefaultHeader(ACCEPT_ENCODING, "gzip, deflate")
                 .addDefaultHeader(ACCEPT, "application/json");
     }
