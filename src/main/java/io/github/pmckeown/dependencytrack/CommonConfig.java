@@ -14,20 +14,20 @@ public class CommonConfig {
     private String projectVersion;
     private String dependencyTrackBaseUrl;
     private String apiKey;
-    private boolean validateCertificationPath;
+    private boolean verifySsl;
     private PollingConfig pollingConfig;
 
     public CommonConfig() {
         // For dependency injection
     }
 
-    public CommonConfig(String projectName, String projectVersion, String dependencyTrackBaseUrl, String apiKey, boolean validateCertificationPath,
+    public CommonConfig(String projectName, String projectVersion, String dependencyTrackBaseUrl, String apiKey, boolean verifySsl,
             PollingConfig pollingConfig) {
         this.projectName = projectName;
         this.projectVersion = projectVersion;
         this.dependencyTrackBaseUrl = dependencyTrackBaseUrl;
         this.apiKey = apiKey;
-        this.validateCertificationPath = validateCertificationPath;
+        this.verifySsl = verifySsl;
         this.pollingConfig = pollingConfig;
     }
 
@@ -71,13 +71,15 @@ public class CommonConfig {
         this.pollingConfig = pollingConfig;
     }
 
-    public boolean isValidateCertificationPath() {
-        return validateCertificationPath;
+    public boolean isVerifySsl() {
+        return verifySsl;
     }
 
-    public void setValidateCertificationPath(boolean validateCertificationPath) {
-        this.validateCertificationPath = validateCertificationPath;
+    public void setVerifySsl(boolean verifySsl) {
+        this.verifySsl = verifySsl;
     }
+
+    
     
     
 }

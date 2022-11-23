@@ -35,6 +35,9 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     @Parameter(required = true, property = "dependency-track.apiKey")
     private String apiKey;
 
+    @Parameter(defaultValue = "true", property = "dependency-track.verifySsl")
+    private boolean verifySsl;
+
     @Parameter(defaultValue = "false", property = "dependency-track.failOnError")
     private boolean failOnError;
 
@@ -67,6 +70,7 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         this.commonConfig.setProjectVersion(projectVersion);
         this.commonConfig.setDependencyTrackBaseUrl(dependencyTrackBaseUrl);
         this.commonConfig.setApiKey(apiKey);
+        this.commonConfig.setVerifySsl(verifySsl);
         this.commonConfig.setPollingConfig(this.pollingConfig != null ? this.pollingConfig : PollingConfig.defaults());
 
         // Perform the requested action
@@ -105,6 +109,10 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         this.failOnError = fail;
     }
 
+    public void setVerifySsl(boolean verifySsl) {
+        this.verifySsl = verifySsl;
+    }
+    
     public void setSkip(boolean skip) {
         this.skip = skip;
     }

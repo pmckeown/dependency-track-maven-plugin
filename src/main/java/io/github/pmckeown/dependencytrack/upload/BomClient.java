@@ -33,9 +33,10 @@ class BomClient {
     @Inject
     BomClient(CommonConfig commonConfig) {
         this.commonConfig = commonConfig;
-        Unirest.config()
-                .verifySsl(commonConfig.isValidateCertificationPath())
-                .setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
+    }
+
+    static {
+        Unirest.config().setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
                 .addDefaultHeader(ACCEPT_ENCODING, "gzip, deflate")
                 .addDefaultHeader(ACCEPT, "application/json");
     }
@@ -49,6 +50,8 @@ class BomClient {
      * @return a response containing a token to later determine if processing the supplied BOM is completed
      */
     Response<UploadBomResponse> uploadBom(UploadBomRequest bom) {
+        Unirest.config()
+                .verifySsl(commonConfig.isVerifySsl());
         RequestBodyEntity requestBodyEntity = Unirest.put(commonConfig.getDependencyTrackBaseUrl() + V1_BOM)
                 .header(CONTENT_TYPE, "application/json")
                 .header("X-Api-Key", commonConfig.getApiKey())
@@ -74,6 +77,8 @@ class BomClient {
      *         flag is false, processing is either completed or the token supplied was invalid.
      */
     Response<BomProcessingResponse> isBomBeingProcessed(String token) {
+        Unirest.config()
+                .verifySsl(commonConfig.isVerifySsl());
         final HttpResponse<BomProcessingResponse> httpResponse = get(
                 commonConfig.getDependencyTrackBaseUrl() + V1_BOM_TOKEN_UUID)
                 .header("X-Api-Key", commonConfig.getApiKey())
