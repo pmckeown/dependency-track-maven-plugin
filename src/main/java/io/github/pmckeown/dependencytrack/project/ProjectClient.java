@@ -30,6 +30,8 @@ import static kong.unirest.Unirest.patch;
 @Singleton
 public class ProjectClient {
 
+    private static final String X_API_KEY = "X-Api-Key";
+
     private CommonConfig commonConfig;
 
     @Inject
@@ -45,7 +47,7 @@ public class ProjectClient {
 
     public Response<List<Project>> getProjects() {
         HttpResponse<List<Project>> httpResponse = get(commonConfig.getDependencyTrackBaseUrl() + V1_PROJECT)
-                .header("X-Api-Key", commonConfig.getApiKey())
+                .header(X_API_KEY, commonConfig.getApiKey())
                 .asObject(new GenericType<List<Project>>(){});
 
         Optional<List<Project>> body;
@@ -61,16 +63,16 @@ public class ProjectClient {
     Response<Void> deleteProject(Project project) {
         HttpResponse<?> httpResponse = delete(commonConfig.getDependencyTrackBaseUrl() + V1_PROJECT_UUID)
                 .routeParam("uuid", project.getUuid())
-                .header("X-Api-Key", commonConfig.getApiKey())
+                .header(X_API_KEY, commonConfig.getApiKey())
                 .asEmpty();
 
         return new Response<>(httpResponse.getStatus(), httpResponse.getStatusText(), httpResponse.isSuccess());
     }
 
-    public Response<?> patchProject(String uuid, ProjectInfo info) {
+    public Response<Void> patchProject(String uuid, ProjectInfo info) {
         HttpResponse<?> httpResponse = patch(commonConfig.getDependencyTrackBaseUrl() + V1_PROJECT_UUID)
                 .routeParam("uuid", uuid)
-                .header("X-Api-Key", commonConfig.getApiKey())
+                .header(X_API_KEY, commonConfig.getApiKey())
                 .contentType("application/json")
                 .body(info)
                 .asEmpty();

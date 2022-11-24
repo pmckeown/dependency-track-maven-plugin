@@ -60,7 +60,7 @@ public class ProjectAction {
         Optional<ProjectInfo> info = createProjectInfo(new File(bomLocation));
         if (info.isPresent()) {
             try {
-                Response<?> response = projectClient.patchProject(project.getUuid(), info.get());
+                Response<Void> response = projectClient.patchProject(project.getUuid(), info.get());
                 return response.isSuccess();
             } catch (UnirestException ex) {
                 logger.error("Failed to update project info", ex);
