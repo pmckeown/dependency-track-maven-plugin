@@ -516,7 +516,7 @@
                                     <findingThresholds>
                                         <critical>0</critical>
                                         <high>0</high>
-                                        <medium>1</medium>
+                                        <medium>0</medium>
                                         <low>0</low>
                                     </findingThresholds>
                                 </configuration>
