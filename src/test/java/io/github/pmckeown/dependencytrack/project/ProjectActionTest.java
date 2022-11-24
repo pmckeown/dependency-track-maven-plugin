@@ -21,6 +21,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
@@ -107,6 +109,21 @@ public class ProjectActionTest {
         assertThat(info.getPurl(), is(equalTo("pkg:maven/io.github.pmckeown/dependency-track-maven-plugin@1.2.1-" +
                 "SNAPSHOT?type=maven-plugin")));
         assertThat(info.getClassifier(), is(equalTo("LIBRARY")));
+    }
+
+    @Test
+    public void thatWhenProjectInfoIsUpdatedTrueIsReturned() throws Exception {
+        doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
+        boolean projectInfoUpdated = projectAction.updateProjectInfo(aProjectList().get(0),
+                String.valueOf(new File(ProjectActionTest.class.getResource("bom.xml").getPath())));
+        assertThat(projectInfoUpdated, is(equalTo(true)));
+    }
+    @Test
+    public void thatWhenProjectInfoIsNotUpdatedFalseIsReturned() throws Exception {
+        doReturn(aNotFoundResponse()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
+        boolean projectInfoUpdated = projectAction.updateProjectInfo(aProjectList().get(0),
+                String.valueOf(new File(ProjectActionTest.class.getResource("bom.xml").getPath())));
+        assertThat(projectInfoUpdated, is(equalTo(false)));
     }
 
     @Test
