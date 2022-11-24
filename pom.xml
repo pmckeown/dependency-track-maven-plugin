@@ -157,6 +157,11 @@
             <artifactId>jaxb-impl</artifactId>
             <version>2.3.3</version>
         </dependency>
+        <dependency>
+            <groupId>org.cyclonedx</groupId>
+            <artifactId>cyclonedx-core-java</artifactId>
+            <version>7.2.1</version>
+        </dependency>
 
         <!-- Test dependencies -->
         <dependency>
@@ -461,7 +466,7 @@
                         <artifactId>cyclonedx-maven-plugin</artifactId>
                         <version>2.7.0</version>
                         <configuration>
-                            <schemaVersion>1.1</schemaVersion>
+                            <schemaVersion>1.4</schemaVersion>
                             <includeBomSerialNumber>true</includeBomSerialNumber>
                             <includeCompileScope>true</includeCompileScope>
                             <includeProvidedScope>true</includeProvidedScope>
@@ -497,6 +502,9 @@
                                 <goals>
                                     <goal>upload-bom</goal>
                                 </goals>
+                                <configuration>
+                                    <updateProjectInfo>true</updateProjectInfo>
+                                </configuration>
                             </execution>
                             <execution>
                                 <id>fail-if-vulnerabilities-present</id>

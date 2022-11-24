@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -96,6 +97,27 @@ public class ProjectActionTest {
         }
     }
 
+    @Test
+    public void projectInfoCreationFromSbom() {
+        File bomFile = new File(ProjectActionTest.class.getResource("bom.xml").getFile());
+        ProjectInfo info = getProjectAction.createProjectInfo(bomFile).get();
+        assertThat(info.getGroup(), is(equalTo("io.github.pmckeown")));
+        assertThat(info.getDescription(), is(equalTo("Maven plugin to integrate with a Dependency Track server to submit dependency manifests and gather project metrics.")));
+        assertThat(info.getPurl(), is(equalTo("pkg:maven/io.github.pmckeown/dependency-track-maven-plugin@1.2.1-SNAPSHOT?type=maven-plugin")));
+        assertThat(info.getClassifier(), is(equalTo("LIBRARY")));
+    }
+
+    @Test
+    public void thatProjectInfoCreationFromMissingSbomThrowsNoException() {
+        assertThat(getProjectAction.createProjectInfo(new File("no-such-file")).isPresent(), is(equalTo(false)));
+    }
+
+    @Test
+    public void thatProjectInfoCreationFromOldSbomReturnsNoProjectInfo() {
+        File bomFile = new File(ProjectActionTest.class.getResource("bom-1.1.xml").getFile());
+        assertThat(getProjectAction.createProjectInfo(bomFile).isPresent(), is(equalTo(false)));
+    }
+    
     private Response aNotFoundResponse() {
         return new Response(404, "Not Found", false);
     }

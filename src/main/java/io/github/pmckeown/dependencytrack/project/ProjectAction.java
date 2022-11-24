@@ -7,10 +7,18 @@ import kong.unirest.UnirestException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import org.cyclonedx.BomParserFactory;
+import org.cyclonedx.exception.ParseException;
+import org.cyclonedx.model.Bom;
+import org.cyclonedx.model.Component;
+
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.String.format;
+
+import java.io.File;
 
 @Singleton
 public class ProjectAction {
@@ -48,6 +56,49 @@ public class ProjectAction {
             }
         } catch (UnirestException ex) {
             throw new DependencyTrackException(ex.getMessage(), ex);
+        }
+    }
+
+    public Optional<ProjectInfo> createProjectInfo(File bomFile) {
+        if (!bomFile.canRead()) {
+            return Optional.empty();
+        }
+        Bom bom;
+        try {
+            bom = BomParserFactory.createParser(bomFile).parse(bomFile);
+        }
+        catch (ParseException e) {
+            logger.warn("Failed to update project info. Failure processing bom.", e);
+            return Optional.empty();
+        }
+        if (bom.getMetadata() == null || bom.getMetadata().getComponent() == null) {
+            return Optional.empty();
+        }
+
+        Component component =  bom.getMetadata().getComponent();
+        ProjectInfo info = new ProjectInfo();
+        if (component.getType() != null) {
+            info.setClassifier(component.getType().name());
+        }
+        info.setAuthor(component.getAuthor());
+        info.setPublisher(component.getPublisher());
+        info.setDescription(component.getDescription());
+        info.setGroup(component.getGroup());
+        info.setPurl(component.getPurl());
+        info.setCpe(component.getCpe());
+        if (component.getSwid() != null) {
+            info.setSwidTagId(component.getSwid().getTagId());
+        }
+        return Optional.of(info);
+    }
+    
+    public boolean updateProjectInfo(Project project, ProjectInfo info) throws DependencyTrackException {
+        try {
+            Response<?> response = projectClient.patchProject(project.getUuid(), info);
+            return response.isSuccess();
+        } catch (UnirestException ex) {
+            logger.error("Failed to update project info", ex);
+            throw new DependencyTrackException("Failed to update project info");
         }
     }
 

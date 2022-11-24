@@ -4,6 +4,7 @@ import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
+import kong.unirest.HttpStatus;
 import kong.unirest.Unirest;
 import kong.unirest.jackson.JacksonObjectMapper;
 
@@ -19,6 +20,7 @@ import static kong.unirest.HeaderNames.ACCEPT;
 import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
 import static kong.unirest.Unirest.delete;
 import static kong.unirest.Unirest.get;
+import static kong.unirest.Unirest.patch;
 
 /**
  * Client for getting Project details from Dependency Track
@@ -63,5 +65,17 @@ public class ProjectClient {
                 .asEmpty();
 
         return new Response<>(httpResponse.getStatus(), httpResponse.getStatusText(), httpResponse.isSuccess());
+    }
+
+    public Response<?> patchProject(String uuid, ProjectInfo info) {
+        HttpResponse<?> httpResponse = patch(commonConfig.getDependencyTrackBaseUrl() + V1_PROJECT_UUID)
+                .routeParam("uuid", uuid)
+                .header("X-Api-Key", commonConfig.getApiKey())
+                .contentType("application/json")
+                .body(info)
+                .asEmpty();
+
+        boolean isSuccess = httpResponse.isSuccess() || httpResponse.getStatus() == HttpStatus.NOT_MODIFIED;
+        return new Response<>(httpResponse.getStatus(), httpResponse.getStatusText(), isSuccess);
     }
 }

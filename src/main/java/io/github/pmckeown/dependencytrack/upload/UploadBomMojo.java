@@ -1,13 +1,14 @@
 package io.github.pmckeown.dependencytrack.upload;
 
-
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
+import io.github.pmckeown.dependencytrack.project.ProjectInfo;
 import io.github.pmckeown.util.Logger;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -15,6 +16,9 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+
+import java.io.File;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -40,6 +44,9 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     @Parameter(property = "project", readonly = true, required = true)
     private MavenProject mavenProject;
+    
+    @Parameter(property = "dependency-track.updateProjectInfo")
+    private boolean updateProjectInfo;
 
     private UploadBomAction uploadBomAction;
 
@@ -63,6 +70,15 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
                 handleFailure("Bom upload failed");
             }
             Project project = projectAction.getProject(projectName, projectVersion);
+            if (updateProjectInfo) {
+                Optional<ProjectInfo> info = projectAction.createProjectInfo(new File(getBomLocation()));
+                if (info.isPresent()) {
+                    logger.info("Updating project info");
+                    if (!projectAction.updateProjectInfo(project, info.get())) {
+                        logger.info("Failed to update project info");
+                    }
+                }
+            }
             metricsAction.refreshMetrics(project);
         } catch (DependencyTrackException ex) {
             handleFailure("Error occurred during upload", ex);
