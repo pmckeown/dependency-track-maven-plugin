@@ -4,21 +4,18 @@ import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.UnirestException;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.cyclonedx.BomParserFactory;
 import org.cyclonedx.exception.ParseException;
 import org.cyclonedx.model.Bom;
 import org.cyclonedx.model.Component;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.String.format;
-
-import java.io.File;
 
 @Singleton
 public class ProjectAction {
@@ -58,8 +55,43 @@ public class ProjectAction {
             throw new DependencyTrackException(ex.getMessage(), ex);
         }
     }
+    
+    public boolean updateProjectInfo(Project project, String bomLocation) throws DependencyTrackException {
+        Optional<ProjectInfo> info = createProjectInfo(new File(bomLocation));
+        if (info.isPresent()) {
+            try {
+                Response<?> response = projectClient.patchProject(project.getUuid(), info.get());
+                return response.isSuccess();
+            } catch (UnirestException ex) {
+                logger.error("Failed to update project info", ex);
+                throw new DependencyTrackException("Failed to update project info");
+            }
+        } else {
+            logger.warn("Could not create ProjectInfo from bom at location: %s", bomLocation);
+        }
 
-    public Optional<ProjectInfo> createProjectInfo(File bomFile) {
+        return false;
+    }
+
+    boolean deleteProject(Project project) throws DependencyTrackException {
+        try {
+            logger.debug("Deleting project %s-%s", project.getName(), project.getVersion());
+
+            Response<?> response = projectClient.deleteProject(project);
+            return response.isSuccess();
+        } catch(UnirestException ex) {
+            logger.error("Failed to delete project", ex);
+            throw new DependencyTrackException("Failed to delete project");
+        }
+    }
+
+    private Optional<Project> findProject(List<Project> projects, String projectName, String projectVersion) {
+        return projects.stream()
+                .filter(project -> projectName.equals(project.getName()) && projectVersion.equals(project.getVersion()))
+                .findFirst();
+    }
+
+     Optional<ProjectInfo> createProjectInfo(File bomFile) {
         if (!bomFile.canRead()) {
             return Optional.empty();
         }
@@ -90,33 +122,5 @@ public class ProjectAction {
             info.setSwidTagId(component.getSwid().getTagId());
         }
         return Optional.of(info);
-    }
-    
-    public boolean updateProjectInfo(Project project, ProjectInfo info) throws DependencyTrackException {
-        try {
-            Response<?> response = projectClient.patchProject(project.getUuid(), info);
-            return response.isSuccess();
-        } catch (UnirestException ex) {
-            logger.error("Failed to update project info", ex);
-            throw new DependencyTrackException("Failed to update project info");
-        }
-    }
-
-    boolean deleteProject(Project project) throws DependencyTrackException {
-        try {
-            logger.debug("Deleting project %s-%s", project.getName(), project.getVersion());
-
-            Response<?> response = projectClient.deleteProject(project);
-            return response.isSuccess();
-        } catch(UnirestException ex) {
-            logger.error("Failed to delete project", ex);
-            throw new DependencyTrackException("Failed to delete project");
-        }
-    }
-
-    private Optional<Project> findProject(List<Project> projects, String projectName, String projectVersion) {
-        return projects.stream()
-                .filter(project -> projectName.equals(project.getName()) && projectVersion.equals(project.getVersion()))
-                .findFirst();
     }
 }
