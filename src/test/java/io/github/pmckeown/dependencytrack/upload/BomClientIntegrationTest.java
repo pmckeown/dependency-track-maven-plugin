@@ -25,6 +25,8 @@ import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_BOM_TO
 import static io.github.pmckeown.dependencytrack.TestUtils.asJson;
 import static io.github.pmckeown.dependencytrack.upload.BomProcessingResponseBuilder.aBomProcessingResponse;
 import static io.github.pmckeown.dependencytrack.upload.UploadBomResponseBuilder.anUploadBomResponse;
+import io.github.pmckeown.util.Logger;
+import org.apache.maven.plugin.testing.SilentLog;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -36,7 +38,7 @@ public class BomClientIntegrationTest extends AbstractDependencyTrackIntegration
     private static final String BASE_64_ENCODED_BOM = "blah";
 
     private BomClient client;
-
+    
     @Before
     public void setup() {
         client = new BomClient(getCommonConfig());

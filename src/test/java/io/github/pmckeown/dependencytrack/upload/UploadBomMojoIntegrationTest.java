@@ -206,6 +206,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
             uploadBomMojo.setBomLocation(bomLocation);
         }
         uploadBomMojo.setApiKey("ABC123");
+        uploadBomMojo.setVerifySsl(false); 
         return uploadBomMojo;
     }
 }
