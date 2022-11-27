@@ -71,13 +71,13 @@
         <dependency>
             <groupId>com.konghq</groupId>
             <artifactId>unirest-java</artifactId>
-            <version>3.13.10</version>
+            <version>3.14.0</version>
             <classifier>standalone</classifier>
         </dependency>
         <dependency>
             <groupId>com.konghq</groupId>
             <artifactId>unirest-objectmapper-jackson</artifactId>
-            <version>3.13.13</version>
+            <version>3.14.0</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
