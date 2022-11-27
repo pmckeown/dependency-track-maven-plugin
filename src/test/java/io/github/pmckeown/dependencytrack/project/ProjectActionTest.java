@@ -23,6 +23,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -120,6 +121,19 @@ public class ProjectActionTest {
         boolean projectInfoUpdated = projectAction.updateProjectInfo(aProjectList().get(0),
                 String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
         assertThat(projectInfoUpdated, is(equalTo(false)));
+    }
+
+    @Test
+    public void thatWhenProjectInfoUpdateErrorsAnExceptionIsThrown() {
+        doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
+        doThrow(UnirestException.class).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
+        try {
+            projectAction.updateProjectInfo(aProjectList().get(0),
+                    String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+            fail("Exception expected");
+        } catch (Exception ex) {
+            assertThat(ex, is(instanceOf(DependencyTrackException.class)));
+        }
     }
     
     private Response aNotFoundResponse() {
