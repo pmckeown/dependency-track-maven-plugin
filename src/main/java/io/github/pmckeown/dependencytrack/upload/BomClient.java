@@ -6,17 +6,13 @@ import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
 import kong.unirest.RequestBodyEntity;
 import kong.unirest.Unirest;
-import kong.unirest.jackson.JacksonObjectMapper;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Optional;
 
-import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_BOM;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_BOM_TOKEN_UUID;
-import static kong.unirest.HeaderNames.ACCEPT;
-import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
 import static kong.unirest.HeaderNames.CONTENT_TYPE;
 import static kong.unirest.Unirest.get;
 
@@ -35,12 +31,6 @@ class BomClient {
         this.commonConfig = commonConfig;
     }
 
-    static {
-        Unirest.config().setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
-                .addDefaultHeader(ACCEPT_ENCODING, "gzip, deflate")
-                .addDefaultHeader(ACCEPT, "application/json");
-    }
-
     /**
      * Upload a BOM to the Dependency-Track server.  The BOM is processed asynchronously after the upload is completed
      * and the response returned.  The response contains a token that can be used later to query if the bom that the
@@ -50,8 +40,6 @@ class BomClient {
      * @return a response containing a token to later determine if processing the supplied BOM is completed
      */
     Response<UploadBomResponse> uploadBom(UploadBomRequest bom) {
-        Unirest.config()
-                .verifySsl(commonConfig.isVerifySsl());
         RequestBodyEntity requestBodyEntity = Unirest.put(commonConfig.getDependencyTrackBaseUrl() + V1_BOM)
                 .header(CONTENT_TYPE, "application/json")
                 .header("X-Api-Key", commonConfig.getApiKey())

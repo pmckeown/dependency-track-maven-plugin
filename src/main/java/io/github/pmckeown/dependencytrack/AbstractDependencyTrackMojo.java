@@ -1,10 +1,16 @@
 package io.github.pmckeown.dependencytrack;
 
 import io.github.pmckeown.util.Logger;
+import kong.unirest.Unirest;
+import kong.unirest.jackson.JacksonObjectMapper;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
+
+import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
+import static kong.unirest.HeaderNames.ACCEPT;
+import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
 
 /**
  * Base class for Mojos in this project.
@@ -73,6 +79,9 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         this.commonConfig.setVerifySsl(verifySsl);
         this.commonConfig.setPollingConfig(this.pollingConfig != null ? this.pollingConfig : PollingConfig.defaults());
 
+        // Configure Unirest with additional user-supplied configuration
+        configureUnirest();
+
         // Perform the requested action
         if (getSkip()) {
             logger.info("dependency-track.skip = true: Skipping analysis.");
@@ -137,5 +146,16 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
 
     private boolean getSkip() {
         return Boolean.parseBoolean(System.getProperty("dependency-track.skip", Boolean.toString(skip)));
+    }
+
+    /**
+     * Unirest is configured
+     */
+    private void configureUnirest() {
+        Unirest.config()
+                .setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
+                .addDefaultHeader(ACCEPT_ENCODING, "gzip, deflate")
+                .addDefaultHeader(ACCEPT, "application/json")
+                .verifySsl(commonConfig.isVerifySsl());
     }
 }
