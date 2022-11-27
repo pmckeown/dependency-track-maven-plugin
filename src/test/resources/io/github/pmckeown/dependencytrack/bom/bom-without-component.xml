@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bom serialNumber="urn:uuid:d0ca6bcf-01ff-4081-8089-0c8ac5c8d117" version="1" xmlns="http://cyclonedx.org/schema/bom/1.4">
+  <metadata>
+    <timestamp>2022-11-11T11:57:27Z</timestamp>
+    <tools>
+      <tool>
+        <vendor>OWASP Foundation</vendor>
+        <name>CycloneDX Maven plugin</name>
+        <version>2.7.0</version>
+        <hashes>
+          <hash alg="MD5">c3466195d086bf7c31fdd23f8ffd7a8d</hash>
+          <hash alg="SHA-1">2fdea945fa3c30de50040220d11f14d80d981257</hash>
+          <hash alg="SHA-256">c084484d62553a4d3d1d5e80704941e620b0e935ae56936fd9f31b92852b6bf9</hash>
+          <hash alg="SHA-384">eaa63bb9fe43143350ef15d21608d755e007d810a349d6a8c98e1719a8110ef35318582bfa8220bea6c1db3e4a489db4</hash>
+          <hash alg="SHA-512">a63bae3558190e5ac018c3b9358dfc45766814858a726967c435b11686ed3fc0925c35e4b5170179b0016241ee6843f7080c61799e71b6d029cdf0f5f3b69460</hash>
+          <hash alg="SHA3-256">048ed1d36f6d94c27c51a2d6f5658181d2678d83d86b544a42fdfcfb400c587b</hash>
+          <hash alg="SHA3-384">b32fe6eafc71232a7cdd9b624d8b7b2da216a2060b7ce3c3a20acc950b385bb999d662ab1c2ecf37af8308f78b631baf</hash>
+          <hash alg="SHA3-512">195d25b92dd0c0cfd180318cea84e0ebeb99f6cf593a0e7378dd13a325ded684b45eb96c1ffe4a49293721df57621949c77f0adef406758d848075ba5a17eccd</hash>
+        </hashes>
+      </tool>
+    </tools>
+  </metadata>
+</bom>

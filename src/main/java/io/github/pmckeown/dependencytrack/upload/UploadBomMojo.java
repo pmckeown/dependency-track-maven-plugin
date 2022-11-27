@@ -1,6 +1,5 @@
 package io.github.pmckeown.dependencytrack.upload;
 
-
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
@@ -40,6 +39,9 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     @Parameter(property = "project", readonly = true, required = true)
     private MavenProject mavenProject;
+    
+    @Parameter(property = "dependency-track.updateProjectInfo")
+    private boolean updateProjectInfo;
 
     private UploadBomAction uploadBomAction;
 
@@ -63,6 +65,12 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
                 handleFailure("Bom upload failed");
             }
             Project project = projectAction.getProject(projectName, projectVersion);
+            if (updateProjectInfo) {
+                logger.info("Updating project info");
+                if (!projectAction.updateProjectInfo(project, getBomLocation())) {
+                    logger.info("Failed to update project info");
+                }
+            }
             metricsAction.refreshMetrics(project);
         } catch (DependencyTrackException ex) {
             handleFailure("Error occurred during upload", ex);
