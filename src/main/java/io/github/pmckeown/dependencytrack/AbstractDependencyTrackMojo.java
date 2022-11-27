@@ -150,7 +150,8 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     }
 
     /**
-     * Unirest is configured
+     * Unirest is configured globally using a static `Unirest.config()` method.  Doing so here allows for user-supplied
+     * configuration.
      */
     private void configureUnirest() {
         Unirest.config()
