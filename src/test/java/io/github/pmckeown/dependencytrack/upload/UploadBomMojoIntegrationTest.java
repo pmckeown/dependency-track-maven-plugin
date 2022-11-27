@@ -4,6 +4,7 @@ import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.ResourceConstants;
 import io.github.pmckeown.util.BomEncoder;
 import io.github.pmckeown.util.Logger;
+import kong.unirest.Unirest;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +13,19 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.notFound;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static io.github.pmckeown.TestMojoLoader.loadUploadBomMojo;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_BOM;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
@@ -195,6 +208,14 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
         verify(exactly(0), putRequestedFor(urlEqualTo(V1_BOM)));
     }
 
+    @Test
+    public void thatSslVerifyDefaultsToTrue() throws Exception {
+        UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
+        uploadBomMojo.setSkip(true);
+        uploadBomMojo.execute();
+        assertThat(Unirest.config().isVerifySsl(), is(true));
+    }
+
     /*
      * Helper methods
      */
@@ -206,7 +227,6 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
             uploadBomMojo.setBomLocation(bomLocation);
         }
         uploadBomMojo.setApiKey("ABC123");
-        uploadBomMojo.setVerifySsl(false); 
         return uploadBomMojo;
     }
 }

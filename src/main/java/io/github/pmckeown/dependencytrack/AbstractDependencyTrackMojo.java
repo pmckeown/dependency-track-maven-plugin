@@ -3,6 +3,7 @@ package io.github.pmckeown.dependencytrack;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.Unirest;
 import kong.unirest.jackson.JacksonObjectMapper;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -23,6 +24,7 @@ import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
  *     <li>apiKey</li>
  *     <li>failOnError</li>
  *     <li>skip</li>
+ *     <li>verifySsl</li>
  * </ol>
  *
  * @author Paul McKeown
@@ -41,17 +43,17 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     @Parameter(required = true, property = "dependency-track.apiKey")
     private String apiKey;
 
-    @Parameter(defaultValue = "true", property = "dependency-track.verifySsl")
-    private boolean verifySsl;
-
     @Parameter(defaultValue = "false", property = "dependency-track.failOnError")
     private boolean failOnError;
 
-    @Parameter
-    private PollingConfig pollingConfig;
-
     @Parameter(defaultValue = "false", property = "dependency-track.skip", alias = "dependency-track.skip")
     private boolean skip;
+
+    @Parameter(defaultValue = "true", property = "dependency-track.verifySsl")
+    private boolean verifySsl;
+
+    @Parameter
+    private PollingConfig pollingConfig;
 
     protected Logger logger;
 
@@ -76,7 +78,6 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         this.commonConfig.setProjectVersion(projectVersion);
         this.commonConfig.setDependencyTrackBaseUrl(dependencyTrackBaseUrl);
         this.commonConfig.setApiKey(apiKey);
-        this.commonConfig.setVerifySsl(verifySsl);
         this.commonConfig.setPollingConfig(this.pollingConfig != null ? this.pollingConfig : PollingConfig.defaults());
 
         // Configure Unirest with additional user-supplied configuration
@@ -156,6 +157,12 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
                 .setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
                 .addDefaultHeader(ACCEPT_ENCODING, "gzip, deflate")
                 .addDefaultHeader(ACCEPT, "application/json")
-                .verifySsl(commonConfig.isVerifySsl());
+                .verifySsl(this.verifySsl);
+
+        // Debug all Unirest config
+        logger.debug("Unirest Configuration: %s", ToStringBuilder.reflectionToString(Unirest.config()));
+
+        // Info print user specified
+        logger.info("SSL Verification enabled: %b", this.verifySsl);
     }
 }

@@ -37,7 +37,6 @@ public class UploadBomAction {
     public boolean upload(String bomLocation) throws DependencyTrackException {
         logger.info("Project Name: %s", commonConfig.getProjectName());
         logger.info("Project Version: %s", commonConfig.getProjectVersion());
-        logger.debug("verifySsl when calling DT: %s", commonConfig.isVerifySsl());
         logger.info("%s", commonConfig.getPollingConfig());
 
         Optional<String> encodedBomOptional = bomEncoder.encodeBom(bomLocation, logger);

@@ -65,8 +65,6 @@ class BomClient {
      *         flag is false, processing is either completed or the token supplied was invalid.
      */
     Response<BomProcessingResponse> isBomBeingProcessed(String token) {
-        Unirest.config()
-                .verifySsl(commonConfig.isVerifySsl());
         final HttpResponse<BomProcessingResponse> httpResponse = get(
                 commonConfig.getDependencyTrackBaseUrl() + V1_BOM_TOKEN_UUID)
                 .header("X-Api-Key", commonConfig.getApiKey())

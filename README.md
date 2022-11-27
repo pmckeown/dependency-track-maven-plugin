@@ -38,12 +38,12 @@ component URL in the `dependencyTrackBaseUrl` property.
 The plugin is configured to poll for results from the Dependency-Track server by default.  The polling configuration
 can be changed by modifying the `pollingConfig` element in the plugin configuration.  The available options are:
 
-|Property |Required |Default Value |Support Values  |
-|---------|---------|--------------|----------------|
-|enabled  |false    |true          |                |
-|pause    |false    |1             |                |
-|attempts |false    |20            |                |
-|timeUnit |false    |SECONDS       |MILLIS / SECONDS|
+| Property | Required | Default Value | Support Values   |
+|----------|----------|---------------|------------------|
+| enabled  | false    | true          |                  |
+| pause    | false    | 1             |                  |
+| attempts | false    | 20            |                  |
+| timeUnit | false    | SECONDS       | MILLIS / SECONDS |
 
 **XML Configuration Example**
 ```xml
@@ -119,15 +119,15 @@ The Automation team needs the following permissions:
 The following options are common to all goals and can be declared centrally in the plugin management definition 
 of this plugin:
 
-|Property              |Required|Default Value        |
-|----------------------|--------|---------------------|
-|dependencyTrackBaseUrl|true    |N/A                  |
-|apiKey                |true    |N/A                  |
-|projectName           |false   |${project.artifactId}|
-|projectVersion        |false   |${project.version}   |
-|failOnError           |false   |false                |  
-|verifySsl             |false   |false                |  
-|skip                  |false   |false                |  
+| Property               | Required | Default Value         |
+|------------------------|----------|-----------------------|
+| dependencyTrackBaseUrl | true     | N/A                   |
+| apiKey                 | true     | N/A                   |
+| projectName            | false    | ${project.artifactId} |
+| projectVersion         | false    | ${project.version}    |
+| failOnError            | false    | false                 |
+| skip                   | false    | false                 |  
+| verifySsl              | false    | true                  |  
 
 
 ## Features
@@ -166,13 +166,13 @@ continuing with plugin execution. This can be disabled by updating the [Polling 
 
 The BOM Location can be modified if you generate it to a folder that is not the default of `target/`.
 
-When setting `updateProjectInfo` to true an attempt will be made to update the project information in 
+When setting `updateProjectInfo` to true, an attempt will be made to update the project information in 
 Dependency-Track based on the metadata present in the BOM. This requires a CycloneDX BOM using Schema 1.2 or later.
 
-|Property                      |Required|Default Value |
-|------------------------------|--------|--------------|
-|bomLocation                   |false   |target/bom.xml|
-|updateProjectInfo             |false   |false         |
+| Property          | Required  | Default Value  |
+|-------------------|-----------|----------------|
+| bomLocation       | false     | target/bom.xml |
+| updateProjectInfo | false     | false          |
 
 ### Get Project Findings
 After a BOM upload, the best way to determine if there are any vulnerabilities is to use the `findings` goal which is 
