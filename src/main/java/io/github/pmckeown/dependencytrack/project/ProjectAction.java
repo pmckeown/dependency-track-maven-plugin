@@ -2,12 +2,9 @@ package io.github.pmckeown.dependencytrack.project;
 
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.Response;
+import io.github.pmckeown.dependencytrack.bom.BomParser;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.UnirestException;
-import org.cyclonedx.BomParserFactory;
-import org.cyclonedx.exception.ParseException;
-import org.cyclonedx.model.Bom;
-import org.cyclonedx.model.Component;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,11 +18,14 @@ import static java.lang.String.format;
 public class ProjectAction {
 
     private ProjectClient projectClient;
+
+    private BomParser bomParser;
     private Logger logger;
 
     @Inject
-    public ProjectAction(ProjectClient projectClient, Logger logger) {
+    public ProjectAction(ProjectClient projectClient, BomParser bomParser, Logger logger) {
         this.projectClient = projectClient;
+        this.bomParser = bomParser;
         this.logger = logger;
     }
 
@@ -57,7 +57,7 @@ public class ProjectAction {
     }
     
     public boolean updateProjectInfo(Project project, String bomLocation) throws DependencyTrackException {
-        Optional<ProjectInfo> info = createProjectInfo(new File(bomLocation));
+        Optional<ProjectInfo> info = bomParser.getProjectInfo(new File(bomLocation));
         if (info.isPresent()) {
             try {
                 Response<Void> response = projectClient.patchProject(project.getUuid(), info.get());
@@ -89,38 +89,5 @@ public class ProjectAction {
         return projects.stream()
                 .filter(project -> projectName.equals(project.getName()) && projectVersion.equals(project.getVersion()))
                 .findFirst();
-    }
-
-     Optional<ProjectInfo> createProjectInfo(File bomFile) {
-        if (!bomFile.canRead()) {
-            return Optional.empty();
-        }
-        Bom bom;
-        try {
-            bom = BomParserFactory.createParser(bomFile).parse(bomFile);
-        }
-        catch (ParseException e) {
-            logger.warn("Failed to update project info. Failure processing bom.", e);
-            return Optional.empty();
-        }
-        if (bom.getMetadata() == null || bom.getMetadata().getComponent() == null) {
-            return Optional.empty();
-        }
-
-        Component component =  bom.getMetadata().getComponent();
-        ProjectInfo info = new ProjectInfo();
-        if (component.getType() != null) {
-            info.setClassifier(component.getType().name());
-        }
-        info.setAuthor(component.getAuthor());
-        info.setPublisher(component.getPublisher());
-        info.setDescription(component.getDescription());
-        info.setGroup(component.getGroup());
-        info.setPurl(component.getPurl());
-        info.setCpe(component.getCpe());
-        if (component.getSwid() != null) {
-            info.setSwidTagId(component.getSwid().getTagId());
-        }
-        return Optional.of(info);
     }
 }

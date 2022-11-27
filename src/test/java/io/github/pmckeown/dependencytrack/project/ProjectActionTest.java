@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack.project;
 
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.Response;
+import io.github.pmckeown.dependencytrack.bom.BomParser;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.UnirestException;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -41,6 +43,9 @@ public class ProjectActionTest {
 
     @Mock
     private ProjectClient projectClient;
+
+    @Mock
+    private BomParser bomParser;
 
     @Mock
     private Logger logger;
@@ -100,41 +105,21 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void projectInfoCreationFromSbom() {
-        File bomFile = new File(ProjectActionTest.class.getResource("bom.xml").getFile());
-        ProjectInfo info = projectAction.createProjectInfo(bomFile).get();
-        assertThat(info.getGroup(), is(equalTo("io.github.pmckeown")));
-        assertThat(info.getDescription(), is(equalTo("Maven plugin to integrate with a Dependency Track server to " +
-                "submit dependency manifests and gather project metrics.")));
-        assertThat(info.getPurl(), is(equalTo("pkg:maven/io.github.pmckeown/dependency-track-maven-plugin@1.2.1-" +
-                "SNAPSHOT?type=maven-plugin")));
-        assertThat(info.getClassifier(), is(equalTo("LIBRARY")));
-    }
-
-    @Test
     public void thatWhenProjectInfoIsUpdatedTrueIsReturned() throws Exception {
+        doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
         doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
         boolean projectInfoUpdated = projectAction.updateProjectInfo(aProjectList().get(0),
-                String.valueOf(new File(ProjectActionTest.class.getResource("bom.xml").getPath())));
+                String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
         assertThat(projectInfoUpdated, is(equalTo(true)));
     }
+
     @Test
     public void thatWhenProjectInfoIsNotUpdatedFalseIsReturned() throws Exception {
+        doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
         doReturn(aNotFoundResponse()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
         boolean projectInfoUpdated = projectAction.updateProjectInfo(aProjectList().get(0),
-                String.valueOf(new File(ProjectActionTest.class.getResource("bom.xml").getPath())));
+                String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
         assertThat(projectInfoUpdated, is(equalTo(false)));
-    }
-
-    @Test
-    public void thatProjectInfoCreationFromMissingSbomThrowsNoException() {
-        assertThat(projectAction.createProjectInfo(new File("no-such-file")).isPresent(), is(equalTo(false)));
-    }
-
-    @Test
-    public void thatProjectInfoCreationFromOldSbomReturnsNoProjectInfo() {
-        File bomFile = new File(ProjectActionTest.class.getResource("bom-1.1.xml").getFile());
-        assertThat(projectAction.createProjectInfo(bomFile).isPresent(), is(equalTo(false)));
     }
     
     private Response aNotFoundResponse() {
