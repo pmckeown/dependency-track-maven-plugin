@@ -1,10 +1,17 @@
 package io.github.pmckeown.dependencytrack;
 
 import io.github.pmckeown.util.Logger;
+import kong.unirest.Unirest;
+import kong.unirest.jackson.JacksonObjectMapper;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
+
+import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
+import static kong.unirest.HeaderNames.ACCEPT;
+import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
 
 /**
  * Base class for Mojos in this project.
@@ -17,6 +24,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  *     <li>apiKey</li>
  *     <li>failOnError</li>
  *     <li>skip</li>
+ *     <li>verifySsl</li>
  * </ol>
  *
  * @author Paul McKeown
@@ -38,11 +46,14 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     @Parameter(defaultValue = "false", property = "dependency-track.failOnError")
     private boolean failOnError;
 
-    @Parameter
-    private PollingConfig pollingConfig;
-
     @Parameter(defaultValue = "false", property = "dependency-track.skip", alias = "dependency-track.skip")
     private boolean skip;
+
+    @Parameter(defaultValue = "true", property = "dependency-track.verifySsl")
+    private boolean verifySsl;
+
+    @Parameter
+    private PollingConfig pollingConfig;
 
     protected Logger logger;
 
@@ -68,6 +79,9 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         this.commonConfig.setDependencyTrackBaseUrl(dependencyTrackBaseUrl);
         this.commonConfig.setApiKey(apiKey);
         this.commonConfig.setPollingConfig(this.pollingConfig != null ? this.pollingConfig : PollingConfig.defaults());
+
+        // Configure Unirest with additional user-supplied configuration
+        configureUnirest();
 
         // Perform the requested action
         if (getSkip()) {
@@ -105,6 +119,10 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         this.failOnError = fail;
     }
 
+    public void setVerifySsl(boolean verifySsl) {
+        this.verifySsl = verifySsl;
+    }
+    
     public void setSkip(boolean skip) {
         this.skip = skip;
     }
@@ -129,5 +147,23 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
 
     private boolean getSkip() {
         return Boolean.parseBoolean(System.getProperty("dependency-track.skip", Boolean.toString(skip)));
+    }
+
+    /**
+     * Unirest is configured globally using a static `Unirest.config()` method.  Doing so here allows for user-supplied
+     * configuration.
+     */
+    private void configureUnirest() {
+        Unirest.config()
+                .setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
+                .addDefaultHeader(ACCEPT_ENCODING, "gzip, deflate")
+                .addDefaultHeader(ACCEPT, "application/json")
+                .verifySsl(this.verifySsl);
+
+        // Debug all Unirest config
+        logger.debug("Unirest Configuration: %s", ToStringBuilder.reflectionToString(Unirest.config()));
+
+        // Info print user specified
+        logger.info("SSL Verification enabled: %b", this.verifySsl);
     }
 }

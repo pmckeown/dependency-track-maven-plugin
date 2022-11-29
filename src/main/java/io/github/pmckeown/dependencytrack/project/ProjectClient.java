@@ -5,19 +5,14 @@ import io.github.pmckeown.dependencytrack.Response;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
 import kong.unirest.HttpStatus;
-import kong.unirest.Unirest;
-import kong.unirest.jackson.JacksonObjectMapper;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
 import java.util.Optional;
 
-import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_UUID;
-import static kong.unirest.HeaderNames.ACCEPT;
-import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
 import static kong.unirest.Unirest.delete;
 import static kong.unirest.Unirest.get;
 import static kong.unirest.Unirest.patch;
@@ -37,12 +32,6 @@ public class ProjectClient {
     @Inject
     public ProjectClient(CommonConfig commonConfig) {
         this.commonConfig = commonConfig;
-    }
-
-    static {
-        Unirest.config().setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
-                .addDefaultHeader(ACCEPT_ENCODING, "gzip, deflate")
-                .addDefaultHeader(ACCEPT, "application/json");
     }
 
     public Response<List<Project>> getProjects() {

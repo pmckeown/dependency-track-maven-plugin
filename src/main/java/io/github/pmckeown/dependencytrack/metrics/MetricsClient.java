@@ -6,17 +6,12 @@ import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
-import kong.unirest.jackson.JacksonObjectMapper;
-import kong.unirest.Unirest;
 
 import javax.inject.Inject;
 import java.util.Optional;
 
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_METRICS_PROJECT_UUID_CURRENT;
-import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_METRICS_PROJECT_UUID_REFRESH;
-import static kong.unirest.HeaderNames.ACCEPT;
-import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
 import static kong.unirest.Unirest.get;
 
 /**
@@ -34,12 +29,6 @@ class MetricsClient {
     MetricsClient(CommonConfig commonConfig, Logger logger) {
         this.commonConfig = commonConfig;
         this.logger = logger;
-    }
-
-    static {
-        Unirest.config().setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
-                .addDefaultHeader(ACCEPT_ENCODING, "gzip, deflate")
-                .addDefaultHeader(ACCEPT, "application/json");
     }
 
     Response<Metrics> getMetrics(Project project) {

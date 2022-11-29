@@ -68,4 +68,5 @@ public class CommonConfig {
     public void setPollingConfig(PollingConfig pollingConfig) {
         this.pollingConfig = pollingConfig;
     }
+    
 }

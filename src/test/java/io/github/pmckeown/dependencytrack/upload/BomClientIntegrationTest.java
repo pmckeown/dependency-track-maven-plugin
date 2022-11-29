@@ -36,7 +36,7 @@ public class BomClientIntegrationTest extends AbstractDependencyTrackIntegration
     private static final String BASE_64_ENCODED_BOM = "blah";
 
     private BomClient client;
-
+    
     @Before
     public void setup() {
         client = new BomClient(getCommonConfig());

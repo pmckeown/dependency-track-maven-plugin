@@ -4,6 +4,7 @@ import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
+import kong.unirest.Unirest;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
 import org.junit.Test;
@@ -85,5 +86,18 @@ public class UploadBomMojoTest {
         verifyNoInteractions(uploadBomAction);
         verifyNoInteractions(metricsAction);
         verifyNoInteractions(projectAction);
+    }
+
+    @Test
+    public void thatUnirestConfiguredWithSslVerifyOnWhenAsked() throws Exception {
+        uploadBomMojo.setVerifySsl(true);
+        uploadBomMojo.execute();
+        assertThat(Unirest.config().isVerifySsl(), is(equalTo(true)));
+    }
+    @Test
+    public void thatUnirestIsConfiguredWithSslVerifyOffWhenAsked() throws Exception {
+        uploadBomMojo.setVerifySsl(false);
+        uploadBomMojo.execute();
+        assertThat(Unirest.config().isVerifySsl(), is(equalTo(false)));
     }
 }
