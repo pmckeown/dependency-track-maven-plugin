@@ -132,6 +132,16 @@ of this plugin:
 
 ## Features
 
+* [Upload Bill of Material](#upload-bill-of-material) - Create/modify a project on the Dependency-Track server, as well
+as set additional information such as description, group, PURL via the `updateProjectInfo` option
+* [Get Project Findings](#get-project-findings) - Returns vulnerability findings on a project, useful for CI/CD 
+quality control
+* [Policy Violations](#policy-violations) - Returns policy findings on a project, useful for CI/CD quality control
+* [Get Inherited Risk Score](#get-inherited-risk-score) - Useful for CI/CD quality control
+* [Get Metrics](#get-metrics) - Useful for CI/CD quality control
+* [Delete Project](#delete-project) - Deletes a project from the Dependency-Track server
+
+
 ### Upload Bill of Material
 Upload a Bill of Material (BOM) to a Dependency-Track server.  By default this uploads the bom.xml and creates (or 
 updates if already present) a project on the Dependency-Track server with the name and version that map to the current
@@ -166,8 +176,21 @@ continuing with plugin execution. This can be disabled by updating the [Polling 
 
 The BOM Location can be modified if you generate it to a folder that is not the default of `target/`.
 
-When setting `updateProjectInfo` to true, an attempt will be made to update the project information in 
-Dependency-Track based on the metadata present in the BOM. This requires a CycloneDX BOM using Schema 1.2 or later.
+When setting `updateProjectInfo` to true, an attempt will be made to update the following project information in 
+Dependency-Track based on the metadata present in the BOM:
+
+* Author - `Alice Bravo`
+* Publisher - `Company Inc`
+* Description - `An example project from department Foo`
+* Classifier - `Library`
+* Group (Namespace, group, or vendor) - `tld.company.foo`
+* PURL (Package URL) - `pkg:maven/tld.company.foo/project@1.0.0?type=jar`
+* CPE (Common Platform Enumeration) - `cpe:2.3:a:company:project:1.0.0:ga:*:*:*:*:*:*`
+* SWID Tag Id (Software Identification Tag Id) - `<SoftwareIdentity name="project" ...`
+
+**Notes:** 
+* This requires a CycloneDX BOM using Schema 1.2 or later.
+* Not all information is visible in the Dependency-Track server UI.
 
 | Property          | Required  | Default Value  |
 |-------------------|-----------|----------------|
