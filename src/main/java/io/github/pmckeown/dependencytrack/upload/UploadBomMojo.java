@@ -6,6 +6,7 @@ import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
+import io.github.pmckeown.dependencytrack.project.UpdateRequest;
 import io.github.pmckeown.util.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -16,6 +17,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import javax.inject.Inject;
+
+import static java.lang.String.format;
 
 /**
  * Provides the capability to upload a Bill of Material (BOM) to your Dependency Track server.
@@ -39,9 +42,18 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     @Parameter(property = "project", readonly = true, required = true)
     private MavenProject mavenProject;
-    
+
     @Parameter(property = "dependency-track.updateProjectInfo")
     private boolean updateProjectInfo;
+
+    @Parameter(property = "dependency-track.updateParent")
+    private boolean updateParent;
+
+    @Parameter(defaultValue = "${project.parent.name}", property = "dependency-track.parentName")
+    private String parentName;
+
+    @Parameter(defaultValue = "${project.parent.version}", property = "dependency-track.parentVersion")
+    private String parentVersion;
 
     private UploadBomAction uploadBomAction;
 
@@ -61,20 +73,58 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
         try {
+            logger.info("Update Project Parent: %s", updateParent);
+
+            Project parent = null;
+            if (updateParent) {
+                if (StringUtils.isEmpty(parentName)) {
+                    throw new DependencyTrackException(
+                            "Attempt to set parent with no default parent name and none provided");
+                } else if (StringUtils.isEmpty(parentVersion)) {
+                    throw new DependencyTrackException(
+                            "Attempt to set parent with no default parent version and none provided");
+                }
+                logger.info("Parent Name: %s", parentName);
+                logger.info("Parent Version: %s", parentVersion);
+                getLog().info(format("Attempting to fetch project parent: %s-%s", parentName, parentVersion));
+                parent = projectAction.getProject(parentName, parentVersion);
+
+                if (parent == null) {
+                    throw new DependencyTrackException(format("Server did not find project parent: %s-%s", parentName,
+                            parentVersion));
+                }
+            }
+
             if (!uploadBomAction.upload(getBomLocation())) {
                 handleFailure("Bom upload failed");
             }
             Project project = projectAction.getProject(projectName, projectVersion);
-            if (updateProjectInfo) {
-                logger.info("Updating project info");
-                if (!projectAction.updateProjectInfo(project, getBomLocation())) {
-                    logger.info("Failed to update project info");
+
+            UpdateRequest updateReq = new UpdateRequest();
+            if (updateProjectInfo) updateReq.withBomLocation(getBomLocation());
+            if (projectAction.updateRequired(updateReq.withParent(parent))) {
+                if (!projectAction.updateProject(project, updateReq)) {
+                    throw new DependencyTrackException("Failed to update project info");
                 }
+                project = projectAction.getProject(projectName, projectVersion);
             }
+
             metricsAction.refreshMetrics(project);
         } catch (DependencyTrackException ex) {
             handleFailure("Error occurred during upload", ex);
         }
+    }
+
+    public void updateParent(boolean updateParent) {
+        this.updateParent = updateParent;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+
+    public void setParentVersion(String parentVersion) {
+        this.parentVersion = parentVersion;
     }
 
     private String getBomLocation() {

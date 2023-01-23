@@ -1,6 +1,7 @@
 package io.github.pmckeown.dependencytrack.project;
 
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.Item;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.bom.BomParser;
 import io.github.pmckeown.util.Logger;
@@ -55,22 +56,45 @@ public class ProjectAction {
             throw new DependencyTrackException(ex.getMessage(), ex);
         }
     }
-    
-    public boolean updateProjectInfo(Project project, String bomLocation) throws DependencyTrackException {
-        Optional<ProjectInfo> info = bomParser.getProjectInfo(new File(bomLocation));
-        if (info.isPresent()) {
+
+    public boolean updateProject(Project project, UpdateRequest updateReq) throws DependencyTrackException {
+        ProjectInfo info = null;
+        if (updateReq.hasBomLocation()) {
+            logger.info("Project info will be updated");
+            Optional<ProjectInfo> optInfo = bomParser.getProjectInfo(new File(updateReq.getBomLocation()));
+            if (optInfo.isPresent()) {
+                info = optInfo.get();
+            } else {
+                logger.warn("Could not create ProjectInfo from bom at location: %s", updateReq.getBomLocation());
+                return false;
+            }
+        }
+
+        if (updateReq.hasParent()) {
+            logger.info("Project parent will be updated");
+            if (info == null) {
+                info = new ProjectInfo();
+            }
+
+            info.setParent(new Item(updateReq.getParent().getUuid()));
+        }
+
+        if (info == null) {
+            // No-op
+            return true;
+        } else {
             try {
-                Response<Void> response = projectClient.patchProject(project.getUuid(), info.get());
+                Response<Void> response = projectClient.patchProject(project.getUuid(), info);
                 return response.isSuccess();
             } catch (UnirestException ex) {
                 logger.error("Failed to update project info", ex);
-                throw new DependencyTrackException("Failed to update project info");
+                throw new DependencyTrackException("Failed to update project");
             }
-        } else {
-            logger.warn("Could not create ProjectInfo from bom at location: %s", bomLocation);
         }
+    }
 
-        return false;
+    public boolean updateRequired(UpdateRequest updateReq) {
+        return updateReq.hasBomLocation() || updateReq.hasParent();
     }
 
     boolean deleteProject(Project project) throws DependencyTrackException {

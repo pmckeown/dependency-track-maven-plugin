@@ -1,5 +1,6 @@
 package io.github.pmckeown.dependencytrack.project;
 
+import io.github.pmckeown.dependencytrack.Item;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -17,6 +18,7 @@ public class ProjectInfo {
     private String purl;
     private String cpe;
     private String swidTagId;
+    private Item parent;
 
     public String getAuthor() {
         return author;
@@ -80,6 +82,14 @@ public class ProjectInfo {
 
     public void setSwidTagId(String swidTagId) {
         this.swidTagId = swidTagId;
+    }
+
+    public Item getParent() {
+        return parent;
+    }
+
+    public void setParent(Item parent) {
+        this.parent = parent;
     }
 
     @Override

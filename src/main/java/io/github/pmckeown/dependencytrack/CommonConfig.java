@@ -20,15 +20,6 @@ public class CommonConfig {
         // For dependency injection
     }
 
-    public CommonConfig(String projectName, String projectVersion, String dependencyTrackBaseUrl, String apiKey,
-            PollingConfig pollingConfig) {
-        this.projectName = projectName;
-        this.projectVersion = projectVersion;
-        this.dependencyTrackBaseUrl = dependencyTrackBaseUrl;
-        this.apiKey = apiKey;
-        this.pollingConfig = pollingConfig;
-    }
-
     public String getProjectName() {
         return projectName;
     }
@@ -68,5 +59,5 @@ public class CommonConfig {
     public void setPollingConfig(PollingConfig pollingConfig) {
         this.pollingConfig = pollingConfig;
     }
-    
+
 }
