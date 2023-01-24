@@ -192,20 +192,20 @@ Dependency-Track based on the metadata present in the BOM:
 * This requires a CycloneDX BOM using Schema 1.2 or later.
 * Not all information is visible in the Dependency-Track server UI.
 
-Should you also wish to set the project parent within the Dependency-Track server, then set `setProjectParent` to `true` 
-and the project parent will be defaulted to that of the one defined in the `pom.xml`. If you wish to override these 
-values, or there is no parent set within the `pom.xml`, then set `parentName` and/or `parentVersion` too.
+From Dependency-Track server 4.8.0 onwards, you can set the project parent by setting `setProjectParent` to `true`. The 
+project parent will be defaulted to that of the one defined in the `pom.xml`. If you wish to override these values, or 
+there is no parent set within the `pom.xml`, then set `parentName` and/or `parentVersion` too.
 
 **Note:** If the parent cannot be found on the Dependency-Track server, the BOM upload will not be attempted in order to
 prevent an incorrectly configured project being created on the server.
 
-| Property          | Required | Default Value                 |
-|-------------------|----------|-------------------------------|
-| bomLocation       | false    | target/bom.xml                |
-| updateProjectInfo | false    | false                         |  
-| setParent         | false    | false                         |
-| parentName        | false    | ${project.project.artifactId} |
-| parentVersion     | false    | ${project.project.version}    |
+| Property          | Required | Default Value                |
+|-------------------|----------|------------------------------|
+| bomLocation       | false    | target/bom.xml               |
+| updateProjectInfo | false    | false                        |  
+| setParent         | false    | false                        |
+| parentName        | false    | ${project.parent.artifactId} |
+| parentVersion     | false    | ${project.parent.version}    |
 
 ### Get Project Findings
 After a BOM upload, the best way to determine if there are any vulnerabilities is to use the `findings` goal which is 
