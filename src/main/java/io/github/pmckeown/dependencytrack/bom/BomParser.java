@@ -2,6 +2,8 @@ package io.github.pmckeown.dependencytrack.bom;
 
 import io.github.pmckeown.dependencytrack.project.ProjectInfo;
 import io.github.pmckeown.util.Logger;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.BOMInputStream;
 import org.cyclonedx.BomParserFactory;
 import org.cyclonedx.model.Bom;
 import org.cyclonedx.model.Component;
@@ -9,6 +11,7 @@ import org.cyclonedx.model.Component;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.Optional;
 
 /**
@@ -42,7 +45,9 @@ public class BomParser {
         }
         Bom bom;
         try {
-            bom = BomParserFactory.createParser(bomFile).parse(bomFile);
+            final BOMInputStream bis = new BOMInputStream(new FileInputStream(bomFile), false);
+            final byte[] bytes = IOUtils.toByteArray(bis);
+            bom = BomParserFactory.createParser(bytes).parse(bytes);
         } catch (Exception ex) {
             logger.warn("Failed to update project info. Failure processing bom.", ex);
             return Optional.empty();
