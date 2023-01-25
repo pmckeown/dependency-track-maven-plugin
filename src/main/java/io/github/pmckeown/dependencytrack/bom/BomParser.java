@@ -45,7 +45,7 @@ public class BomParser {
         }
         Bom bom;
         try {
-            final BOMInputStream bis = new BOMInputStream(new FileInputStream(bomFile), false);
+            BOMInputStream bis = new BOMInputStream(new FileInputStream(bomFile), false);
             byte[] bytes = IOUtils.toByteArray(bis);
             bom = BomParserFactory.createParser(bytes).parse(bytes);
         } catch (Exception ex) {
