@@ -52,7 +52,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Parameter(defaultValue = "${project.parent.name}", property = "dependency-track.parentName")
     private String parentName;
 
-    @Parameter(defaultValue = "${project.parent.version}", property = "dependency-track.parentVersion")
+    @Parameter(property = "dependency-track.parentVersion")
     private String parentVersion;
 
     private UploadBomAction uploadBomAction;
@@ -80,17 +80,12 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
                 if (StringUtils.isEmpty(parentName)) {
                     throw new DependencyTrackException(
                             "Attempt to set parent with no default parent name and none provided");
-                } else if (StringUtils.isEmpty(parentVersion)) {
-                    throw new DependencyTrackException(
-                            "Attempt to set parent with no default parent version and none provided");
                 }
-                logger.info("Parent Name: %s", parentName);
-                logger.info("Parent Version: %s", parentVersion);
-                getLog().info(format("Attempting to fetch project parent: %s-%s", parentName, parentVersion));
+                getLog().info(format("Attempting to fetch project parent: '%s-%s'", parentName, parentVersion));
                 parent = projectAction.getProject(parentName, parentVersion);
 
                 if (parent == null) {
-                    throw new DependencyTrackException(format("Server did not find project parent: %s-%s", parentName,
+                    throw new DependencyTrackException(format("Server did not find project parent: '%s-%s'", parentName,
                             parentVersion));
                 }
             }

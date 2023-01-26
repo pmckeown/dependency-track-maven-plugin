@@ -6,9 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * Model class any object that can be referenced by UUID
- *
- * @author Paul McKeown
+ * Model class so any object that can be referenced by just its UUID
  */
 public class Item {
 

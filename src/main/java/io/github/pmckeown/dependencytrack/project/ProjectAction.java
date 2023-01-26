@@ -6,6 +6,7 @@ import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.bom.BomParser;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.UnirestException;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -84,6 +85,8 @@ public class ProjectAction {
             return true;
         } else {
             try {
+                logger.debug("Project UUID: %s", project.getUuid());
+                logger.debug("Patch request: %s", info);
                 Response<Void> response = projectClient.patchProject(project.getUuid(), info);
                 return response.isSuccess();
             } catch (UnirestException ex) {
@@ -110,8 +113,9 @@ public class ProjectAction {
     }
 
     private Optional<Project> findProject(List<Project> projects, String projectName, String projectVersion) {
+        // The project version may be null from the Dependency-Track server
         return projects.stream()
-                .filter(project -> projectName.equals(project.getName()) && projectVersion.equals(project.getVersion()))
+                .filter(project -> projectName.equals(project.getName()) && StringUtils.equals(projectVersion, project.getVersion()))
                 .findFirst();
     }
 }
