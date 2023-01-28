@@ -13,9 +13,7 @@ import java.util.Optional;
 
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_UUID;
-import static kong.unirest.Unirest.delete;
-import static kong.unirest.Unirest.get;
-import static kong.unirest.Unirest.patch;
+import static kong.unirest.Unirest.*;
 
 /**
  * Client for getting Project details from Dependency Track

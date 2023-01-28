@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.ResourceConstants;
+import io.github.pmckeown.dependencytrack.TestResourceConstants;
 import io.github.pmckeown.util.BomEncoder;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.Unirest;
@@ -13,19 +14,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
-import static com.github.tomakehurst.wiremock.client.WireMock.notFound;
-import static com.github.tomakehurst.wiremock.client.WireMock.ok;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.TestMojoLoader.loadUploadBomMojo;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_BOM;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
@@ -214,6 +203,71 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
         uploadBomMojo.setSkip(true);
         uploadBomMojo.execute();
         assertThat(Unirest.config().isVerifySsl(), is(true));
+    }
+
+    @Test
+    public void thatProjectParentNameAndVersionDefault() throws Exception {
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+
+        UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
+        uploadBomMojo.setProjectName("test-project");
+        uploadBomMojo.updateParent(true);
+        uploadBomMojo.setFailOnError(true);
+
+        try {
+            uploadBomMojo.execute();
+            fail("Expected error - parent name and version are missing");
+        } catch (Exception ex) {
+            assertThat(ex, is(instanceOf(MojoExecutionException.class)));
+        }
+
+        verify(exactly(0), getRequestedFor(urlEqualTo(V1_PROJECT)));
+    }
+
+    @Test
+    public void thatProjectParentNameAndVersionCanBeProvided() throws Exception {
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathMatching(TestResourceConstants.V1_PROJECT_UUID)).willReturn(ok()));
+        stubFor(patch(urlPathMatching(TestResourceConstants.V1_PROJECT_UUID)).willReturn(ok()));
+        stubFor(get(urlPathMatching(TestResourceConstants.V1_BOM_TOKEN_UUID)).willReturn(ok()));
+        stubFor(put(urlEqualTo(V1_BOM)).willReturn(
+                aResponse().withBodyFile("api/v1/project/upload_bom_response.json")));
+        stubFor(get(urlPathMatching(TestResourceConstants.V1_METRICS_PROJECT_REFRESH)).willReturn(ok()));
+
+        UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
+        uploadBomMojo.setProjectName("test-project");
+        uploadBomMojo.updateParent(true);
+        uploadBomMojo.setParentName("test-parent");
+        uploadBomMojo.setParentVersion("1.0.0-SNAPSHOT");
+        uploadBomMojo.setFailOnError(true);
+        uploadBomMojo.execute();
+
+        verify(exactly(1), patchRequestedFor(urlPathMatching(TestResourceConstants.V1_PROJECT_UUID))
+                .withRequestBody(
+                        matchingJsonPath("$.parent.uuid", equalTo("8977c66f-b310-aced-face-e63e9eb7c4cf"))));
+    }
+
+    @Test
+    public void thatProjectParentNameAndVersionCanBeIgnored() throws Exception {
+        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathMatching(TestResourceConstants.V1_PROJECT_UUID)).willReturn(ok()));
+        stubFor(patch(urlPathMatching(TestResourceConstants.V1_PROJECT_UUID)).willReturn(ok()));
+        stubFor(get(urlPathMatching(TestResourceConstants.V1_BOM_TOKEN_UUID)).willReturn(ok()));
+        stubFor(put(urlEqualTo(V1_BOM)).willReturn(
+                aResponse().withBodyFile("api/v1/project/upload_bom_response.json")));
+        stubFor(get(urlPathMatching(TestResourceConstants.V1_METRICS_PROJECT_REFRESH)).willReturn(ok()));
+
+        UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
+        uploadBomMojo.setProjectName("test-project");
+        uploadBomMojo.setParentName("test-parent-missing");
+        uploadBomMojo.setParentVersion("1.0.0-MISSING");
+        uploadBomMojo.setFailOnError(true);
+        uploadBomMojo.execute();
+
+        verify(exactly(1), getRequestedFor(urlEqualTo(V1_PROJECT)));
     }
 
     /*

@@ -29,7 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTest {
 
-	private static final int COUNT_ALL_PROJECTS = 7;
+	private static final int COUNT_ALL_PROJECTS = 9;
 
 	private ProjectClient projectClient;
 
