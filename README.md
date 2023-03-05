@@ -1,7 +1,7 @@
 [![Build Status](https://github.com/pmckeown/dependency-track-maven-plugin/actions/workflows/maven.yml/badge.svg)](https://github.com/pmckeown/dependency-track-maven-plugin/actions/workflows/maven/badge.svg)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.pmckeown/dependency-track-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.pmckeown/dependency-track-maven-plugin)
-[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=io.github.pmckeown%3Adependency-track-maven-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=io.github.pmckeown%3Adependency-track-maven-plugin)
-[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=io.github.pmckeown%3Adependency-track-maven-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=io.github.pmckeown%3Adependency-track-maven-plugin)
+[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=dependency-track-maven-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=io.github.pmckeown%3Adependency-track-maven-plugin)
+[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=dependency-track-maven-plugin&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=io.github.pmckeown%3Adependency-track-maven-plugin)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/0e77d6dda095411ea178ce1246446188)](https://app.codacy.com/gh/pmckeown/dependency-track-maven-plugin?utm_source=github.com&utm_medium=referral&utm_content=pmckeown/dependency-track-maven-plugin&utm_campaign=Badge_Grade)
 
 # dependency-track-maven-plugin
