@@ -1,7 +1,8 @@
 package io.github.pmckeown.util;
 
-import org.codehaus.plexus.util.Base64;
-import org.codehaus.plexus.util.IOUtil;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 
 import javax.inject.Singleton;
 import java.io.FileInputStream;
@@ -31,7 +32,7 @@ public class BomEncoder {
         logger.debug("looking for bom.xml at %s", bomLocation);
 
         try (FileInputStream fis = new FileInputStream(bomLocation)) {
-            byte[] bytes = IOUtil.toByteArray(fis);
+            byte[] bytes = IOUtils.toByteArray(fis);
 
             String base64EncodedBom = new String(Base64.encodeBase64(bytes));
 
