@@ -18,8 +18,6 @@ import org.apache.maven.project.MavenProject;
 
 import javax.inject.Inject;
 
-import static java.lang.String.format;
-
 /**
  * Provides the capability to upload a Bill of Material (BOM) to your Dependency Track server.
  *
@@ -52,7 +50,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Parameter(defaultValue = "${project.parent.name}", property = "dependency-track.parentName")
     private String parentName;
 
-    @Parameter(property = "dependency-track.parentVersion")
+    @Parameter(defaultValue = "${project.parent.version}", property = "dependency-track.parentVersion")
     private String parentVersion;
 
     private UploadBomAction uploadBomAction;
@@ -72,41 +70,51 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
+        logger.info("Update Project Parent : %s", updateParent);
+
         try {
-            logger.info("Update Project Parent: %s", updateParent);
-
-            Project parent = null;
-            if (updateParent) {
-                if (StringUtils.isEmpty(parentName)) {
-                    throw new DependencyTrackException(
-                            "Attempt to set parent with no default parent name and none provided");
-                }
-                getLog().info(format("Attempting to fetch project parent: '%s-%s'", parentName, parentVersion));
-                parent = projectAction.getProject(parentName, parentVersion);
-
-                if (parent == null) {
-                    throw new DependencyTrackException(format("Server did not find project parent: '%s-%s'", parentName,
-                            parentVersion));
-                }
-            }
-
             if (!uploadBomAction.upload(getBomLocation())) {
                 handleFailure("Bom upload failed");
             }
             Project project = projectAction.getProject(projectName, projectVersion);
 
             UpdateRequest updateReq = new UpdateRequest();
-            if (updateProjectInfo) updateReq.withBomLocation(getBomLocation());
-            if (projectAction.updateRequired(updateReq.withParent(parent))) {
-                if (!projectAction.updateProject(project, updateReq)) {
+            if (updateProjectInfo) {
+                updateReq.withBomLocation(getBomLocation());
+            }
+            if (updateParent) {
+                updateReq.withParent(getProjectParent(parentName, parentVersion));
+            }
+            if (updateProjectInfo || updateParent) {
+                boolean projectUpdated = projectAction.updateProject(project, updateReq);
+                if (!projectUpdated) {
+                    logger.error("Failed to update project info");
                     throw new DependencyTrackException("Failed to update project info");
                 }
-                project = projectAction.getProject(projectName, projectVersion);
             }
 
             metricsAction.refreshMetrics(project);
         } catch (DependencyTrackException ex) {
             handleFailure("Error occurred during upload", ex);
+        }
+    }
+
+    private Project getProjectParent(String parentName, String parentVersion)
+            throws DependencyTrackException {
+        if (StringUtils.isEmpty(parentName)) {
+            logger.error("Parent update requested but no parent found in parent maven project or provided in config");
+            throw new DependencyTrackException("No parent found.");
+        } else {
+            logger.info("Attempting to fetch project parent: '%s-%s'", parentName, parentVersion);
+
+            try {
+                return projectAction.getProject(parentName, parentVersion);
+            } catch (DependencyTrackException ex) {
+                logger.error("Failed to find parent project with name ['%s-%s']. Check the update parent " +
+                        "settings of your this plugin and verify if a matching parent project exists in the " +
+                        "server.", parentName, parentVersion);
+                throw ex;
+            }
         }
     }
 

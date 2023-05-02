@@ -192,21 +192,24 @@ Dependency-Track based on the metadata present in the BOM:
 * This requires a CycloneDX BOM using Schema 1.2 or later.
 * Not all information is visible in the Dependency-Track server UI.
 
-From Dependency-Track server 4.8.0 onwards, you can set the project parent by setting `setProjectParent` to `true`. The 
-parent name will be defaulted to that POM's project parent artifactId. If you wish to override that value, or there is 
-no parent set within the `pom.xml`, then explicitly set `parentName`. `projectVersion` is optional in Dependency-Track, 
-so this has no default set to allow for blank values.
+From Dependency-Track server 4.8.0 onwards, you can set the project parent by setting `updateParent` to `true`. The 
+parent name will be defaulted to that POM's project parent name. If you wish to override that value, or there is 
+no parent set within the `pom.xml`, then explicitly set `parentName` and `parentVersion`.  
+
+Dependency Track doesn't require a project version to be set which means this will fail if there is no version set on 
+the project in Dependency Track that matches the name of the parent of the maven project or the overridden parentName 
+value.
 
 **Note:** If the parent cannot be found on the Dependency-Track server, the BOM upload will not be attempted in order to
 prevent a project being incorrectly created or updated the server.
 
-| Property          | Required | Default Value                | Example Values            |
-|-------------------|----------|------------------------------|---------------------------|
-| bomLocation       | false    | target/bom.xml               | target/custom-bom.xml     |
-| updateProjectInfo | false    | false                        | false                     |
-| setParent         | false    | false                        | true                      |
-| parentName        | false    | ${project.parent.artifactId} | my-name-override          |
-| parentVersion     | false    |                              | ${project.parent.version} |
+| Property          | Required | Default Value             | Example Values        |
+|-------------------|----------|---------------------------|-----------------------|
+| bomLocation       | false    | target/bom.xml            | target/custom-bom.xml |
+| updateProjectInfo | false    | false                     | false                 |
+| updateParent      | false    | false                     | true                  |
+| parentName        | false    | ${project.parent.name}    | my-name-override      |
+| parentVersion     | false    | ${project.parent.version} | my-version-override   |
 
 ### Get Project Findings
 After a BOM upload, the best way to determine if there are any vulnerabilities is to use the `findings` goal which is 
