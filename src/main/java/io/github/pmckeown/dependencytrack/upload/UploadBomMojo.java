@@ -118,18 +118,6 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         }
     }
 
-    public void updateParent(boolean updateParent) {
-        this.updateParent = updateParent;
-    }
-
-    public void setParentName(String parentName) {
-        this.parentName = parentName;
-    }
-
-    public void setParentVersion(String parentVersion) {
-        this.parentVersion = parentVersion;
-    }
-
     private String getBomLocation() {
         if (StringUtils.isNotBlank(bomLocation)) {
             return bomLocation;
@@ -149,6 +137,18 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     void setMavenProject(MavenProject mp) {
         this.mavenProject = mp;
+    }
+
+    void setUpdateParent(boolean updateParent) {
+        this.updateParent = updateParent;
+    }
+
+    void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+
+    void setParentVersion(String parentVersion) {
+        this.parentVersion = parentVersion;
     }
 
 }
