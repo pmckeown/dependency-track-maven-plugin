@@ -219,7 +219,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
 
         UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
         uploadBomMojo.setProjectName("test-project");
-        uploadBomMojo.updateParent(true);
+        uploadBomMojo.setUpdateParent(true);
         uploadBomMojo.setParentName("test-parent");
         uploadBomMojo.setParentVersion("1.0.0-SNAPSHOT");
         uploadBomMojo.setFailOnError(true);
