@@ -6,6 +6,7 @@ import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
+import io.github.pmckeown.dependencytrack.project.UpdateRequest;
 import io.github.pmckeown.util.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -39,9 +40,18 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     @Parameter(property = "project", readonly = true, required = true)
     private MavenProject mavenProject;
-    
+
     @Parameter(property = "dependency-track.updateProjectInfo")
     private boolean updateProjectInfo;
+
+    @Parameter(property = "dependency-track.updateParent")
+    private boolean updateParent;
+
+    @Parameter(defaultValue = "${project.parent.name}", property = "dependency-track.parentName")
+    private String parentName;
+
+    @Parameter(defaultValue = "${project.parent.version}", property = "dependency-track.parentVersion")
+    private String parentVersion;
 
     private UploadBomAction uploadBomAction;
 
@@ -60,20 +70,51 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
+        logger.info("Update Project Parent : %s", updateParent);
+
         try {
             if (!uploadBomAction.upload(getBomLocation())) {
                 handleFailure("Bom upload failed");
             }
             Project project = projectAction.getProject(projectName, projectVersion);
+
+            UpdateRequest updateReq = new UpdateRequest();
             if (updateProjectInfo) {
-                logger.info("Updating project info");
-                if (!projectAction.updateProjectInfo(project, getBomLocation())) {
-                    logger.info("Failed to update project info");
+                updateReq.withBomLocation(getBomLocation());
+            }
+            if (updateParent) {
+                updateReq.withParent(getProjectParent(parentName, parentVersion));
+            }
+            if (updateProjectInfo || updateParent) {
+                boolean projectUpdated = projectAction.updateProject(project, updateReq);
+                if (!projectUpdated) {
+                    logger.error("Failed to update project info");
+                    throw new DependencyTrackException("Failed to update project info");
                 }
             }
+
             metricsAction.refreshMetrics(project);
         } catch (DependencyTrackException ex) {
             handleFailure("Error occurred during upload", ex);
+        }
+    }
+
+    private Project getProjectParent(String parentName, String parentVersion)
+            throws DependencyTrackException {
+        if (StringUtils.isEmpty(parentName)) {
+            logger.error("Parent update requested but no parent found in parent maven project or provided in config");
+            throw new DependencyTrackException("No parent found.");
+        } else {
+            logger.info("Attempting to fetch project parent: '%s-%s'", parentName, parentVersion);
+
+            try {
+                return projectAction.getProject(parentName, parentVersion);
+            } catch (DependencyTrackException ex) {
+                logger.error("Failed to find parent project with name ['%s-%s']. Check the update parent " +
+                        "settings of your this plugin and verify if a matching parent project exists in the " +
+                        "server.", parentName, parentVersion);
+                throw ex;
+            }
         }
     }
 
@@ -96,6 +137,18 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     void setMavenProject(MavenProject mp) {
         this.mavenProject = mp;
+    }
+
+    void setUpdateParent(boolean updateParent) {
+        this.updateParent = updateParent;
+    }
+
+    void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+
+    void setParentVersion(String parentVersion) {
+        this.parentVersion = parentVersion;
     }
 
 }

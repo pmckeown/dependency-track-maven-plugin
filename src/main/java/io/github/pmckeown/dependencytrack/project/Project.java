@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack.project;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.github.pmckeown.dependencytrack.Item;
 import io.github.pmckeown.dependencytrack.metrics.Metrics;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -11,9 +12,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  *
  * @author Paul McKeown
  */
-public class Project {
-
-    private String uuid;
+public class Project extends Item {
     private String name;
     private String version;
     private Metrics metrics;
@@ -21,14 +20,10 @@ public class Project {
     @JsonCreator
     public Project(@JsonProperty("uuid") String uuid, @JsonProperty("name") String name,
                @JsonProperty("version") String version, @JsonProperty("metrics") Metrics metrics) {
-        this.uuid = uuid;
+        super(uuid);
         this.name = name;
         this.version = version;
         this.metrics = metrics;
-    }
-
-    public String getUuid() {
-        return uuid;
     }
 
     public String getName() {

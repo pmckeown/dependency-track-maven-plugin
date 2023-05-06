@@ -24,6 +24,8 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -109,8 +111,10 @@ public class ProjectActionTest {
     public void thatWhenProjectInfoIsUpdatedTrueIsReturned() throws Exception {
         doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
         doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
-        boolean projectInfoUpdated = projectAction.updateProjectInfo(aProjectList().get(0),
-                String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+
+        UpdateRequest updateReq = new UpdateRequest();
+        updateReq.withBomLocation(String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+        boolean projectInfoUpdated = projectAction.updateProject(project1(), updateReq);
         assertThat(projectInfoUpdated, is(equalTo(true)));
     }
 
@@ -118,8 +122,10 @@ public class ProjectActionTest {
     public void thatWhenProjectInfoIsNotUpdatedFalseIsReturned() throws Exception {
         doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
         doReturn(aNotFoundResponse()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
-        boolean projectInfoUpdated = projectAction.updateProjectInfo(aProjectList().get(0),
-                String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+
+        UpdateRequest updateReq = new UpdateRequest();
+        updateReq.withBomLocation(String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+        boolean projectInfoUpdated = projectAction.updateProject(project1(), updateReq);
         assertThat(projectInfoUpdated, is(equalTo(false)));
     }
 
@@ -128,21 +134,57 @@ public class ProjectActionTest {
         doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
         doThrow(UnirestException.class).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
         try {
-            projectAction.updateProjectInfo(aProjectList().get(0),
-                    String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+            UpdateRequest updateReq = new UpdateRequest();
+            updateReq.withBomLocation(String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+            projectAction.updateProject(project1(), updateReq);
             fail("Exception expected");
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
     }
-    
+
+    @Test
+    public void thatWhenProjectParentIsUpdatedTrueIsReturned() throws Exception {
+        doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
+
+        UpdateRequest updateReq = new UpdateRequest();
+        assertTrue(projectAction.updateProject(project2(), updateReq.withParent(project1())));
+    }
+
+    @Test
+    public void thatWhenProjectParentIsNotUpdatedFalseIsReturned() throws Exception {
+        doReturn(aNotFoundResponse()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
+
+        UpdateRequest updateReq = new UpdateRequest();
+        assertFalse(projectAction.updateProject(project2(), updateReq.withParent(project1())));
+    }
+
+    @Test
+    public void thatWhenUpdateProjectParentErrorsAnExceptionIsThrown() {
+        doThrow(UnirestException.class).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
+        try {
+            UpdateRequest updateReq = new UpdateRequest();
+            projectAction.updateProject(project1(), updateReq.withParent(project1()));
+            fail("Exception expected");
+        } catch (Exception ex) {
+            assertThat(ex, is(instanceOf(DependencyTrackException.class)));
+        }
+    }
+
     private Response aNotFoundResponse() {
         return new Response(404, "Not Found", false);
     }
 
+    private Project project1() {
+        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null);
+    }
+
+    private Project project2() {
+        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null);
+    }
+
     private List<Project> aProjectList() {
-        return Arrays.asList(new Project(UUID_1, PROJECT_NAME_1, PROJECT_VERSION_1, null),
-                    new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null));
+        return Arrays.asList(project1(), project2());
     }
 
 }

@@ -5,6 +5,7 @@ import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.Unirest;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +19,7 @@ import java.io.File;
 
 import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -94,10 +96,50 @@ public class UploadBomMojoTest {
         uploadBomMojo.execute();
         assertThat(Unirest.config().isVerifySsl(), is(equalTo(true)));
     }
+
     @Test
     public void thatUnirestIsConfiguredWithSslVerifyOffWhenAsked() throws Exception {
         uploadBomMojo.setVerifySsl(false);
         uploadBomMojo.execute();
         assertThat(Unirest.config().isVerifySsl(), is(equalTo(false)));
+    }
+
+    @Test
+    public void thatWhenUpdateParentFailsTheLoggerIsCalledAndBuildFails() throws Exception {
+        doReturn(true).when(uploadBomAction).upload(anyString());
+        doReturn(aProject().withName("project-parent").withVersion("1.2.3").build())
+                .when(projectAction).getProject("project-parent", "1.2.3");
+
+        uploadBomMojo.setParentName("project-parent");
+        uploadBomMojo.setParentVersion("1.2.3");
+        uploadBomMojo.setUpdateParent(true);
+        uploadBomMojo.setFailOnError(true);
+
+        try {
+            uploadBomMojo.performAction();
+        } catch (Exception ex) {
+            assertThat(ex, instanceOf(MojoExecutionException.class));
+        }
+
+        verify(logger).error("Failed to update project info");
+    }
+
+    @Test
+    public void thatUpdateParentFailsWhenParentNameIsNull() throws Exception {
+        doReturn(true).when(uploadBomAction).upload(anyString());
+
+        uploadBomMojo.setParentName(null);
+        uploadBomMojo.setParentVersion(null);
+        uploadBomMojo.setUpdateParent(true);
+        uploadBomMojo.setFailOnError(true);
+
+        try {
+            uploadBomMojo.performAction();
+        } catch (Exception ex) {
+            assertThat(ex, instanceOf(MojoExecutionException.class));
+        }
+
+        verify(logger).error("Parent update requested but no parent found in parent maven project or provided in " +
+                "config");
     }
 }

@@ -34,12 +34,13 @@ public abstract class AbstractDependencyTrackIntegrationTest {
     public WireMockRule wireMockRule = new WireMockRule(0);
 
     protected CommonConfig getCommonConfig() {
-        return new CommonConfig(
-                PROJECT_NAME,
-                PROJECT_VERSION,
-                HOST + wireMockRule.port(),
-                API_KEY,
-                PollingConfig.disabled());
+        CommonConfig config = new CommonConfig();
+        config.setProjectName(PROJECT_NAME);
+        config.setProjectVersion(PROJECT_VERSION);
+        config.setDependencyTrackBaseUrl(HOST + wireMockRule.port());
+        config.setApiKey(API_KEY);
+        config.setPollingConfig(PollingConfig.disabled());
+        return config;
     }
 
 }
