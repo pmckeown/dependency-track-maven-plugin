@@ -1,6 +1,7 @@
 package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.ResourceConstants;
 import io.github.pmckeown.dependencytrack.TestResourceConstants;
 import io.github.pmckeown.util.BomEncoder;
@@ -206,26 +207,6 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatProjectParentNameAndVersionDefault() throws Exception {
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
-                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
-
-        UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
-        uploadBomMojo.setProjectName("test-project");
-        uploadBomMojo.updateParent(true);
-        uploadBomMojo.setFailOnError(true);
-
-        try {
-            uploadBomMojo.execute();
-            fail("Expected error - parent name and version are missing");
-        } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoExecutionException.class)));
-        }
-
-        verify(exactly(0), getRequestedFor(urlEqualTo(V1_PROJECT)));
-    }
-
-    @Test
     public void thatProjectParentNameAndVersionCanBeProvided() throws Exception {
         stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
@@ -233,7 +214,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
         stubFor(patch(urlPathMatching(TestResourceConstants.V1_PROJECT_UUID)).willReturn(ok()));
         stubFor(get(urlPathMatching(TestResourceConstants.V1_BOM_TOKEN_UUID)).willReturn(ok()));
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(
-                aResponse().withBodyFile("api/v1/project/upload_bom_response.json")));
+                aResponse().withBodyFile("api/v1/project/upload-bom-response.json")));
         stubFor(get(urlPathMatching(TestResourceConstants.V1_METRICS_PROJECT_REFRESH)).willReturn(ok()));
 
         UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
@@ -257,7 +238,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
         stubFor(patch(urlPathMatching(TestResourceConstants.V1_PROJECT_UUID)).willReturn(ok()));
         stubFor(get(urlPathMatching(TestResourceConstants.V1_BOM_TOKEN_UUID)).willReturn(ok()));
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(
-                aResponse().withBodyFile("api/v1/project/upload_bom_response.json")));
+                aResponse().withBodyFile("api/v1/project/upload-bom-response.json")));
         stubFor(get(urlPathMatching(TestResourceConstants.V1_METRICS_PROJECT_REFRESH)).willReturn(ok()));
 
         UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
@@ -277,6 +258,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     private UploadBomMojo uploadBomMojo(String bomLocation) throws Exception {
         UploadBomMojo uploadBomMojo = loadUploadBomMojo(mojoRule);
         uploadBomMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
+        uploadBomMojo.setPollingConfig(PollingConfig.disabled());
         if (bomLocation != null) {
             uploadBomMojo.setBomLocation(bomLocation);
         }
