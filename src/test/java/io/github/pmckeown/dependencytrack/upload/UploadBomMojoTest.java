@@ -109,11 +109,9 @@ public class UploadBomMojoTest {
 
     @Test
     public void thatWhenUpdateParentFailsTheLoggerIsCalledAndBuildFails() throws Exception {
-        doReturn(aProject().build()).when(projectAction).getProject(PROJECT_NAME, PROJECT_VERSION);
         doReturn(true).when(uploadBomAction).upload(anyString());
         doReturn(aProject().withName("project-parent").withVersion("1.2.3").build())
                 .when(projectAction).getProject("project-parent", "1.2.3");
-        doReturn(false).when(projectAction).updateProject(any(Project.class), any(UpdateRequest.class));
 
         uploadBomMojo.setParentName("project-parent");
         uploadBomMojo.setParentVersion("1.2.3");
@@ -131,7 +129,6 @@ public class UploadBomMojoTest {
 
     @Test
     public void thatUpdateParentFailsWhenParentNameIsNull() throws Exception {
-        doReturn(aProject().build()).when(projectAction).getProject(PROJECT_NAME, PROJECT_VERSION);
         doReturn(true).when(uploadBomAction).upload(anyString());
 
         uploadBomMojo.setParentName(null);
