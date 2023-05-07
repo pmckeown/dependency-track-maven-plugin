@@ -5,8 +5,9 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/0e77d6dda095411ea178ce1246446188)](https://app.codacy.com/gh/pmckeown/dependency-track-maven-plugin?utm_source=github.com&utm_medium=referral&utm_content=pmckeown/dependency-track-maven-plugin&utm_campaign=Badge_Grade)
 
 # dependency-track-maven-plugin
-Maven plugin to integrate with a [Dependency-Track](https://dependencytrack.org/) server to submit dependency manifests 
-and gather project metrics.
+Maven plugin to integrate with a [Dependency-Track](https://dependencytrack.org/) server to submit dependency manifests and gather
+project metrics.  Can be used within build pipelines to analyse the current project and optionally fail the build if vulnerabilities 
+are found.
 
 #### Usage
 This maven plugin provides various functions relating to Dependency-Track, from uploading the Bill of Material, to 
