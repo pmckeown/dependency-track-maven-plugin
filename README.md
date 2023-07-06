@@ -91,11 +91,15 @@ provide these properties.
 ```
 
 Then in your `mvn` command, you can override the default values for polling like this:
-```shell script
-mvn dependency-track -Dpolling.enabled=false -Dpolling.attempts=100 -Dpolling.pause=2 -Dpolling.timeUnit=MILLIS
-``` 
-
-
+```shell
+mvn io.github.pmckeown:dependency-track-maven-plugin:findings \
+  -Ddependency-track.dependencyTrackBaseUrl=${DEPENDENCY_TRACK_BASE_URL} \
+  -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY} \
+  -Dpolling.enabled=false \
+  -Dpolling.attempts=100 \
+  -Dpolling.pause=2 \
+  -Dpolling.timeUnit=MILLIS
+```
 
 #### Dependency-Track Configuration
 Your Dependency-Track server must be configured with an `Automation` team whose API Key should be provided
@@ -155,12 +159,18 @@ Binds by default to the Verify Phase in the Maven lifecycle in line with
 
 #### Direct Usage
 ```
-mvn dependency-track:upload-bom
+mvn io.github.pmckeown:dependency-track-maven-plugin:upload-bom \
+  -Ddependency-track.dependencyTrackBaseUrl=${DEPENDENCY_TRACK_BASE_URL} \
+  -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY}
 ```
 
 #### Direct Usage with Overrides
 ```
-mvn dependency-track:upload-bom -Ddependency-track.projectName=arbitrary-name -Ddependency-track.projectVersion=99.99
+mvn io.github.pmckeown:dependency-track-maven-plugin:upload-bom \
+  -Ddependency-track.dependencyTrackBaseUrl=${DEPENDENCY_TRACK_BASE_URL} \
+  -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY} \
+  -Ddependency-track.projectName=arbitrary-name 
+  -Ddependency-track.projectVersion=99.99
 ```
 
 #### Dependencies
@@ -218,24 +228,36 @@ usable immediately after an upload.  Other goals, such as `metrics` and `score` 
 Dependency-Track server that is analysed asynchronously and as such may not be available when invoked immediately after 
 a BOM upload.
   
-The `findings` goal prints out some details of all of the current issues found in the scan, including: component 
+The `findings` goal prints out some details of all the current issues found in the scan, including: component 
 details, vulnerability description and suppression status.
 
 The `findings` goal can be configured to fail the build if the number of findings in a given category are higher than 
 the threshold set for that category.
+
+Note that each severity category is assessed independently of the others.  So a medium threshold of 0 with a findings
+results containing 1 high finding will not fail.
+
+When using this goal independently, remember that the default behaviour of the plugin is to not fail when findings
+are found, use the `dependency-track.failOnError` command line property to configure this.
 
 #### POM Usage
 Binds by default to the Verify Phase in the Maven lifecycle in line with 
 [cyclonedx-maven-plugin](https://github.com/CycloneDX/cyclonedx-maven-plugin).
 
 #### Direct Usage
-```
-mvn dependency-track:findings
+```shell
+mvn io.github.pmckeown:dependency-track-maven-plugin:findings \
+  -Ddependency-track.dependencyTrackBaseUrl=${DEPENDENCY_TRACK_BASE_URL} \
+  -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY}
 ```
 
 #### Direct Usage with Overrides
-```
-mvn dependency-track:findings -Ddependency-track.projectName=arbitrary-name -Ddependency-track.projectVersion=99.99
+```shell
+mvn io.github.pmckeown:dependency-track-maven-plugin:findings \
+  -Ddependency-track.dependencyTrackBaseUrl=${DEPENDENCY_TRACK_BASE_URL} \
+  -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY}
+  -Ddependency-track.projectName=arbitrary-name 
+  -Ddependency-track.projectVersion=99.99
 ```
 
 #### Dependencies
@@ -243,6 +265,8 @@ Depends on a project existing in the Dependency-Track server that matches the cu
 whatever overridden values that are supplied.
 
 #### Configuration
+
+The `findings` goal supports the following XML configuration in the POM:
 
 |Property                    |Required|Default Value|Description                                                                                           |
 |----------------------------|--------|-------------|------------------------------------------------------------------------------------------------------|
@@ -252,6 +276,16 @@ whatever overridden values that are supplied.
 |findingThresholds.medium    |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
 |findingThresholds.low       |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
 |findingThresholds.unassigned|false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
+
+The `findings` goal also supports the following command line options however XML configuration takes precedence if set:
+
+| Property                     | Required | Example Value |
+|------------------------------|----------|---------------|
+| findingThresholds.critical   | false    | 0             |
+| findingThresholds.high       | false    | 3             |
+| findingThresholds.medium     | false    | 10            |
+| findingThresholds.low        | false    | 50            |
+| findingThresholds.unassigned | false    | 0             |
 
 #### Examples
 The following configuration will cause the build to fail if there are any critical or high issues found, more than 5 
@@ -267,6 +301,29 @@ medium issues or more than 10 low issues.
 You can enable the build to fail on any issues in any category by using the following configuration:
 ```xml
 <findingThresholds />
+```
+
+The following CLI execution will fail if there are any findings with a severity rating of HIGH:
+```shell
+mvn io.github.pmckeown:dependency-track-maven-plugin:findings \
+  -Ddependency-track.dependencyTrackBaseUrl=${DEPENDENCY_TRACK_BASE_URL} \
+  -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY} \
+  -Ddependency-track.failOnError=true \
+  -DfindingThresholds.high=0
+```
+
+The following CLI execution will fail if there are any findings in any category:
+
+```shell
+mvn io.github.pmckeown:dependency-track-maven-plugin:findings \
+  -Ddependency-track.dependencyTrackBaseUrl=${DEPENDENCY_TRACK_BASE_URL} \
+  -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY} \
+  -Ddependency-track.failOnError=true \
+  -DfindingThresholds.critical=0 \
+  -DfindingThresholds.high=0 \
+  -DfindingThresholds.medium=0 \
+  -DfindingThresholds.low=0 \
+  -DfindingThresholds.unassigned=0
 ```
 
 ### Policy Violations
@@ -331,8 +388,10 @@ enough time for the server to compute the new score if it has changed.
 Ideally `upload-bom` would run during the validate phase and `score` in the verify phase.
 
 #### Direct Usage
-```
-mvn dependency-track:score
+```shell
+mvn io.github.pmckeown:dependency-track-maven-plugin:score \
+  -Ddependency-track.dependencyTrackBaseUrl=${DEPENDENCY_TRACK_BASE_URL} \
+  -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY}
 ```
 
 #### Dependencies
@@ -356,8 +415,10 @@ enough time for the server to compute the new score if it has changed.
 Ideally `upload-bom` would run during the validate phase and `metrics` in the verify phase.
 
 #### Direct Usage
-```
-mvn dependency-track:metrics
+```shell
+mvn io.github.pmckeown:dependency-track-maven-plugin:metrics \  
+  -Ddependency-track.dependencyTrackBaseUrl=${DEPENDENCY_TRACK_BASE_URL} \
+  -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY}
 ```
 
 #### Dependencies
@@ -373,6 +434,8 @@ whatever overridden values that are supplied.
 |metricsThresholds.high    |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
 |metricsThresholds.medium  |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
 |metricsThresholds.low     |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
+
+Note that this goal does not yet support command line threshold options.
 
 #### Examples
 The following configuration will cause the build to fail if there are any critical or high issues found, more than 5 
@@ -402,7 +465,9 @@ score has been determined.
 
 #### Direct Usage
 ```
-mvn dependency-track:delete-project
+mvn io.github.pmckeown:dependency-track-maven-plugin:delete-project \
+  -Ddependency-track.dependencyTrackBaseUrl=${DEPENDENCY_TRACK_BASE_URL} \
+  -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY}
 ```
 
 #### Dependencies
