@@ -120,22 +120,4 @@ public class FindingsMojoTest {
         assertThat(findingsMojo.getFindingThresholds().getUnassigned(), is(equalTo(1)));
     }
 
-//    @Test
-//    public void thatAnyThresholdPropertyIsSetPolicyIsAnalysed() throws Exception {
-//        doReturn(aProject().build()).when(projectAction).getProject(anyString(), anyString());
-//        doReturn(aListOfFindings().build()).when(findingsAction).getFindings(any(Project.class));
-//        doNothing().when(findingsPrinter).printFindings(any(Project.class), any(List.class));
-//        doReturn(true).when(findingsAnalyser).doNumberOfFindingsBreachPolicy(
-//                any(List.class), any(FindingThresholds.class));
-//
-//        findingsMojo.setThresholdLow(1);
-//
-//        try {
-//            findingsMojo.execute();
-//            fail("Exception expected here");
-//        } catch (Exception ex) {
-//            assertThat(ex, is(instanceOf(MojoFailureException.class)));
-//        }
-//    }
-
 }

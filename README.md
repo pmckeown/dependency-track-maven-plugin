@@ -235,10 +235,10 @@ The `findings` goal can be configured to fail the build if the number of finding
 the threshold set for that category.
 
 Note that each severity category is assessed independently of the others.  So a medium threshold of 0 with a findings
-results containing 1 high finding will not fail error.
+results containing 1 high finding will not fail.
 
 When using this goal independently, remember that the default behaviour of the plugin is to not fail when findings
-are found, use the `failOnError` command line property to configure this.
+are found, use the `dependency-track.failOnError` command line property to configure this.
 
 #### POM Usage
 Binds by default to the Verify Phase in the Maven lifecycle in line with 
@@ -277,8 +277,7 @@ The `findings` goal supports the following XML configuration in the POM:
 |findingThresholds.low       |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
 |findingThresholds.unassigned|false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
 
-
-The `findings` goal also supports the following command line options:
+The `findings` goal also supports the following command line options however XML configuration takes precedence if set:
 
 | Property                     | Required | Example Value |
 |------------------------------|----------|---------------|
@@ -286,7 +285,7 @@ The `findings` goal also supports the following command line options:
 | findingThresholds.high       | false    | 3             |
 | findingThresholds.medium     | false    | 10            |
 | findingThresholds.low        | false    | 50            |
-| findingThresholds.unassigned | false    |               |
+| findingThresholds.unassigned | false    | 0             |
 
 #### Examples
 The following configuration will cause the build to fail if there are any critical or high issues found, more than 5 
@@ -320,10 +319,10 @@ mvn io.github.pmckeown:dependency-track-maven-plugin:findings \
   -Ddependency-track.dependencyTrackBaseUrl=${DEPENDENCY_TRACK_BASE_URL} \
   -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY} \
   -Ddependency-track.failOnError=true \
-  -DfindingThresholds.critical=0\
-  -DfindingThresholds.high=0\
-  -DfindingThresholds.medium=0\
-  -DfindingThresholds.low=0\
+  -DfindingThresholds.critical=0 \
+  -DfindingThresholds.high=0 \
+  -DfindingThresholds.medium=0 \
+  -DfindingThresholds.low=0 \
   -DfindingThresholds.unassigned=0
 ```
 

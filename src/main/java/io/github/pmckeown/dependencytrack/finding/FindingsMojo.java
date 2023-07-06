@@ -30,31 +30,27 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
  * <p>
  * For example the following configuration with fail the build if there are any Critical or High issues found in the
  * scan, more than 10 medium issues or more than 20 low issues.
- * <p>
- * &lt;configuration&gt;
+ * <pre>
  * &lt;findingThresholds&gt;
- * &lt;critical&gt;0&lt;/critical&gt;
- * &lt;high&gt;0&lt;/high&gt;
- * &lt;medium&gt;10&lt;/medium&gt;
- * &lt;low&gt;20&lt;/low&gt;
- * &lt;unassigned&gt;30&lt;/unassigned&gt;
+ *     &lt;critical&gt;0&lt;/critical&gt;
+ *     &lt;high&gt;0&lt;/high&gt;
+ *     &lt;medium&gt;10&lt;/medium&gt;
+ *     &lt;low&gt;20&lt;/low&gt;
+ *     &lt;unassigned&gt;30&lt;/unassigned&gt;
  * &lt;/findingThresholds&gt;
- * &lt;/configuration&gt;
- * <p>
+ * </pre>
  * This allows you to tune build failures to your risk appetite.
  * <p>
  * Specific configuration options are:
  * <ol>
  *     <li>findingThresholds</li>
- *     <li>
- *          <ol>
- *              <li>critical</li>
- *              <li>high</li>
- *              <li>medium</li>
- *              <li>low</li>
- *              <li>unassigned</li>
- *          </ol>
- *     </li>
+ *     <ol>
+ *         <li>critical</li>
+ *         <li>high</li>
+ *         <li>medium</li>
+ *         <li>low</li>
+ *         <li>unassigned</li>
+ *     </ol>
  * </ol>
  *
  * @author Paul McKeown
