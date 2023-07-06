@@ -44,13 +44,15 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
  * Specific configuration options are:
  * <ol>
  *     <li>findingThresholds</li>
- *     <ol>
- *         <li>critical</li>
- *         <li>high</li>
- *         <li>medium</li>
- *         <li>low</li>
- *         <li>unassigned</li>
- *     </ol>
+ *     <li>
+ *          <ol>
+ *              <li>critical</li>
+ *              <li>high</li>
+ *              <li>medium</li>
+ *              <li>low</li>
+ *              <li>unassigned</li>
+ *          </ol>
+ *     </li>
  * </ol>
  *
  * @author Paul McKeown
