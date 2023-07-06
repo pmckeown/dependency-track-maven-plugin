@@ -84,16 +84,16 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     @Parameter(defaultValue = "${project}", readonly = true, required = false)
     private MavenProject mavenProject;
 
-    private final ProjectAction projectAction;
-    private final FindingsAction findingsAction;
-    private final FindingsPrinter findingsPrinter;
-    private final FindingsAnalyser findingsAnalyser;
-    private final FindingsReportGenerator findingsReportGenerator;
+    private ProjectAction projectAction;
+    private FindingsAction findingsAction;
+    private FindingsPrinter findingsPrinter;
+    private FindingsAnalyser findingsAnalyser;
+    private FindingsReportGenerator findingsReportGenerator;
 
     @Inject
-    public FindingsMojo(final ProjectAction projectAction, final FindingsAction findingsAction, final FindingsPrinter findingsPrinter,
-                        final FindingsAnalyser findingsAnalyser, final FindingsReportGenerator findingsReportGenerator,
-                        final CommonConfig commonConfig, final Logger logger) {
+    public FindingsMojo(ProjectAction projectAction, FindingsAction findingsAction, FindingsPrinter findingsPrinter,
+                        FindingsAnalyser findingsAnalyser, FindingsReportGenerator findingsReportGenerator,
+                        CommonConfig commonConfig, Logger logger) {
         super(commonConfig, logger);
         this.projectAction = projectAction;
         this.findingsAction = findingsAction;
@@ -104,43 +104,71 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
 
     @Override
     protected void performAction() throws MojoExecutionException, MojoFailureException {
-        final List<Finding> findings;
+        List<Finding> findings;
         try {
-            final Project project = projectAction.getProject(commonConfig.getProjectName(), commonConfig.getProjectVersion());
+            Project project = projectAction.getProject(commonConfig.getProjectName(), commonConfig.getProjectVersion());
             findings = findingsAction.getFindings(project);
             findingsPrinter.printFindings(project, findings);
-            final FindingThresholds threshold = createThreshold();
-            final boolean policyBreached = findingsAnalyser.doNumberOfFindingsBreachPolicy(findings, threshold);
-            findingsReportGenerator.generate(getOutputDirectory(), findings, threshold, policyBreached);
+            populateThresholdFromCliOptions();
+
+            boolean policyBreached = findingsAnalyser.doNumberOfFindingsBreachPolicy(findings, this.findingThresholds);
+            findingsReportGenerator.generate(getOutputDirectory(), findings, this.findingThresholds, policyBreached);
 
             if (policyBreached) {
                 throw new MojoFailureException("Number of findings exceeded defined thresholds");
             }
-        } catch (final DependencyTrackException ex) {
+        } catch (DependencyTrackException ex) {
             handleFailure("Error occurred when getting findings", ex);
         }
     }
 
-    FindingThresholds createThreshold() {
-        FindingThresholds thresholds = this.findingThresholds;
-
-        if (thresholds == null &&
-                (this.thresholdCritical != null
-                        || this.thresholdHigh != null
-                        || this.thresholdMedium != null
-                        || this.thresholdLow != null
-                        || this.thresholdUnassigned != null)) {
-            thresholds = new FindingThresholds(this.thresholdCritical, this.thresholdHigh, this.thresholdMedium, this.thresholdLow, this.thresholdUnassigned);
+    /**
+     * If Maven options are provided on the command line and the {@link FindingThresholds} is not already populated
+     * from XML configuration, populate the {@link FindingThresholds} from those options.
+     */
+    void populateThresholdFromCliOptions() {
+        if (this.findingThresholds == null) {
+            if (this.thresholdCritical != null
+                    || this.thresholdHigh != null
+                    || this.thresholdMedium != null
+                    || this.thresholdLow != null
+                    || this.thresholdUnassigned != null) {
+                this.findingThresholds = new FindingThresholds(
+                        this.thresholdCritical, this.thresholdHigh, this.thresholdMedium,
+                        this.thresholdLow, this.thresholdUnassigned);
+            }
         }
-
-        return thresholds;
     }
 
     /*
      * For testing
      */
-    void setFindingThresholds(final FindingThresholds findingThresholds) {
+    void setFindingThresholds(FindingThresholds findingThresholds) {
         this.findingThresholds = findingThresholds;
+    }
+
+    FindingThresholds getFindingThresholds() {
+        return this.findingThresholds;
+    }
+
+    void setThresholdCritical(Integer thresholdCritical) {
+        this.thresholdCritical = thresholdCritical;
+    }
+
+    void setThresholdHigh(Integer thresholdHigh) {
+        this.thresholdHigh = thresholdHigh;
+    }
+
+    void setThresholdMedium(Integer thresholdMedium) {
+        this.thresholdMedium = thresholdMedium;
+    }
+
+    void setThresholdLow(Integer thresholdLow) {
+        this.thresholdLow = thresholdLow;
+    }
+
+    void setThresholdUnassigned(Integer thresholdUnassigned) {
+        this.thresholdUnassigned = thresholdUnassigned;
     }
 
     private File getOutputDirectory() {
