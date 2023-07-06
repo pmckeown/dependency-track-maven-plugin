@@ -123,16 +123,11 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
      * from XML configuration, populate the {@link FindingThresholds} from those options.
      */
     void populateThresholdFromCliOptions() {
-        if (this.findingThresholds == null) {
-            if (this.thresholdCritical != null
-                    || this.thresholdHigh != null
-                    || this.thresholdMedium != null
-                    || this.thresholdLow != null
-                    || this.thresholdUnassigned != null) {
-                this.findingThresholds = new FindingThresholds(
-                        this.thresholdCritical, this.thresholdHigh, this.thresholdMedium,
-                        this.thresholdLow, this.thresholdUnassigned);
-            }
+        if (this.findingThresholds == null && (this.thresholdCritical != null || this.thresholdHigh != null ||
+                this.thresholdMedium != null || this.thresholdLow != null || this.thresholdUnassigned != null)) {
+            this.findingThresholds = new FindingThresholds(
+                    this.thresholdCritical, this.thresholdHigh, this.thresholdMedium,
+                    this.thresholdLow, this.thresholdUnassigned);
         }
     }
 
