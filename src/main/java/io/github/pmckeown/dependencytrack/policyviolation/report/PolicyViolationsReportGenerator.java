@@ -12,18 +12,14 @@ import java.util.List;
 public class PolicyViolationsReportGenerator {
 
     private PolicyViolationsXmlReportWriter xmlReportWriter;
-//    private PolicyViolationsHtmlReportWriter htmlReportWriter;
 
     @Inject
-    public PolicyViolationsReportGenerator(PolicyViolationsXmlReportWriter xmlReportWriter,
-            PolicyViolationsHtmlReportWriter htmlReportWriter) {
+    public PolicyViolationsReportGenerator(PolicyViolationsXmlReportWriter xmlReportWriter) {
         this.xmlReportWriter = xmlReportWriter;
-//        this.htmlReportWriter = htmlReportWriter;
     }
 
     public void generate(File buildDirectory, List<PolicyViolation> policyViolations) throws DependencyTrackException {
         PolicyViolationsReport policyViolationReport = new PolicyViolationsReport(policyViolations);
         xmlReportWriter.write(buildDirectory, policyViolationReport);
-//        htmlReportWriter.write(buildDirectory); TODO
     }
 }
