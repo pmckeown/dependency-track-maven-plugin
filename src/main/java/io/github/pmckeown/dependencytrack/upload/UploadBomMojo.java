@@ -50,14 +50,14 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Parameter(defaultValue = "${project.parent.name}", property = "dependency-track.parentName")
     private String parentName;
 
-    @Parameter(defaultValue = "${project.parent.version}", property = "dependency-track.parentVersion")
+    @Parameter(property = "dependency-track.parentVersion")
     private String parentVersion;
 
-    private UploadBomAction uploadBomAction;
+    private final UploadBomAction uploadBomAction;
 
-    private MetricsAction metricsAction;
+    private final MetricsAction metricsAction;
 
-    private ProjectAction projectAction;
+    private final ProjectAction projectAction;
 
     @Inject
     public UploadBomMojo(UploadBomAction uploadBomAction, MetricsAction metricsAction, ProjectAction projectAction,
@@ -111,7 +111,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
                 return projectAction.getProject(parentName, parentVersion);
             } catch (DependencyTrackException ex) {
                 logger.error("Failed to find parent project with name ['%s-%s']. Check the update parent " +
-                        "settings of your this plugin and verify if a matching parent project exists in the " +
+                        "your settings for this plugin and verify if a matching parent project exists in the " +
                         "server.", parentName, parentVersion);
                 throw ex;
             }
