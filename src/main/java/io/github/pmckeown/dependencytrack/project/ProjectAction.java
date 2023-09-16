@@ -88,10 +88,13 @@ public class ProjectAction {
                 logger.debug("Project UUID: %s", project.getUuid());
                 logger.debug("Patch request: %s", info);
                 Response<Void> response = projectClient.patchProject(project.getUuid(), info);
+                logger.debug("Patch completed without error");
+                logger.debug("Response code: %s", response.getStatus());
+                logger.debug("Success? %s", response.isSuccess());
                 return response.isSuccess();
             } catch (UnirestException ex) {
                 logger.error("Failed to update project info", ex);
-                throw new DependencyTrackException("Failed to update project");
+                throw new DependencyTrackException("Failed to update project", ex);
             }
         }
     }
