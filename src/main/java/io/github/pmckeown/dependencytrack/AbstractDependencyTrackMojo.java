@@ -4,6 +4,7 @@ import io.github.pmckeown.util.Logger;
 import kong.unirest.Unirest;
 import kong.unirest.jackson.JacksonObjectMapper;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -46,8 +47,18 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     @Parameter(defaultValue = "false", property = "dependency-track.failOnError")
     private boolean failOnError;
 
+    /**
+     * Set this to 'true' to bypass dependencyTrack plugin
+     * It's not a real boolean as it can have more than 2 values:
+     * <ul>
+     *     <li><code>true</code>: will skip as usual</li>
+     *     <li><code>releases</code>: will skip if current version of the project is a release</li>
+     *     <li><code>snapshots</code>: will skip if current version of the project is a snapshot</li>
+     *     <li>any other values will be considered as <code>false</code></li>
+     * </ul>
+     */
     @Parameter(defaultValue = "false", property = "dependency-track.skip", alias = "dependency-track.skip")
-    private boolean skip;
+    private String skip = Boolean.FALSE.toString();
 
     @Parameter(defaultValue = "true", property = "dependency-track.verifySsl")
     private boolean verifySsl;
@@ -123,7 +134,7 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         this.verifySsl = verifySsl;
     }
     
-    public void setSkip(boolean skip) {
+    public void setSkip(String skip) {
         this.skip = skip;
     }
 
@@ -146,7 +157,9 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     }
 
     private boolean getSkip() {
-        return Boolean.parseBoolean(System.getProperty("dependency-track.skip", Boolean.toString(skip)));
+        return Boolean.parseBoolean(skip)
+                 || ("releases".equals(skip) && !ArtifactUtils.isSnapshot(projectVersion))
+                 || ("snapshots".equals(skip) && ArtifactUtils.isSnapshot(projectVersion));
     }
 
     /**

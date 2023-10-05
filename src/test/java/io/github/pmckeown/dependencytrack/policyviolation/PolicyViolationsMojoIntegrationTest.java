@@ -138,7 +138,7 @@ public class PolicyViolationsMojoIntegrationTest extends AbstractDependencyTrack
 
     @Test
     public void thatPolicyViolationsIsSkippedWhenSkipIsTrue() throws Exception {
-        policyMojo.setSkip(true);
+        policyMojo.setSkip("true");
 
         policyMojo.execute();
 
