@@ -122,7 +122,7 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
     public void thatTheMetricsIsSkippedWhenSkipIsTrue() throws Exception {
         stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
-        metricsMojo.setSkip(true);
+        metricsMojo.setSkip("true");
         metricsMojo.setProjectName("testName");
         metricsMojo.setProjectVersion("99.99");
 

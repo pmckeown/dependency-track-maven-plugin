@@ -136,7 +136,7 @@ public class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMoj
         stubFor(delete(urlPathMatching(V1_PROJECT_UUID)).willReturn(
                 aResponse().withStatus(200)));
 
-        deleteProjectMojo.setSkip(true);
+        deleteProjectMojo.setSkip("true");
 
         deleteProjectMojo.execute();
 

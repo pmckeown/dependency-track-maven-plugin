@@ -77,7 +77,7 @@ public class UploadBomMojoTest {
 
     @Test
     public void thatTheUploadBomIsSkippedWhenSkipIsTrue() throws Exception {
-        uploadBomMojo.setSkip(true);
+        uploadBomMojo.setSkip("true");
         uploadBomMojo.setProjectName(PROJECT_NAME);
         uploadBomMojo.setProjectVersion(PROJECT_VERSION);
 
@@ -85,6 +85,37 @@ public class UploadBomMojoTest {
 
         verify(commonConfig).setProjectName(PROJECT_NAME);
         verify(commonConfig).setProjectVersion(PROJECT_VERSION);
+        verifyNoInteractions(uploadBomAction);
+        verifyNoInteractions(metricsAction);
+        verifyNoInteractions(projectAction);
+    }
+
+    @Test
+    public void thatTheUploadBomIsSkippedWhenSkipIsReleases() throws Exception {
+        uploadBomMojo.setSkip("releases");
+        uploadBomMojo.setProjectName(PROJECT_NAME);
+        uploadBomMojo.setProjectVersion(PROJECT_VERSION);
+
+        uploadBomMojo.execute();
+
+        verify(commonConfig).setProjectName(PROJECT_NAME);
+        verify(commonConfig).setProjectVersion(PROJECT_VERSION);
+        verifyNoInteractions(uploadBomAction);
+        verifyNoInteractions(metricsAction);
+        verifyNoInteractions(projectAction);
+    }
+
+    @Test
+    public void thatTheUploadBomIsSkippedWhenSkipIsSnapshots() throws Exception {
+        String snapshotVersion = "1.0-SNAPSHOT";
+        uploadBomMojo.setSkip("snapshots");
+        uploadBomMojo.setProjectName(PROJECT_NAME);
+        uploadBomMojo.setProjectVersion(snapshotVersion);
+
+        uploadBomMojo.execute();
+
+        verify(commonConfig).setProjectName(PROJECT_NAME);
+        verify(commonConfig).setProjectVersion(snapshotVersion);
         verifyNoInteractions(uploadBomAction);
         verifyNoInteractions(metricsAction);
         verifyNoInteractions(projectAction);

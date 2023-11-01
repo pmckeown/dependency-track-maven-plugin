@@ -191,7 +191,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
         stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(ok()));
 
         UploadBomMojo uploadBomMojo = uploadBomMojo("target/test-classes/projects/skip/bom.xml");
-        uploadBomMojo.setSkip(true);
+        uploadBomMojo.setSkip("true");
 
         uploadBomMojo.execute();
 
@@ -201,7 +201,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     @Test
     public void thatSslVerifyDefaultsToTrue() throws Exception {
         UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
-        uploadBomMojo.setSkip(true);
+        uploadBomMojo.setSkip("true");
         uploadBomMojo.execute();
         assertThat(Unirest.config().isVerifySsl(), is(true));
     }

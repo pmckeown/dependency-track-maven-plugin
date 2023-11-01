@@ -63,7 +63,7 @@ public class FindingsMojoTest {
 
     @Test
     public void thatReportIsNotGeneratedWhenSkipIsTrue() throws Exception {
-        findingsMojo.setSkip(true);
+        findingsMojo.setSkip("true");
 
         findingsMojo.execute();
 
