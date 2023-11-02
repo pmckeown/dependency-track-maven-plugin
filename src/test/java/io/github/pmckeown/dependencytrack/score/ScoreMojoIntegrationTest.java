@@ -196,7 +196,7 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
         scoreMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
         scoreMojo.setProjectName("dependency-track");
         scoreMojo.setProjectVersion("3.6.0-SNAPSHOT");
-        scoreMojo.setSkip(true);
+        scoreMojo.setSkip("true");
 
         scoreMojo.execute();
 

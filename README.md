@@ -134,6 +134,11 @@ of this plugin:
 | skip                   | false    | false                         |  
 | verifySsl              | false    | true                          |
 
+The skip property has more than two possible values:
+ * true: will skip as usual
+ * releases: will skip if current version of the project is a release
+ * snapshots: will skip if current version of the project is a snapshot
+ * any other values will be considered as false
 
 ## Features
 

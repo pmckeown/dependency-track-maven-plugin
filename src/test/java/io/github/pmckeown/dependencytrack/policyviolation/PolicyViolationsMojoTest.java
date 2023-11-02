@@ -54,7 +54,7 @@ public class PolicyViolationsMojoTest {
 
     @Test
     public void thatReportIsNotGeneratedWhenSkipIsTrue() throws Exception {
-        policyMojo.setSkip(true);
+        policyMojo.setSkip("true");
 
         policyMojo.execute();
 

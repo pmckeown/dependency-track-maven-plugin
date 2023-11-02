@@ -153,7 +153,7 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
                                                 .withVulnerability(aVulnerability().withSeverity(LOW))
                                                 .withAnalysis(anAnalysis())).build()))));
 
-        findingsMojo.setSkip(true);
+        findingsMojo.setSkip("true");
 
         findingsMojo.execute();
 
