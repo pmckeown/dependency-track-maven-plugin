@@ -9,6 +9,8 @@ Maven plugin to integrate with a [Dependency-Track](https://dependencytrack.org/
 project metrics.  Can be used within build pipelines to analyse the current project and optionally fail the build if vulnerabilities 
 are found.
 
+Bad commit fr testing tagging
+
 #### Usage
 This maven plugin provides various functions relating to Dependency-Track, from uploading the Bill of Material, to 
 checking for 3rd party dependencies with vulnerabilities in your Maven POM.  Common configuration can be provided 
