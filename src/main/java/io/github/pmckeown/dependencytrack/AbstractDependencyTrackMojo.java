@@ -169,8 +169,8 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     private void configureUnirest() {
         Unirest.config()
                 .setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
-                .addDefaultHeader(ACCEPT_ENCODING, "gzip, deflate")
-                .addDefaultHeader(ACCEPT, "application/json")
+                .setDefaultHeader(ACCEPT_ENCODING, "gzip, deflate")
+                .setDefaultHeader(ACCEPT, "application/json")
                 .verifySsl(this.verifySsl);
 
         // Debug all Unirest config
