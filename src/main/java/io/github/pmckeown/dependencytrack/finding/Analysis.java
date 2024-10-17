@@ -1,43 +1,67 @@
 package io.github.pmckeown.dependencytrack.finding;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import javax.xml.bind.annotation.XmlElement;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Analysis {
 
-    public enum State {
-        NOT_AFFECTED,
-        FALSE_POSITIVE,
-        IN_TRIAGE,
-        EXPLOITABLE,
-        NOT_SET
-    }
+	public enum AnalysisState {
+		NOT_AFFECTED,
+		FALSE_POSITIVE,
+		IN_TRIAGE,
+		EXPLOITABLE,
+		NOT_SET,
+		RESOLVED
+	}
 
-    private boolean isSuppressed;
-    private State state;
+	public enum AnalysisJustification {
+		CODE_NOT_PRESENT,
+		CODE_NOT_REACHABLE,
+		REQUIRES_CONFIGURATION,
+		REQUIRES_DEPENDENCY,
+		REQUIRES_ENVIRONMENT,
+		PROTECTED_BY_COMPILER,
+		PROTECTED_AT_RUNTIME,
+		PROTECTED_AT_PERIMETER,
+		PROTECTED_BY_MITIGATING_CONTROL,
+		NOT_SET
+	}
 
-    @JsonCreator
-    public Analysis(@JsonProperty("isSuppressed") boolean isSuppressed, @JsonProperty("state") State state) {
-        this.isSuppressed = isSuppressed;
-        this.state = state;
-    }
+	private boolean isSuppressed;
+	private AnalysisState analysisState;
+	private AnalysisJustification analysisJustification;
 
-    @XmlElement
-    public boolean isSuppressed() {
-        return isSuppressed;
-    }
+	@JsonCreator
+	public Analysis(@JsonProperty("isSuppressed") final boolean isSuppressed,
+			@JsonProperty("analysisState") final AnalysisState analysisState,
+			@JsonProperty("analysisJustification") final AnalysisJustification analysisJustification) {
+		this.isSuppressed = isSuppressed;
+		this.analysisState = analysisState;
+		this.analysisJustification = analysisJustification;
+	}
 
-    @XmlElement
-    public State getState() {
-        return state;
-    }
+	@XmlElement
+	public boolean isSuppressed() {
+		return isSuppressed;
+	}
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
-    }
+	@XmlElement
+	public AnalysisState getAnalysisState() {
+		return analysisState;
+	}
+
+	@XmlElement
+	public AnalysisJustification getAnalysisJustification() {
+		return analysisJustification;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
+	}
 }

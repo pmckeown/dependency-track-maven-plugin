@@ -69,7 +69,7 @@ public class FindingsReportIntegrationTest {
                 .withFinding(aFinding()
                         .withVulnerability(aVulnerability().withSeverity(Severity.CRITICAL))
                         .withComponent(aComponent().withName("suppressed"))
-                        .withAnalysis(anAnalysis().withState(Analysis.State.FALSE_POSITIVE).withSuppressed(true)))
+                        .withAnalysis(anAnalysis().withState(Analysis.AnalysisState.FALSE_POSITIVE).withSuppressed(true)))
                 .withFinding(aFinding()
                         .withVulnerability(aVulnerability().withSeverity(Severity.HIGH))
                         .withComponent(aComponent())

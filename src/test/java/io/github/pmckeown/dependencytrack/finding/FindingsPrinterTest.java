@@ -11,7 +11,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.List;
 
 import static io.github.pmckeown.dependencytrack.Constants.DELIMITER;
-import static io.github.pmckeown.dependencytrack.finding.Analysis.State.FALSE_POSITIVE;
+import static io.github.pmckeown.dependencytrack.finding.Analysis.AnalysisState.FALSE_POSITIVE;
 import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
 import static io.github.pmckeown.dependencytrack.finding.FindingBuilder.aFinding;
@@ -140,7 +140,7 @@ public class FindingsPrinterTest {
                                 .withAnalysis(
                                         anAnalysis()
                                                 .withSuppressed(isSuppressed)
-                                                .withState(Analysis.State.FALSE_POSITIVE))).build();
+                                                .withState(Analysis.AnalysisState.FALSE_POSITIVE))).build();
     }
 
     private List<Finding> findingsList(String longDescription, String vulnId, boolean isSuppressed) {
