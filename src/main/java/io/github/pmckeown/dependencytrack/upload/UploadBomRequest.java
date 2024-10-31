@@ -10,35 +10,37 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public class UploadBomRequest {
 
-    private String projectName;
-    private String projectVersion;
-    private boolean autoCreate;
-    private String base64EncodedBom;
+	private String projectName;
+	private String projectVersion;
+	private boolean autoCreate;
+	private String base64EncodedBom;
 
-    UploadBomRequest(String projectName, String projectVersion, boolean autoCreate, String base64EncodedBom) {
-        this.projectName = projectName;
-        this.projectVersion = projectVersion;
-        this.autoCreate = autoCreate;
-        this.base64EncodedBom = base64EncodedBom;
-    }
+	UploadBomRequest(final String projectName, final String projectVersion, final boolean autoCreate,
+			final String base64EncodedBom) {
+		this.projectName = projectName;
+		this.projectVersion = projectVersion;
+		this.autoCreate = autoCreate;
+		this.base64EncodedBom = base64EncodedBom;
+	}
 
-    public String getProjectName() {
-        return projectName;
-    }
+	public String getProjectName() {
+		return projectName;
+	}
 
-    public String getProjectVersion() {
-        return projectVersion;
-    }
+	public String getProjectVersion() {
+		return projectVersion;
+	}
 
-    public boolean isAutoCreate() {
-        return autoCreate;
-    }
+	public boolean isAutoCreate() {
+		return autoCreate;
+	}
 
-    public String getBom() {
-        return base64EncodedBom;
-    }
+	public String getBom() {
+		return base64EncodedBom;
+	}
 
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
-    }
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
+	}
 }
