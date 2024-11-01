@@ -11,6 +11,7 @@ public class ProjectBuilder {
     private String name = "test-project";
     private String version = "2.0.0";
     private Metrics metrics;
+    private boolean isLatest;
 
     public static ProjectBuilder aProject() {
         return new ProjectBuilder();
@@ -36,7 +37,12 @@ public class ProjectBuilder {
         return this;
     }
 
+    public ProjectBuilder withIsLatest(boolean isLatest) {
+        this.isLatest = isLatest;
+        return this;
+    }
+
     public Project build() {
-        return new Project(uuid, name, version, metrics);
+        return new Project(uuid, name, version, metrics, isLatest);
     }
 }

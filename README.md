@@ -223,6 +223,7 @@ prevent a project being incorrectly created or updated the server.
 | updateParent      | false    | false                  | true                      |
 | parentName        | false    | ${project.parent.name} | my-name-override          |
 | parentVersion     | false    |                        | ${project.parent.version} |
+| isLatest          | false    | false                  | true                      |
 
 ### Get Project Findings
 After a BOM upload, the best way to determine if there are any vulnerabilities is to use the `findings` goal which is 

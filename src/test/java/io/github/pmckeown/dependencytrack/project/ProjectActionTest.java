@@ -171,16 +171,40 @@ public class ProjectActionTest {
         }
     }
 
+    @Test
+    public void thatWhenProjectBomAndIsLatestTrueIsProvidedNoExceptionIsReturned() throws Exception {
+        doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
+        doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
+
+        UpdateRequest updateReq = new UpdateRequest();
+        updateReq.withBomLocation(String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+        assertTrue(projectAction.updateProject(project3(), updateReq));
+    }
+
+    @Test
+    public void thatWhenProjectBomAndIsLatestFalseIsProvidedNoExceptionIsReturned() throws Exception {
+        doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
+        doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
+
+        UpdateRequest updateReq = new UpdateRequest();
+        updateReq.withBomLocation(String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+        assertTrue(projectAction.updateProject(project1(), updateReq));
+    }
+
     private Response aNotFoundResponse() {
         return new Response(404, "Not Found", false);
     }
 
     private Project project1() {
-        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null);
+        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null, false);
     }
 
     private Project project2() {
-        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null);
+        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null, false);
+    }
+
+    private Project project3() {
+        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null, true);
     }
 
     private List<Project> aProjectList() {

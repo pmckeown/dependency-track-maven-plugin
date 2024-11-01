@@ -35,6 +35,10 @@ public class UploadBomAction {
     }
 
     public boolean upload(String bomLocation) throws DependencyTrackException {
+        return upload(bomLocation, false);
+    }
+
+    public boolean upload(String bomLocation, boolean isLatest) throws DependencyTrackException {
         logger.info("Project Name: %s", commonConfig.getProjectName());
         logger.info("Project Version: %s", commonConfig.getProjectVersion());
         logger.info("%s", commonConfig.getPollingConfig());
@@ -45,7 +49,7 @@ public class UploadBomAction {
             return false;
         }
 
-        Optional<UploadBomResponse> uploadBomResponse = doUpload(encodedBomOptional.get());
+        Optional<UploadBomResponse> uploadBomResponse = doUpload(encodedBomOptional.get(), isLatest);
 
         if (commonConfig.getPollingConfig().isEnabled() && uploadBomResponse.isPresent()) {
             try {
@@ -74,11 +78,15 @@ public class UploadBomAction {
         });
     }
 
-    private Optional<UploadBomResponse> doUpload(String encodedBom) throws DependencyTrackException {
+    private Optional<UploadBomResponse> doUpload(String encodedBom, boolean isLatest) throws DependencyTrackException {
         try {
-            Response<UploadBomResponse> response = bomClient.uploadBom(new UploadBomRequest(
-                    commonConfig.getProjectName(), commonConfig.getProjectVersion(), true, encodedBom));
-            
+            Response<UploadBomResponse> response = bomClient.uploadBom(
+                new UploadBomRequest(commonConfig.getProjectName(),
+                                     commonConfig.getProjectVersion(),
+                                     true,
+                                     encodedBom,
+                                     isLatest));
+
             if (response.isSuccess()) {
                 logger.info("BOM uploaded to Dependency Track server");
                 return response.getBody();

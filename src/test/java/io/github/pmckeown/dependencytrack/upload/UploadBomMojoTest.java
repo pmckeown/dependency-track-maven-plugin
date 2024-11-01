@@ -22,6 +22,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
@@ -63,16 +64,18 @@ public class UploadBomMojoTest {
     @Test
     public void thatTheBomLocationIsDefaultedWhenNotSupplied() throws Exception {
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Boolean> argumentCaptor2 = ArgumentCaptor.forClass(Boolean.class);
         doReturn(new File(".")).when(project).getBasedir();
         doReturn(aProject().build()).when(projectAction).getProject(PROJECT_NAME, PROJECT_VERSION);
-        doReturn(true).when(uploadBomAction).upload(anyString());
+        doReturn(true).when(uploadBomAction).upload(anyString(), anyBoolean());
 
         uploadBomMojo.setProjectName(PROJECT_NAME);
         uploadBomMojo.setProjectVersion(PROJECT_VERSION);
         uploadBomMojo.execute();
 
-        verify(uploadBomAction).upload(argumentCaptor.capture());
+        verify(uploadBomAction).upload(argumentCaptor.capture(), argumentCaptor2.capture());
         assertThat(argumentCaptor.getValue(), is(equalTo("./target/bom.xml")));
+        assertThat(argumentCaptor2.getValue(), is(equalTo(false)));
     }
 
     @Test
@@ -137,7 +140,7 @@ public class UploadBomMojoTest {
 
     @Test
     public void thatWhenUpdateParentFailsTheLoggerIsCalledAndBuildFails() throws Exception {
-        doReturn(true).when(uploadBomAction).upload(anyString());
+        doReturn(true).when(uploadBomAction).upload(anyString(), anyBoolean());
         doReturn(aProject().withName("project-parent").withVersion("1.2.3").build())
                 .when(projectAction).getProject("project-parent", "1.2.3");
 
@@ -157,7 +160,7 @@ public class UploadBomMojoTest {
 
     @Test
     public void thatUpdateParentFailsWhenParentNameIsNull() throws Exception {
-        doReturn(true).when(uploadBomAction).upload(anyString());
+        doReturn(true).when(uploadBomAction).upload(anyString(), anyBoolean());
 
         uploadBomMojo.setParentName(null);
         uploadBomMojo.setParentVersion(null);

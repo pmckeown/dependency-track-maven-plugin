@@ -53,6 +53,9 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Parameter(property = "dependency-track.parentVersion")
     private String parentVersion;
 
+    @Parameter(property = "dependency-track.isLatest", defaultValue = "false")
+    private boolean isLatest;
+
     private final UploadBomAction uploadBomAction;
 
     private final MetricsAction metricsAction;
@@ -73,7 +76,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         logger.info("Update Project Parent : %s", updateParent);
 
         try {
-            if (!uploadBomAction.upload(getBomLocation())) {
+            if (!uploadBomAction.upload(getBomLocation(), isLatest)) {
                 handleFailure("Bom upload failed");
             }
             Project project = projectAction.getProject(projectName, projectVersion);
@@ -149,6 +152,10 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     void setParentVersion(String parentVersion) {
         this.parentVersion = parentVersion;
+    }
+
+    void setLatest(boolean isLatest) {
+        this.isLatest = isLatest;
     }
 
 }

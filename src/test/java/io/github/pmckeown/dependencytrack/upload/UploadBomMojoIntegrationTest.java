@@ -171,6 +171,22 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
+    public void thatProjectIsLatestCanBeProvided() throws Exception {
+        stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
+                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
+
+
+        UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
+        uploadBomMojo.setLatest(true);
+        uploadBomMojo.execute();
+
+        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM))
+                .withRequestBody(
+                        matchingJsonPath("$.isLatestProjectVersion", equalTo("true"))));
+    }
+
+    @Test
     public void thatProjectVersionDefaultsToPomVersion() throws Exception {
         stubFor(get(urlPathMatching(V1_PROJECT)).willReturn(
                 aResponse().withBodyFile("api/v1/project/get-all-projects.json")));

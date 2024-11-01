@@ -18,6 +18,7 @@ public class ProjectInfo {
     private String purl;
     private String cpe;
     private String swidTagId;
+    private Boolean isLatest;
     private Item parent;
 
     public String getAuthor() {
@@ -90,6 +91,14 @@ public class ProjectInfo {
 
     public void setParent(Item parent) {
         this.parent = parent;
+    }
+
+    public Boolean getIsLatest() {
+        return isLatest;
+    }
+
+    public void setIsLatest(Boolean isLatest) {
+        this.isLatest = isLatest;
     }
 
     @Override

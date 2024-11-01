@@ -10,16 +10,18 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public class UploadBomRequest {
 
-    private String projectName;
-    private String projectVersion;
-    private boolean autoCreate;
-    private String base64EncodedBom;
+    private final String projectName;
+    private final String projectVersion;
+    private final boolean autoCreate;
+    private final String base64EncodedBom;
+    private final boolean isLatest;
 
-    UploadBomRequest(String projectName, String projectVersion, boolean autoCreate, String base64EncodedBom) {
+    UploadBomRequest(String projectName, String projectVersion, boolean autoCreate, String base64EncodedBom, boolean isLatest) {
         this.projectName = projectName;
         this.projectVersion = projectVersion;
         this.autoCreate = autoCreate;
         this.base64EncodedBom = base64EncodedBom;
+        this.isLatest = isLatest;
     }
 
     public String getProjectName() {
@@ -34,10 +36,20 @@ public class UploadBomRequest {
         return autoCreate;
     }
 
+    /**
+     * TODO: Change method name to IsisLatest, when switching to post upload request
+     *
+     * @return
+     */
+    public boolean isIsLatestProjectVersion() {
+        return isLatest;
+    }
+
     public String getBom() {
         return base64EncodedBom;
     }
 
+    @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }
