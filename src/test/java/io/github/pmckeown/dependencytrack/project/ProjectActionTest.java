@@ -12,8 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
@@ -55,7 +53,7 @@ public class ProjectActionTest {
 
     @Test
     public void thatProjectCanBeRetrievedByNameAndVersion() throws Exception {
-        doReturn(aSuccessResponse().withBody(aProjectList()).build()).when(projectClient).getProjects();
+        doReturn(aSuccessResponse().withBody(project2()).build()).when(projectClient).getProject(anyString(), anyString());
 
         Project project = projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
 
@@ -65,7 +63,7 @@ public class ProjectActionTest {
 
     @Test
     public void thatExceptionIsThrownWhenConnectionFails() {
-        doThrow(UnirestException.class).when(projectClient).getProjects();
+        doThrow(UnirestException.class).when(projectClient).getProject(anyString(), anyString());
 
         try {
             projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
@@ -74,20 +72,16 @@ public class ProjectActionTest {
         }
     }
 
-    @Test
-    public void thatANotFoundResponseResultsInAnException() {
-        doReturn(aNotFoundResponse()).when(projectClient).getProjects();
+    @Test(expected = DependencyTrackException.class)
+    public void thatANotFoundResponseResultsInAnException() throws DependencyTrackException {
+        doReturn(aNotFoundResponse()).when(projectClient).getProject(anyString(), anyString());
 
-        try {
-            projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
-        } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(DependencyTrackException.class)));
-        }
+        projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
     }
 
     @Test
     public void thatNoProjectsAreFoundAnExceptionIsThrown() {
-        doReturn(aSuccessResponse().build()).when(projectClient).getProjects();
+        doReturn(aSuccessResponse().build()).when(projectClient).getProject(anyString(), anyString());
 
         try {
             projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
@@ -96,15 +90,11 @@ public class ProjectActionTest {
         }
     }
 
-    @Test
-    public void thatRequestedProjectCannotBeFoundAnExceptionIsThrown() {
-        doReturn(aSuccessResponse().withBody(aProjectList()).build()).when(projectClient).getProjects();
+    @Test(expected = DependencyTrackException.class)
+    public void thatRequestedProjectCannotBeFoundAnExceptionIsThrown() throws DependencyTrackException {
+        doReturn(aSuccessResponse().build()).when(projectClient).getProject(anyString(), anyString());
 
-        try {
-            projectAction.getProject("missing-project", "unknown-version");
-        } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(DependencyTrackException.class)));
-        }
+        projectAction.getProject("missing-project", "unknown-version");
     }
 
     @Test
@@ -205,10 +195,6 @@ public class ProjectActionTest {
 
     private Project project3() {
         return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null, true);
-    }
-
-    private List<Project> aProjectList() {
-        return Arrays.asList(project1(), project2());
     }
 
 }

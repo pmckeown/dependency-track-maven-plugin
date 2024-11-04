@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.TestMojoLoader.loadScoreMojo;
-import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
+import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_METRICS_PROJECT_CURRENT;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -29,19 +29,19 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     public void thatAllProjectsCanBeRetrieved() throws Exception {
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
-                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
+            aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
         scoreMojo.execute();
 
-        verify(exactly(1), getRequestedFor(urlEqualTo(V1_PROJECT)));
+        verify(exactly(1), getRequestedFor(urlPathEqualTo(V1_PROJECT_LOOKUP)));
     }
 
     @Test
     public void thatARiskScoreHigherThanTheThresholdCausesBuildToFailEvenWithFailOnErrorFalse() throws Exception {
         // The current project score in the JSON file is 3
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
-                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
+            aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
         scoreMojo.setInheritedRiskScoreThreshold(1);
         scoreMojo.setFailOnError(false);
@@ -57,8 +57,8 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     @Test
     public void thatARiskScoreEqualToTheThresholdDoesNothing() throws Exception {
         // The current project score in the JSON file is 3
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
-                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
+            aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
         scoreMojo.setInheritedRiskScoreThreshold(3);
 
@@ -72,8 +72,8 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     @Test
     public void thatFailureToGetARiskScoreEqualThrowsAnException() throws Exception {
         // The current project score in the JSON file is 3
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
-                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
+            aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
         scoreMojo.setInheritedRiskScoreThreshold(3);
 
@@ -87,8 +87,8 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     @Test
     public void thatARiskScoreLowerThanTheThresholdDoesNothing() throws Exception {
         // The current project score in the JSON file is 3
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
-                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
+            aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
         scoreMojo.setInheritedRiskScoreThreshold(999);
 
@@ -102,8 +102,8 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     @Test
     public void thatWhenNoMetricsHaveBeenCalculatedThenTheMetricsAreRetrieved() throws Exception {
         // The current project score in the JSON file is 3
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
-                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
+            aResponse().withBodyFile("api/v1/project/noMetrics.json")));
         stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT)).willReturn(
                 aResponse().withBodyFile("api/v1/metrics/project/project-metrics.json")));
 
@@ -117,8 +117,8 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     @Test
     public void thatWhenNoMetricsHaveBeenTheTheCallIsRetriedTheCorrectNumberOfTimes() throws Exception {
         // The current project score in the JSON file is 3
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
-                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
+            aResponse().withBodyFile("api/v1/project/noMetrics.json")));
         stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT)).willReturn(
                 aResponse().withStatus(404).withBody("The project could not be found.")));
 
@@ -139,7 +139,7 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     public void thatWhenFailOnErrorIsFalseAFailureFromToDependencyTrackDoesNotFailTheBuild() {
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(notFound()));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(notFound()));
 
         try {
             scoreMojo.setFailOnError(false);
@@ -148,12 +148,12 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
             fail("No exception expected");
         }
 
-        verify(exactly(1), getRequestedFor(urlEqualTo(V1_PROJECT)));
+        verify(exactly(1), getRequestedFor(urlPathEqualTo(V1_PROJECT_LOOKUP)));
     }
 
     @Test
     public void thatWhenFailOnErrorIsTrueAFailureFromToDependencyTrackDoesFailTheBuild() throws Exception {
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(notFound()));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(notFound()));
 
         try {
             scoreMojo.setFailOnError(true);
@@ -200,6 +200,6 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
         scoreMojo.execute();
 
-        verify(exactly(0), getRequestedFor(urlEqualTo(V1_PROJECT)));
+        verify(exactly(0), getRequestedFor(urlPathEqualTo(V1_PROJECT_LOOKUP)));
     }
 }

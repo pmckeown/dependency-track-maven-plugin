@@ -12,12 +12,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.http.Fault.RANDOM_DATA_THEN_CLOSE;
 import static io.github.pmckeown.TestMojoLoader.loadFindingsMojo;
-import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
+import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_FINDING_PROJECT_UUID;
 import static io.github.pmckeown.dependencytrack.TestUtils.asJson;
 import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
@@ -27,9 +27,6 @@ import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aLis
 import static io.github.pmckeown.dependencytrack.finding.Severity.LOW;
 import static io.github.pmckeown.dependencytrack.finding.Severity.UNASSIGNED;
 import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
 public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
@@ -47,8 +44,8 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
 
     @Test
     public void thatFindingMojoCanRetrieveFindingsAndPrintThem() throws Exception {
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
-                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
+                aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(
                 aResponse().withBody(asJson(
                         aListOfFindings()
@@ -60,45 +57,41 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
 
         findingsMojo.execute();
 
-        verify(exactly(1), getRequestedFor(urlEqualTo(V1_PROJECT)));
+        verify(exactly(1), getRequestedFor(urlPathEqualTo(V1_PROJECT_LOOKUP)));
         verify(exactly(1), getRequestedFor(urlPathMatching(V1_FINDING_PROJECT_UUID)));
     }
 
     @Test
     public void thatWhenNoFindingsAreFoundTheMojoDoesNotFail() throws Exception {
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
-                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
+                aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(ok()));
 
         try {
             findingsMojo.execute();
-            verify(exactly(1), getRequestedFor(urlEqualTo(V1_PROJECT)));
+            verify(exactly(1), getRequestedFor(urlPathEqualTo(V1_PROJECT_LOOKUP)));
             verify(exactly(1), getRequestedFor(urlPathMatching(V1_FINDING_PROJECT_UUID)));
         } catch (Exception ex) {
             fail("No exception expected");
         }
     }
 
-    @Test
+    @Test(expected = MojoExecutionException.class)
     public void thatWhenExceptionOccursWhileGettingFindingsAndFailOnErrorIsTrueTheMojoErrors() throws Exception {
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
-                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
+                aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(aResponse().withFault(RANDOM_DATA_THEN_CLOSE)));
 
         findingsMojo.setFailOnError(true);
 
-        try {
-            findingsMojo.execute();
-            fail("Exception expected");
-        } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoExecutionException.class)));
-        }
+        findingsMojo.execute();
+        fail("Exception expected");
     }
 
-    @Test
+    @Test(expected = MojoFailureException.class)
     public void thatBuildFailsWhenFindingsNumberBreachesDefinedThresholds() throws Exception {
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
-                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
+                aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(
                 aResponse().withBody(asJson(
                         aListOfFindings()
@@ -110,18 +103,14 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
 
         findingsMojo.setFindingThresholds(new FindingThresholds(0, 0, 0, 0, 0));
 
-        try {
-            findingsMojo.execute();
-            fail("Exception expected");
-        } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoFailureException.class)));
-        }
+        findingsMojo.execute();
+        fail("Exception expected");
     }
 
     @Test
     public void thatBuildDoesNotFailWhenOnlyUnassignedFindingExists() throws Exception {
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
-                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
+                aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(
                 aResponse().withBody(asJson(
                         aListOfFindings()
@@ -142,8 +131,8 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
 
     @Test
     public void thatFindingsIsSkippedWhenSkipIsTrue() throws Exception {
-        stubFor(get(urlEqualTo(V1_PROJECT)).willReturn(
-                aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
+                aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(
                 aResponse().withBody(asJson(
                         aListOfFindings()
@@ -157,7 +146,7 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
 
         findingsMojo.execute();
 
-        verify(exactly(0), getRequestedFor(urlEqualTo(V1_PROJECT)));
+        verify(exactly(0), getRequestedFor(urlPathEqualTo(V1_PROJECT_LOOKUP)));
         verify(exactly(0), getRequestedFor(urlPathMatching(V1_FINDING_PROJECT_UUID)));
     }
 }

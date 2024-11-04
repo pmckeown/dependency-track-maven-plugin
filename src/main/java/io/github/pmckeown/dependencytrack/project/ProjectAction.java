@@ -33,21 +33,15 @@ public class ProjectAction {
 
     public Project getProject(String projectName, String projectVersion) throws DependencyTrackException {
         try {
-            Response<List<Project>> response = projectClient.getProjects();
+            Response<Project> response = projectClient.getProject(projectName, projectVersion);
 
             if (response.isSuccess()) {
-                Optional<List<Project>> body = response.getBody();
+                Optional<Project> body = response.getBody();
                 if (body.isPresent()) {
-                    Optional<Project> project = findProject(body.get(), projectName, projectVersion);
-
-                    if (project.isPresent()) {
-                        return project.get();
-                    } else {
-                        throw new DependencyTrackException(
-                                format("Requested project not found: %s-%s", projectName, projectVersion));
-                    }
+                    return body.get();
                 } else {
-                    throw new DependencyTrackException("No projects found on server.");
+                    throw new DependencyTrackException(
+                        format("Requested project not found: %s-%s", projectName, projectVersion));
                 }
             } else {
                 logger.error("Failed to list projects with error from server: " + response.getStatusText());

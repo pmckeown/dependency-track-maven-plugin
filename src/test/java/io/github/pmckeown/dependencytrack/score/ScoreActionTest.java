@@ -8,6 +8,7 @@ import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectClient;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.UnirestException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -17,13 +18,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static io.github.pmckeown.dependencytrack.metrics.MetricsBuilder.aMetrics;
 import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
-import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -34,8 +34,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 public class ScoreActionTest {
 
     private static final Integer INHERITED_RISK_SCORE_THRESHOLD = 3;
-    private static final String PROJECT_VERSION = "projectVersion";
-    private static final String PROJECT_NAME = "projectName";
 
     @InjectMocks
     private ScoreAction scoreAction;
@@ -52,52 +50,30 @@ public class ScoreActionTest {
     @Mock
     private Logger logger;
 
-    @Test
-    public void thatWhenAnExceptionOccursGettingProjectsThenAnExceptionIsThrown() {
-        doThrow(UnirestException.class).when(projectClient).getProjects();
+    @Test(expected = DependencyTrackException.class)
+    public void thatWhenAnExceptionOccursGettingProjectsThenAnExceptionIsThrown() throws DependencyTrackException {
+        doReturn("ProjectName").when(commonConfig).getProjectName();
+        doReturn("ProjectVersion").when(commonConfig).getProjectVersion();
+        doThrow(UnirestException.class).when(projectClient).getProject(anyString(), anyString());
 
-        try {
-            scoreAction.determineScore(INHERITED_RISK_SCORE_THRESHOLD);
-            fail("Exception expected");
-        } catch (DependencyTrackException ex) {
-            assertThat(ex, is(instanceOf(DependencyTrackException.class)));
-        }
+        scoreAction.determineScore(INHERITED_RISK_SCORE_THRESHOLD);
+        fail("Exception expected");
     }
 
-    @Test
-    public void thatWhenNoProjectsAreFoundThenAnExceptionIsThrown() {
-        doReturn(new Response(404, "Not Found", false)).when(projectClient).getProjects();
+    @Test(expected = DependencyTrackException.class)
+    public void thatWhenNoProjectsAreFoundThenAnExceptionIsThrown() throws DependencyTrackException {
+        doReturn("ProjectName").when(commonConfig).getProjectName();
+        doReturn("ProjectVersion").when(commonConfig).getProjectVersion();
+        doReturn(new Response(404, "Not Found", false)).when(projectClient).getProject(anyString(), anyString());
 
-        try {
-            scoreAction.determineScore(INHERITED_RISK_SCORE_THRESHOLD);
-            fail("Exception expected");
-        } catch (DependencyTrackException ex) {
-            assertThat(ex, is(instanceOf(DependencyTrackException.class)));
-        }
-    }
-
-    @Test
-    public void thatWhenCurrentProjectsIsNotFoundInListThenAnExceptionIsThrown() {
-        doReturn(aSuccessResponse().withBody(
-                singletonList(
-                        aProject().withMetrics(aMetrics().withInheritedRiskScore(100)).build()
-                )).build()).when(projectClient).getProjects();
-        doReturn("unknown-project").when(commonConfig).getProjectName();
-        doReturn("1.2.3").when(commonConfig).getProjectVersion();
-
-        try {
-            scoreAction.determineScore(INHERITED_RISK_SCORE_THRESHOLD);
-            fail("Exception expected");
-        } catch (DependencyTrackException ex) {
-            assertThat(ex, is(instanceOf(DependencyTrackException.class)));
-        }
+        scoreAction.determineScore(INHERITED_RISK_SCORE_THRESHOLD);
+        fail("Exception expected");
     }
 
     @Test
     public void thatWhenTheCurrentProjectHasMetricsInItThenTheScoreIsReturned() throws Exception {
         Project project = aProject().withMetrics(aMetrics().withInheritedRiskScore(100)).build();
-        doReturn(aSuccessResponse().withBody(
-                singletonList(project)).build()).when(projectClient).getProjects();
+        doReturn(aSuccessResponse().withBody(project).build()).when(projectClient).getProject(anyString(), anyString());
         doReturn(project.getName()).when(commonConfig).getProjectName();
         doReturn(project.getVersion()).when(commonConfig).getProjectVersion();
 
@@ -110,8 +86,7 @@ public class ScoreActionTest {
     @Test
     public void thatWhenTheCurrentProjectHasNoMetricsInItTheyAreRequestedAndThenTheScoreIsReturned() throws Exception {
         Project project = aProject().build();
-        doReturn(aSuccessResponse().withBody(
-                singletonList(project)).build()).when(projectClient).getProjects();
+        doReturn(aSuccessResponse().withBody(project).build()).when(projectClient).getProject(anyString(), anyString());
         doReturn(aMetrics().withInheritedRiskScore(100).build()).when(metricsAction).getMetrics(
                 any(Project.class));
         doReturn(project.getName()).when(commonConfig).getProjectName();
@@ -126,8 +101,7 @@ public class ScoreActionTest {
     @Test
     public void thatWhenTheCurrentProjectScoreIsZeroThenTheScoreIsReturned() throws Exception {
         Project project = aProject().build();
-        doReturn(aSuccessResponse().withBody(
-                singletonList(project)).build()).when(projectClient).getProjects();
+        doReturn(aSuccessResponse().withBody(project).build()).when(projectClient).getProject(anyString(), anyString());
         doReturn(aMetrics().withInheritedRiskScore(0).build()).when(metricsAction).getMetrics(
                 any(Project.class));
         doReturn(project.getName()).when(commonConfig).getProjectName();

@@ -7,29 +7,20 @@ import kong.unirest.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.List;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.patch;
 import static com.github.tomakehurst.wiremock.client.WireMock.patchRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_PROJECT_UUID;
-import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_PROJECT_WITH_ONE_MILLION_LIMIT;
 import static io.github.pmckeown.dependencytrack.project.ProjectInfoBuilder.aProjectInfo;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTest {
-
-	private static final int COUNT_ALL_PROJECTS = 9;
 
 	private ProjectClient projectClient;
 
@@ -41,23 +32,11 @@ public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTes
 	}
 
 	@Test
-	public void thatCallingDependencyTrackWithAHighResponseLimitReturnsAllProjects() {
-
-		stubFor(get(urlEqualTo(V1_PROJECT_WITH_ONE_MILLION_LIMIT)).willReturn(
-				aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
-
-		List<Project> projects = projectClient.getProjects().getBody().orElse(Collections.emptyList());
-
-		verify(exactly(1), getRequestedFor(urlEqualTo(V1_PROJECT_WITH_ONE_MILLION_LIMIT)));
-		assertThat(projects.size(), is(COUNT_ALL_PROJECTS));
-	}
-
-	@Test
 	public void thatProjectInfoUpdateReturnsSuccessWhenServerReturnsSuccess() {
 		stubFor(patch(urlPathMatching(V1_PROJECT_UUID)).willReturn(
 				aResponse().withStatus(HttpStatus.OK)));
 
-		Response<Void> response = projectClient.patchProject("1234", aProjectInfo().build());
+		Response<Void> response = projectClient.patchProject("3b2fa278-6380-4430-b646-a353107e9fbe", aProjectInfo().build());
 		assertThat(response.isSuccess(), is(equalTo(true)));
 		verify(exactly(1), patchRequestedFor(urlPathMatching(V1_PROJECT_UUID)));
 	}
@@ -67,7 +46,7 @@ public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTes
 		stubFor(patch(urlPathMatching(V1_PROJECT_UUID)).willReturn(
 				aResponse().withStatus(HttpStatus.NOT_MODIFIED)));
 
-		Response<Void> response = projectClient.patchProject("1234", aProjectInfo().build());
+		Response<Void> response = projectClient.patchProject("3b2fa278-6380-4430-b646-a353107e9fbe", aProjectInfo().build());
 		assertThat(response.isSuccess(), is(equalTo(true)));
 		verify(exactly(1), patchRequestedFor(urlPathMatching(V1_PROJECT_UUID)));
 	}
@@ -77,7 +56,7 @@ public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTes
 		stubFor(patch(urlPathMatching(V1_PROJECT_UUID)).willReturn(
 				aResponse().withStatus(HttpStatus.IM_A_TEAPOT)));
 
-		Response<Void> response = projectClient.patchProject("1234", aProjectInfo().build());
+		Response<Void> response = projectClient.patchProject("3b2fa278-6380-4430-b646-a353107e9fbe", aProjectInfo().build());
 		assertThat(response.isSuccess(), is(equalTo(false)));
 		verify(exactly(1), patchRequestedFor(urlPathMatching(V1_PROJECT_UUID)));
 	}

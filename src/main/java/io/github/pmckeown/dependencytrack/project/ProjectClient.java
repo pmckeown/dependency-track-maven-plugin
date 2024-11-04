@@ -8,11 +8,10 @@ import kong.unirest.HttpStatus;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.List;
 import java.util.Optional;
 
-import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_UUID;
+import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
 import static kong.unirest.Unirest.*;
 
 /**
@@ -32,18 +31,19 @@ public class ProjectClient {
         this.commonConfig = commonConfig;
     }
 
-    public Response<List<Project>> getProjects() {
-        HttpResponse<List<Project>> httpResponse = get(commonConfig.getDependencyTrackBaseUrl() + V1_PROJECT)
-                .header(X_API_KEY, commonConfig.getApiKey())
-                .asObject(new GenericType<List<Project>>(){});
-
-        Optional<List<Project>> body;
+    public Response<Project> getProject(String projectName, String projectVersion) {
+        HttpResponse<Project> httpResponse = get(commonConfig.getDependencyTrackBaseUrl() + V1_PROJECT_LOOKUP)
+            .queryString("name", projectName)
+            .queryString("version", projectVersion)
+            .header(X_API_KEY, commonConfig.getApiKey())
+            .asObject(new GenericType<Project>() {
+            });
+        Optional<Project> body;
         if (httpResponse.isSuccess()) {
             body = Optional.of(httpResponse.getBody());
         } else {
             body = Optional.empty();
         }
-
         return new Response<>(httpResponse.getStatus(), httpResponse.getStatusText(), httpResponse.isSuccess(), body);
     }
 
