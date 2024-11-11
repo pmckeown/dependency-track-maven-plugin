@@ -12,7 +12,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -181,20 +186,51 @@ public class ProjectActionTest {
         assertTrue(projectAction.updateProject(project1(), updateReq));
     }
 
+    @Test
+    public void thatProjectTagsAreUpdated() throws Exception {
+        doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
+
+        Set<String> tags = new HashSet<>();
+        tags.add("Backend");
+        tags.add("Team-1");
+
+        List<ProjectTag> existingProjectTags = Collections.emptyList();
+        UpdateRequest updateReq = new UpdateRequest();
+        assertTrue(projectAction.updateProject(projectWithTags(existingProjectTags), updateReq, tags));
+    }
+
+    @Test
+    public void thatProjectTagsAreUpdatedAndMerged() throws Exception {
+        doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
+
+        Set<String> tags = new HashSet<>();
+        tags.add("Backend");
+        tags.add("Team-1");
+
+        List<ProjectTag> existingProjectTags = new LinkedList<>();
+        existingProjectTags.add(new ProjectTag("Frontend"));
+        UpdateRequest updateReq = new UpdateRequest();
+        assertTrue(projectAction.updateProject(projectWithTags(existingProjectTags), updateReq, tags));
+    }
+
     private Response aNotFoundResponse() {
         return new Response(404, "Not Found", false);
     }
 
     private Project project1() {
-        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null, false);
+        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null, false, Collections.emptyList());
     }
 
     private Project project2() {
-        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null, false);
+        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null, false, Collections.emptyList());
     }
 
     private Project project3() {
-        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null, true);
+        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null, true, Collections.emptyList());
+    }
+
+    private Project projectWithTags(List<ProjectTag> tags) {
+        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null, false, tags);
     }
 
 }

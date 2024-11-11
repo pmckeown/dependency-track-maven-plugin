@@ -3,7 +3,10 @@ package io.github.pmckeown.dependencytrack.project;
 import io.github.pmckeown.dependencytrack.metrics.Metrics;
 import io.github.pmckeown.dependencytrack.metrics.MetricsBuilder;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ProjectBuilder {
 
@@ -12,6 +15,7 @@ public class ProjectBuilder {
     private String version = "2.0.0";
     private Metrics metrics;
     private boolean isLatest;
+    private List<ProjectTag> tags;
 
     public static ProjectBuilder aProject() {
         return new ProjectBuilder();
@@ -42,7 +46,12 @@ public class ProjectBuilder {
         return this;
     }
 
+    public ProjectBuilder withTags(Set<String> tags) {
+        this.tags = tags.stream().map(ProjectTag::new).collect(Collectors.toList());
+        return this;
+    }
+
     public Project build() {
-        return new Project(uuid, name, version, metrics, isLatest);
+        return new Project(uuid, name, version, metrics, isLatest, tags);
     }
 }

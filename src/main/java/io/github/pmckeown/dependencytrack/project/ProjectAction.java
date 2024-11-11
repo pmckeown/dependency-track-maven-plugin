@@ -6,13 +6,16 @@ import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.bom.BomParser;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.UnirestException;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -53,6 +56,10 @@ public class ProjectAction {
     }
 
     public boolean updateProject(Project project, UpdateRequest updateReq) throws DependencyTrackException {
+        return updateProject(project, updateReq, Collections.emptySet());
+    }
+
+    public boolean updateProject(Project project, UpdateRequest updateReq, Set<String> projectTags) throws DependencyTrackException {
         ProjectInfo info = null;
         if (updateReq.hasBomLocation()) {
             logger.info("Project info will be updated");
@@ -63,6 +70,17 @@ public class ProjectAction {
             } else {
                 logger.warn("Could not create ProjectInfo from bom at location: %s", updateReq.getBomLocation());
                 return false;
+            }
+        }
+        if (projectTags != null && !projectTags.isEmpty()) {
+            if (info == null) {
+                info = new ProjectInfo();
+            }
+            if (project.getTags() != null && !project.getTags().isEmpty()) {
+                logger.info("Merging Project Tags");
+                info.setTags(mergeTags(project.getTags(), projectTags));
+            } else {
+                info.setTags(projectTags.stream().map(ProjectTag::new).collect(Collectors.toList()));
             }
         }
 
@@ -110,10 +128,19 @@ public class ProjectAction {
         }
     }
 
-    private Optional<Project> findProject(List<Project> projects, String projectName, String projectVersion) {
-        // The project version may be null from the Dependency-Track server
-        return projects.stream()
-                .filter(project -> projectName.equals(project.getName()) && StringUtils.equals(projectVersion, project.getVersion()))
-                .findFirst();
+    private List<ProjectTag> mergeTags(List<ProjectTag> existingTags, Set<String> mavenTags) {
+        List<ProjectTag> projectTags = new LinkedList<>(existingTags);
+        for (String mavenTag : mavenTags) {
+            boolean exists = false;
+            for (ProjectTag projectTag : projectTags) {
+                if (projectTag.getName().equals(mavenTag)) {
+                    exists = true;
+                }
+            }
+            if (!exists) {
+                projectTags.add(new ProjectTag(mavenTag));
+            }
+        }
+        return projectTags;
     }
 }

@@ -16,6 +16,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
+import java.util.Set;
+
 import javax.inject.Inject;
 
 /**
@@ -56,6 +58,9 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Parameter(property = "dependency-track.isLatest", defaultValue = "false")
     private boolean isLatest;
 
+    @Parameter(property = "dependency-track.projectTags")
+    private Set<String> projectTags;
+
     private final UploadBomAction uploadBomAction;
 
     private final MetricsAction metricsAction;
@@ -76,7 +81,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         logger.info("Update Project Parent : %s", updateParent);
 
         try {
-            if (!uploadBomAction.upload(getBomLocation(), isLatest)) {
+            if (!uploadBomAction.upload(getBomLocation(), isLatest, projectTags)) {
                 handleFailure("Bom upload failed");
             }
             Project project = projectAction.getProject(projectName, projectVersion);
@@ -89,7 +94,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
                 updateReq.withParent(getProjectParent(parentName, parentVersion));
             }
             if (updateProjectInfo || updateParent) {
-                boolean projectUpdated = projectAction.updateProject(project, updateReq);
+                boolean projectUpdated = projectAction.updateProject(project, updateReq, projectTags);
                 if (!projectUpdated) {
                     logger.error("Failed to update project info");
                     throw new DependencyTrackException("Failed to update project info");
@@ -158,4 +163,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         this.isLatest = isLatest;
     }
 
+    void setProjectTags(Set<String> projectTags) {
+        this.projectTags = projectTags;
+    }
 }

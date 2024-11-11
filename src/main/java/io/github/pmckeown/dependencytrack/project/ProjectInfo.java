@@ -1,6 +1,9 @@
 package io.github.pmckeown.dependencytrack.project;
 
 import io.github.pmckeown.dependencytrack.Item;
+
+import java.util.List;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -20,6 +23,7 @@ public class ProjectInfo {
     private String swidTagId;
     private Boolean isLatest;
     private Item parent;
+    private List<ProjectTag> tags;
 
     public String getAuthor() {
         return author;
@@ -99,6 +103,14 @@ public class ProjectInfo {
 
     public void setIsLatest(Boolean isLatest) {
         this.isLatest = isLatest;
+    }
+
+    public List<ProjectTag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<ProjectTag> tags) {
+        this.tags = tags;
     }
 
     @Override

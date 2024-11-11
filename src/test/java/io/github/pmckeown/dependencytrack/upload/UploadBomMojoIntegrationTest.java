@@ -13,7 +13,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.TestMojoLoader.loadUploadBomMojo;
@@ -172,6 +174,23 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
         verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM))
                 .withRequestBody(
                         matchingJsonPath("$.isLatestProjectVersion", equalTo("true"))));
+    }
+
+    @Test
+    public void thatProjectTagsCanBeProvided() throws Exception {
+        stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
+
+        UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
+        uploadBomMojo.setLatest(true);
+        Set<String> tags = new HashSet<>();
+        tags.add("Backend");
+        tags.add("Team-1");
+        uploadBomMojo.setProjectTags(tags);
+        uploadBomMojo.execute();
+
+        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM))
+            .withRequestBody(
+                matchingJsonPath("$.projectTags", equalToJson("[{\"name\":\"Backend\"},{\"name\":\"Team-1\"}]"))));
     }
 
     @Test

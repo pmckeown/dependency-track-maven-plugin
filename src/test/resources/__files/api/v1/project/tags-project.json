@@ -1,0 +1,16 @@
+{
+  "name": "tags-project",
+  "version": "4.6.10",
+  "classifier": "APPLICATION",
+  "uuid": "8c8fcbd1-b569-4e98-849f-884afef20a2a",
+  "tags": [
+    {
+      "name": "backend"
+    },
+    {
+      "name": "Team-1"
+    }
+  ],
+  "active": true,
+  "isLatest": true
+}
