@@ -507,6 +507,10 @@
                                 </goals>
                                 <configuration>
                                     <updateProjectInfo>true</updateProjectInfo>
+                                    <isLatest>true</isLatest>
+                                    <projectTags>
+                                        <name>dog-food</name>
+                                    </projectTags>
                                 </configuration>
                             </execution>
                             <execution>
