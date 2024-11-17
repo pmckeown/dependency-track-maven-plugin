@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
@@ -19,7 +20,7 @@ public class ObjectMapperFactoryTest {
         JacksonObjectMapper om = new JacksonObjectMapper(ObjectMapperFactory.relaxedObjectMapper());
 
         List<Project> projects = om.readValue(IOUtils.toString(FileUtils.openInputStream(
-                new File("src/test/resources/__files/api/v1/project/get-all-projects.json"))),
+                new File("src/test/resources/__files/api/v1/project/get-all-projects.json")), StandardCharsets.UTF_8),
                 new GenericType<List<Project>>(){});
 
         assertNotNull(projects);

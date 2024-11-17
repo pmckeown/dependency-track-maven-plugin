@@ -8,7 +8,12 @@ import io.github.pmckeown.util.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Handles uploading BOMs
@@ -35,9 +40,15 @@ public class UploadBomAction {
     }
 
     public boolean upload(String bomLocation) throws DependencyTrackException {
+        return upload(bomLocation, false, Collections.emptySet());
+    }
+
+    public boolean upload(String bomLocation, boolean isLatest, Set<String> projectTags) throws DependencyTrackException {
         logger.info("Project Name: %s", commonConfig.getProjectName());
         logger.info("Project Version: %s", commonConfig.getProjectVersion());
+        logger.info("Project Tags: %s", StringUtils.join(projectTags, ","));
         logger.info("%s", commonConfig.getPollingConfig());
+
 
         Optional<String> encodedBomOptional = bomEncoder.encodeBom(bomLocation, logger);
         if (!encodedBomOptional.isPresent()) {
@@ -45,7 +56,7 @@ public class UploadBomAction {
             return false;
         }
 
-        Optional<UploadBomResponse> uploadBomResponse = doUpload(encodedBomOptional.get());
+        Optional<UploadBomResponse> uploadBomResponse = doUpload(encodedBomOptional.get(), isLatest, projectTags);
 
         if (commonConfig.getPollingConfig().isEnabled() && uploadBomResponse.isPresent()) {
             try {
@@ -74,11 +85,16 @@ public class UploadBomAction {
         });
     }
 
-    private Optional<UploadBomResponse> doUpload(String encodedBom) throws DependencyTrackException {
+    private Optional<UploadBomResponse> doUpload(String encodedBom, boolean isLatest, Set<String> projectTags) throws DependencyTrackException {
         try {
-            Response<UploadBomResponse> response = bomClient.uploadBom(new UploadBomRequest(
-                    commonConfig.getProjectName(), commonConfig.getProjectVersion(), true, encodedBom));
-            
+            Response<UploadBomResponse> response = bomClient.uploadBom(
+                new UploadBomRequest(commonConfig.getProjectName(),
+                                     commonConfig.getProjectVersion(),
+                                     true,
+                                     encodedBom,
+                                     isLatest,
+                                     projectTags));
+
             if (response.isSuccess()) {
                 logger.info("BOM uploaded to Dependency Track server");
                 return response.getBody();

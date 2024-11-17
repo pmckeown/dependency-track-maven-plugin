@@ -1,0 +1,23 @@
+{
+  "name": "dependency-track",
+  "version": "3.6.0-SNAPSHOT",
+  "uuid": "21ea26f5-f835-488e-bd72-a4f22516fbfe",
+  "lastBomImport": 1562480255118,
+  "metrics": {
+    "critical": 0,
+    "high": 0,
+    "medium": 1,
+    "low": 0,
+    "unassigned": 0,
+    "vulnerabilities": 1,
+    "vulnerableComponents": 1,
+    "components": 151,
+    "suppressed": 0,
+    "findingsTotal": 1,
+    "findingsAudited": 0,
+    "findingsUnaudited": 1,
+    "inheritedRiskScore": 3,
+    "firstOccurrence": 1562135708949,
+    "lastOccurrence": 1562482715111
+  }
+}

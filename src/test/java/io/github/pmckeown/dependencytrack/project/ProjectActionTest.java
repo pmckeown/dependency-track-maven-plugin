@@ -12,9 +12,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -55,7 +58,7 @@ public class ProjectActionTest {
 
     @Test
     public void thatProjectCanBeRetrievedByNameAndVersion() throws Exception {
-        doReturn(aSuccessResponse().withBody(aProjectList()).build()).when(projectClient).getProjects();
+        doReturn(aSuccessResponse().withBody(project2()).build()).when(projectClient).getProject(anyString(), anyString());
 
         Project project = projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
 
@@ -65,7 +68,7 @@ public class ProjectActionTest {
 
     @Test
     public void thatExceptionIsThrownWhenConnectionFails() {
-        doThrow(UnirestException.class).when(projectClient).getProjects();
+        doThrow(UnirestException.class).when(projectClient).getProject(anyString(), anyString());
 
         try {
             projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
@@ -74,20 +77,16 @@ public class ProjectActionTest {
         }
     }
 
-    @Test
-    public void thatANotFoundResponseResultsInAnException() {
-        doReturn(aNotFoundResponse()).when(projectClient).getProjects();
+    @Test(expected = DependencyTrackException.class)
+    public void thatANotFoundResponseResultsInAnException() throws DependencyTrackException {
+        doReturn(aNotFoundResponse()).when(projectClient).getProject(anyString(), anyString());
 
-        try {
-            projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
-        } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(DependencyTrackException.class)));
-        }
+        projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
     }
 
     @Test
     public void thatNoProjectsAreFoundAnExceptionIsThrown() {
-        doReturn(aSuccessResponse().build()).when(projectClient).getProjects();
+        doReturn(aSuccessResponse().build()).when(projectClient).getProject(anyString(), anyString());
 
         try {
             projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
@@ -96,15 +95,11 @@ public class ProjectActionTest {
         }
     }
 
-    @Test
-    public void thatRequestedProjectCannotBeFoundAnExceptionIsThrown() {
-        doReturn(aSuccessResponse().withBody(aProjectList()).build()).when(projectClient).getProjects();
+    @Test(expected = DependencyTrackException.class)
+    public void thatRequestedProjectCannotBeFoundAnExceptionIsThrown() throws DependencyTrackException {
+        doReturn(aSuccessResponse().build()).when(projectClient).getProject(anyString(), anyString());
 
-        try {
-            projectAction.getProject("missing-project", "unknown-version");
-        } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(DependencyTrackException.class)));
-        }
+        projectAction.getProject("missing-project", "unknown-version");
     }
 
     @Test
@@ -171,20 +166,71 @@ public class ProjectActionTest {
         }
     }
 
+    @Test
+    public void thatWhenProjectBomAndIsLatestTrueIsProvidedNoExceptionIsReturned() throws Exception {
+        doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
+        doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
+
+        UpdateRequest updateReq = new UpdateRequest();
+        updateReq.withBomLocation(String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+        assertTrue(projectAction.updateProject(project3(), updateReq));
+    }
+
+    @Test
+    public void thatWhenProjectBomAndIsLatestFalseIsProvidedNoExceptionIsReturned() throws Exception {
+        doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
+        doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
+
+        UpdateRequest updateReq = new UpdateRequest();
+        updateReq.withBomLocation(String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+        assertTrue(projectAction.updateProject(project1(), updateReq));
+    }
+
+    @Test
+    public void thatProjectTagsAreUpdated() throws Exception {
+        doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
+
+        Set<String> tags = new HashSet<>();
+        tags.add("Backend");
+        tags.add("Team-1");
+
+        List<ProjectTag> existingProjectTags = Collections.emptyList();
+        UpdateRequest updateReq = new UpdateRequest();
+        assertTrue(projectAction.updateProject(projectWithTags(existingProjectTags), updateReq, tags));
+    }
+
+    @Test
+    public void thatProjectTagsAreUpdatedAndMerged() throws Exception {
+        doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
+
+        Set<String> tags = new HashSet<>();
+        tags.add("Backend");
+        tags.add("Team-1");
+
+        List<ProjectTag> existingProjectTags = new LinkedList<>();
+        existingProjectTags.add(new ProjectTag("Frontend"));
+        UpdateRequest updateReq = new UpdateRequest();
+        assertTrue(projectAction.updateProject(projectWithTags(existingProjectTags), updateReq, tags));
+    }
+
     private Response aNotFoundResponse() {
         return new Response(404, "Not Found", false);
     }
 
     private Project project1() {
-        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null);
+        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null, false, Collections.emptyList());
     }
 
     private Project project2() {
-        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null);
+        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null, false, Collections.emptyList());
     }
 
-    private List<Project> aProjectList() {
-        return Arrays.asList(project1(), project2());
+    private Project project3() {
+        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null, true, Collections.emptyList());
+    }
+
+    private Project projectWithTags(List<ProjectTag> tags) {
+        return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null, false, tags);
     }
 
 }
