@@ -216,14 +216,40 @@ Dependency-Track, so this has no default to allow for blank values.
 **Note:** If the parent cannot be found on the Dependency-Track server, the BOM upload will not be attempted in order to
 prevent a project being incorrectly created or updated the server.
 
-| Property          | Required | Default Value          | Example Values            |
-|-------------------|----------|------------------------|---------------------------|
-| bomLocation       | false    | target/bom.xml         | target/custom-bom.xml     |
-| updateProjectInfo | false    | false                  | false                     |
-| updateParent      | false    | false                  | true                      |
-| parentName        | false    | ${project.parent.name} | my-name-override          |
-| parentVersion     | false    |                        | ${project.parent.version} |
-| isLatest          | false    | false                  | true                      |
+| Property             | Required | Default Value          | Example Values            |
+|----------------------|----------|------------------------|---------------------------|
+| bomLocation          | false    | target/bom.xml         | target/custom-bom.xml     |
+| updateProjectInfo    | false    | false                  | false                     |
+| updateParent         | false    | false                  | true                      |
+| parentName           | false    | ${project.parent.name} | my-name-override          |
+| parentVersion        | false    |                        | ${project.parent.version} |
+| isLatest             | false    | false                  | true                      |
+| projectTags[].name   | false    | false                  | <name>tag1</name>         |
+
+The `isLatest` option sets the flag on the project to indicate that it is the latest version.
+
+The `projectTags` option allows for tags to be added to a project.  This adds project tags only, and doesn't reconcile 
+the tags on the remote server, so if they are removed from the list or modified, they will need to be removed or 
+modified on the server to reflect the new state.
+
+Example:
+
+```xml
+<execution>
+    <id>upload-bom</id>
+    <phase>verify</phase>
+    <goals>
+        <goal>upload-bom</goal>
+    </goals>
+    <configuration>
+        <updateProjectInfo>true</updateProjectInfo>
+        <isLatest>true</isLatest>
+        <projectTags>
+            <name>tag1</name>
+        </projectTags>
+    </configuration>
+</execution>
+```
 
 ### Get Project Findings
 After a BOM upload, the best way to determine if there are any vulnerabilities is to use the `findings` goal which is 
