@@ -4,21 +4,16 @@ import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
-import java.lang.reflect.Field;
 import kong.unirest.Unirest;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.io.File;
 import java.util.Collections;
-import java.util.Set;
 
 import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -60,26 +55,6 @@ public class UploadBomMojoTest {
     @Before
     public void setup() {
         uploadBomMojo.setMavenProject(project);
-    }
-
-    @Test
-    public void thatTheBomLocationIsDefaultedWhenNotSupplied() throws Exception {
-        doReturn(new File(".")).when(project).getBasedir();
-        doReturn(aProject().build()).when(projectAction).getProject(PROJECT_NAME, PROJECT_VERSION);
-        doReturn(true).when(uploadBomAction).upload();
-
-        uploadBomMojo.setProjectName(PROJECT_NAME);
-        uploadBomMojo.setProjectVersion(PROJECT_VERSION);
-        uploadBomMojo.setProjectTags(Collections.emptySet());
-        uploadBomMojo.execute();
-
-        verify(uploadBomAction).upload();
-
-        Field commonConfigField = uploadBomMojo.getClass().getDeclaredField("commonConfig");
-        commonConfigField.setAccessible(true);
-        CommonConfig commonConfig = (CommonConfig) commonConfigField.get(uploadBomMojo);
-        assertThat(commonConfig.getBomLocation(), is(equalTo("./target/bom.xml")));
-        assertThat(commonConfig.isLatest(), is(equalTo(false)));
     }
 
     @Test

@@ -3,7 +3,6 @@ package io.github.pmckeown.dependencytrack.upload;
 import io.github.pmckeown.dependencytrack.*;
 import io.github.pmckeown.util.BomEncoder;
 import io.github.pmckeown.util.Logger;
-import kong.unirest.UnirestException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -23,7 +22,6 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 

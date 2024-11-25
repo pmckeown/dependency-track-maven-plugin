@@ -1,8 +1,13 @@
 package io.github.pmckeown.dependencytrack;
 
+import io.github.pmckeown.util.Logger;
 import java.util.Collections;
 import java.util.Set;
+import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
@@ -29,9 +34,7 @@ public class CommonConfig {
     private boolean autoCreate = true;
     private Set<String> projectTags = Collections.emptySet();
 
-    public CommonConfig() {
-        // For dependency injection
-    }
+    protected Logger logger = new Logger(new SystemStreamLog());
 
     public String getProjectName() {
         return projectName;
@@ -128,13 +131,19 @@ public class CommonConfig {
         this.mavenProject = mavenProject;
     }
 
-    public String getBomLocation() {
-        return bomLocation;
-    }
-
     public void setBomLocation(String bomLocation) {
         this.bomLocation = bomLocation;
     }
+    public String getBomLocation() {
+        if (StringUtils.isNotBlank(bomLocation)) {
+            return bomLocation;
+        } else {
+            String defaultLocation = mavenProject.getBasedir() + "/target/bom.xml";
+            this.logger.debug("bomLocation not supplied so using: %s", defaultLocation);
+            return defaultLocation;
+        }
+    }
+
     public boolean isAutoCreate() {
         return autoCreate;
     }
