@@ -218,15 +218,16 @@ Dependency-Track, so this has no default to allow for blank values.
 **Note:** If the parent cannot be found on the Dependency-Track server, the BOM upload will not be attempted in order to
 prevent a project being incorrectly created or updated the server.
 
-| Property             | Required | Default Value          | Example Values            |
-|----------------------|----------|------------------------|---------------------------|
-| bomLocation          | false    | target/bom.xml         | target/custom-bom.xml     |
-| updateProjectInfo    | false    | false                  | false                     |
-| updateParent         | false    | false                  | true                      |
-| parentName           | false    | ${project.parent.name} | my-name-override          |
-| parentVersion        | false    |                        | ${project.parent.version} |
-| isLatest             | false    | false                  | true                      |
-| projectTags[].name   | false    | false                  | <name>tag1</name>         |
+| Property           | Required | Default Value          | Example Values                        |
+|--------------------|----------|------------------------|---------------------------------------|
+| bomLocation        | false    | target/bom.xml         | target/custom-bom.xml                 |
+| updateProjectInfo  | false    | false                  | false                                 |
+| updateParent       | false    | false                  | true                                  |
+| parentUuid         | false    |                        | 628df5eb-a7fe-4c3f-831c-4536839a05ed  |
+| parentName         | false    | ${project.parent.name} | my-name-override                      |
+| parentVersion      | false    |                        | ${project.parent.version}             |
+| isLatest           | false    | false                  | true                                  |
+| projectTags[].name | false    | false                  | <name>tag1</name>                     |
 
 The `isLatest` option sets the flag on the project to indicate that it is the latest version.
 
