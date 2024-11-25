@@ -17,19 +17,17 @@ import io.github.pmckeown.dependencytrack.project.ProjectTag;
  */
 public class UploadBomRequest {
 
-    private final UUID project;
     private final String projectName;
     private final String projectVersion;
     private final boolean autoCreate;
     private final String base64EncodedBom;
     private final boolean isLatest;
     private final List<ProjectTag> projectTags;
-    private final UUID parentUUID;
+    private final String parentUUID;
     private final String parentName;
     private final String parentVersion;
 
     UploadBomRequest(CommonConfig commonConfig, String base64EncodedBom) {
-        this.project = commonConfig.getProjectUuid();
         this.projectName = commonConfig.getProjectName();
         this.projectVersion = commonConfig.getProjectVersion();
         this.autoCreate = commonConfig.isAutoCreate();
@@ -74,7 +72,7 @@ public class UploadBomRequest {
         return projectTags;
     }
 
-    public UUID getParentUUID() {
+    public String getParentUUID() {
         return parentUUID;
     }
 

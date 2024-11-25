@@ -51,7 +51,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     private boolean updateParent;
 
     @Parameter(defaultValue = "${project.parent.uuid}", property = "dependency-track.parentUuid")
-    private UUID parentUuid;
+    private String parentUuid;
 
     @Parameter(defaultValue = "${project.parent.name}", property = "dependency-track.parentName")
     private String parentName;
@@ -167,9 +167,9 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         this.updateParent = updateParent;
     }
 
-    public UUID getParentUuid() { return parentUuid; }
+    public String getParentUuid() { return parentUuid; }
 
-    public void setParentUuid(UUID parentUuid) { this.parentUuid = parentUuid; }
+    public void setParentUuid(String parentUuid) { this.parentUuid = parentUuid; }
 
     void setParentName(String parentName) {
         this.parentName = parentName;

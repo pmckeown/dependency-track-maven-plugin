@@ -17,7 +17,6 @@ import org.apache.maven.project.MavenProject;
 @Singleton
 public class CommonConfig {
 
-    private UUID projectUuid;
     private String projectName;
     private String projectVersion;
     private String dependencyTrackBaseUrl;
@@ -27,7 +26,7 @@ public class CommonConfig {
     private MavenProject mavenProject;
     private boolean updateProjectInfo;
     private boolean updateParent;
-    private UUID parentUuid;
+    private String parentUuid;
     private String parentName;
     private String parentVersion;
     private boolean isLatest;
@@ -35,10 +34,6 @@ public class CommonConfig {
     private Set<String> projectTags = Collections.emptySet();
 
     protected Logger logger = new Logger(new SystemStreamLog());
-
-    public UUID getProjectUuid() { return projectUuid; }
-
-    public void setProjectUuid(UUID projectUuid) { this.projectUuid = projectUuid; }
 
     public String getProjectName() {
         return projectName;
@@ -104,9 +99,9 @@ public class CommonConfig {
     }
 
 
-    public UUID getParentUuid() { return parentUuid; }
+    public String getParentUuid() { return parentUuid; }
 
-    public void setParentUuid(UUID parentUuid) { this.parentUuid = parentUuid; }
+    public void setParentUuid(String parentUuid) { this.parentUuid = parentUuid; }
 
     public String getParentName() {
         return parentName;
