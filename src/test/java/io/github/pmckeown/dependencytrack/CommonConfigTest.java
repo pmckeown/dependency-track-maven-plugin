@@ -34,7 +34,7 @@ public class CommonConfigTest {
     }
 
     @Test
-    public void thatTheBomLocationIsDefaultedWhenNotSupplied() throws Exception {
+    public void thatTheBomLocationIsDefaultedWhenNotSupplied() {
         doReturn(new File(".")).when(project).getBasedir();
 
         assertThat(commonConfig.getBomLocation(), is(equalTo("./target/bom.xml")));

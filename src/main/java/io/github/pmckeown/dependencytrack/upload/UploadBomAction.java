@@ -11,7 +11,6 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -55,8 +54,7 @@ public class UploadBomAction {
             return false;
         }
 
-        Optional<UploadBomResponse> uploadBomResponse = doUpload(encodedBomOptional.get(),
-            commonConfig.isLatest(), commonConfig.getProjectTags());
+        Optional<UploadBomResponse> uploadBomResponse = doUpload(encodedBomOptional.get());
 
         if (commonConfig.getPollingConfig().isEnabled() && uploadBomResponse.isPresent()) {
             try {
@@ -85,7 +83,7 @@ public class UploadBomAction {
         });
     }
 
-    private Optional<UploadBomResponse> doUpload(String encodedBom, boolean isLatest, Set<String> projectTags) throws DependencyTrackException {
+    private Optional<UploadBomResponse> doUpload(String encodedBom) throws DependencyTrackException {
         try {
             Response<UploadBomResponse> response = bomClient.uploadBom(
                 new UploadBomRequest(commonConfig,
