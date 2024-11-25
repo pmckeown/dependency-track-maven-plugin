@@ -215,8 +215,9 @@ parent name will be defaulted to that POM's project parent name. If you wish to 
 no parent set within the `pom.xml`, then explicitly set `parentName` and `parentVersion`. `projectVersion` is optional 
 Dependency-Track, so this has no default to allow for blank values.
 
-**Note:** If the parent cannot be found on the Dependency-Track server, the BOM upload will not be attempted in order to
-prevent a project being incorrectly created or updated the server.
+**Note 1:** If both `parentUuid` and `parentName` / `parentVersion` are provided in configuration `parentUuid` will take precedence.
+
+**Note 2:** If a non-existing parent information is provided, the plugin will fail with `404 Not found`. 
 
 | Property           | Required | Default Value          | Example Values                        |
 |--------------------|----------|------------------------|---------------------------------------|
