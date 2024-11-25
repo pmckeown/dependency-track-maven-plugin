@@ -4,6 +4,7 @@ import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
+import java.lang.reflect.Field;
 import kong.unirest.Unirest;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -24,9 +25,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -66,21 +64,22 @@ public class UploadBomMojoTest {
 
     @Test
     public void thatTheBomLocationIsDefaultedWhenNotSupplied() throws Exception {
-        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Boolean> argumentCaptor2 = ArgumentCaptor.forClass(Boolean.class);
-        ArgumentCaptor<Set<String>> argumentCaptor3 = ArgumentCaptor.forClass(Set.class);
         doReturn(new File(".")).when(project).getBasedir();
         doReturn(aProject().build()).when(projectAction).getProject(PROJECT_NAME, PROJECT_VERSION);
-        doReturn(true).when(uploadBomAction).upload(anyString(), anyBoolean(), anySet());
+        doReturn(true).when(uploadBomAction).upload();
 
         uploadBomMojo.setProjectName(PROJECT_NAME);
         uploadBomMojo.setProjectVersion(PROJECT_VERSION);
         uploadBomMojo.setProjectTags(Collections.emptySet());
         uploadBomMojo.execute();
 
-        verify(uploadBomAction).upload(argumentCaptor.capture(), argumentCaptor2.capture(), argumentCaptor3.capture());
-        assertThat(argumentCaptor.getValue(), is(equalTo("./target/bom.xml")));
-        assertThat(argumentCaptor2.getValue(), is(equalTo(false)));
+        verify(uploadBomAction).upload();
+
+        Field commonConfigField = uploadBomMojo.getClass().getDeclaredField("commonConfig");
+        commonConfigField.setAccessible(true);
+        CommonConfig commonConfig = (CommonConfig) commonConfigField.get(uploadBomMojo);
+        assertThat(commonConfig.getBomLocation(), is(equalTo("./target/bom.xml")));
+        assertThat(commonConfig.isLatest(), is(equalTo(false)));
     }
 
     @Test
@@ -145,7 +144,7 @@ public class UploadBomMojoTest {
 
     @Test
     public void thatWhenUpdateParentFailsTheLoggerIsCalledAndBuildFails() throws Exception {
-        doReturn(true).when(uploadBomAction).upload(anyString(), anyBoolean(), anySet());
+        doReturn(true).when(uploadBomAction).upload();
         doReturn(aProject().withName("project-parent").withVersion("1.2.3").build())
                 .when(projectAction).getProject("project-parent", "1.2.3");
 
@@ -166,7 +165,7 @@ public class UploadBomMojoTest {
 
     @Test
     public void thatUpdateParentFailsWhenParentNameIsNull() throws Exception {
-        doReturn(true).when(uploadBomAction).upload(anyString(), anyBoolean(), anySet());
+        doReturn(true).when(uploadBomAction).upload();
 
         uploadBomMojo.setParentName(null);
         uploadBomMojo.setParentVersion(null);

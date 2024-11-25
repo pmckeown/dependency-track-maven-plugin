@@ -121,6 +121,6 @@ public class BomClientIntegrationTest extends AbstractDependencyTrackIntegration
      */
 
     private UploadBomRequest aBom() {
-        return new UploadBomRequest(PROJECT_NAME, PROJECT_VERSION, false, BASE_64_ENCODED_BOM, false, Collections.emptySet());
+        return new UploadBomRequest(getCommonConfig(), BASE_64_ENCODED_BOM);
     }
 }

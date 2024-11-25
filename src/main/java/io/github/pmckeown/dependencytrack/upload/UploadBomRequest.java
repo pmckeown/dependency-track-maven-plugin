@@ -1,5 +1,6 @@
 package io.github.pmckeown.dependencytrack.upload;
 
+import io.github.pmckeown.dependencytrack.CommonConfig;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,16 +24,16 @@ public class UploadBomRequest {
     private final boolean isLatest;
     private final List<ProjectTag> projectTags;
 
-    UploadBomRequest(String projectName, String projectVersion, boolean autoCreate, String base64EncodedBom, boolean isLatest, Set<String> projectTags) {
-        this.projectName = projectName;
-        this.projectVersion = projectVersion;
-        this.autoCreate = autoCreate;
+    UploadBomRequest(CommonConfig commonConfig, String base64EncodedBom) {
+        this.projectName = commonConfig.getProjectName();
+        this.projectVersion = commonConfig.getProjectVersion();
+        this.autoCreate = commonConfig.isAutoCreate();
         this.base64EncodedBom = base64EncodedBom;
-        this.isLatest = isLatest;
-        if (projectTags == null) {
+        this.isLatest = commonConfig.isLatest();
+        if (commonConfig.getProjectTags() == null) {
             this.projectTags = null;
         } else {
-            this.projectTags = projectTags.stream().map(ProjectTag::new).collect(Collectors.toList());
+            this.projectTags = commonConfig.getProjectTags().stream().map(ProjectTag::new).collect(Collectors.toList());
         }
     }
 

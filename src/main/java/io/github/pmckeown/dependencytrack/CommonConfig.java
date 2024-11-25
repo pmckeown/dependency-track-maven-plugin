@@ -1,6 +1,10 @@
 package io.github.pmckeown.dependencytrack;
 
+import java.util.Collections;
+import java.util.Set;
 import javax.inject.Singleton;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Holder for common configuration supplied on Mojo execution
@@ -15,6 +19,15 @@ public class CommonConfig {
     private String dependencyTrackBaseUrl;
     private String apiKey;
     private PollingConfig pollingConfig;
+    private String bomLocation;
+    private MavenProject mavenProject;
+    private boolean updateProjectInfo;
+    private boolean updateParent;
+    private String parentName;
+    private String parentVersion;
+    private boolean isLatest;
+    private boolean autoCreate = true;
+    private Set<String> projectTags = Collections.emptySet();
 
     public CommonConfig() {
         // For dependency injection
@@ -59,5 +72,70 @@ public class CommonConfig {
     public void setPollingConfig(PollingConfig pollingConfig) {
         this.pollingConfig = pollingConfig;
     }
+    public Set<String> getProjectTags() {
+        return projectTags;
+    }
 
+    public void setProjectTags(Set<String> projectTags) {
+        this.projectTags = projectTags;
+    }
+
+    public boolean isLatest() {
+        return isLatest;
+    }
+
+    public void setLatest(boolean latest) {
+        isLatest = latest;
+    }
+
+    public String getParentVersion() {
+        return parentVersion;
+    }
+
+    public void setParentVersion(String parentVersion) {
+        this.parentVersion = parentVersion;
+    }
+
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+
+    public boolean isUpdateParent() {
+        return updateParent;
+    }
+
+    public void setUpdateParent(boolean updateParent) {
+        this.updateParent = updateParent;
+    }
+
+    public boolean isUpdateProjectInfo() {
+        return updateProjectInfo;
+    }
+
+    public void setUpdateProjectInfo(boolean updateProjectInfo) {
+        this.updateProjectInfo = updateProjectInfo;
+    }
+
+    public MavenProject getMavenProject() {
+        return mavenProject;
+    }
+
+    public void setMavenProject(MavenProject mavenProject) {
+        this.mavenProject = mavenProject;
+    }
+
+    public String getBomLocation() {
+        return bomLocation;
+    }
+
+    public void setBomLocation(String bomLocation) {
+        this.bomLocation = bomLocation;
+    }
+    public boolean isAutoCreate() {
+        return autoCreate;
+    }
 }

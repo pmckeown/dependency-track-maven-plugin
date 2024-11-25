@@ -78,10 +78,11 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
+        enrichCommonConfig();
         logger.info("Update Project Parent : %s", updateParent);
 
         try {
-            if (!uploadBomAction.upload(getBomLocation(), isLatest, projectTags)) {
+            if (!uploadBomAction.upload()) {
                 handleFailure("Bom upload failed");
             }
             Project project = projectAction.getProject(projectName, projectVersion);
@@ -107,6 +108,16 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         }
     }
 
+    private void enrichCommonConfig() {
+        this.commonConfig.setBomLocation(getBomLocation());
+        this.commonConfig.setMavenProject(mavenProject);
+        this.commonConfig.setUpdateProjectInfo(updateProjectInfo);
+        this.commonConfig.setUpdateParent(updateParent);
+        this.commonConfig.setParentName(parentName);
+        this.commonConfig.setParentVersion(parentVersion);
+        this.commonConfig.setLatest(isLatest);
+        this.commonConfig.setProjectTags(projectTags);
+    }
     private Project getProjectParent(String parentName, String parentVersion)
             throws DependencyTrackException {
         if (StringUtils.isEmpty(parentName)) {

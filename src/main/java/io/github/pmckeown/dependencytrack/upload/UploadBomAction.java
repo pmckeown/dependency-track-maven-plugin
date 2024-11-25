@@ -39,24 +39,24 @@ public class UploadBomAction {
         this.logger = logger;
     }
 
-    public boolean upload(String bomLocation) throws DependencyTrackException {
-        return upload(bomLocation, false, Collections.emptySet());
-    }
-
-    public boolean upload(String bomLocation, boolean isLatest, Set<String> projectTags) throws DependencyTrackException {
+    public boolean upload() throws DependencyTrackException {
         logger.info("Project Name: %s", commonConfig.getProjectName());
         logger.info("Project Version: %s", commonConfig.getProjectVersion());
-        logger.info("Project Tags: %s", StringUtils.join(projectTags, ","));
+        logger.info("Project is latest: %s", commonConfig.isLatest());
+        logger.info("Project Tags: %s", StringUtils.join(commonConfig.getProjectTags(), ","));
+        logger.info("Parent Name: %s", commonConfig.getParentName());
+        logger.info("Parent Version: %s", commonConfig.getParentVersion());
         logger.info("%s", commonConfig.getPollingConfig());
 
 
-        Optional<String> encodedBomOptional = bomEncoder.encodeBom(bomLocation, logger);
+        Optional<String> encodedBomOptional = bomEncoder.encodeBom(commonConfig.getBomLocation(), logger);
         if (!encodedBomOptional.isPresent()) {
-            logger.error("No bom.xml could be located at: %s", bomLocation);
+            logger.error("No bom.xml could be located at: %s", commonConfig.getBomLocation());
             return false;
         }
 
-        Optional<UploadBomResponse> uploadBomResponse = doUpload(encodedBomOptional.get(), isLatest, projectTags);
+        Optional<UploadBomResponse> uploadBomResponse = doUpload(encodedBomOptional.get(),
+            commonConfig.isLatest(), commonConfig.getProjectTags());
 
         if (commonConfig.getPollingConfig().isEnabled() && uploadBomResponse.isPresent()) {
             try {
@@ -88,12 +88,10 @@ public class UploadBomAction {
     private Optional<UploadBomResponse> doUpload(String encodedBom, boolean isLatest, Set<String> projectTags) throws DependencyTrackException {
         try {
             Response<UploadBomResponse> response = bomClient.uploadBom(
-                new UploadBomRequest(commonConfig.getProjectName(),
-                                     commonConfig.getProjectVersion(),
-                                     true,
-                                     encodedBom,
-                                     isLatest,
-                                     projectTags));
+                new UploadBomRequest(commonConfig,
+                                     encodedBom
+                )
+            );
 
             if (response.isSuccess()) {
                 logger.info("BOM uploaded to Dependency Track server");
