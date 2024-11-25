@@ -2,7 +2,6 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
