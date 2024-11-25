@@ -8,6 +8,7 @@ import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.dependencytrack.project.UpdateRequest;
 import io.github.pmckeown.util.Logger;
+import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -48,6 +49,9 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     @Parameter(property = "dependency-track.updateParent")
     private boolean updateParent;
+
+    @Parameter(defaultValue = "${project.parent.uuid}", property = "dependency-track.parentUuid")
+    private UUID parentUuid;
 
     @Parameter(defaultValue = "${project.parent.name}", property = "dependency-track.parentName")
     private String parentName;
@@ -113,6 +117,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         this.commonConfig.setMavenProject(mavenProject);
         this.commonConfig.setUpdateProjectInfo(updateProjectInfo);
         this.commonConfig.setUpdateParent(updateParent);
+        this.commonConfig.setParentUuid(parentUuid);
         this.commonConfig.setParentName(parentName);
         this.commonConfig.setParentVersion(parentVersion);
         this.commonConfig.setLatest(isLatest);
@@ -161,6 +166,10 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     void setUpdateParent(boolean updateParent) {
         this.updateParent = updateParent;
     }
+
+    public UUID getParentUuid() { return parentUuid; }
+
+    public void setParentUuid(UUID parentUuid) { this.parentUuid = parentUuid; }
 
     void setParentName(String parentName) {
         this.parentName = parentName;
