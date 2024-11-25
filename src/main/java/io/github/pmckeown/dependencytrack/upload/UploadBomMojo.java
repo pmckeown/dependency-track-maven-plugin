@@ -8,6 +8,7 @@ import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.dependencytrack.project.UpdateRequest;
 import io.github.pmckeown.util.Logger;
+import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -49,6 +50,9 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Parameter(property = "dependency-track.updateParent")
     private boolean updateParent;
 
+    @Parameter(defaultValue = "${project.parent.uuid}", property = "dependency-track.parentUuid")
+    private String parentUuid;
+
     @Parameter(defaultValue = "${project.parent.name}", property = "dependency-track.parentName")
     private String parentName;
 
@@ -78,10 +82,11 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
+        enrichCommonConfig();
         logger.info("Update Project Parent : %s", updateParent);
 
         try {
-            if (!uploadBomAction.upload(getBomLocation(), isLatest, projectTags)) {
+            if (!uploadBomAction.upload()) {
                 handleFailure("Bom upload failed");
             }
             Project project = projectAction.getProject(projectName, projectVersion);
@@ -107,6 +112,17 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         }
     }
 
+    private void enrichCommonConfig() {
+        this.commonConfig.setBomLocation(getBomLocation());
+        this.commonConfig.setMavenProject(mavenProject);
+        this.commonConfig.setUpdateProjectInfo(updateProjectInfo);
+        this.commonConfig.setUpdateParent(updateParent);
+        this.commonConfig.setParentUuid(parentUuid);
+        this.commonConfig.setParentName(parentName);
+        this.commonConfig.setParentVersion(parentVersion);
+        this.commonConfig.setLatest(isLatest);
+        this.commonConfig.setProjectTags(projectTags);
+    }
     private Project getProjectParent(String parentName, String parentVersion)
             throws DependencyTrackException {
         if (StringUtils.isEmpty(parentName)) {
@@ -150,6 +166,10 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     void setUpdateParent(boolean updateParent) {
         this.updateParent = updateParent;
     }
+
+    public String getParentUuid() { return parentUuid; }
+
+    public void setParentUuid(String parentUuid) { this.parentUuid = parentUuid; }
 
     void setParentName(String parentName) {
         this.parentName = parentName;
