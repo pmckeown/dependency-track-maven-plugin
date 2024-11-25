@@ -3,12 +3,10 @@ package io.github.pmckeown.dependencytrack;
 import io.github.pmckeown.util.Logger;
 import java.util.Collections;
 import java.util.Set;
-import javax.inject.Inject;
+import java.util.UUID;
 import javax.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -19,6 +17,7 @@ import org.apache.maven.project.MavenProject;
 @Singleton
 public class CommonConfig {
 
+    private UUID projectUuid;
     private String projectName;
     private String projectVersion;
     private String dependencyTrackBaseUrl;
@@ -28,6 +27,7 @@ public class CommonConfig {
     private MavenProject mavenProject;
     private boolean updateProjectInfo;
     private boolean updateParent;
+    private UUID parentUuid;
     private String parentName;
     private String parentVersion;
     private boolean isLatest;
@@ -35,6 +35,10 @@ public class CommonConfig {
     private Set<String> projectTags = Collections.emptySet();
 
     protected Logger logger = new Logger(new SystemStreamLog());
+
+    public UUID getProjectUuid() { return projectUuid; }
+
+    public void setProjectUuid(UUID projectUuid) { this.projectUuid = projectUuid; }
 
     public String getProjectName() {
         return projectName;
@@ -99,6 +103,11 @@ public class CommonConfig {
         this.parentVersion = parentVersion;
     }
 
+
+    public UUID getParentUuid() { return parentUuid; }
+
+    public void setParentUuid(UUID parentUuid) { this.parentUuid = parentUuid; }
+
     public String getParentName() {
         return parentName;
     }
@@ -107,25 +116,17 @@ public class CommonConfig {
         this.parentName = parentName;
     }
 
-    public boolean isUpdateParent() {
-        return updateParent;
-    }
+    public boolean isUpdateParent() { return updateParent; }
 
     public void setUpdateParent(boolean updateParent) {
         this.updateParent = updateParent;
     }
 
-    public boolean isUpdateProjectInfo() {
-        return updateProjectInfo;
-    }
+    public boolean isUpdateProjectInfo() { return updateProjectInfo; }
 
-    public void setUpdateProjectInfo(boolean updateProjectInfo) {
-        this.updateProjectInfo = updateProjectInfo;
-    }
+    public void setUpdateProjectInfo(boolean updateProjectInfo) { this.updateProjectInfo = updateProjectInfo; }
 
-    public MavenProject getMavenProject() {
-        return mavenProject;
-    }
+    public MavenProject getMavenProject() { return mavenProject; }
 
     public void setMavenProject(MavenProject mavenProject) {
         this.mavenProject = mavenProject;
@@ -138,7 +139,7 @@ public class CommonConfig {
         if (StringUtils.isNotBlank(bomLocation)) {
             return bomLocation;
         } else {
-            String defaultLocation = mavenProject.getBasedir() + "/target/bom.xml";
+            String defaultLocation = getMavenProject().getBasedir() + "/target/bom.xml";
             this.logger.debug("bomLocation not supplied so using: %s", defaultLocation);
             return defaultLocation;
         }

@@ -32,6 +32,9 @@ import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
  */
 public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
 
+    @Parameter(required = false, property = "dependency-track.projectUuid")
+    protected String projectUuid;
+
     @Parameter(required = true, defaultValue = "${project.artifactId}", property = "dependency-track.projectName")
     protected String projectName;
 

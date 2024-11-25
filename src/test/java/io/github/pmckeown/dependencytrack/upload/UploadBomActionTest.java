@@ -131,7 +131,7 @@ public class UploadBomActionTest {
     }
 
     private Response aNotFoundResponse() {
-        return new Response(404, "Not Found", false);
+        return new Response(404, "Not Found", false, Optional.of("The parent component could not be found."));
     }
 
 }
