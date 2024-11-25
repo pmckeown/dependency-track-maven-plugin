@@ -7,7 +7,7 @@
 
     <groupId>io.github.pmckeown</groupId>
     <artifactId>dependency-track-maven-plugin</artifactId>
-    <version>1.8.1-SNAPSHOT</version>
+    <version>1.8.2-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Dependency Track Maven Plugin</name>
@@ -65,8 +65,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
         <maven.version>3.9.5</maven.version>
     </properties>
 
@@ -218,8 +216,14 @@
                     <version>3.3.1</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
+                    <version>3.13.0</version>
+                    <configuration>
+                        <release>8</release>
+                        <source>8</source>
+                        <target>8</target>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-plugin-plugin</artifactId>
