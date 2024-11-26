@@ -3,7 +3,6 @@ package io.github.pmckeown.dependencytrack;
 import io.github.pmckeown.util.Logger;
 import java.util.Collections;
 import java.util.Set;
-import java.util.UUID;
 import javax.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.logging.SystemStreamLog;
