@@ -251,6 +251,67 @@ Example:
 </execution>
 ```
 
+#### Suppress Vulnerabilities
+
+You can also suppress certain vulnerabilities in the XML configuration, if you believe that they don't affect the project 
+and can't be exploited. The suppression will be applied during the upload of the BOM and thus won't taken into account 
+for other goals following the upload. This way goals like `findings` or `metrics` won't fail because of the suppressed 
+vulnerabilities, if they are configured to do so.
+
+You can enter a list of vulnerabilities to be suppressed like so:
+
+**XML Configuration Example**
+```xml
+<configuration>
+    <suppressions>
+		<suppression>
+			<cve>CVE-2022-41853</cve>
+			<state>NOT_AFFECTED</state>
+			<justification>CODE_NOT_REACHABLE</justification>
+			<details>Test dependency</details>
+		</suppression>
+		<suppression>
+			<cve>CVE-2021-42392</cve>
+		</suppression>
+	</suppressions>
+</configuration>
+```
+
+| Property                  | Required | Default Value |
+|---------------------------|----------|---------------|
+| suppression               | false    | N/A           |
+| suppression.cve           | true     | N/A           |
+| suppression.state         | false    | NOT_AFFECTED  |
+| suppression.justification | false    | NOT_SET       |
+| suppression.details       | false    | N/A           |
+
+All possible values for state are:
+
+  * NOT_AFFECTED
+  * FALSE_POSITIVE
+  * IN_TRIAGE
+  * EXPLOITABLE
+  * NOT_SET
+  * RESOLVED
+  
+All possible values for justification are:
+
+  * CODE_NOT_PRESENT
+  * CODE_NOT_REACHABLE
+  * REQUIRES_CONFIGURATION
+  * REQUIRES_DEPENDENCY
+  * REQUIRES_ENVIRONMENT
+  * PROTECTED_BY_COMPILER
+  * PROTECTED_AT_RUNTIME
+  * PROTECTED_AT_PERIMETER
+  * PROTECTED_BY_MITIGATING_CONTROL
+  * NOT_SET
+  
+**Notes:** 
+* The configured vulnerabilities will always be suppressed at the Dependency Track server regardless of the state.
+* The justification can only have another value than NOT_SET when the state is set to NOT_AFFECTED. Otherwise the 
+justification defaults back to NOT_SET.
+
 ### Get Project Findings
 After a BOM upload, the best way to determine if there are any vulnerabilities is to use the `findings` goal which is 
 usable immediately after an upload.  Other goals, such as `metrics` and `score` pull down information from the
