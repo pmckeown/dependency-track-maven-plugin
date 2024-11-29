@@ -100,7 +100,9 @@ public class CommonConfig {
 
     public String getParentUuid() { return parentUuid; }
 
-    public void setParentUuid(String parentUuid) { this.parentUuid = parentUuid; }
+    public void setParentUuid(String parentUuid) { 
+        this.parentUuid = parentUuid; 
+    }
 
     public String getParentName() {
         return parentName;
