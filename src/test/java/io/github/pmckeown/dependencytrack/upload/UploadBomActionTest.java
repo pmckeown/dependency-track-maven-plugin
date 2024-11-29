@@ -3,7 +3,6 @@ package io.github.pmckeown.dependencytrack.upload;
 import io.github.pmckeown.dependencytrack.*;
 import io.github.pmckeown.util.BomEncoder;
 import io.github.pmckeown.util.Logger;
-import kong.unirest.UnirestException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -23,7 +22,6 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -52,33 +50,34 @@ public class UploadBomActionTest {
 
     @Test
     public void thatWhenNoBomIsFoundThenFalseIsReturned() throws Exception {
-        doReturn(Optional.empty()).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
-        boolean success = uploadBomAction.upload(BOM_LOCATION);
+        boolean success = uploadBomAction.upload();
 
         assertThat(success, is(equalTo(false)));
     }
 
     @Test
     public void thatBomCanBeUploadedSuccessfully() throws Exception {
+        doReturn(BOM_LOCATION).when(commonConfig).getBomLocation();
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
         doReturn(anUploadBomSuccessResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class));
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
-        boolean success = uploadBomAction.upload(BOM_LOCATION);
+        boolean success = uploadBomAction.upload();
 
         assertThat(success, is(equalTo(true)));
     }
 
     @Test
     public void thatBomUploadFailureReturnsFalse() {
+        doReturn(BOM_LOCATION).when(commonConfig).getBomLocation();
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
         doReturn(aNotFoundResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class));
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
         try {
-            uploadBomAction.upload(BOM_LOCATION);
+            uploadBomAction.upload();
             fail("DependencyTrackException expected");
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
@@ -87,12 +86,10 @@ public class UploadBomActionTest {
 
     @Test
     public void thatBomUploadExceptionResultsInException() {
-        doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
-        doThrow(UnirestException.class).when(bomClient).uploadBom(any(UploadBomRequest.class));
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
         try {
-            uploadBomAction.upload(BOM_LOCATION);
+            uploadBomAction.upload();
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
@@ -100,6 +97,7 @@ public class UploadBomActionTest {
 
     @Test
     public void thatWhenPollingIsEnabledThatTheServerIsQueriedUntilBomIsFullyProcessed() throws Exception {
+        doReturn(BOM_LOCATION).when(commonConfig).getBomLocation();
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
         doReturn(anUploadBomSuccessResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class));
         doReturn(new PollingConfig(true, 1, 3, MILLIS)).when(commonConfig).getPollingConfig();
@@ -113,7 +111,7 @@ public class UploadBomActionTest {
                 .doReturn(aBomProcessingResponse(false))
                 .when(bomClient).isBomBeingProcessed(anyString());
 
-        uploadBomAction.upload(BOM_LOCATION);
+        uploadBomAction.upload();
 
         verify(bomClient, times(3)).isBomBeingProcessed(anyString());
     }
@@ -133,7 +131,7 @@ public class UploadBomActionTest {
     }
 
     private Response aNotFoundResponse() {
-        return new Response(404, "Not Found", false);
+        return new Response(404, "Not Found", false, Optional.of("The parent component could not be found."));
     }
 
 }

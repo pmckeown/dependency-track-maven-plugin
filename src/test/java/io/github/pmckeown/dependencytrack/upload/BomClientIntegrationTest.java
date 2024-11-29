@@ -31,8 +31,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
-import java.util.Collections;
-
 public class BomClientIntegrationTest extends AbstractDependencyTrackIntegrationTest {
 
     private static final String BASE_64_ENCODED_BOM = "blah";
@@ -121,6 +119,6 @@ public class BomClientIntegrationTest extends AbstractDependencyTrackIntegration
      */
 
     private UploadBomRequest aBom() {
-        return new UploadBomRequest(PROJECT_NAME, PROJECT_VERSION, false, BASE_64_ENCODED_BOM, false, Collections.emptySet());
+        return new UploadBomRequest(getCommonConfig(), BASE_64_ENCODED_BOM);
     }
 }
