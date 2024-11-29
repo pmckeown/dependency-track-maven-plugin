@@ -42,6 +42,7 @@ public class UploadBomAction {
         logger.info("Project Version: %s", commonConfig.getProjectVersion());
         logger.info("Project is latest: %s", commonConfig.isLatest());
         logger.info("Project Tags: %s", StringUtils.join(commonConfig.getProjectTags(), ","));
+        logger.info("Parent UUID: %s", commonConfig.getParentUuid());
         logger.info("Parent Name: %s", commonConfig.getParentName());
         logger.info("Parent Version: %s", commonConfig.getParentVersion());
         logger.info("%s", commonConfig.getPollingConfig());
@@ -85,9 +86,7 @@ public class UploadBomAction {
     private Optional<UploadBomResponse> doUpload(String encodedBom) throws DependencyTrackException {
         try {
             Response<UploadBomResponse> response = bomClient.uploadBom(
-                new UploadBomRequest(commonConfig,
-                                     encodedBom
-                )
+                new UploadBomRequest(commonConfig, encodedBom)
             );
 
             if (response.isSuccess()) {
