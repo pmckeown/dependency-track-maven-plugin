@@ -1,7 +1,7 @@
 package io.github.pmckeown.dependencytrack.upload;
 
+import io.github.pmckeown.dependencytrack.CommonConfig;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -22,18 +22,24 @@ public class UploadBomRequest {
     private final String base64EncodedBom;
     private final boolean isLatest;
     private final List<ProjectTag> projectTags;
+    private final String parentUUID;
+    private final String parentName;
+    private final String parentVersion;
 
-    UploadBomRequest(String projectName, String projectVersion, boolean autoCreate, String base64EncodedBom, boolean isLatest, Set<String> projectTags) {
-        this.projectName = projectName;
-        this.projectVersion = projectVersion;
-        this.autoCreate = autoCreate;
+    UploadBomRequest(CommonConfig commonConfig, String base64EncodedBom) {
+        this.projectName = commonConfig.getProjectName();
+        this.projectVersion = commonConfig.getProjectVersion();
+        this.autoCreate = commonConfig.isAutoCreate();
         this.base64EncodedBom = base64EncodedBom;
-        this.isLatest = isLatest;
-        if (projectTags == null) {
+        this.isLatest = commonConfig.isLatest();
+        if (commonConfig.getProjectTags() == null) {
             this.projectTags = null;
         } else {
-            this.projectTags = projectTags.stream().map(ProjectTag::new).collect(Collectors.toList());
+            this.projectTags = commonConfig.getProjectTags().stream().map(ProjectTag::new).collect(Collectors.toList());
         }
+        this.parentUUID = commonConfig.getParentUuid();
+        this.parentName = commonConfig.getParentName();
+        this.parentVersion = commonConfig.getParentVersion();
     }
 
     public String getProjectName() {
@@ -63,6 +69,18 @@ public class UploadBomRequest {
 
     public List<ProjectTag> getProjectTags() {
         return projectTags;
+    }
+
+    public String getParentUUID() {
+        return parentUUID;
+    }
+
+    public String getParentName() {
+        return parentName;
+    }
+
+    public String getParentVersion() {
+        return parentVersion;
     }
 
     @Override

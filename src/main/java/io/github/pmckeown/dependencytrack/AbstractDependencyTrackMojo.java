@@ -13,7 +13,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
 import static kong.unirest.HeaderNames.ACCEPT;
 import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
-
 /**
  * Base class for Mojos in this project.
  *
