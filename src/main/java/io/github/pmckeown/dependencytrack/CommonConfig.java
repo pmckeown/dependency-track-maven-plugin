@@ -16,8 +16,9 @@ import org.apache.maven.project.MavenProject;
 @Singleton
 public class CommonConfig {
 
-    private String projectName;
-    private String projectVersion;
+    private String projectUuid="";
+    private String projectName="";
+    private String projectVersion="";
     private String dependencyTrackBaseUrl;
     private String apiKey;
     private PollingConfig pollingConfig;
@@ -33,6 +34,10 @@ public class CommonConfig {
     private Set<String> projectTags = Collections.emptySet();
 
     protected Logger logger = new Logger(new SystemStreamLog());
+
+    public String getProjectUuid() { return projectUuid; }
+
+    public void setProjectUuid(String projectUuid) { this.projectUuid = projectUuid; }
 
     public String getProjectName() {
         return projectName;
@@ -94,14 +99,22 @@ public class CommonConfig {
     }
 
     public void setParentVersion(String parentVersion) {
-        this.parentVersion = parentVersion;
+        if (StringUtils.isBlank(parentUuid)) {
+            this.parentVersion = parentVersion;
+        } else if (StringUtils.isNotBlank(parentUuid))
+            logger.info("parentUuid set so ignoring parentVersion: %s", parentVersion);
     }
-
 
     public String getParentUuid() { return parentUuid; }
 
-    public void setParentUuid(String parentUuid) { 
-        this.parentUuid = parentUuid; 
+    public void setParentUuid(String parentUuid) {
+        this.parentUuid = parentUuid;
+        if (StringUtils.isNotBlank(parentUuid)) {
+            logger.info("parentUuid set to: %s", parentUuid);
+            logger.info("clearing parentName and parentVersion");
+            this.setParentName(null);
+            this.setParentVersion(null);
+        }
     }
 
     public String getParentName() {
@@ -109,16 +122,19 @@ public class CommonConfig {
     }
 
     public void setParentName(String parentName) {
-        this.parentName = parentName;
+        if (StringUtils.isBlank(parentUuid)) {
+            this.parentName = parentName;
+        } else if (StringUtils.isNotBlank(parentUuid))
+            logger.info("parentUuid set so ignoring parentName: %s", parentName);
     }
 
-    public boolean isUpdateParent() { return updateParent; }
+    public boolean getUpdateParent() { return updateParent; }
 
     public void setUpdateParent(boolean updateParent) {
         this.updateParent = updateParent;
     }
 
-    public boolean isUpdateProjectInfo() { return updateProjectInfo; }
+    public boolean getUpdateProjectInfo() { return updateProjectInfo; }
 
     public void setUpdateProjectInfo(boolean updateProjectInfo) { this.updateProjectInfo = updateProjectInfo; }
 

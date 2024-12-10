@@ -15,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Collections;
 
-import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -54,6 +53,7 @@ public class UploadBomMojoTest {
 
     @Before
     public void setup() {
+        uploadBomMojo.setCommonConfig(commonConfig);
         uploadBomMojo.setMavenProject(project);
     }
 
@@ -120,9 +120,13 @@ public class UploadBomMojoTest {
     @Test
     public void thatWhenUpdateParentFailsTheLoggerIsCalledAndBuildFails() throws Exception {
         doReturn(true).when(uploadBomAction).upload();
-        doReturn(aProject().withName("project-parent").withVersion("1.2.3").build())
-                .when(projectAction).getProject("project-parent", "1.2.3");
 
+        CommonConfig config = new CommonConfig();
+        config.setProjectName("project-parent");
+        config.setProjectVersion("1.2.3");
+        config.setUpdateParent(true);
+
+        uploadBomMojo.setCommonConfig(config);
         uploadBomMojo.setParentName("project-parent");
         uploadBomMojo.setParentVersion("1.2.3");
         uploadBomMojo.setUpdateParent(true);

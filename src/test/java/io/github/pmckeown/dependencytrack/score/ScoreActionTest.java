@@ -9,6 +9,7 @@ import io.github.pmckeown.dependencytrack.project.ProjectClient;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.UnirestException;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -45,16 +46,16 @@ public class ScoreActionTest {
     private MetricsAction metricsAction;
 
     @Mock
-    private CommonConfig commonConfig;
-
-    @Mock
     private Logger logger;
+
+    @Before
+    public void setup() {
+        scoreAction.setCommonConfig(new CommonConfig());
+    }
 
     @Test(expected = DependencyTrackException.class)
     public void thatWhenAnExceptionOccursGettingProjectsThenAnExceptionIsThrown() throws DependencyTrackException {
-        doReturn("ProjectName").when(commonConfig).getProjectName();
-        doReturn("ProjectVersion").when(commonConfig).getProjectVersion();
-        doThrow(UnirestException.class).when(projectClient).getProject(anyString(), anyString());
+        doThrow(UnirestException.class).when(projectClient).getProject(anyString(), anyString(), anyString());
 
         scoreAction.determineScore(INHERITED_RISK_SCORE_THRESHOLD);
         fail("Exception expected");
@@ -62,9 +63,7 @@ public class ScoreActionTest {
 
     @Test(expected = DependencyTrackException.class)
     public void thatWhenNoProjectsAreFoundThenAnExceptionIsThrown() throws DependencyTrackException {
-        doReturn("ProjectName").when(commonConfig).getProjectName();
-        doReturn("ProjectVersion").when(commonConfig).getProjectVersion();
-        doReturn(new Response(404, "Not Found", false)).when(projectClient).getProject(anyString(), anyString());
+        doReturn(new Response(404, "Not Found", false)).when(projectClient).getProject(anyString(), anyString(), anyString());
 
         scoreAction.determineScore(INHERITED_RISK_SCORE_THRESHOLD);
         fail("Exception expected");
@@ -73,9 +72,7 @@ public class ScoreActionTest {
     @Test
     public void thatWhenTheCurrentProjectHasMetricsInItThenTheScoreIsReturned() throws Exception {
         Project project = aProject().withMetrics(aMetrics().withInheritedRiskScore(100)).build();
-        doReturn(aSuccessResponse().withBody(project).build()).when(projectClient).getProject(anyString(), anyString());
-        doReturn(project.getName()).when(commonConfig).getProjectName();
-        doReturn(project.getVersion()).when(commonConfig).getProjectVersion();
+        doReturn(aSuccessResponse().withBody(project).build()).when(projectClient).getProject(anyString(), anyString(), anyString());
 
         Integer score = scoreAction.determineScore(INHERITED_RISK_SCORE_THRESHOLD);
         assertThat(score, is(equalTo(100)));
@@ -86,11 +83,9 @@ public class ScoreActionTest {
     @Test
     public void thatWhenTheCurrentProjectHasNoMetricsInItTheyAreRequestedAndThenTheScoreIsReturned() throws Exception {
         Project project = aProject().build();
-        doReturn(aSuccessResponse().withBody(project).build()).when(projectClient).getProject(anyString(), anyString());
+        doReturn(aSuccessResponse().withBody(project).build()).when(projectClient).getProject(anyString(), anyString(), anyString());
         doReturn(aMetrics().withInheritedRiskScore(100).build()).when(metricsAction).getMetrics(
                 any(Project.class));
-        doReturn(project.getName()).when(commonConfig).getProjectName();
-        doReturn(project.getVersion()).when(commonConfig).getProjectVersion();
 
         Integer score = scoreAction.determineScore(INHERITED_RISK_SCORE_THRESHOLD);
         assertThat(score, is(equalTo(100)));
@@ -101,11 +96,9 @@ public class ScoreActionTest {
     @Test
     public void thatWhenTheCurrentProjectScoreIsZeroThenTheScoreIsReturned() throws Exception {
         Project project = aProject().build();
-        doReturn(aSuccessResponse().withBody(project).build()).when(projectClient).getProject(anyString(), anyString());
+        doReturn(aSuccessResponse().withBody(project).build()).when(projectClient).getProject(anyString(), anyString(), anyString());
         doReturn(aMetrics().withInheritedRiskScore(0).build()).when(metricsAction).getMetrics(
                 any(Project.class));
-        doReturn(project.getName()).when(commonConfig).getProjectName();
-        doReturn(project.getVersion()).when(commonConfig).getProjectVersion();
 
         Integer score = scoreAction.determineScore(INHERITED_RISK_SCORE_THRESHOLD);
         assertThat(score, is(equalTo(0)));

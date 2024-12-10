@@ -56,9 +56,4 @@ public class Project extends Item {
     public List<ProjectTag> getTags() {
         return tags;
     }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
-    }
 }

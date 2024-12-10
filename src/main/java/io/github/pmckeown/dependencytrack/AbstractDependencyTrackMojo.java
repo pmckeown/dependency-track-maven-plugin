@@ -137,8 +137,8 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         this.skip = skip;
     }
 
-    public void setPollingConfig(PollingConfig commonConfig) {
-        this.pollingConfig = commonConfig;
+    public void setPollingConfig(PollingConfig pollingConfig) {
+        this.pollingConfig = pollingConfig;
     }
 
     protected void handleFailure(String message) throws MojoFailureException {

@@ -1,5 +1,7 @@
 package io.github.pmckeown.dependencytrack.project;
 
+import com.networknt.schema.utils.StringUtils;
+import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.Item;
 import io.github.pmckeown.dependencytrack.Response;
@@ -34,17 +36,39 @@ public class ProjectAction {
         this.logger = logger;
     }
 
-    public Project getProject(String projectName, String projectVersion) throws DependencyTrackException {
+    public Project getProject(CommonConfig commonConfig) throws DependencyTrackException {
+        return getProject(
+            commonConfig.getProjectUuid(),
+            commonConfig.getProjectName(),
+            commonConfig.getProjectVersion());
+    }
+
+    public Project getProject(String uuid) throws DependencyTrackException {
+        return getProject(uuid, "", "");
+    }
+
+    public Project getProject(String name, String version) throws DependencyTrackException {
+        return getProject("", name, version);
+    }
+
+    public Project getProject(String uuid, String name, String version) throws DependencyTrackException {
         try {
-            Response<Project> response = projectClient.getProject(projectName, projectVersion);
+            Response<Project> response = projectClient.getProject(uuid, name, version);
 
             if (response.isSuccess()) {
                 Optional<Project> body = response.getBody();
                 if (body.isPresent()) {
                     return body.get();
                 } else {
-                    throw new DependencyTrackException(
-                        format("Requested project not found: %s-%s", projectName, projectVersion));
+                    if (StringUtils.isBlank(uuid)) {
+                        throw new DependencyTrackException(
+                            format("Requested project not found by UUUID: %s", uuid)
+                        );
+                    } else {
+                        throw new DependencyTrackException(
+                            format("Requested project not found by name/version: %s-%s", name, version)
+                            );
+                    }
                 }
             } else {
                 logger.error("Failed to list projects with error from server: " + response.getStatusText());

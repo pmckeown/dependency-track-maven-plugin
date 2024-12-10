@@ -30,7 +30,32 @@ in the `pluginManagement` section of your POM to avoid repetition.
     </plugins>
 </pluginManagement>
 ```
+Especially if you're in a multi-module configuration you should additionally include the plugin
+in the regular build plugin section that contains `<inherited>false</inherited>`.
+This assures that your submodules reflect the parent/child hierarchy of your pom.  
 
+```xml
+<plugins>
+      <!-- Generate SBOM file -->
+      <plugin>
+        <groupId>org.cyclonedx</groupId>
+        <artifactId>cyclonedx-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>io.github.pmckeown</groupId>
+        <artifactId>dependency-track-maven-plugin</artifactId>
+        <inherited>false</inherited>
+        <configuration>
+          <!-- set either -->
+          <parentUuid>UUID_OF_PARENT_PROJECT_IN_DTRACK</parentUuid>
+          <!-- or -->
+          <parentName>NAME_OF_PARENT_PROJECT_IN_DTRACK</parentName>
+          <parentVersion>VERSION_OF_PARENT_PROJECT_IN_DTRACK</parentVersion>
+        </configuration>
+      </plugin>
+  </plugins>
+  ```
+  
 **IMPORTANT** Dependency Track includes a front-end and an api-server component on different ports (defaulting to
 8080 and 8081 respectively). You must ensure that you target the api server component (8081) and not the front-end
 component URL in the `dependencyTrackBaseUrl` property.
@@ -208,6 +233,7 @@ Dependency-Track based on the metadata present in the BOM:
 
 **Notes:** 
 * This requires a CycloneDX BOM using Schema 1.2 or later.
+* required permission `PORTFOLIO_MANAGEMENT` if `updateProjectInfo` or `updateParent` is `true`
 * Not all information is visible in the Dependency-Track server UI.
 
 From Dependency-Track server 4.8.0 onwards, you can set the project parent by setting `updateParent` to `true`. The 

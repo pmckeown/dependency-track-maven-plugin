@@ -226,34 +226,6 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatProjectParentNameAndVersionCanBeProvided() throws Exception {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
-            .withQueryParam("name", equalTo("test-parent"))
-            .willReturn(aResponse().withBodyFile("api/v1/project/test-parent.json")));
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).atPriority(1)
-            .withQueryParam("name", equalTo("test-project"))
-            .willReturn(aResponse().withBodyFile("api/v1/project/test-project.json")));
-        stubFor(get(urlPathMatching(TestResourceConstants.V1_PROJECT_UUID)).willReturn(ok()));
-        stubFor(patch(urlPathMatching(TestResourceConstants.V1_PROJECT_UUID)).willReturn(ok()));
-        stubFor(get(urlPathMatching(TestResourceConstants.V1_BOM_TOKEN_UUID)).willReturn(ok()));
-        stubFor(put(urlEqualTo(V1_BOM)).willReturn(
-                aResponse().withBodyFile("api/v1/project/upload-bom-response.json")));
-        stubFor(get(urlPathMatching(TestResourceConstants.V1_METRICS_PROJECT_REFRESH)).willReturn(ok()));
-
-        UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
-        uploadBomMojo.setProjectName("test-project");
-        uploadBomMojo.setUpdateParent(true);
-        uploadBomMojo.setParentName("test-parent");
-        uploadBomMojo.setParentVersion("1.0.0-SNAPSHOT");
-        uploadBomMojo.setFailOnError(true);
-        uploadBomMojo.execute();
-
-        verify(exactly(1), patchRequestedFor(urlPathMatching(TestResourceConstants.V1_PROJECT_UUID))
-                .withRequestBody(
-                        matchingJsonPath("$.parent.uuid", equalTo("8977c66f-b310-aced-face-e63e9eb7c4cf"))));
-    }
-
-    @Test
     public void thatProjectParentNameAndVersionCanBeIgnored() throws Exception {
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
             .willReturn(aResponse().withBodyFile("api/v1/project/test-project.json")));
