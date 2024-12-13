@@ -135,7 +135,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     }
 
     private Project getProjectParentByUuid(String uuid) throws DependencyTrackException {
-        logger.info("Attempting to fetch project parent: '%s'", parentUuid);
+        logger.info("Attempting to fetch project parent: '%s'", uuid);
         try {
             return projectAction.getProject(uuid);
         } catch (DependencyTrackException ex) {
@@ -147,13 +147,13 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     }
 
     private Project getProjectParentByNameAndVersion(String name, String version) throws DependencyTrackException {
-        logger.info("Attempting to fetch project parent: '%s-%s'", parentName, parentVersion);
+        logger.info("Attempting to fetch project parent: '%s-%s'", name, version);
         try {
-            return projectAction.getProject(commonConfig.getParentName(), commonConfig.getParentVersion());
+            return projectAction.getProject(name, version);
         } catch (DependencyTrackException ex) {
             logger.error("Failed to find parent project with name ['%s-%s']. Check the update parent " +
                 "your settings for this plugin and verify if a matching parent project exists in the " +
-                "server.", parentName, parentVersion);
+                "server.", name, version);
             throw ex;
         }
     }

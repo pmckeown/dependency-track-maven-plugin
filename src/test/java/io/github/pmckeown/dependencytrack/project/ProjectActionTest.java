@@ -38,9 +38,6 @@ import static org.mockito.Mockito.doThrow;
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectActionTest {
 
-    private static final String UUID_1 = "project-uuid-1";
-    private static final String PROJECT_NAME_1 = "projectName1";
-    private static final String PROJECT_VERSION_1 = "projectVersion1";
     private static final String UUID_2 = "project-uuid-2";
     private static final String PROJECT_NAME_2 = "projectName2";
     private static final String PROJECT_VERSION_2 = "projectVersion2";
@@ -261,12 +258,6 @@ public class ProjectActionTest {
         CommonConfig commonConfig = new CommonConfig();
         commonConfig.setProjectName(PROJECT_NAME_2);
         commonConfig.setProjectVersion(PROJECT_VERSION_2);
-        return commonConfig;
-    }
-
-    private CommonConfig commonConfig2() {
-        CommonConfig commonConfig = new CommonConfig();
-        commonConfig.setProjectUuid(UUID_2);
         return commonConfig;
     }
 }
