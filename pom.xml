@@ -66,6 +66,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.version>3.9.5</maven.version>
+        <sonar.organization>pmckeown</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencies>
@@ -427,8 +429,6 @@
                 </property>
             </activation>
             <properties>
-                <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-                <sonar.organization>pmckeown</sonar.organization>
                 <sonar.projectKey>io.github.pmckeown:dependency-track-maven-plugin</sonar.projectKey>
                 <!--suppress UnresolvedMavenProperty -->
                 <sonar.login>${env.SONAR_TOKEN}</sonar.login>
