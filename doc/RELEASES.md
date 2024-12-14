@@ -31,4 +31,9 @@ After these steps remember to set the next SNAPSHOT version release number and c
 
 The release process signs the published artifacts as a requirement for publishing to the Sonatype OSS Repository Hosting
 (OSSRH) servers.  Follow the instructions [here](https://blog.sonatype.com/2010/01/how-to-generate-pgp-signatures-with-maven/) 
-on how to generate, publish and use a pgp key for use when signing the release artifacts.  
+on how to generate, publish and use a pgp key for use when signing the release artifacts.
+
+# After Release Plugin Runs 
+1. Go to https://central.sonatype.com
+2. Log in with username and password as an entity with publishing rights on the namespace
+3. Go to https://central.sonatype.com/publishing and publish the new package
