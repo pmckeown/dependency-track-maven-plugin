@@ -26,7 +26,7 @@ class ScoreAction {
 
     private ProjectClient projectClient;
     private MetricsAction metricsAction;
-    private CommonConfig commonConfig;
+    private CommonConfig commonConfig = new CommonConfig();
     private Logger logger;
 
     @Inject
@@ -40,7 +40,7 @@ class ScoreAction {
 
     Integer determineScore(Integer inheritedRiskScoreThreshold) throws DependencyTrackException {
         try {
-            Response<Project> response = projectClient.getProject(commonConfig.getProjectName(), commonConfig.getProjectVersion());
+            Response<Project> response = projectClient.getProject(commonConfig.getProjectUuid(), commonConfig.getProjectName(), commonConfig.getProjectVersion());
 
             Optional<Project> body = response.getBody();
             if (response.isSuccess() && body.isPresent()) {
@@ -88,5 +88,12 @@ class ScoreAction {
             logger.info(scoreMessage.toString());
         }
         logger.info(DELIMITER);
+    }
+
+    /*
+     * Setters for dependency injection in tests
+     */
+    void setCommonConfig(CommonConfig commonConfig) {
+        this.commonConfig = commonConfig;
     }
 }

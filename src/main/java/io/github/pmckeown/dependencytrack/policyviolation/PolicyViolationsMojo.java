@@ -68,7 +68,7 @@ public class PolicyViolationsMojo extends AbstractDependencyTrackMojo {
     protected void performAction() throws MojoExecutionException, MojoFailureException {
         List<PolicyViolation> policyViolations;
         try {
-            Project project = projectAction.getProject(commonConfig.getProjectName(), commonConfig.getProjectVersion());
+            Project project = projectAction.getProject(commonConfig);
             policyViolations = policyAction.getPolicyViolations(project);
             policyViolationsPrinter.printPolicyViolations(project, policyViolations);
             boolean policyViolationsBreached = policyAnalyser.isAnyPolicyViolationBreached(policyViolations,

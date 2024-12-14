@@ -1,5 +1,6 @@
 package io.github.pmckeown.dependencytrack.project;
 
+import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.bom.BomParser;
@@ -37,15 +38,15 @@ import static org.mockito.Mockito.doThrow;
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectActionTest {
 
-    private static final String UUID_1 = "project-uuid-1";
-    private static final String PROJECT_NAME_1 = "projectName1";
-    private static final String PROJECT_VERSION_1 = "projectVersion1";
     private static final String UUID_2 = "project-uuid-2";
     private static final String PROJECT_NAME_2 = "projectName2";
     private static final String PROJECT_VERSION_2 = "projectVersion2";
 
     @InjectMocks
     private ProjectAction projectAction;
+
+    @Mock
+    private CommonConfig commonConfig1;
 
     @Mock
     private ProjectClient projectClient;
@@ -57,8 +58,18 @@ public class ProjectActionTest {
     private Logger logger;
 
     @Test
+    public void thatProjectCanBeRetrievedByCommonConfig() throws Exception {
+        doReturn(aSuccessResponse().withBody(project2()).build()).when(projectClient).getProject(anyString(), anyString(), anyString());
+
+        Project project = projectAction.getProject(commonConfig1());
+
+        assertThat(project, is(not(nullValue())));
+        assertThat(project.getUuid(), is(equalTo(UUID_2)));
+    }
+
+    @Test
     public void thatProjectCanBeRetrievedByNameAndVersion() throws Exception {
-        doReturn(aSuccessResponse().withBody(project2()).build()).when(projectClient).getProject(anyString(), anyString());
+        doReturn(aSuccessResponse().withBody(project2()).build()).when(projectClient).getProject(anyString(), anyString(), anyString());
 
         Project project = projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
 
@@ -67,11 +78,21 @@ public class ProjectActionTest {
     }
 
     @Test
+    public void thatProjectCanBeRetrievedByUuid() throws Exception {
+        doReturn(aSuccessResponse().withBody(project2()).build()).when(projectClient).getProject(anyString(), anyString(), anyString());
+
+        Project project = projectAction.getProject(UUID_2);
+
+        assertThat(project, is(not(nullValue())));
+        assertThat(project.getUuid(), is(equalTo(UUID_2)));
+    }
+
+    @Test
     public void thatExceptionIsThrownWhenConnectionFails() {
-        doThrow(UnirestException.class).when(projectClient).getProject(anyString(), anyString());
+        doThrow(UnirestException.class).when(projectClient).getProject(anyString(), anyString(), anyString());
 
         try {
-            projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
+            projectAction.getProject(commonConfig1());
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
@@ -79,17 +100,17 @@ public class ProjectActionTest {
 
     @Test(expected = DependencyTrackException.class)
     public void thatANotFoundResponseResultsInAnException() throws DependencyTrackException {
-        doReturn(aNotFoundResponse()).when(projectClient).getProject(anyString(), anyString());
+        doReturn(aNotFoundResponse()).when(projectClient).getProject(anyString(), anyString(), anyString());
 
-        projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
+        projectAction.getProject(commonConfig1());
     }
 
     @Test
     public void thatNoProjectsAreFoundAnExceptionIsThrown() {
-        doReturn(aSuccessResponse().build()).when(projectClient).getProject(anyString(), anyString());
+        doReturn(aSuccessResponse().build()).when(projectClient).getProject(anyString(), anyString(), anyString());
 
         try {
-            projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
+            projectAction.getProject(commonConfig1());
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
@@ -97,9 +118,9 @@ public class ProjectActionTest {
 
     @Test(expected = DependencyTrackException.class)
     public void thatRequestedProjectCannotBeFoundAnExceptionIsThrown() throws DependencyTrackException {
-        doReturn(aSuccessResponse().build()).when(projectClient).getProject(anyString(), anyString());
+        doReturn(aSuccessResponse().build()).when(projectClient).getProject(anyString(), anyString(), anyString());
 
-        projectAction.getProject("missing-project", "unknown-version");
+        projectAction.getProject(commonConfig1());
     }
 
     @Test
@@ -233,4 +254,10 @@ public class ProjectActionTest {
         return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null, false, tags);
     }
 
+    private CommonConfig commonConfig1() {
+        CommonConfig commonConfig = new CommonConfig();
+        commonConfig.setProjectName(PROJECT_NAME_2);
+        commonConfig.setProjectVersion(PROJECT_VERSION_2);
+        return commonConfig;
+    }
 }

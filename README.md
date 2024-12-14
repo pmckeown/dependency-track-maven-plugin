@@ -30,7 +30,32 @@ in the `pluginManagement` section of your POM to avoid repetition.
     </plugins>
 </pluginManagement>
 ```
+Especially if you're in a multi-module configuration you should additionally include the plugin
+in the regular build plugin section that contains `<inherited>false</inherited>`.
+This assures that your submodules reflect the parent/child hierarchy of your pom.  
 
+```xml
+<plugins>
+      <!-- Generate SBOM file -->
+      <plugin>
+        <groupId>org.cyclonedx</groupId>
+        <artifactId>cyclonedx-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>io.github.pmckeown</groupId>
+        <artifactId>dependency-track-maven-plugin</artifactId>
+        <inherited>false</inherited>
+        <configuration>
+          <!-- set either -->
+          <parentUuid>UUID_OF_PARENT_PROJECT_IN_DTRACK</parentUuid>
+          <!-- or -->
+          <parentName>NAME_OF_PARENT_PROJECT_IN_DTRACK</parentName>
+          <parentVersion>VERSION_OF_PARENT_PROJECT_IN_DTRACK</parentVersion>
+        </configuration>
+      </plugin>
+  </plugins>
+  ```
+  
 **IMPORTANT** Dependency Track includes a front-end and an api-server component on different ports (defaulting to
 8080 and 8081 respectively). You must ensure that you target the api server component (8081) and not the front-end
 component URL in the `dependencyTrackBaseUrl` property.
@@ -117,6 +142,8 @@ The Automation team needs the following permissions:
 * In Dependency Track v4.4.x and later: 
   * BOM_UPLOAD
   * PORTFOLIO_MANAGEMENT
+  
+    Only when project should be automatically created. If a project exists in any version, this permission is not needed.
   * PROJECT_CREATION_UPLOAD
   * VIEW_PORTFOLIO
   * VIEW_VULNERABILITY
@@ -206,6 +233,7 @@ Dependency-Track based on the metadata present in the BOM:
 
 **Notes:** 
 * This requires a CycloneDX BOM using Schema 1.2 or later.
+* required permission `PORTFOLIO_MANAGEMENT` if `updateProjectInfo` or `updateParent` is `true`
 * Not all information is visible in the Dependency-Track server UI.
 
 From Dependency-Track server 4.8.0 onwards, you can set the project parent by setting `updateParent` to `true`. The 
@@ -213,18 +241,20 @@ parent name will be defaulted to that POM's project parent name. If you wish to 
 no parent set within the `pom.xml`, then explicitly set `parentName` and `parentVersion`. `projectVersion` is optional 
 Dependency-Track, so this has no default to allow for blank values.
 
-**Note:** If the parent cannot be found on the Dependency-Track server, the BOM upload will not be attempted in order to
-prevent a project being incorrectly created or updated the server.
+**Note 1:** If both `parentUuid` and `parentName` / `parentVersion` are provided in configuration `parentUuid` will take precedence.
 
-| Property             | Required | Default Value          | Example Values            |
-|----------------------|----------|------------------------|---------------------------|
-| bomLocation          | false    | target/bom.xml         | target/custom-bom.xml     |
-| updateProjectInfo    | false    | false                  | false                     |
-| updateParent         | false    | false                  | true                      |
-| parentName           | false    | ${project.parent.name} | my-name-override          |
-| parentVersion        | false    |                        | ${project.parent.version} |
-| isLatest             | false    | false                  | true                      |
-| projectTags[].name   | false    | false                  | <name>tag1</name>         |
+**Note 2:** If a non-existing parent information is provided, the plugin will fail with `404 Not found`. 
+
+| Property           | Required | Default Value          | Example Values                        |
+|--------------------|----------|------------------------|---------------------------------------|
+| bomLocation        | false    | target/bom.xml         | target/custom-bom.xml                 |
+| updateProjectInfo  | false    | false                  | false                                 |
+| updateParent       | false    | false                  | true                                  |
+| parentUuid         | false    |                        | 628df5eb-a7fe-4c3f-831c-4536839a05ed  |
+| parentName         | false    | ${project.parent.name} | my-name-override                      |
+| parentVersion      | false    |                        | ${project.parent.version}             |
+| isLatest           | false    | false                  | true                                  |
+| projectTags[].name | false    | false                  | <name>tag1</name>                     |
 
 The `isLatest` option sets the flag on the project to indicate that it is the latest version.
 

@@ -75,7 +75,7 @@ public class MetricsMojo extends AbstractDependencyTrackMojo {
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
         try {
-            Project project = getProjectAction.getProject(projectName, projectVersion);
+            Project project = getProjectAction.getProject(commonConfig);
             logger.debug("Project Details: %s", project.toString());
 
             Metrics metrics = getMetrics(project);

@@ -6,6 +6,10 @@ import io.github.pmckeown.dependencytrack.Response;
 import kong.unirest.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
@@ -24,15 +28,20 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.doReturn;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTest {
 
+    @InjectMocks
     private ProjectClient projectClient;
+
+    @Mock
+    private CommonConfig commonConfig;
 
     @Before
     public void setUp() {
-        CommonConfig commonConfig = new CommonConfig();
-        commonConfig.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
+        doReturn("http://localhost:" + wireMockRule.port()).when(commonConfig).getDependencyTrackBaseUrl();
         projectClient = new ProjectClient(commonConfig);
     }
 
@@ -48,12 +57,14 @@ public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTes
 
     @Test
     public void thatProjectParsingWorks() {
+        doReturn("doesn't matter").when(commonConfig).getProjectName();
+        doReturn("doesn't matter").when(commonConfig).getProjectVersion();
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
             aResponse()
                 .withStatus(HttpStatus.OK)
                 .withBodyFile("api/v1/project/tags-project.json")));
 
-        Response<Project> response = projectClient.getProject("doesn't matter", "doesn't matter");
+        Response<Project> response = projectClient.getProject(commonConfig.getProjectUuid(), commonConfig.getProjectName(), commonConfig.getProjectVersion());
         assertThat(response.isSuccess(), is(equalTo(true)));
         assertThat(response.getBody().isPresent(), is(equalTo(true)));
         Project project = response.getBody().get();

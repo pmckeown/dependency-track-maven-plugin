@@ -13,7 +13,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
 import static kong.unirest.HeaderNames.ACCEPT;
 import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
-
 /**
  * Base class for Mojos in this project.
  *
@@ -138,8 +137,8 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         this.skip = skip;
     }
 
-    public void setPollingConfig(PollingConfig commonConfig) {
-        this.pollingConfig = commonConfig;
+    public void setPollingConfig(PollingConfig pollingConfig) {
+        this.pollingConfig = pollingConfig;
     }
 
     protected void handleFailure(String message) throws MojoFailureException {

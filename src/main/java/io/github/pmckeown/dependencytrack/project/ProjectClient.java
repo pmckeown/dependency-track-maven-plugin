@@ -9,6 +9,7 @@ import kong.unirest.HttpStatus;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_UUID;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
@@ -31,13 +32,13 @@ public class ProjectClient {
         this.commonConfig = commonConfig;
     }
 
-    public Response<Project> getProject(String projectName, String projectVersion) {
-        HttpResponse<Project> httpResponse = get(commonConfig.getDependencyTrackBaseUrl() + V1_PROJECT_LOOKUP)
-            .queryString("name", projectName)
-            .queryString("version", projectVersion)
-            .header(X_API_KEY, commonConfig.getApiKey())
-            .asObject(new GenericType<Project>() {
-            });
+    public Response<Project> getProject(String projectUuid, String projectName, String projectVersion) {
+        HttpResponse<Project> httpResponse;
+        if (StringUtils.isNotBlank(projectUuid)) {
+            httpResponse = getProjectByUuid(projectUuid);
+        } else {
+            httpResponse = getProjectByNameAndVersion(projectName, projectVersion);
+        }
         Optional<Project> body;
         if (httpResponse.isSuccess()) {
             body = Optional.of(httpResponse.getBody());
@@ -45,6 +46,23 @@ public class ProjectClient {
             body = Optional.empty();
         }
         return new Response<>(httpResponse.getStatus(), httpResponse.getStatusText(), httpResponse.isSuccess(), body);
+    }
+
+    private HttpResponse<Project> getProjectByNameAndVersion(String projectName, String projectVersion) {
+        return get(commonConfig.getDependencyTrackBaseUrl() + V1_PROJECT_LOOKUP)
+            .queryString("name", projectName)
+            .queryString("version", projectVersion)
+            .header(X_API_KEY, commonConfig.getApiKey())
+            .asObject(new GenericType<Project>() {
+            });
+    }
+
+    private HttpResponse<Project> getProjectByUuid(String uuid) {
+        return get(commonConfig.getDependencyTrackBaseUrl() + V1_PROJECT_UUID)
+            .routeParam("uuid", uuid)
+            .header(X_API_KEY, commonConfig.getApiKey())
+            .asObject(new GenericType<Project>() {
+            });
     }
 
     Response<Void> deleteProject(Project project) {

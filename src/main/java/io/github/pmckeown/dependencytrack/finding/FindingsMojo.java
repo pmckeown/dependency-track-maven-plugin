@@ -104,7 +104,7 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     protected void performAction() throws MojoExecutionException, MojoFailureException {
         List<Finding> findings;
         try {
-            Project project = projectAction.getProject(commonConfig.getProjectName(), commonConfig.getProjectVersion());
+            Project project = projectAction.getProject(commonConfig);
             findings = findingsAction.getFindings(project);
             findingsPrinter.printFindings(project, findings);
             populateThresholdFromCliOptions();

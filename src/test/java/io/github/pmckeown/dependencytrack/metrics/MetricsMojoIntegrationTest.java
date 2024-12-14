@@ -3,7 +3,6 @@ package io.github.pmckeown.dependencytrack.metrics;
 import com.github.tomakehurst.wiremock.http.Fault;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.PollingConfig;
-import io.github.pmckeown.dependencytrack.ResourceConstants;
 import io.github.pmckeown.dependencytrack.project.ProjectBuilder;
 
 import org.apache.maven.plugin.MojoExecutionException;

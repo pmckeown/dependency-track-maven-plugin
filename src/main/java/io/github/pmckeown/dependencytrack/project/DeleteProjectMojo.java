@@ -31,7 +31,7 @@ public class DeleteProjectMojo extends AbstractDependencyTrackMojo {
     @Override
     protected void performAction() throws MojoExecutionException, MojoFailureException {
         try {
-            Project project = projectAction.getProject(projectName, projectVersion);
+            Project project = projectAction.getProject(commonConfig);
 
             boolean success = projectAction.deleteProject(project);
 
