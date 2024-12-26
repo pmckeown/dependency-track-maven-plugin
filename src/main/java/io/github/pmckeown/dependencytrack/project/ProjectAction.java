@@ -1,9 +1,9 @@
 package io.github.pmckeown.dependencytrack.project;
 
 import com.networknt.schema.utils.StringUtils;
-import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.Item;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.bom.BomParser;
 import io.github.pmckeown.util.Logger;
@@ -12,11 +12,7 @@ import kong.unirest.UnirestException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -25,7 +21,6 @@ import static java.lang.String.format;
 public class ProjectAction {
 
     private ProjectClient projectClient;
-
     private BomParser bomParser;
     private Logger logger;
 
@@ -36,11 +31,11 @@ public class ProjectAction {
         this.logger = logger;
     }
 
-    public Project getProject(CommonConfig commonConfig) throws DependencyTrackException {
+    public Project getProject(ModuleConfig moduleConfig) throws DependencyTrackException {
         return getProject(
-            commonConfig.getProjectUuid(),
-            commonConfig.getProjectName(),
-            commonConfig.getProjectVersion());
+                moduleConfig.getProjectUuid(),
+                moduleConfig.getProjectName(),
+                moduleConfig.getProjectVersion());
     }
 
     public Project getProject(String uuid) throws DependencyTrackException {
@@ -62,12 +57,12 @@ public class ProjectAction {
                 } else {
                     if (StringUtils.isBlank(uuid)) {
                         throw new DependencyTrackException(
-                            format("Requested project not found by UUUID: %s", uuid)
+                                format("Requested project not found by UUUID: %s", uuid)
                         );
                     } else {
                         throw new DependencyTrackException(
-                            format("Requested project not found by name/version: %s-%s", name, version)
-                            );
+                                format("Requested project not found by name/version: %s-%s", name, version)
+                        );
                     }
                 }
             } else {
@@ -146,7 +141,7 @@ public class ProjectAction {
 
             Response<?> response = projectClient.deleteProject(project);
             return response.isSuccess();
-        } catch(UnirestException ex) {
+        } catch (UnirestException ex) {
             logger.error("Failed to delete project", ex);
             throw new DependencyTrackException("Failed to delete project");
         }

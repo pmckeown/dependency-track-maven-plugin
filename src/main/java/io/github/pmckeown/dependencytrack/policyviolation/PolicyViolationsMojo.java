@@ -3,6 +3,7 @@ package io.github.pmckeown.dependencytrack.policyviolation;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.policyviolation.report.PolicyViolationsReportGenerator;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
@@ -24,14 +25,14 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
  * Print the policy violations retrieved from the Dependency Track Server after a BOM upload.  This is calculated
  * immediately by the server and as such can be used in situations where you want to know if a change to your
  * application pom.xml has breached a Policy defined on the Dependency Track server.
- *
+ * <p>
  * The build will fail if any Policies are breached that are configured with a violation state of FAIL.
- *
+ * <p>
  * The build will pass if any Policies are breached that are configured with a violation state of INFO.
- *
+ * <p>
  * The build will pass if any Policies are breached that are configured with a violation state of WARN unless the
  * `failOnWarn` option is supplied.
- *
+ * <p>
  * This allows you to tune build failures to your risk appetite.
  *
  * @author Sahiba Mittal
@@ -54,9 +55,9 @@ public class PolicyViolationsMojo extends AbstractDependencyTrackMojo {
 
     @Inject
     public PolicyViolationsMojo(ProjectAction projectAction, PolicyViolationsReportGenerator policyViolationReportGenerator,
-            CommonConfig commonConfig, Logger logger, PolicyViolationsAction policyAction,
-            PolicyViolationsPrinter policyViolationsPrinter, PolicyViolationsAnalyser policyAnalyser) {
-        super(commonConfig, logger);
+                                CommonConfig commonConfig, ModuleConfig moduleConfig, Logger logger, PolicyViolationsAction policyAction,
+                                PolicyViolationsPrinter policyViolationsPrinter, PolicyViolationsAnalyser policyAnalyser) {
+        super(commonConfig, moduleConfig, logger);
         this.projectAction = projectAction;
         this.policyViolationReportGenerator = policyViolationReportGenerator;
         this.policyAction = policyAction;
@@ -68,7 +69,7 @@ public class PolicyViolationsMojo extends AbstractDependencyTrackMojo {
     protected void performAction() throws MojoExecutionException, MojoFailureException {
         List<PolicyViolation> policyViolations;
         try {
-            Project project = projectAction.getProject(commonConfig);
+            Project project = projectAction.getProject(moduleConfig);
             policyViolations = policyAction.getPolicyViolations(project);
             policyViolationsPrinter.printPolicyViolations(project, policyViolations);
             boolean policyViolationsBreached = policyAnalyser.isAnyPolicyViolationBreached(policyViolations,
@@ -86,8 +87,7 @@ public class PolicyViolationsMojo extends AbstractDependencyTrackMojo {
     private File getOutputDirectory() {
         if (mavenProject == null) {
             return null;
-        }
-        else {
+        } else {
             return new File(mavenProject.getBuild().getDirectory());
         }
     }

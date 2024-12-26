@@ -3,6 +3,7 @@ package io.github.pmckeown.dependencytrack.project;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -23,25 +24,25 @@ public class DeleteProjectMojo extends AbstractDependencyTrackMojo {
     private ProjectAction projectAction;
 
     @Inject
-    public DeleteProjectMojo(ProjectAction projectAction, CommonConfig commonConfig, Logger logger) {
-        super(commonConfig, logger);
+    public DeleteProjectMojo(ProjectAction projectAction, CommonConfig commonConfig, ModuleConfig moduleConfig, Logger logger) {
+        super(commonConfig, moduleConfig, logger);
         this.projectAction = projectAction;
     }
 
     @Override
     protected void performAction() throws MojoExecutionException, MojoFailureException {
         try {
-            Project project = projectAction.getProject(commonConfig);
+            Project project = projectAction.getProject(moduleConfig);
 
             boolean success = projectAction.deleteProject(project);
 
             if (!success) {
-                handleFailure(format("Failed to delete project: %s-%s", commonConfig.getProjectName(),
-                        commonConfig.getProjectVersion()));
+                handleFailure(format("Failed to delete project: %s-%s", moduleConfig.getProjectName(),
+                        moduleConfig.getProjectVersion()));
             }
         } catch (DependencyTrackException ex) {
             handleFailure(format("Exception occurred while trying to delete project: %s-%s",
-                    commonConfig.getProjectName(), commonConfig.getProjectVersion()), ex);
+                    moduleConfig.getProjectName(), moduleConfig.getProjectVersion()), ex);
         }
     }
 }

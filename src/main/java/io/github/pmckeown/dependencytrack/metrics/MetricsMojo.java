@@ -3,6 +3,7 @@ package io.github.pmckeown.dependencytrack.metrics;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
@@ -23,15 +24,15 @@ import javax.inject.Inject;
  * For example the following configuration with fail the build if there are any Critical or High issues found in the
  * scan, more than 10 medium issues or more than 20 low issues.
  *
- * &lt;configuration&gt;
- *     &lt;metricsThresholds&gt;
- *         &lt;critical&gt;0&lt;/critical&gt;
- *         &lt;high&gt;0&lt;/high&gt;
- *         &lt;medium&gt;10&lt;/medium&gt;
- *         &lt;low&gt;20&lt;/low&gt;
- *         &lt;unassigned&gt;30&lt;/unassigned&gt;
- *     &lt;/metricsThresholds&gt;
- * &lt;/configuration&gt;
+ *  &lt;configuration&gt;
+ *      &lt;metricsThresholds&gt;
+ *          &lt;critical&gt;0&lt;/critical&gt;
+ *          &lt;high&gt;0&lt;/high&gt;
+ *          &lt;medium&gt;10&lt;/medium&gt;
+ *          &lt;low&gt;20&lt;/low&gt;
+ *          &lt;unassigned&gt;30&lt;/unassigned&gt;
+ *      &lt;/metricsThresholds&gt;
+ *  &lt;/configuration&gt;
  *
  * This allows you to tune build failures to your risk appetite.
  *
@@ -64,8 +65,8 @@ public class MetricsMojo extends AbstractDependencyTrackMojo {
 
     @Inject
     public MetricsMojo(MetricsAction metricsAction, ProjectAction getProjectAction, MetricsPrinter metricsPrinter,
-           MetricsAnalyser metricsAnalyser, CommonConfig commonConfig, Logger logger) {
-        super(commonConfig, logger);
+                       MetricsAnalyser metricsAnalyser, CommonConfig commonConfig, ModuleConfig moduleConfig, Logger logger) {
+        super(commonConfig, moduleConfig, logger);
         this.metricsAction = metricsAction;
         this.getProjectAction = getProjectAction;
         this.metricsPrinter = metricsPrinter;
@@ -75,7 +76,7 @@ public class MetricsMojo extends AbstractDependencyTrackMojo {
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
         try {
-            Project project = getProjectAction.getProject(commonConfig);
+            Project project = getProjectAction.getProject(moduleConfig);
             logger.debug("Project Details: %s", project.toString());
 
             Metrics metrics = getMetrics(project);

@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack.project;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.CommonConfig;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import kong.unirest.HttpStatus;
 import org.junit.Before;
@@ -11,22 +12,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
-import static com.github.tomakehurst.wiremock.client.WireMock.patch;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.patchRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_PROJECT_UUID;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
+import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_PROJECT_UUID;
 import static io.github.pmckeown.dependencytrack.project.ProjectInfoBuilder.aProjectInfo;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.doReturn;
 
@@ -38,6 +29,9 @@ public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTes
 
     @Mock
     private CommonConfig commonConfig;
+
+    @Mock
+    private ModuleConfig moduleConfig;
 
     @Before
     public void setUp() {
@@ -57,14 +51,14 @@ public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTes
 
     @Test
     public void thatProjectParsingWorks() {
-        doReturn("doesn't matter").when(commonConfig).getProjectName();
-        doReturn("doesn't matter").when(commonConfig).getProjectVersion();
+        doReturn("doesn't matter").when(moduleConfig).getProjectName();
+        doReturn("doesn't matter").when(moduleConfig).getProjectVersion();
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-            aResponse()
-                .withStatus(HttpStatus.OK)
-                .withBodyFile("api/v1/project/tags-project.json")));
+                aResponse()
+                        .withStatus(HttpStatus.OK)
+                        .withBodyFile("api/v1/project/tags-project.json")));
 
-        Response<Project> response = projectClient.getProject(commonConfig.getProjectUuid(), commonConfig.getProjectName(), commonConfig.getProjectVersion());
+        Response<Project> response = projectClient.getProject(moduleConfig.getProjectUuid(), moduleConfig.getProjectName(), moduleConfig.getProjectVersion());
         assertThat(response.isSuccess(), is(equalTo(true)));
         assertThat(response.getBody().isPresent(), is(equalTo(true)));
         Project project = response.getBody().get();

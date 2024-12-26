@@ -3,6 +3,7 @@ package io.github.pmckeown.dependencytrack.finding;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.finding.report.FindingsReportGenerator;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
@@ -91,8 +92,8 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     @Inject
     public FindingsMojo(ProjectAction projectAction, FindingsAction findingsAction, FindingsPrinter findingsPrinter,
                         FindingsAnalyser findingsAnalyser, FindingsReportGenerator findingsReportGenerator,
-                        CommonConfig commonConfig, Logger logger) {
-        super(commonConfig, logger);
+                        CommonConfig commonConfig, ModuleConfig moduleConfig, Logger logger) {
+        super(commonConfig, moduleConfig, logger);
         this.projectAction = projectAction;
         this.findingsAction = findingsAction;
         this.findingsPrinter = findingsPrinter;
@@ -104,7 +105,7 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     protected void performAction() throws MojoExecutionException, MojoFailureException {
         List<Finding> findings;
         try {
-            Project project = projectAction.getProject(commonConfig);
+            Project project = projectAction.getProject(moduleConfig);
             findings = findingsAction.getFindings(project);
             findingsPrinter.printFindings(project, findings);
             populateThresholdFromCliOptions();

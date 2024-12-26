@@ -1,6 +1,7 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.policyviolation.report.PolicyViolationsReportGenerator;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
@@ -12,9 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("unused")
 @RunWith(MockitoJUnitRunner.class)
@@ -37,6 +36,9 @@ public class PolicyViolationsMojoTest {
 
     @Mock
     private CommonConfig commonConfig;
+
+    @Mock
+    private ModuleConfig moduleConfig;
 
     @Mock
     private PolicyViolationsReportGenerator policyViolationReportGenerator;

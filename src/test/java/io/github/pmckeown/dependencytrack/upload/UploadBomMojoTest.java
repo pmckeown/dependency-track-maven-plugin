@@ -1,6 +1,7 @@
 package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
@@ -13,15 +14,12 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
 import java.util.Collections;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UploadBomMojoTest {
@@ -51,9 +49,13 @@ public class UploadBomMojoTest {
     @Mock
     private CommonConfig commonConfig;
 
+    @Mock
+    private ModuleConfig moduleConfig;
+
     @Before
     public void setup() {
         uploadBomMojo.setCommonConfig(commonConfig);
+        uploadBomMojo.setModuleConfig(moduleConfig);
         uploadBomMojo.setMavenProject(project);
     }
 
@@ -65,8 +67,8 @@ public class UploadBomMojoTest {
 
         uploadBomMojo.execute();
 
-        verify(commonConfig).setProjectName(PROJECT_NAME);
-        verify(commonConfig).setProjectVersion(PROJECT_VERSION);
+        verify(moduleConfig).setProjectName(PROJECT_NAME);
+        verify(moduleConfig).setProjectVersion(PROJECT_VERSION);
         verifyNoInteractions(uploadBomAction);
         verifyNoInteractions(metricsAction);
         verifyNoInteractions(projectAction);
@@ -80,8 +82,8 @@ public class UploadBomMojoTest {
 
         uploadBomMojo.execute();
 
-        verify(commonConfig).setProjectName(PROJECT_NAME);
-        verify(commonConfig).setProjectVersion(PROJECT_VERSION);
+        verify(moduleConfig).setProjectName(PROJECT_NAME);
+        verify(moduleConfig).setProjectVersion(PROJECT_VERSION);
         verifyNoInteractions(uploadBomAction);
         verifyNoInteractions(metricsAction);
         verifyNoInteractions(projectAction);
@@ -96,8 +98,8 @@ public class UploadBomMojoTest {
 
         uploadBomMojo.execute();
 
-        verify(commonConfig).setProjectName(PROJECT_NAME);
-        verify(commonConfig).setProjectVersion(snapshotVersion);
+        verify(moduleConfig).setProjectName(PROJECT_NAME);
+        verify(moduleConfig).setProjectVersion(snapshotVersion);
         verifyNoInteractions(uploadBomAction);
         verifyNoInteractions(metricsAction);
         verifyNoInteractions(projectAction);
@@ -119,14 +121,14 @@ public class UploadBomMojoTest {
 
     @Test
     public void thatWhenUpdateParentFailsTheLoggerIsCalledAndBuildFails() throws Exception {
-        doReturn(true).when(uploadBomAction).upload();
-
-        CommonConfig config = new CommonConfig();
+        ModuleConfig config = new ModuleConfig();
         config.setProjectName("project-parent");
         config.setProjectVersion("1.2.3");
         config.setUpdateParent(true);
 
-        uploadBomMojo.setCommonConfig(config);
+        doReturn(true).when(uploadBomAction).upload(config);
+
+        uploadBomMojo.setModuleConfig(config);
         uploadBomMojo.setParentName("project-parent");
         uploadBomMojo.setParentVersion("1.2.3");
         uploadBomMojo.setUpdateParent(true);
@@ -144,7 +146,7 @@ public class UploadBomMojoTest {
 
     @Test
     public void thatUpdateParentFailsWhenParentNameIsNull() throws Exception {
-        doReturn(true).when(uploadBomAction).upload();
+        doReturn(true).when(uploadBomAction).upload(moduleConfig);
 
         uploadBomMojo.setParentName(null);
         uploadBomMojo.setParentVersion(null);

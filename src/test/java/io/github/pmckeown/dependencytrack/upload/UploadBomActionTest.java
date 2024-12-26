@@ -14,16 +14,12 @@ import java.util.Optional;
 
 import static io.github.pmckeown.dependencytrack.PollingConfig.TimeUnit.MILLIS;
 import static io.github.pmckeown.dependencytrack.upload.UploadBomResponseBuilder.anUploadBomResponse;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UploadBomActionTest {
@@ -42,6 +38,9 @@ public class UploadBomActionTest {
     @Mock
     private CommonConfig commonConfig;
 
+    @Mock
+    private ModuleConfig moduleConfig;
+
     @Spy
     private Poller<Boolean> poller = new Poller<>();
 
@@ -52,32 +51,32 @@ public class UploadBomActionTest {
     public void thatWhenNoBomIsFoundThenFalseIsReturned() throws Exception {
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
-        boolean success = uploadBomAction.upload();
+        boolean success = uploadBomAction.upload(moduleConfig);
 
         assertThat(success, is(equalTo(false)));
     }
 
     @Test
     public void thatBomCanBeUploadedSuccessfully() throws Exception {
-        doReturn(BOM_LOCATION).when(commonConfig).getBomLocation();
+        doReturn(BOM_LOCATION).when(moduleConfig).getBomLocation();
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
         doReturn(anUploadBomSuccessResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class));
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
-        boolean success = uploadBomAction.upload();
+        boolean success = uploadBomAction.upload(moduleConfig);
 
         assertThat(success, is(equalTo(true)));
     }
 
     @Test
     public void thatBomUploadFailureReturnsFalse() {
-        doReturn(BOM_LOCATION).when(commonConfig).getBomLocation();
+        doReturn(BOM_LOCATION).when(moduleConfig).getBomLocation();
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
         doReturn(aNotFoundResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class));
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
         try {
-            uploadBomAction.upload();
+            uploadBomAction.upload(moduleConfig);
             fail("DependencyTrackException expected");
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
@@ -89,7 +88,7 @@ public class UploadBomActionTest {
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
         try {
-            uploadBomAction.upload();
+            uploadBomAction.upload(moduleConfig);
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
@@ -97,7 +96,7 @@ public class UploadBomActionTest {
 
     @Test
     public void thatWhenPollingIsEnabledThatTheServerIsQueriedUntilBomIsFullyProcessed() throws Exception {
-        doReturn(BOM_LOCATION).when(commonConfig).getBomLocation();
+        doReturn(BOM_LOCATION).when(moduleConfig).getBomLocation();
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
         doReturn(anUploadBomSuccessResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class));
         doReturn(new PollingConfig(true, 1, 3, MILLIS)).when(commonConfig).getPollingConfig();
@@ -111,7 +110,7 @@ public class UploadBomActionTest {
                 .doReturn(aBomProcessingResponse(false))
                 .when(bomClient).isBomBeingProcessed(anyString());
 
-        uploadBomAction.upload();
+        uploadBomAction.upload(moduleConfig);
 
         verify(bomClient, times(3)).isBomBeingProcessed(anyString());
     }
