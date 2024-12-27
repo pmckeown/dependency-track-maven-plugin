@@ -16,7 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.doReturn;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ConfigTest {
+public class ModuleConfigTest {
 
     private static final String PROJECT_NAME = "test";
 
