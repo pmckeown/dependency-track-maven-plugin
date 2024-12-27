@@ -1,13 +1,12 @@
 package io.github.pmckeown.dependencytrack.upload;
 
-import io.github.pmckeown.dependencytrack.CommonConfig;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import io.github.pmckeown.dependencytrack.ModuleConfig;
+import io.github.pmckeown.dependencytrack.project.ProjectTag;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import io.github.pmckeown.dependencytrack.project.ProjectTag;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Encapsulates the request payload for uploading a BOM
@@ -26,20 +25,20 @@ public class UploadBomRequest {
     private final String parentName;
     private final String parentVersion;
 
-    UploadBomRequest(CommonConfig commonConfig, String base64EncodedBom) {
-        this.projectName = commonConfig.getProjectName();
-        this.projectVersion = commonConfig.getProjectVersion();
-        this.autoCreate = commonConfig.isAutoCreate();
+    UploadBomRequest(ModuleConfig moduleConfig, String base64EncodedBom) {
+        this.projectName = moduleConfig.getProjectName();
+        this.projectVersion = moduleConfig.getProjectVersion();
+        this.autoCreate = moduleConfig.isAutoCreate();
         this.base64EncodedBom = base64EncodedBom;
-        this.isLatest = commonConfig.isLatest();
-        if (commonConfig.getProjectTags() == null) {
+        this.isLatest = moduleConfig.isLatest();
+        if (moduleConfig.getProjectTags() == null) {
             this.projectTags = null;
         } else {
-            this.projectTags = commonConfig.getProjectTags().stream().map(ProjectTag::new).collect(Collectors.toList());
+            this.projectTags = moduleConfig.getProjectTags().stream().map(ProjectTag::new).collect(Collectors.toList());
         }
-        this.parentUUID = commonConfig.getParentUuid();
-        this.parentName = commonConfig.getParentName();
-        this.parentVersion = commonConfig.getParentVersion();
+        this.parentUUID = moduleConfig.getParentUuid();
+        this.parentName = moduleConfig.getParentName();
+        this.parentVersion = moduleConfig.getParentVersion();
     }
 
     public String getProjectName() {

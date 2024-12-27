@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack.score;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.metrics.Metrics;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
@@ -26,21 +27,19 @@ class ScoreAction {
 
     private ProjectClient projectClient;
     private MetricsAction metricsAction;
-    private CommonConfig commonConfig = new CommonConfig();
     private Logger logger;
 
     @Inject
     public ScoreAction(ProjectClient projectClient, MetricsAction metricsAction, CommonConfig commonConfig,
-           Logger logger) {
+                       Logger logger) {
         this.projectClient = projectClient;
         this.metricsAction = metricsAction;
-        this.commonConfig = commonConfig;
         this.logger = logger;
     }
 
-    Integer determineScore(Integer inheritedRiskScoreThreshold) throws DependencyTrackException {
+    Integer determineScore(ModuleConfig moduleConfig, Integer inheritedRiskScoreThreshold) throws DependencyTrackException {
         try {
-            Response<Project> response = projectClient.getProject(commonConfig.getProjectUuid(), commonConfig.getProjectName(), commonConfig.getProjectVersion());
+            Response<Project> response = projectClient.getProject(moduleConfig.getProjectUuid(), moduleConfig.getProjectName(), moduleConfig.getProjectVersion());
 
             Optional<Project> body = response.getBody();
             if (response.isSuccess() && body.isPresent()) {
@@ -90,10 +89,4 @@ class ScoreAction {
         logger.info(DELIMITER);
     }
 
-    /*
-     * Setters for dependency injection in tests
-     */
-    void setCommonConfig(CommonConfig commonConfig) {
-        this.commonConfig = commonConfig;
-    }
 }

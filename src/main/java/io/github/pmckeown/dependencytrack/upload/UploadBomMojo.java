@@ -3,6 +3,7 @@ package io.github.pmckeown.dependencytrack.upload;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
@@ -16,17 +17,16 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import java.util.Set;
-
 import javax.inject.Inject;
+import java.util.Set;
 
 /**
  * Provides the capability to upload a Bill of Material (BOM) to your Dependency Track server.
- *
+ * <p>
  * The BOM may any format supported by your Dependency Track server, has only been tested with the output from the
  * <a href="https://github.com/CycloneDX/cyclonedx-maven-plugin">cyclonedx-maven-plugin</a> in the
  * <a href="https://cyclonedx.org/">CycloneDX</a> format
- *
+ * <p>
  * Specific configuration options are:
  * <ol>
  *     <li>bomLocation</li>
@@ -72,8 +72,8 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     @Inject
     public UploadBomMojo(UploadBomAction uploadBomAction, MetricsAction metricsAction, ProjectAction projectAction,
-             CommonConfig commonConfig, Logger logger) {
-        super(commonConfig, logger);
+                         CommonConfig commonConfig, ModuleConfig moduleConfig, Logger logger) {
+        super(commonConfig, moduleConfig, logger);
         this.uploadBomAction = uploadBomAction;
         this.metricsAction = metricsAction;
         this.projectAction = projectAction;
@@ -81,21 +81,21 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
-        enrichCommonConfig();
-        logger.info("Update Project Parent : %s", commonConfig.getUpdateParent());
+        enrichConfig();
+        logger.info("Update Project Parent : %s", moduleConfig.getUpdateParent());
 
         try {
-            if (!uploadBomAction.upload()) {
+            if (!uploadBomAction.upload(moduleConfig)) {
                 handleFailure("Bom upload failed");
             }
-            Project project = projectAction.getProject(commonConfig);
+            Project project = projectAction.getProject(moduleConfig);
 
             UpdateRequest updateReq = new UpdateRequest();
             if (updateProjectInfo) {
                 updateReq.withBomLocation(getBomLocation());
             }
             if (updateParent) {
-                updateReq.withParent(getProjectParent(commonConfig));
+                updateReq.withParent(getProjectParent(moduleConfig));
             }
             if (updateProjectInfo || updateParent) {
                 boolean projectUpdated = projectAction.updateProject(project, updateReq, projectTags);
@@ -111,26 +111,27 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         }
     }
 
-    private void enrichCommonConfig() {
-        this.commonConfig.setBomLocation(getBomLocation());
-        this.commonConfig.setMavenProject(mavenProject);
-        this.commonConfig.setUpdateProjectInfo(updateProjectInfo);
-        this.commonConfig.setUpdateParent(updateParent);
-        this.commonConfig.setParentUuid(parentUuid);
-        this.commonConfig.setParentName(parentName);
-        this.commonConfig.setParentVersion(parentVersion);
-        this.commonConfig.setLatest(isLatest);
-        this.commonConfig.setProjectTags(projectTags);
+    private void enrichConfig() {
+        this.moduleConfig.setBomLocation(getBomLocation());
+        this.moduleConfig.setMavenProject(mavenProject);
+        this.moduleConfig.setUpdateProjectInfo(updateProjectInfo);
+        this.moduleConfig.setUpdateParent(updateParent);
+        this.moduleConfig.setParentUuid(parentUuid);
+        this.moduleConfig.setParentName(parentName);
+        this.moduleConfig.setParentVersion(parentVersion);
+        this.moduleConfig.setLatest(isLatest);
+        this.moduleConfig.setProjectTags(projectTags);
     }
-    private Project getProjectParent(CommonConfig commonConfig) throws DependencyTrackException {
-        if (StringUtils.isBlank(commonConfig.getParentName()) && StringUtils.isBlank(commonConfig.getParentUuid())) {
+
+    private Project getProjectParent(ModuleConfig moduleConfig) throws DependencyTrackException {
+        if (StringUtils.isBlank(moduleConfig.getParentName()) && StringUtils.isBlank(moduleConfig.getParentUuid())) {
             logger.error("Parent update requested but no parent found in parent maven project or provided in config");
             throw new DependencyTrackException("No parent configured.");
         } else {
-            if (StringUtils.isBlank(commonConfig.getParentUuid()))
-                return getProjectParentByNameAndVersion(commonConfig.getParentName(), commonConfig.getParentVersion());
+            if (StringUtils.isBlank(moduleConfig.getParentUuid()))
+                return getProjectParentByNameAndVersion(moduleConfig.getParentName(), moduleConfig.getParentVersion());
             else
-                return getProjectParentByUuid(commonConfig.getParentUuid());
+                return getProjectParentByUuid(moduleConfig.getParentUuid());
         }
     }
 
@@ -140,8 +141,8 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
             return projectAction.getProject(uuid);
         } catch (DependencyTrackException ex) {
             logger.error("Failed to find parent project with UUID ['%s']. Check the update parent " +
-                "your settings for this plugin and verify if a matching parent project exists in the " +
-                "server.", uuid);
+                    "your settings for this plugin and verify if a matching parent project exists in the " +
+                    "server.", uuid);
             throw ex;
         }
     }
@@ -152,8 +153,8 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
             return projectAction.getProject(name, version);
         } catch (DependencyTrackException ex) {
             logger.error("Failed to find parent project with name ['%s-%s']. Check the update parent " +
-                "your settings for this plugin and verify if a matching parent project exists in the " +
-                "server.", name, version);
+                    "your settings for this plugin and verify if a matching parent project exists in the " +
+                    "server.", name, version);
             throw ex;
         }
     }
@@ -173,11 +174,11 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
      */
     void setBomLocation(String bomLocation) {
         this.bomLocation = bomLocation;
-        commonConfig.setBomLocation(bomLocation);
+        moduleConfig.setBomLocation(bomLocation);
     }
 
     void setCommonConfig(CommonConfig commonConfig) {
-        commonConfig.setMavenProject(this.mavenProject);
+        moduleConfig.setMavenProject(this.mavenProject);
         this.commonConfig = commonConfig;
     }
 
@@ -185,40 +186,51 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         return commonConfig;
     }
 
+    void setModuleConfig(ModuleConfig moduleConfig) {
+        moduleConfig.setMavenProject(this.mavenProject);
+        this.moduleConfig = moduleConfig;
+    }
+
+    ModuleConfig getModuleConfig() {
+        return moduleConfig;
+    }
+
     void setMavenProject(MavenProject mp) {
         this.mavenProject = mp;
-        commonConfig.setMavenProject(mp);
+        moduleConfig.setMavenProject(mp);
     }
 
     void setUpdateParent(boolean updateParent) {
         this.updateParent = updateParent;
-        commonConfig.setUpdateParent(updateParent);
+        moduleConfig.setUpdateParent(updateParent);
     }
 
-    public String getParentUuid() { return commonConfig.getParentUuid(); }
+    public String getParentUuid() {
+        return moduleConfig.getParentUuid();
+    }
 
     public void setParentUuid(String parentUuid) {
         this.parentUuid = parentUuid;
-        commonConfig.setParentUuid(parentUuid);
+        moduleConfig.setParentUuid(parentUuid);
     }
 
     void setParentName(String parentName) {
         this.parentName = parentName;
-        commonConfig.setParentName(parentName);
+        moduleConfig.setParentName(parentName);
     }
 
     void setParentVersion(String parentVersion) {
         this.parentVersion = parentVersion;
-        commonConfig.setParentVersion(parentVersion);
+        moduleConfig.setParentVersion(parentVersion);
     }
 
     void setLatest(boolean isLatest) {
         this.isLatest = isLatest;
-        commonConfig.setLatest(isLatest);
+        moduleConfig.setLatest(isLatest);
     }
 
     void setProjectTags(Set<String> projectTags) {
         this.projectTags = projectTags;
-        commonConfig.setProjectTags(projectTags);
+        moduleConfig.setProjectTags(projectTags);
     }
 }

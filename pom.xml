@@ -192,9 +192,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.tomakehurst</groupId>
+            <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
-            <version>3.0.1</version>
+            <version>3.0.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
