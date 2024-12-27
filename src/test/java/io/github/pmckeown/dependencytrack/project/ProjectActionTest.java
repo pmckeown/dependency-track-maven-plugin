@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack.project;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.bom.BomParser;
 import io.github.pmckeown.util.Logger;
@@ -13,23 +14,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -46,7 +36,7 @@ public class ProjectActionTest {
     private ProjectAction projectAction;
 
     @Mock
-    private CommonConfig commonConfig1;
+    private CommonConfig commonConfig;
 
     @Mock
     private ProjectClient projectClient;
@@ -61,7 +51,7 @@ public class ProjectActionTest {
     public void thatProjectCanBeRetrievedByCommonConfig() throws Exception {
         doReturn(aSuccessResponse().withBody(project2()).build()).when(projectClient).getProject(anyString(), anyString(), anyString());
 
-        Project project = projectAction.getProject(commonConfig1());
+        Project project = projectAction.getProject(getModuleConfig());
 
         assertThat(project, is(not(nullValue())));
         assertThat(project.getUuid(), is(equalTo(UUID_2)));
@@ -92,7 +82,7 @@ public class ProjectActionTest {
         doThrow(UnirestException.class).when(projectClient).getProject(anyString(), anyString(), anyString());
 
         try {
-            projectAction.getProject(commonConfig1());
+            projectAction.getProject(getModuleConfig());
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
@@ -102,7 +92,7 @@ public class ProjectActionTest {
     public void thatANotFoundResponseResultsInAnException() throws DependencyTrackException {
         doReturn(aNotFoundResponse()).when(projectClient).getProject(anyString(), anyString(), anyString());
 
-        projectAction.getProject(commonConfig1());
+        projectAction.getProject(getModuleConfig());
     }
 
     @Test
@@ -110,7 +100,7 @@ public class ProjectActionTest {
         doReturn(aSuccessResponse().build()).when(projectClient).getProject(anyString(), anyString(), anyString());
 
         try {
-            projectAction.getProject(commonConfig1());
+            projectAction.getProject(getModuleConfig());
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
@@ -120,7 +110,7 @@ public class ProjectActionTest {
     public void thatRequestedProjectCannotBeFoundAnExceptionIsThrown() throws DependencyTrackException {
         doReturn(aSuccessResponse().build()).when(projectClient).getProject(anyString(), anyString(), anyString());
 
-        projectAction.getProject(commonConfig1());
+        projectAction.getProject(getModuleConfig());
     }
 
     @Test
@@ -254,10 +244,10 @@ public class ProjectActionTest {
         return new Project(UUID_2, PROJECT_NAME_2, PROJECT_VERSION_2, null, false, tags);
     }
 
-    private CommonConfig commonConfig1() {
-        CommonConfig commonConfig = new CommonConfig();
-        commonConfig.setProjectName(PROJECT_NAME_2);
-        commonConfig.setProjectVersion(PROJECT_VERSION_2);
-        return commonConfig;
+    private ModuleConfig getModuleConfig() {
+        ModuleConfig moduleConfig = new ModuleConfig();
+        moduleConfig.setProjectName(PROJECT_NAME_2);
+        moduleConfig.setProjectVersion(PROJECT_VERSION_2);
+        return moduleConfig;
     }
 }

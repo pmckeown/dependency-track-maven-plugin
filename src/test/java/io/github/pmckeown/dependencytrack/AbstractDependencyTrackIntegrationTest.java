@@ -35,11 +35,16 @@ public abstract class AbstractDependencyTrackIntegrationTest {
 
     protected CommonConfig getCommonConfig() {
         CommonConfig config = new CommonConfig();
-        config.setProjectName(PROJECT_NAME);
-        config.setProjectVersion(PROJECT_VERSION);
         config.setDependencyTrackBaseUrl(HOST + wireMockRule.port());
         config.setApiKey(API_KEY);
         config.setPollingConfig(PollingConfig.disabled());
+        return config;
+    }
+
+    protected ModuleConfig getModuleConfig() {
+        ModuleConfig config = new ModuleConfig();
+        config.setProjectName(PROJECT_NAME);
+        config.setProjectVersion(PROJECT_VERSION);
         return config;
     }
 

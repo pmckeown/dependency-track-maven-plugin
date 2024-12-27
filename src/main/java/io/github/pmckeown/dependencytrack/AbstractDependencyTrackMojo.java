@@ -13,9 +13,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
 import static kong.unirest.HeaderNames.ACCEPT;
 import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
+
 /**
  * Base class for Mojos in this project.
- *
+ * <p>
  * Provides common configuration options:
  * <ol>
  *     <li>projectName</li>
@@ -69,26 +70,29 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
 
     protected CommonConfig commonConfig;
 
-    protected AbstractDependencyTrackMojo(CommonConfig commonConfig, Logger logger) {
+    protected ModuleConfig moduleConfig;
+
+    protected AbstractDependencyTrackMojo(CommonConfig commonConfig, ModuleConfig moduleConfig, Logger logger) {
         this.logger = logger;
         this.commonConfig = commonConfig;
+        this.moduleConfig = moduleConfig;
     }
 
     /**
      * Initialises the {@link Logger} and {@link CommonConfig} instances that were injected by the SISU inversion of
      * control container (using Guice under the hood) by providing the data provided by the Plexus IOC container.
-     *
+     * <p>
      * Then performs the action defined by the subclass.
      */
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
         // Set up Mojo environment
         this.logger.setLog(getLog());
-        this.commonConfig.setProjectName(projectName);
-        this.commonConfig.setProjectVersion(projectVersion);
         this.commonConfig.setDependencyTrackBaseUrl(dependencyTrackBaseUrl);
         this.commonConfig.setApiKey(apiKey);
         this.commonConfig.setPollingConfig(this.pollingConfig != null ? this.pollingConfig : PollingConfig.defaults());
+        this.moduleConfig.setProjectName(projectName);
+        this.moduleConfig.setProjectVersion(projectVersion);
 
         // Configure Unirest with additional user-supplied configuration
         configureUnirest();
@@ -105,7 +109,7 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
      * Template method to be implemented by subclasses.
      *
      * @throws MojoExecutionException when an error is encountered during Mojo execution
-     * @throws MojoFailureException when the Mojo fails
+     * @throws MojoFailureException   when the Mojo fails
      */
     protected abstract void performAction() throws MojoExecutionException, MojoFailureException;
 
@@ -132,7 +136,7 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
     public void setVerifySsl(boolean verifySsl) {
         this.verifySsl = verifySsl;
     }
-    
+
     public void setSkip(String skip) {
         this.skip = skip;
     }
@@ -157,8 +161,8 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
 
     private boolean getSkip() {
         return Boolean.parseBoolean(skip)
-                 || ("releases".equals(skip) && !ArtifactUtils.isSnapshot(projectVersion))
-                 || ("snapshots".equals(skip) && ArtifactUtils.isSnapshot(projectVersion));
+                || ("releases".equals(skip) && !ArtifactUtils.isSnapshot(projectVersion))
+                || ("snapshots".equals(skip) && ArtifactUtils.isSnapshot(projectVersion));
     }
 
     /**

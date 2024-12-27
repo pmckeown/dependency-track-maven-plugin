@@ -1,6 +1,7 @@
 package io.github.pmckeown.dependencytrack.finding;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.finding.report.FindingsReportGenerator;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
@@ -14,16 +15,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("unused")
 @RunWith(MockitoJUnitRunner.class)
@@ -46,6 +42,9 @@ public class FindingsMojoTest {
 
     @Mock
     private CommonConfig commonConfig;
+
+    @Mock
+    private ModuleConfig moduleConfig;
 
     @Mock
     private FindingsReportGenerator findingsReportGenerator;
