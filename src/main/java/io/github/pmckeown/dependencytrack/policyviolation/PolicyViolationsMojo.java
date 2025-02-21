@@ -1,5 +1,19 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
+import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
+
+import java.io.File;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
@@ -8,18 +22,6 @@ import io.github.pmckeown.dependencytrack.policyviolation.report.PolicyViolation
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.io.File;
-import java.util.List;
-
-import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
 
 /**
  * Print the policy violations retrieved from the Dependency Track Server after a BOM upload.  This is calculated
@@ -37,7 +39,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
  *
  * @author Sahiba Mittal
  */
-@Mojo(name = "policy-violations", defaultPhase = VERIFY)
+@Mojo(name = "policy-violations", defaultPhase = VERIFY, threadSafe = true)
 @Singleton
 public class PolicyViolationsMojo extends AbstractDependencyTrackMojo {
 

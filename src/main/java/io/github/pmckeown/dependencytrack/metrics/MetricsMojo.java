@@ -1,5 +1,13 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
+import javax.inject.Inject;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
@@ -7,13 +15,6 @@ import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-
-import javax.inject.Inject;
 
 /**
  * Print the full set of metrics about a project as determined by the Dependency Track Server
@@ -52,7 +53,7 @@ import javax.inject.Inject;
  *
  * @author Paul McKeown
  */
-@Mojo(name = "metrics", defaultPhase = LifecyclePhase.VERIFY)
+@Mojo(name = "metrics", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
 public class MetricsMojo extends AbstractDependencyTrackMojo {
 
     private MetricsAction metricsAction;

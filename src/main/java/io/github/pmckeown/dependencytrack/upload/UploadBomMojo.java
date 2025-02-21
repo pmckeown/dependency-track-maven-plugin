@@ -1,5 +1,17 @@
 package io.github.pmckeown.dependencytrack.upload;
 
+import java.util.Set;
+
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
@@ -9,16 +21,6 @@ import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.dependencytrack.project.UpdateRequest;
 import io.github.pmckeown.util.Logger;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-
-import javax.inject.Inject;
-import java.util.Set;
 
 /**
  * Provides the capability to upload a Bill of Material (BOM) to your Dependency Track server.
@@ -34,7 +36,7 @@ import java.util.Set;
  *
  * @author Paul McKeown
  */
-@Mojo(name = "upload-bom", defaultPhase = LifecyclePhase.VERIFY)
+@Mojo(name = "upload-bom", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
 public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     @Parameter(property = "dependency-track.bomLocation")

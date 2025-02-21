@@ -1,23 +1,24 @@
 package io.github.pmckeown.dependencytrack.score;
 
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
-import io.github.pmckeown.dependencytrack.CommonConfig;
-import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.ModuleConfig;
-import io.github.pmckeown.util.Logger;
+import static java.lang.String.format;
+
+import javax.inject.Inject;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import javax.inject.Inject;
-
-import static java.lang.String.format;
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
+import io.github.pmckeown.dependencytrack.CommonConfig;
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
+import io.github.pmckeown.util.Logger;
 
 /**
  * Provides the capability to find the current Inherited Risk Score as determined by the Dependency Track Server.
- * 
+ *
  * Specific configuration options are:
  * <ol>
  *     <li>inheritedRiskScoreThreshold</li>
@@ -25,7 +26,7 @@ import static java.lang.String.format;
  *
  * @author Paul McKeown
  */
-@Mojo(name = "score", defaultPhase = LifecyclePhase.VERIFY)
+@Mojo(name = "score", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
 public class ScoreMojo extends AbstractDependencyTrackMojo {
 
     @Parameter

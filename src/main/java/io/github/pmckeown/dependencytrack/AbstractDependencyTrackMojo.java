@@ -1,8 +1,11 @@
 package io.github.pmckeown.dependencytrack;
 
-import io.github.pmckeown.util.Logger;
-import kong.unirest.Unirest;
-import kong.unirest.jackson.JacksonObjectMapper;
+import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
+import static kong.unirest.HeaderNames.ACCEPT;
+import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -10,9 +13,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
-import static kong.unirest.HeaderNames.ACCEPT;
-import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
+import io.github.pmckeown.util.Logger;
+import kong.unirest.Unirest;
+import kong.unirest.jackson.JacksonObjectMapper;
 
 /**
  * Base class for Mojos in this project.
@@ -31,6 +34,8 @@ import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
  * @author Paul McKeown
  */
 public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
+
+    private static AtomicBoolean configureUnirest = new AtomicBoolean();
 
     @Parameter(required = true, defaultValue = "${project.artifactId}", property = "dependency-track.projectName")
     protected String projectName;
@@ -170,16 +175,18 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
      * configuration.
      */
     private void configureUnirest() {
-        Unirest.config()
-                .setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
-                .setDefaultHeader(ACCEPT_ENCODING, "gzip, deflate")
-                .setDefaultHeader(ACCEPT, "application/json")
-                .verifySsl(this.verifySsl);
+        if(configureUnirest.compareAndSet(false, true)) {
+            Unirest.config()
+            .setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
+            .setDefaultHeader(ACCEPT_ENCODING, "gzip, deflate")
+            .setDefaultHeader(ACCEPT, "application/json")
+            .verifySsl(verifySsl);
 
-        // Debug all Unirest config
-        logger.debug("Unirest Configuration: %s", ToStringBuilder.reflectionToString(Unirest.config()));
+            // Debug all Unirest config
+            logger.debug("Unirest Configuration: %s", ToStringBuilder.reflectionToString(Unirest.config()));
 
-        // Info print user specified
-        logger.info("SSL Verification enabled: %b", this.verifySsl);
+            // Info print user specified
+            logger.info("SSL Verification enabled: %b", verifySsl);
+        }
     }
 }
