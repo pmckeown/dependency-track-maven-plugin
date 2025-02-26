@@ -1,24 +1,25 @@
 package io.github.pmckeown.dependencytrack.project;
 
+import static java.lang.String.format;
+
+import javax.inject.Inject;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.util.Logger;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
-
-import javax.inject.Inject;
-
-import static java.lang.String.format;
 
 /**
  * Provides the capability to delete a project on the remote Dependency Track Server.
  *
  * @author Paul McKeown
  */
-@Mojo(name = "delete-project")
+@Mojo(name = "delete-project", threadSafe = true)
 public class DeleteProjectMojo extends AbstractDependencyTrackMojo {
 
     private ProjectAction projectAction;
