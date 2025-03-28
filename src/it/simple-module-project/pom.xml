@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>io.github.pmckeown.dtmp.tests</groupId>
+    <artifactId>simple-module-project</artifactId>
+    <version>1.0.0-@it.snapshot.timestamp@</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <dependency-track-maven-plugin.version>@project.version@</dependency-track-maven-plugin.version>
+    </properties>
+
+    <modules>
+        <module>child</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.cyclonedx</groupId>
+                <artifactId>cyclonedx-maven-plugin</artifactId>
+                <version>2.7.10</version>
+                <configuration>
+                    <schemaVersion>1.4</schemaVersion>
+                    <includeBomSerialNumber>true</includeBomSerialNumber>
+                    <includeCompileScope>true</includeCompileScope>
+                    <includeProvidedScope>true</includeProvidedScope>
+                    <includeRuntimeScope>true</includeRuntimeScope>
+                    <includeSystemScope>true</includeSystemScope>
+                    <includeTestScope>false</includeTestScope>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generate-bom</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>makeBom</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.github.pmckeown</groupId>
+                <artifactId>dependency-track-maven-plugin</artifactId>
+                <version>${dependency-track-maven-plugin.version}</version>
+                <configuration>
+                    <dependencyTrackBaseUrl>${env.DEPENDENCY_TRACK_BASE_URL}</dependencyTrackBaseUrl>
+                    <apiKey>${env.DEPENDENCY_TRACK_API_KEY}</apiKey>
+                    <failOnError>true</failOnError>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>upload-bom</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>upload-bom</goal>
+                        </goals>
+                        <configuration>
+                            <updateProjectInfo>true</updateProjectInfo>
+                            <isLatest>true</isLatest>
+                            <projectTags>
+                                <name>dog-food</name>
+                            </projectTags>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
