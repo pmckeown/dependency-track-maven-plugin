@@ -2,6 +2,8 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.project.ProjectTag;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -37,8 +39,14 @@ public class UploadBomRequest {
             this.projectTags = moduleConfig.getProjectTags().stream().map(ProjectTag::new).collect(Collectors.toList());
         }
         this.parentUUID = moduleConfig.getParentUuid();
-        this.parentName = moduleConfig.getParentName();
-        this.parentVersion = moduleConfig.getParentVersion();
+        if (StringUtils.isNoneBlank(moduleConfig.getParentName(), moduleConfig.getParentVersion())) {
+            // For new project versions both values are required in order to resolve the parent.
+            this.parentName = moduleConfig.getParentName();
+            this.parentVersion = moduleConfig.getParentVersion();
+        } else {
+            this.parentName = null;
+            this.parentVersion = null;
+        }
     }
 
     public String getProjectName() {
