@@ -17,7 +17,7 @@
               <plugin>
                   <groupId>org.cyclonedx</groupId>
                   <artifactId>cyclonedx-maven-plugin</artifactId>
-                  <version>2.7.10</version>
+                  <version>@cyclonedx-maven-plugin.version@</version>
                   <inherited>true</inherited>
                   <configuration>
                       <schemaVersion>1.4</schemaVersion>
