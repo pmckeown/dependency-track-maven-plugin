@@ -173,7 +173,7 @@ The skip property has more than two possible values:
 | 1.9.2          | 4.8.0                   | Project parent          |
 |                | 4.12.0                  | isLatest, projectTags   |
 
-*Note:* certain plugin features are not available in older versions.
+*Note:* certain plugin features are not available in older server versions.
 
 ## Features
 
