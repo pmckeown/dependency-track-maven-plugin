@@ -54,6 +54,10 @@ public class Logger {
         }
     }
 
+    public boolean isDebugEnabled() {
+        return log != null && log.isDebugEnabled();
+    }
+
     public void error(String template, Object... params) {
         assertLogSupplied();
         if(log.isErrorEnabled()) {

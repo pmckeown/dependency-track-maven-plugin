@@ -19,7 +19,7 @@ public class Project extends Item {
     private String name;
     private String version;
     private Metrics metrics;
-    private boolean isLatest;
+    private Boolean isLatest;
     private List<ProjectTag> tags;
 
     @JsonCreator
@@ -27,7 +27,7 @@ public class Project extends Item {
                    @JsonProperty("name") String name,
                    @JsonProperty("version") String version,
                    @JsonProperty("metrics") Metrics metrics,
-                   @JsonProperty("isLatest") boolean isLatest,
+                   @JsonProperty("isLatest") Boolean isLatest,
                    @JsonProperty("tags") List<ProjectTag> tags) {
         super(uuid);
         this.name = name;
@@ -49,7 +49,7 @@ public class Project extends Item {
         return metrics;
     }
 
-    public boolean isLatest() {
+    public Boolean isLatest() {
         return isLatest;
     }
 

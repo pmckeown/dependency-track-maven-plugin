@@ -38,7 +38,7 @@ public class UploadBomAction {
     public boolean upload(ModuleConfig moduleConfig) throws DependencyTrackException {
         logger.info("Project Name: %s", moduleConfig.getProjectName());
         logger.info("Project Version: %s", moduleConfig.getProjectVersion());
-        logger.info("Project is latest: %s", moduleConfig.isLatest());
+        logger.info("Project is latest: %s", Boolean.TRUE.equals(moduleConfig.isLatest()));
         logger.info("Project Tags: %s", StringUtils.join(moduleConfig.getProjectTags(), ","));
         logger.info("Parent UUID: %s", moduleConfig.getParentUuid());
         logger.info("Parent Name: %s", moduleConfig.getParentName());

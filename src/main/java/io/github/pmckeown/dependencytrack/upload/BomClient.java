@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
+import io.github.pmckeown.util.Logger;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
 import kong.unirest.RequestBodyEntity;
@@ -25,10 +26,12 @@ import static kong.unirest.Unirest.get;
 class BomClient {
 
     private CommonConfig commonConfig;
+    private Logger logger;
 
     @Inject
-    BomClient(CommonConfig commonConfig) {
+    BomClient(CommonConfig commonConfig, Logger logger) {
         this.commonConfig = commonConfig;
+        this.logger = logger;
     }
 
     /**
@@ -51,6 +54,9 @@ class BomClient {
         if (httpResponse.isSuccess()) {
             body = Optional.of(httpResponse.getBody());
         } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Server response body: %s", httpResponse.mapError(String.class));
+            }
             body = Optional.empty();
         }
 
