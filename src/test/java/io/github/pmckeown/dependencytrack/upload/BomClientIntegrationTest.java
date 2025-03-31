@@ -4,9 +4,13 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.http.Fault;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackIntegrationTest;
 import io.github.pmckeown.dependencytrack.Response;
+import io.github.pmckeown.util.Logger;
 import kong.unirest.UnirestException;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_BOM;
@@ -19,15 +23,19 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
+@RunWith(MockitoJUnitRunner.class)
 public class BomClientIntegrationTest extends AbstractDependencyTrackIntegrationTest {
 
     private static final String BASE_64_ENCODED_BOM = "blah";
+
+    @Mock
+    private Logger logger;
 
     private BomClient client;
 
     @Before
     public void setup() {
-        client = new BomClient(getCommonConfig());
+        client = new BomClient(getCommonConfig(), logger);
     }
 
     @Test

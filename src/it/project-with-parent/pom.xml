@@ -8,7 +8,7 @@
         <version>1.0.0</version>
         <relativePath>../common-parent-project</relativePath>
     </parent>
-    <artifactId>modules-project-child1</artifactId>
+    <artifactId>project-with-parent</artifactId>
     <version>1.0.0-@it.snapshot.timestamp@</version>
 
     <dependencies>
