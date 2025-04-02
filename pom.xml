@@ -68,6 +68,7 @@
         <maven.version>3.9.5</maven.version>
         <sonar.organization>pmckeown</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <cyclonedx-maven-plugin.version>2.7.10</cyclonedx-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -458,10 +459,10 @@
             2 properties must be set on the command line or as environment variables.
 
             Example usage with command args:
-            mvn clean install -Peat-your-own-dog-food -Ddependency-track.dependencyTrackBaseUrl -Ddependency-track.dependencyTrackApiKey
+            mvn clean verify -Peat-your-own-dog-food -Ddependency-track.dependencyTrackBaseUrl -Ddependency-track.dependencyTrackApiKey
 
             Example usage with environment variables set (DEPENDENCY_TRACK_BASE_URL & DEPENDENCY_TRACK_API_KEY):
-            mvn clean install -Peat-your-own-dog-food
+            mvn clean verify -Peat-your-own-dog-food
         -->
         <profile>
             <id>eat-your-own-dog-food</id>
@@ -470,7 +471,7 @@
                     <plugin>
                         <groupId>org.cyclonedx</groupId>
                         <artifactId>cyclonedx-maven-plugin</artifactId>
-                        <version>2.7.10</version>
+                        <version>${cyclonedx-maven-plugin.version}</version>
                         <configuration>
                             <schemaVersion>1.4</schemaVersion>
                             <includeBomSerialNumber>true</includeBomSerialNumber>
@@ -529,6 +530,48 @@
                                         <medium>0</medium>
                                         <low>0</low>
                                     </findingThresholds>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>3.6.0</version>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>timestamp-property</goal>
+                                </goals>
+                                <configuration>
+                                    <pattern>yyyyMMddHHmmss</pattern>
+                                    <name>it.snapshot.timestamp</name>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <version>3.9.0</version>
+                        <executions>
+                            <execution>
+                                <id>local-plugin-install</id>
+                                <goals>
+                                    <goal>install</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <goals>
+                                        <goal>verify</goal>
+                                    </goals>
+                                    <skipInvocation>${skipITs}</skipInvocation>
                                 </configuration>
                             </execution>
                         </executions>

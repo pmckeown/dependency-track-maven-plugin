@@ -166,6 +166,15 @@ The skip property has more than two possible values:
  * snapshots: will skip if current version of the project is a snapshot
  * any other values will be considered as false
 
+#### Dependency-Track Plugin/Server Compatibility
+
+| Plugin Version | Required Server Version | Features                |
+|----------------|-------------------------|-------------------------|
+| 1.9.2          | 4.8.0                   | Project parent          |
+|                | 4.12.0                  | isLatest, projectTags   |
+
+*Note:* certain plugin features are not available in older server versions.
+
 ## Features
 
 * [Upload Bill of Material](#upload-bill-of-material) - Create/modify a project on the Dependency-Track server, as well
@@ -237,12 +246,14 @@ Dependency-Track based on the metadata present in the BOM:
 
 From Dependency-Track server 4.8.0 onwards, you can set the project parent by setting `updateParent` to `true`. The 
 parent name will be defaulted to that POM's project parent name. If you wish to override that value, or there is 
-no parent set within the `pom.xml`, then explicitly set `parentName` and `parentVersion`. `projectVersion` is optional 
-Dependency-Track, so this has no default to allow for blank values.
+no parent set within the `pom.xml`, then explicitly set `parentName`. Both `parentName` and `parentVersion`
+must be configured, otherwise either value is omitted in the upload.
 
 **Note 1:** If both `parentUuid` and `parentName` / `parentVersion` are provided in configuration `parentUuid` will take precedence.
 
-**Note 2:** If a non-existing parent information is provided, the plugin will fail with `404 Not found`. 
+**Note 2:** If a non-existing parent information is provided, the plugin will fail with `404 Not found`.
+
+From Dependency-Track server 4.12.0 onwards you can set `isLatest` and `projectTags`.
 
 | Property           | Required | Default Value          | Example Values                        |
 |--------------------|----------|------------------------|---------------------------------------|
@@ -252,8 +263,8 @@ Dependency-Track, so this has no default to allow for blank values.
 | parentUuid         | false    |                        | 628df5eb-a7fe-4c3f-831c-4536839a05ed  |
 | parentName         | false    | ${project.parent.name} | my-name-override                      |
 | parentVersion      | false    |                        | ${project.parent.version}             |
-| isLatest           | false    | false                  | true                                  |
-| projectTags[].name | false    | false                  | <name>tag1</name>                     |
+| isLatest           | false    |                        | true                                  |
+| projectTags[].name | false    |                        | <name>tag1</name>                     |
 
 The `isLatest` option sets the flag on the project to indicate that it is the latest version.
 

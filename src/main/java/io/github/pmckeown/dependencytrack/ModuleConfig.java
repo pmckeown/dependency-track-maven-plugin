@@ -24,7 +24,7 @@ public class ModuleConfig {
     private MavenProject mavenProject;
     private boolean updateProjectInfo;
     private boolean updateParent;
-    private boolean isLatest;
+    private Boolean isLatest;
     private boolean autoCreate = true;
     private Set<String> projectTags = Collections.emptySet();
 
@@ -128,11 +128,11 @@ public class ModuleConfig {
         this.updateProjectInfo = updateProjectInfo;
     }
 
-    public boolean isLatest() {
+    public Boolean isLatest() {
         return isLatest;
     }
 
-    public void setLatest(boolean latest) {
+    public void setLatest(Boolean latest) {
         isLatest = latest;
     }
 

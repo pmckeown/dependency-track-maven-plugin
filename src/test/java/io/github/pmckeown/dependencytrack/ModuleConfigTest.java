@@ -13,14 +13,11 @@ import java.io.File;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ModuleConfigTest {
-
-    private static final String PROJECT_NAME = "test";
-
-    private static final String PROJECT_VERSION = "1.0";
 
     @Mock
     private MavenProject project;
@@ -39,6 +36,5 @@ public class ModuleConfigTest {
         doReturn(new File(".")).when(project).getBasedir();
 
         assertThat(moduleConfig.getBomLocation(), is(equalTo("./target/bom.xml")));
-        assertThat(moduleConfig.isLatest(), is(equalTo(false)));
     }
 }
