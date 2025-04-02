@@ -7,14 +7,15 @@
 
     <groupId>io.github.pmckeown</groupId>
     <artifactId>dependency-track-maven-plugin</artifactId>
-    <version>1.9.2-SNAPSHOT</version>
+    <version>1.10.0-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Dependency Track Maven Plugin</name>
     <url>https://github.com/pmckeown/dependency-track-maven-plugin</url>
     <description>
-        Maven plugin to integrate with a Dependency Track server to submit dependency manifests and gather project metrics.  Can be used within
-        build pipelines to analyse the current project and optionally fail the build if vulnerabilities are found.
+        Maven plugin to integrate with a Dependency Track server to submit dependency manifests and gather project
+        metrics.  Can be used within build pipelines to analyse the current project and optionally fail the build if
+        vulnerabilities are found.
     </description>
     <inceptionYear>2019</inceptionYear>
 
