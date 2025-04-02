@@ -5,12 +5,24 @@ However, it is also useful to be able to test the project against a real Depende
 
 ## Integrated Testing
 
-### Running a Local Dependency Track
+### Running Latest Dependency Track Locally
 To run a Dependency Track server, the easiest option if you have Docker for Desktop installed is to use
 the Docker Compose command from the Dependency Track project.
 
 ```shell script
 curl --location --remote-name https://dependencytrack.org/docker-compose.yml
+docker compose up
+```
+
+### Running specific versions of Dependency Track Locally
+To run a specific version of a Dependency Track server, clone the git repo and check out the branch you want to run, 
+then run using docker compose. 
+
+```shell script
+git clone git@github.com:DependencyTrack/dependency-track.git
+cd dependency-track
+git checkout 4.12.x
+cd src/main/docker
 docker compose up
 ```
 

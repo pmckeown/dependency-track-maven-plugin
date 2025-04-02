@@ -1,5 +1,5 @@
 [![Build Status](https://github.com/pmckeown/dependency-track-maven-plugin/actions/workflows/maven.yml/badge.svg)](https://github.com/pmckeown/dependency-track-maven-plugin/actions/workflows/maven/badge.svg)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.pmckeown/dependency-track-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.pmckeown/dependency-track-maven-plugin)
+![Maven Central Version](https://img.shields.io/maven-central/v/io.github.pmckeown/dependency-track-maven-plugin)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pmckeown_dependency-track-maven-plugin&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=pmckeown_dependency-track-maven-plugin)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/0e77d6dda095411ea178ce1246446188)](https://app.codacy.com/gh/pmckeown/dependency-track-maven-plugin?utm_source=github.com&utm_medium=referral&utm_content=pmckeown/dependency-track-maven-plugin&utm_campaign=Badge_Grade)
 
@@ -168,10 +168,10 @@ The skip property has more than two possible values:
 
 #### Dependency-Track Plugin/Server Compatibility
 
-| Plugin Version | Required Server Version | Features                |
-|----------------|-------------------------|-------------------------|
-| 1.9.2          | 4.8.0                   | Project parent          |
-|                | 4.12.0                  | isLatest, projectTags   |
+| Min Plugin Version | Required Server Version | Features                |
+|--------------------|-------------------------|-------------------------|
+| 1.5.0              | 4.8.0                   | Project parent          |
+| 1.10.0             | 4.12.0                  | isLatest, projectTags   |
 
 *Note:* certain plugin features are not available in older server versions.
 
@@ -188,7 +188,7 @@ quality control
 
 
 ### Upload Bill of Material
-Upload a Bill of Material (BOM) to a Dependency-Track server.  By default this uploads the bom.xml and creates (or 
+Upload a Bill of Material (BOM) to a Dependency-Track server.  By default, this uploads the bom.xml and creates (or
 updates if already present) a project on the Dependency-Track server with the name and version that map to the current
 maven project artifactId and version.  Set the projectName or projectVersion properties if you want to override the
 project name or version. 
@@ -246,12 +246,14 @@ Dependency-Track based on the metadata present in the BOM:
 
 From Dependency-Track server 4.8.0 onwards, you can set the project parent by setting `updateParent` to `true`. The 
 parent name will be defaulted to that POM's project parent name. If you wish to override that value, or there is 
-no parent set within the `pom.xml`, then explicitly set `parentName`. Both `parentName` and `parentVersion`
-must be configured, otherwise either value is omitted in the upload.
+no parent set within the `pom.xml`, then explicitly set `parentName`.
 
-**Note 1:** If both `parentUuid` and `parentName` / `parentVersion` are provided in configuration `parentUuid` will take precedence.
+**Note 1:** Both `parentName` and `parentVersion` must be configured, otherwise either value is omitted in the upload.
 
-**Note 2:** If a non-existing parent information is provided, the plugin will fail with `404 Not found`.
+**Note 2:** If both `parentUuid` and `parentName` / `parentVersion` are provided in configuration, `parentUuid` will
+take precedence.
+
+**Note 3:** If a non-existing parent information is provided, the plugin will fail with `404 Not found`.
 
 From Dependency-Track server 4.12.0 onwards you can set `isLatest` and `projectTags`.
 
@@ -337,14 +339,14 @@ whatever overridden values that are supplied.
 
 The `findings` goal supports the following XML configuration in the POM:
 
-|Property                    |Required|Default Value|Description                                                                                           |
-|----------------------------|--------|-------------|------------------------------------------------------------------------------------------------------|
-|findingThresholds           |false   |N/A          |If not set or no child elements set then no policy will be applied and the goal will always succeed   |
-|findingThresholds.critical  |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
-|findingThresholds.high      |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
-|findingThresholds.medium    |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
-|findingThresholds.low       |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
-|findingThresholds.unassigned|false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
+| Property                     | Required | Default Value | Description                                                                                            |
+|------------------------------|----------|---------------|--------------------------------------------------------------------------------------------------------|
+| findingThresholds            | false    | N/A           | If not set or no child elements set then no policy will be applied and the goal will always succeed    |
+| findingThresholds.critical   | false    | 0             | The build will fail if the issue count is higher than the configured threshold value for this category |
+| findingThresholds.high       | false    | 0             | The build will fail if the issue count is higher than the configured threshold value for this category |
+| findingThresholds.medium     | false    | 0             | The build will fail if the issue count is higher than the configured threshold value for this category |
+| findingThresholds.low        | false    | 0             | The build will fail if the issue count is higher than the configured threshold value for this category |
+| findingThresholds.unassigned | false    | 0             | The build will fail if the issue count is higher than the configured threshold value for this category |
 
 The `findings` goal also supports the following command line options however XML configuration takes precedence if set:
 
@@ -424,9 +426,9 @@ Policy Violation requires your Automation Team to have additional permissions:
 
 #### Policy Configuration
 
-|Property                      |Required|Default Value |
-|------------------------------|--------|--------------|
-|failOnWarn                    |false   |false         |
+| Property   | Required | Default Value |
+|------------|----------|---------------|
+| failOnWarn | false    | false         |
 
 #### Behaviour
 
@@ -469,9 +471,9 @@ whatever overridden values that are supplied.
 
 #### Configuration
 
-|Property                   |Required|Default Value|
-|---------------------------|--------|-------------|
-|inheritedRiskScoreThreshold|false   |N/A          |
+| Property                    | Required | Default Value |
+|-----------------------------|----------|---------------|
+| inheritedRiskScoreThreshold | false    | N/A           |
 
 ### Get Metrics
 Get and print all metrics from the Dependency-Track server for the current project or any arbitrary project.  Optionally
@@ -496,13 +498,13 @@ whatever overridden values that are supplied.
 
 #### Configuration
 
-|Property                  |Required|Default Value|Description                                                                                           |
-|--------------------------|--------|-------------|------------------------------------------------------------------------------------------------------|
-|metricsThresholds         |false   |N/A          |If present with no child elements, any issues found in any category will cause the build to fail      |
-|metricsThresholds.critical|false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
-|metricsThresholds.high    |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
-|metricsThresholds.medium  |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
-|metricsThresholds.low     |false   |0            |The build will fail if the issue count is higher than the configured threshold value for this category|
+| Property                   | Required | Default Value | Description                                                                                            |
+|----------------------------|----------|---------------|--------------------------------------------------------------------------------------------------------|
+| metricsThresholds          | false    | N/A           | If present with no child elements, any issues found in any category will cause the build to fail       |
+| metricsThresholds.critical | false    | 0             | The build will fail if the issue count is higher than the configured threshold value for this category |
+| metricsThresholds.high     | false    | 0             | The build will fail if the issue count is higher than the configured threshold value for this category |
+| metricsThresholds.medium   | false    | 0             | The build will fail if the issue count is higher than the configured threshold value for this category |
+| metricsThresholds.low      | false    | 0             | The build will fail if the issue count is higher than the configured threshold value for this category |
 
 Note that this goal does not yet support command line threshold options.
 
