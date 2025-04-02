@@ -1,17 +1,29 @@
 # Testing dependency-track-maven-plugin
-The project contains a number of unit and in-memory integration tests that verify the codebase.  
+The project contains a number of unit and in-memory integration tests that verify the codebase.
 
-However, it is also useful to be able to test the project against a real Dependency Track server.  
+However, it is also useful to be able to test the project against a real Dependency Track server.
 
 ## Integrated Testing
 
-### Running a Local Dependency Track
+### Running Latest Dependency Track Locally
 To run a Dependency Track server, the easiest option if you have Docker for Desktop installed is to use
 the Docker Compose command from the Dependency Track project.
 
 ```shell script
 curl --location --remote-name https://dependencytrack.org/docker-compose.yml
-docker-compose up
+docker compose up
+```
+
+### Running specific versions of Dependency Track Locally
+To run a specific version of a Dependency Track server, clone the git repo and check out the branch you want to run, 
+then run using docker compose. 
+
+```shell script
+git clone git@github.com:DependencyTrack/dependency-track.git
+cd dependency-track
+git checkout 4.12.x
+cd src/main/docker
+docker compose up
 ```
 
 ### Running the Plugin against Dependency Track
@@ -25,9 +37,9 @@ file.  You will need to export or define a couple of environment variables for t
 ```shell script
 export DEPENDENCY_TRACK_BASE_URL=http://localhost:8081 
 export DEPENDENCY_TRACK_API_KEY=<YOUR_API_KEY> 
-mvn clean install -DskipTests -Peat-your-own-dog-food
+mvn clean verify -DskipTests -Peat-your-own-dog-food
 ```
 
 Notes:
 - The project tests can be skipped for the profile executions
-- The API backend port when using the `docker-compose up` from the Dependency Track project is by default `8081`  
+- The API backend port when using the `docker compose up` from the Dependency Track project is by default `8081`

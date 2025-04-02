@@ -58,8 +58,8 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Parameter(property = "dependency-track.parentVersion")
     private String parentVersion;
 
-    @Parameter(property = "dependency-track.isLatest", defaultValue = "false")
-    private boolean isLatest;
+    @Parameter(property = "dependency-track.isLatest")
+    private Boolean isLatest;
 
     @Parameter(property = "dependency-track.projectTags")
     private Set<String> projectTags;

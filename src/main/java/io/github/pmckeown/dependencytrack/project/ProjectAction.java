@@ -85,7 +85,7 @@ public class ProjectAction {
             Optional<ProjectInfo> optInfo = bomParser.getProjectInfo(new File(updateReq.getBomLocation()));
             if (optInfo.isPresent()) {
                 info = optInfo.get();
-                info.setIsLatest(Boolean.valueOf(project.isLatest()));
+                info.setIsLatest(project.isLatest());
             } else {
                 logger.warn("Could not create ProjectInfo from bom at location: %s", updateReq.getBomLocation());
                 return false;
