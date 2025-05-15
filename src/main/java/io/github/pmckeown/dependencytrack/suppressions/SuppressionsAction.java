@@ -37,7 +37,7 @@ public class SuppressionsAction {
 
         try {
             // send all analysis in list to Dependency Track
-            for (Analysis analysis : analysisList) { doUpload(analysis); }
+            for (Analysis analysis : analysisList) { doUpload(project.getUuid(), analysis); }
         } catch (UnirestException ex) {
             logger.error("Failed to configure vulnerability suppressions", ex);
             throw new DependencyTrackException("Failed to configure vulnerability suppressions");
@@ -45,9 +45,9 @@ public class SuppressionsAction {
         return true;
     }
 
-    private Optional<UploadAnalysisResponse> doUpload(Analysis analysis) throws DependencyTrackException {
+    private Optional<UploadAnalysisResponse> doUpload(String projectUuid, Analysis analysis) throws DependencyTrackException {
         try {
-            Response<UploadAnalysisResponse> response = analysisClient.uploadAnalysis(analysis);
+            Response<UploadAnalysisResponse> response = analysisClient.uploadAnalysis(projectUuid, analysis);
 
             if (response.isSuccess()) {
                 logger.info("Analysis uploaded to Dependency Track server");

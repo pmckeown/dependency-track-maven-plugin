@@ -36,8 +36,9 @@ public class AnalysisClient {
      * @param analysis the request object containing the project details and the Base64 encoded bom.xml
      * @return a response containing a token to later determine if processing the supplied BOM is completed
      */
-    Response<UploadAnalysisResponse> uploadAnalysis(Analysis analysis) {
-        RequestBodyEntity requestBodyEntity = Unirest.put(commonConfig.getDependencyTrackBaseUrl() + V1_ANALYSIS)
+    Response<UploadAnalysisResponse> uploadAnalysis(String projectUuid, Analysis analysis) {
+        RequestBodyEntity requestBodyEntity = Unirest.put(commonConfig.getDependencyTrackBaseUrl() + V1_ANALYSIS )
+            .routeParam("uuid", projectUuid)
             .header(CONTENT_TYPE, "application/json")
             .header("X-Api-Key", commonConfig.getApiKey())
             .body(analysis);

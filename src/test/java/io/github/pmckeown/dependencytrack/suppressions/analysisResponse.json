@@ -1,0 +1,264 @@
+{
+  "analysisState": "NOT_AFFECTED",
+  "analysisJustification": "PROTECTED_BY_MITIGATING_CONTROL",
+  "analysisResponse": "NOT_SET",
+  "analysisDetails": "Automatically ignore violation in branch",
+  "analysisComments": [
+    {
+      "timestamp": 1746609922547,
+      "comment": "Suppressed",
+      "commenter": "Administrators"
+    },
+    {
+      "timestamp": 1746609922584,
+      "comment": "Hucke set via API",
+      "commenter": "Administrators"
+    },
+    {
+      "timestamp": 1746609963814,
+      "comment": "Hucke set via API",
+      "commenter": "Administrators"
+    },
+    {
+      "timestamp": 1746609991756,
+      "comment": "Unsuppressed",
+      "commenter": "Administrators"
+    },
+    {
+      "timestamp": 1746609991791,
+      "comment": "Hucke set via API",
+      "commenter": "Administrators"
+    },
+    {
+      "timestamp": 1746610046562,
+      "comment": "Suppressed",
+      "commenter": "Administrators"
+    },
+    {
+      "timestamp": 1746610046594,
+      "comment": "Hucke set via API",
+      "commenter": "Administrators"
+    },
+    {
+      "timestamp": 1746610222616,
+      "comment": "Vendor Response: NOT_SET → WORKAROUND_AVAILABLE",
+      "commenter": "admin"
+    },
+    {
+      "timestamp": 1746610226112,
+      "comment": "Vendor Response: WORKAROUND_AVAILABLE → NOT_SET",
+      "commenter": "admin"
+    },
+    {
+      "timestamp": 1746610237017,
+      "comment": "Analysis: NOT_SET → IN_TRIAGE",
+      "commenter": "admin"
+    },
+    {
+      "timestamp": 1746610239060,
+      "comment": "Analysis: IN_TRIAGE → EXPLOITABLE",
+      "commenter": "admin"
+    },
+    {
+      "timestamp": 1746610242258,
+      "comment": "Analysis: EXPLOITABLE → NOT_AFFECTED",
+      "commenter": "admin"
+    },
+    {
+      "timestamp": 1746610319059,
+      "comment": "Justification: NOT_SET → REQUIRES_ENVIRONMENT",
+      "commenter": "admin"
+    },
+    {
+      "timestamp": 1746610329205,
+      "comment": "Justification: REQUIRES_ENVIRONMENT → PROTECTED_BY_MITIGATING_CONTROL",
+      "commenter": "admin"
+    },
+    {
+      "timestamp": 1746610339380,
+      "comment": "Justification: PROTECTED_BY_MITIGATING_CONTROL → NOT_SET",
+      "commenter": "admin"
+    },
+    {
+      "timestamp": 1746610344355,
+      "comment": "Analysis: NOT_AFFECTED → EXPLOITABLE",
+      "commenter": "admin"
+    },
+    {
+      "timestamp": 1746610345281,
+      "comment": "Unsuppressed",
+      "commenter": "admin"
+    },
+    {
+      "timestamp": 1746610349099,
+      "comment": "Analysis: EXPLOITABLE → NOT_AFFECTED",
+      "commenter": "Administrators"
+    },
+    {
+      "timestamp": 1746610349119,
+      "comment": "Justification: NOT_SET → PROTECTED_BY_MITIGATING_CONTROL",
+      "commenter": "Administrators"
+    },
+    {
+      "timestamp": 1746610349139,
+      "comment": "Suppressed",
+      "commenter": "Administrators"
+    },
+    {
+      "timestamp": 1746610349179,
+      "comment": "Automatically ignore violation in branches",
+      "commenter": "Administrators"
+    },
+    {
+      "timestamp": 1746610480805,
+      "comment": "Automatically ignore violation in branches",
+      "commenter": "Administrators"
+    },
+    {
+      "timestamp": 1746610596499,
+      "comment": "Details: Automatically ignore violation in branch",
+      "commenter": "Administrators"
+    },
+    {
+      "timestamp": 1746699502439,
+      "comment": "Unsuppressed",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1746699535987,
+      "comment": "Suppressed",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747054411124,
+      "comment": "Analysis: NOT_AFFECTED → NOT_SET",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747054424171,
+      "comment": "Analysis: NOT_SET → NOT_AFFECTED",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747054486974,
+      "comment": "Analysis: NOT_AFFECTED → NOT_SET",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747054487960,
+      "comment": "Analysis: NOT_SET → EXPLOITABLE",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747054488287,
+      "comment": "Analysis: EXPLOITABLE → IN_TRIAGE",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747054488540,
+      "comment": "Analysis: IN_TRIAGE → RESOLVED",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747054488801,
+      "comment": "Analysis: RESOLVED → FALSE_POSITIVE",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747054489188,
+      "comment": "Analysis: FALSE_POSITIVE → NOT_AFFECTED",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747206199269,
+      "comment": "Analysis: NOT_AFFECTED → FALSE_POSITIVE",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747206200416,
+      "comment": "Analysis: FALSE_POSITIVE → RESOLVED",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747206201302,
+      "comment": "Analysis: RESOLVED → IN_TRIAGE",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747206201634,
+      "comment": "Analysis: IN_TRIAGE → EXPLOITABLE",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747206202385,
+      "comment": "Analysis: EXPLOITABLE → NOT_SET",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747206203472,
+      "comment": "Analysis: NOT_SET → EXPLOITABLE",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747206203647,
+      "comment": "Analysis: EXPLOITABLE → IN_TRIAGE",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747206203796,
+      "comment": "Analysis: IN_TRIAGE → RESOLVED",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747206203941,
+      "comment": "Analysis: RESOLVED → FALSE_POSITIVE",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747206204385,
+      "comment": "Analysis: FALSE_POSITIVE → NOT_AFFECTED",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747206251959,
+      "comment": "Analysis: NOT_AFFECTED → FALSE_POSITIVE",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747206253684,
+      "comment": "Analysis: FALSE_POSITIVE → NOT_AFFECTED",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747206530987,
+      "comment": "Analysis: NOT_AFFECTED → NOT_SET",
+      "commenter": "Administrators"
+    },
+    {
+      "timestamp": 1747206558824,
+      "comment": "Justification: PROTECTED_BY_MITIGATING_CONTROL → NOT_SET",
+      "commenter": "Administrators"
+    },
+    {
+      "timestamp": 1747206982184,
+      "comment": "Analysis: NOT_SET → NOT_AFFECTED",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747227122491,
+      "comment": "Analysis: NOT_AFFECTED → NOT_SET",
+      "commenter": "thomas.hucke"
+    },
+    {
+      "timestamp": 1747234475359,
+      "comment": "Analysis: NOT_SET → NOT_AFFECTED",
+      "commenter": "Administrators"
+    },
+    {
+      "timestamp": 1747234475401,
+      "comment": "Justification: NOT_SET → PROTECTED_BY_MITIGATING_CONTROL",
+      "commenter": "Administrators"
+    }
+  ],
+  "isSuppressed": true
+}

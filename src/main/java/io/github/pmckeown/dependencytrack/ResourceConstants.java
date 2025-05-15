@@ -7,7 +7,7 @@ package io.github.pmckeown.dependencytrack;
  */
 public final class ResourceConstants {
 
-    public static final String V1_ANALYSIS = "/api/v1/analysis";
+    public static final String V1_ANALYSIS = "/api/v1/analysis/{uuid}";
     public static final String V1_BOM = "/api/v1/bom";
     public static final String V1_BOM_TOKEN_UUID = "/api/v1/bom/token/{uuid}";
     public static final String V1_PROJECT_LOOKUP = "/api/v1/project/lookup";
