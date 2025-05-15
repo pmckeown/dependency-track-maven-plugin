@@ -27,7 +27,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FindingsAnalyserTest {
+public class FindingsProcessorTest {
 
     @InjectMocks
     private FindingsAnalyser findingAnalyser;

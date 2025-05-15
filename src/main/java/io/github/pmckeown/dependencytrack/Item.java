@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -17,6 +18,7 @@ public class Item {
         this.uuid = uuid;
     }
 
+    @XmlElement
     public String getUuid() {
         return uuid;
     }

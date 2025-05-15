@@ -25,6 +25,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_FINDING_PROJECT_UUID;
 import static io.github.pmckeown.dependencytrack.TestUtils.asJson;
 import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
+import static io.github.pmckeown.dependencytrack.finding.Severity.CRITICAL;
 import static io.github.pmckeown.dependencytrack.finding.Severity.LOW;
 import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
@@ -74,7 +75,45 @@ public class FindingsClientTest extends AbstractDependencyTrackIntegrationTest {
             assertThat(findingList.get(0), is(not(nullValue())));
             assertThat(findingList.get(0).getComponent().getName(), is(equalTo("dodgy")));
             assertThat(findingList.get(0).getVulnerability().getSeverity(), is(equalTo(LOW)));
-            assertThat(findingList.get(0).getAnalysis().isSuppressed(), is(equalTo(false)));
+            assertThat(findingList.get(0).getAnalysis().getIsSuppressed(), is(equalTo(false)));
+        } else {
+            fail("Body missing");
+        }
+    }
+
+    @Test
+    public void thatSuppressedFindingsCanBeRetrieved() throws Exception {
+        stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(
+            aResponse().withBody(asJson(
+                aListOfFindings()
+                    .withFinding(
+                        aFinding()
+                            .withComponent(aComponent().withName("dodgy"))
+                            .withVulnerability(aVulnerability().withSeverity(LOW))
+                            .withAnalysis(anAnalysis()))
+                    .withFinding(
+                        aFinding()
+                            .withComponent(aComponent().withName("ghosty"))
+                            .withVulnerability(aVulnerability().withSeverity(CRITICAL))
+                            .withAnalysis(anAnalysis().withSuppressed(true)))
+                    .build()))));
+
+        Response<List<Finding>> response = findingClient.getFindingsForProject(aProject().build(), true);
+
+        verify(1, getRequestedFor(urlPathMatching(V1_FINDING_PROJECT_UUID)));
+        assertThat(response.isSuccess(), is(equalTo(true)));
+        Optional<List<Finding>> body = response.getBody();
+        if (body.isPresent()) {
+            List<Finding> findingList = body.get();
+            assertThat(findingList.size(), is(equalTo(2)));
+            assertThat(findingList.get(0), is(not(nullValue())));
+            assertThat(findingList.get(0).getComponent().getName(), is(equalTo("dodgy")));
+            assertThat(findingList.get(0).getVulnerability().getSeverity(), is(equalTo(LOW)));
+            assertThat(findingList.get(0).getAnalysis().getIsSuppressed(), is(equalTo(false)));
+            assertThat(findingList.get(1), is(not(nullValue())));
+            assertThat(findingList.get(1).getComponent().getName(), is(equalTo("ghosty")));
+            assertThat(findingList.get(1).getVulnerability().getSeverity(), is(equalTo(CRITICAL)));
+            assertThat(findingList.get(1).getAnalysis().getIsSuppressed(), is(equalTo(true)));
         } else {
             fail("Body missing");
         }

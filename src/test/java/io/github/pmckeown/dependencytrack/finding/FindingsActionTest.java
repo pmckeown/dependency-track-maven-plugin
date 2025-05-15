@@ -54,7 +54,30 @@ public class FindingsActionTest {
         List<Finding> returnedFindings = findingAction.getFindings(project);
 
         assertThat(returnedFindings.size(), is(equalTo(1)));
-        assertThat(returnedFindings.get(0).getAnalysis().isSuppressed(), is(equalTo(false)));
+        assertThat(returnedFindings.get(0).getAnalysis().getIsSuppressed(), is(equalTo(false)));
+    }
+
+    @Test
+    public void thatSuppressedFindingsAreReturned() throws Exception {
+        Project project = aProject().build();
+        List<Finding> findings = aListOfFindings()
+                .withFinding(aFinding()
+                        .withAnalysis(anAnalysis())
+                        .withVulnerability(aVulnerability())
+                        .withComponent(aComponent()))
+                .withFinding(aFinding()
+                        .withAnalysis(anAnalysis()
+                            .withSuppressed(true))
+                        .withVulnerability(aVulnerability())
+                        .withComponent(aComponent()))
+                .build();
+        doReturn(aSuccessResponse().withBody(findings).build()).when(findingClient).getFindingsForProject(project);
+
+        List<Finding> returnedFindings = findingAction.getFindings(project);
+
+        assertThat(returnedFindings.size(), is(equalTo(2)));
+        assertThat(returnedFindings.get(0).getAnalysis().getIsSuppressed(), is(equalTo(false)));
+        assertThat(returnedFindings.get(1).getAnalysis().getIsSuppressed(), is(equalTo(true)));
     }
 
     @Test

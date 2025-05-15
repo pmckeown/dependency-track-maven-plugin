@@ -1,5 +1,6 @@
 package io.github.pmckeown.dependencytrack;
 
+import io.github.pmckeown.dependencytrack.suppressions.VulnerabilitySuppression;
 import io.github.pmckeown.util.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.logging.SystemStreamLog;
@@ -27,6 +28,8 @@ public class ModuleConfig {
     private Boolean isLatest;
     private boolean autoCreate = true;
     private Set<String> projectTags = Collections.emptySet();
+
+    private Set<VulnerabilitySuppression> vulnerabilitySuppressions = Collections.emptySet();
 
     protected Logger logger = new Logger(new SystemStreamLog());
 
@@ -148,4 +151,9 @@ public class ModuleConfig {
         this.projectTags = projectTags;
     }
 
+    public Set<VulnerabilitySuppression> getVulnerabilitySuppressions() { return vulnerabilitySuppressions; }
+
+    public void setVulnerabilitySuppressions(Set<VulnerabilitySuppression> vulnerabilitySuppressions) {
+        this.vulnerabilitySuppressions = vulnerabilitySuppressions;
+    }
 }

@@ -69,6 +69,6 @@ public class FindingsAnalyser {
 
     private long getCount(List<Finding> findings, Severity severity) {
         return findings.stream().filter(f -> f.getVulnerability().getSeverity() == severity
-                && !f.getAnalysis().isSuppressed()).count();
+                && !f.getAnalysis().getIsSuppressed()).count();
     }
 }

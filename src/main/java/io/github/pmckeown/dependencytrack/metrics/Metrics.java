@@ -116,7 +116,7 @@ public class Metrics {
         return lastOccurrence;
     }
 
-    public int getSuppressed() {
+    public int getIsSuppressed() {
         return suppressed;
     }
 

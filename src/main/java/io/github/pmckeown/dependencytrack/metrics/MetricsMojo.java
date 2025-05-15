@@ -56,7 +56,7 @@ import javax.inject.Inject;
 public class MetricsMojo extends AbstractDependencyTrackMojo {
 
     private MetricsAction metricsAction;
-    private ProjectAction getProjectAction;
+    private ProjectAction projectAction;
     private MetricsPrinter metricsPrinter;
     private MetricsAnalyser metricsAnalyser;
 
@@ -64,11 +64,11 @@ public class MetricsMojo extends AbstractDependencyTrackMojo {
     private MetricsThresholds metricsThresholds;
 
     @Inject
-    public MetricsMojo(MetricsAction metricsAction, ProjectAction getProjectAction, MetricsPrinter metricsPrinter,
+    public MetricsMojo(MetricsAction metricsAction, ProjectAction projectAction, MetricsPrinter metricsPrinter,
                        MetricsAnalyser metricsAnalyser, CommonConfig commonConfig, ModuleConfig moduleConfig, Logger logger) {
         super(commonConfig, moduleConfig, logger);
         this.metricsAction = metricsAction;
-        this.getProjectAction = getProjectAction;
+        this.projectAction = projectAction;
         this.metricsPrinter = metricsPrinter;
         this.metricsAnalyser = metricsAnalyser;
     }
@@ -76,7 +76,7 @@ public class MetricsMojo extends AbstractDependencyTrackMojo {
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
         try {
-            Project project = getProjectAction.getProject(moduleConfig);
+            Project project = projectAction.getProject(moduleConfig);
             logger.debug("Project Details: %s", project.toString());
 
             Metrics metrics = getMetrics(project);
