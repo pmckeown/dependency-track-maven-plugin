@@ -56,6 +56,7 @@ public class AnalysisClientTest extends AbstractDependencyTrackIntegrationTest {
             UploadAnalysisResponse analysisResponse = body.get();
             assertThat(analysisResponse, is(not(nullValue())));
             assertThat(analysisResponse.getIsSuppressed(), is(equalTo(fixType1Analysis().build().getSuppressed())));
+            assertThat(analysisResponse.getAnalysisResponse(), is(equalTo(fixType1Analysis().build().getAnalysisResponse())));
         } else {
             fail("Body missing");
         }
