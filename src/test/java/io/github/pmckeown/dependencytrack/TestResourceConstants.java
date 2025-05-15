@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack;
 
 public class TestResourceConstants {
 
+    public static final String V1_ANALYSIS_PROJECT_UUID = "/api/v1/analysis/(.*)";
     public static final String V1_METRICS_PROJECT_CURRENT = "/api/v1/metrics/project/(.*)/current";
     public static final String V1_METRICS_PROJECT_REFRESH = "/api/v1/metrics/project/(.*)/refresh";
     public static final String V1_PROJECT_UUID = "/api/v1/project/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})";
