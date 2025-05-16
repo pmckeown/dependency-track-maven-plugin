@@ -1,6 +1,7 @@
 package io.github.pmckeown.dependencytrack.suppressions;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -44,7 +45,7 @@ public class AnalysisClientTest extends AbstractDependencyTrackIntegrationTest {
     @Test
     public void thatAnalysisCouldBeUploaded() throws Exception {
         stubFor(put(urlPathMatching(V1_ANALYSIS_PROJECT_UUID)).willReturn(
-                aResponse().withBody(asJson(fixType1Analysis().build()))));
+            aResponse().withBody(asJson(fixType1Analysis().build()))));
 
         Response<UploadAnalysisResponse> response = analysisClient.uploadAnalysis(
             fixType1Analysis().build().getProjectUuid(), fixType1Analysis().build());
@@ -60,5 +61,18 @@ public class AnalysisClientTest extends AbstractDependencyTrackIntegrationTest {
         } else {
             fail("Body missing");
         }
+
+    }
+
+    @Test
+    public void thatSererErrorResultsInUnsuccessfulResponse() {
+        stubFor(put(urlPathMatching(V1_ANALYSIS_PROJECT_UUID)).willReturn(badRequest()));
+
+        Response<UploadAnalysisResponse> response = analysisClient.uploadAnalysis(
+            fixType1Analysis().build().getProjectUuid(), fixType1Analysis().build());
+
+        verify(1, putRequestedFor(urlPathMatching(V1_ANALYSIS_PROJECT_UUID)));
+        assertThat(response.isSuccess(), is(equalTo(false)));
+        assertThat(response.getStatus(), is(equalTo(400)));
     }
 }

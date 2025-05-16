@@ -4,7 +4,6 @@ import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
-import io.github.pmckeown.dependencytrack.finding.FindingsAction;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
@@ -59,7 +58,7 @@ public class SuppressionsMojo extends AbstractDependencyTrackMojo {
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
 
-        if (vulnerabilitySuppressions.stream().filter(vulnerabilitySuppressionValidator::isInValidVulnerabilitySuppression).count() > 0) {
+        if (vulnerabilitySuppressions.stream().anyMatch(vulnerabilitySuppressionValidator::isInValidVulnerabilitySuppression)) {
             handleFailure("Maven vulnerability suppression configuration is invalid");
         }
         this.moduleConfig.setVulnerabilitySuppressions(vulnerabilitySuppressions);

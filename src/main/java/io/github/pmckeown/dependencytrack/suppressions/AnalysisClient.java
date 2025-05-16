@@ -13,14 +13,13 @@ import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
 import kong.unirest.RequestBodyEntity;
 import kong.unirest.Unirest;
-//TODO whole class
 
 @Singleton
 public class AnalysisClient {
 
-    private CommonConfig commonConfig;
+    private final CommonConfig commonConfig;
 
-    private Logger logger;
+    private final Logger logger;
 
     @Inject
     AnalysisClient(CommonConfig commonConfig, Logger logger) {
