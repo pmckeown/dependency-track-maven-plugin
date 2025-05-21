@@ -8,9 +8,8 @@ import io.github.pmckeown.dependencytrack.finding.FindingBuilder;
 import io.github.pmckeown.dependencytrack.finding.FindingsAction;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +21,6 @@ import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -42,13 +40,7 @@ public class FindingsProcessorTest {
 
     private List<Finding> findings;
 
-    private final VulnerabilitySuppression fixType1VulnerabilitySuppression =
-        VulnerabilitySuppressionBuilder.fixType1VulnerabilitySuppression().build();
-
-    private final VulnerabilitySuppression fixType2VulnerabilitySuppression =
-        VulnerabilitySuppressionBuilder.fixType2VulnerabilitySuppression().build();
-
-    private Set<VulnerabilitySuppression> vulnerabilitySuppressions = new HashSet<VulnerabilitySuppression>();
+    private final List<VulnerabilitySuppression> vulnerabilitySuppressions = new ArrayList<>();
 
     @Before
     public void setUp() {
@@ -62,11 +54,11 @@ public class FindingsProcessorTest {
         findings.add(FindingBuilder.notSuppressedType2Finding().build());
 
         // only type2 finding should be suppressed
-        vulnerabilitySuppressions.add(fixType2VulnerabilitySuppression);
+        vulnerabilitySuppressions.add(VulnerabilitySuppressionBuilder.fixType2VulnerabilitySuppression().build());
     }
 
     @Test
-    public void thatQueryingSuppressionsForFindingsIsCorrect() throws Exception {
+    public void thatQueryingSuppressionsForFindingsIsCorrect() {
         assertThat(findingsProcessor.getVulnerabilitySuppression(findings.get(1), vulnerabilitySuppressions).isPresent(), is(false));
         assertThat(findingsProcessor.getVulnerabilitySuppression(findings.get(2), vulnerabilitySuppressions).isPresent(), is(true));
     }

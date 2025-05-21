@@ -13,9 +13,8 @@ import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.dependencytrack.project.ProjectBuilder;
 import io.github.pmckeown.util.Logger;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -61,7 +60,7 @@ public class SuppressionsMojoTest {
 
     @Test
     public void thatSuppressionsArePosted() throws Exception {
-        Set<VulnerabilitySuppression> vulnerabilitySuppressions = new HashSet<>();
+        List<VulnerabilitySuppression> vulnerabilitySuppressions = new ArrayList<>();
         vulnerabilitySuppressions.add(VulnerabilitySuppressionBuilder.aVulnerabilitySuppression().build());
         vulnerabilitySuppressions.add(VulnerabilitySuppressionBuilder.fixType1VulnerabilitySuppression().build());
         vulnerabilitySuppressions.add(VulnerabilitySuppressionBuilder.fixType2VulnerabilitySuppression().build());
@@ -71,12 +70,13 @@ public class SuppressionsMojoTest {
         doReturn(FindingListBuilder.aListOfFindings().build())
             .when(findingsProcessor).process(any(Project.class), any(ModuleConfig.class));
 
-        suppressionsMojo.setvulnerabilitySuppressions(vulnerabilitySuppressions);
+        suppressionsMojo.getSuppressions().setVulnerabilitySuppressions(vulnerabilitySuppressions);
 
         suppressionsMojo.execute();
 
         verify(vulnerabilitySuppressionValidator, times(3)).isInValidVulnerabilitySuppression(any(VulnerabilitySuppression.class));
-        verify(suppressionsAction).setProjectSuppressions(any(Project.class), any(List.class));
+        //noinspection unchecked
+        verify(suppressionsAction).setProjectSuppressions(any(List.class));
     }
 
 

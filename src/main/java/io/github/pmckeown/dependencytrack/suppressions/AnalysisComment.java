@@ -6,17 +6,22 @@ import javax.xml.bind.annotation.XmlElement;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+/**
+ * POJO for an analysis comment which is part of the response from the Dependency-Track API.
+ *
+ * @author Thomas Hucke
+ */
 public class AnalysisComment {
 
-    private Integer timestamp;
+    private final Long timestamp;
 
-    private String comment;
+    private final String comment;
 
-    private String commenter;
+    private final String commenter;
 
     @JsonCreator
     public AnalysisComment(
-        @JsonProperty("timestamp") Integer timestamp,
+        @JsonProperty("timestamp") Long timestamp,
         @JsonProperty("comment") String comment,
         @JsonProperty("commenter") String commenter
     ) {
@@ -26,7 +31,7 @@ public class AnalysisComment {
     }
 
     @XmlElement
-    public Integer getTimestamp() {
+    public Long getTimestamp() {
         return timestamp;
     }
 

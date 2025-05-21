@@ -1,6 +1,6 @@
 package io.github.pmckeown.dependencytrack.finding.report;
 
-import io.github.pmckeown.dependencytrack.finding.Analysis;
+import io.github.pmckeown.dependencytrack.finding.AnalysisState;
 import io.github.pmckeown.dependencytrack.finding.Finding;
 import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
 import io.github.pmckeown.dependencytrack.finding.Severity;
@@ -69,7 +69,7 @@ public class FindingsReportIntegrationTest {
                 .withFinding(aFinding()
                         .withVulnerability(aVulnerability().withSeverity(Severity.CRITICAL))
                         .withComponent(aComponent().withName("suppressed"))
-                        .withAnalysis(anAnalysis().withState(Analysis.State.FALSE_POSITIVE).withSuppressed(true)))
+                        .withAnalysis(anAnalysis().withState(AnalysisState.FALSE_POSITIVE).withSuppressed(true)))
                 .withFinding(aFinding()
                         .withVulnerability(aVulnerability().withSeverity(Severity.HIGH))
                         .withComponent(aComponent())

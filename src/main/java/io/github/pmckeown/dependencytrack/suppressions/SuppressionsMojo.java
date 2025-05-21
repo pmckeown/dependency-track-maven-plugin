@@ -7,8 +7,8 @@ import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import javax.inject.Inject;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -17,24 +17,15 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * Provides the capability to upload a Bill of Material (BOM) to your Dependency Track server.
- * <p>
- * The BOM may any format supported by your Dependency Track server, has only been tested with the output from the
- * <a href="https://github.com/CycloneDX/cyclonedx-maven-plugin">cyclonedx-maven-plugin</a> in the
- * <a href="https://cyclonedx.org/">CycloneDX</a> format
- * <p>
- * Specific configuration options are:
- * <ol>
- *     <li>bomLocation</li>
- * </ol>
+ * Provides the capability to post vulnerability suppressions to your Dependency Track server.
  *
- * @author Paul McKeown
+ * @author Thomas Hucke
  */
 @Mojo(name = "suppressions", defaultPhase = LifecyclePhase.VERIFY)
 public class SuppressionsMojo extends AbstractDependencyTrackMojo {
 
-    @Parameter(property = "dependency-track.suppressions.vulnerabilities")
-    private Set<VulnerabilitySuppression> vulnerabilitySuppressions;
+    @Parameter(required = true)
+    private Suppressions suppressions = new Suppressions(Collections.emptyList());
 
     private final FindingsProcessor findingsProcessor;
 
@@ -55,13 +46,18 @@ public class SuppressionsMojo extends AbstractDependencyTrackMojo {
         this.vulnerabilitySuppressionValidator = vulnerabilitySuppressionValidator;
     }
 
+    @SuppressWarnings("unused")
+    void setSuppressions(Suppressions suppressions) {
+        this.suppressions = suppressions;
+    }
+
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
-
-        if (vulnerabilitySuppressions.stream().anyMatch(vulnerabilitySuppressionValidator::isInValidVulnerabilitySuppression)) {
+        logger.info("Performing suppression action");
+        if (suppressions.getVulnerabilitySuppressions().stream().anyMatch(vulnerabilitySuppressionValidator::isInValidVulnerabilitySuppression)) {
             handleFailure("Maven vulnerability suppression configuration is invalid");
         }
-        this.moduleConfig.setVulnerabilitySuppressions(vulnerabilitySuppressions);
+        this.moduleConfig.setVulnerabilitySuppressions(suppressions.getVulnerabilitySuppressions());
 
         /*
         Concept
@@ -101,7 +97,7 @@ public class SuppressionsMojo extends AbstractDependencyTrackMojo {
             // fetch all findings for the project incl. suppressed ones
             List<Analysis> analysisList = findingsProcessor.process(project, moduleConfig);
 
-            if (!suppressionsAction.setProjectSuppressions(project, analysisList)) {
+            if (!suppressionsAction.setProjectSuppressions(analysisList)) {
                 handleFailure("Setting suppressions failed");
             }
         } catch (DependencyTrackException ex) {
@@ -109,11 +105,7 @@ public class SuppressionsMojo extends AbstractDependencyTrackMojo {
         }
     }
 
-    /*
-     * Setters for dependency injection in tests
-     */
-    void setvulnerabilitySuppressions(Set<VulnerabilitySuppression> vulnerabilitySuppressions) {
-        moduleConfig.setVulnerabilitySuppressions(vulnerabilitySuppressions);
-        this.vulnerabilitySuppressions = vulnerabilitySuppressions;
+    public Suppressions getSuppressions() {
+        return suppressions;
     }
 }

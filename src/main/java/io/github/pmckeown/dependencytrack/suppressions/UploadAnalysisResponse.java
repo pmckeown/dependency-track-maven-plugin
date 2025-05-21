@@ -6,29 +6,32 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import io.github.pmckeown.dependencytrack.finding.Analysis.State;
-import io.github.pmckeown.dependencytrack.suppressions.Analysis.AnalysisJustification;
-import io.github.pmckeown.dependencytrack.suppressions.Analysis.AnalysisVendorResponse;
+import io.github.pmckeown.dependencytrack.finding.AnalysisState;
 
+/**
+ * POJO of the response from the Dependency-Track API for the upload analysis endpoint.
+ *
+ * @author Thomas Hucke
+ */
 public class UploadAnalysisResponse {
 
-    private State analysisState;
+    private final AnalysisState analysisState;
 
-    private AnalysisJustification analysisJustification;
+    private final AnalysisJustificationEnum analysisJustification;
 
-    private AnalysisVendorResponse analysisResponse;
+    private final AnalysisVendorResponseEnum analysisResponse;
 
-    private String analysisDetails;
+    private final String analysisDetails;
 
-    private List<AnalysisComment> analysisComments;
+    private final List<AnalysisComment> analysisComments;
 
-    private boolean isSuppressed;
+    private final boolean isSuppressed;
 
     @JsonCreator
     public UploadAnalysisResponse(
-        @JsonProperty("analysisState") State analysisState,
-        @JsonProperty("analysisJustification") AnalysisJustification analysisJustification,
-        @JsonProperty("analysisResponse") AnalysisVendorResponse analysisResponse,
+        @JsonProperty("analysisState") AnalysisState analysisState,
+        @JsonProperty("analysisJustification") AnalysisJustificationEnum analysisJustification,
+        @JsonProperty("analysisResponse") AnalysisVendorResponseEnum analysisResponse,
         @JsonProperty("analysisDetails") String analysisDetails,
         @JsonProperty("analysisComments") List<AnalysisComment> analysisComments,
         @JsonProperty("isSuppressed") boolean isSuppressed
@@ -42,13 +45,13 @@ public class UploadAnalysisResponse {
     }
 
     @XmlElement
-    public State getAnalysisState() { return analysisState; }
+    public AnalysisState getAnalysisState() { return analysisState; }
 
     @XmlElement
-    public AnalysisJustification getAnalysisJustification() { return analysisJustification; }
+    public AnalysisJustificationEnum getAnalysisJustification() { return analysisJustification; }
 
     @XmlElement
-    public AnalysisVendorResponse getAnalysisResponse() { return analysisResponse; }
+    public AnalysisVendorResponseEnum getAnalysisResponse() { return analysisResponse; }
 
     @XmlElement
     public String getAnalysisDetails() { return analysisDetails; }

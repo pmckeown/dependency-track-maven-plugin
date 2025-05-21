@@ -2,11 +2,9 @@ package io.github.pmckeown.dependencytrack.suppressions;
 
 import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 
-import io.github.pmckeown.dependencytrack.finding.Analysis.State;
+import io.github.pmckeown.dependencytrack.finding.AnalysisState;
 import io.github.pmckeown.dependencytrack.finding.FindingBuilder;
 import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.dependencytrack.suppressions.Analysis.AnalysisJustification;
-import io.github.pmckeown.dependencytrack.suppressions.Analysis.AnalysisVendorResponse;
 
 public class AnalysisBuilder {
 
@@ -18,11 +16,11 @@ public class AnalysisBuilder {
 
     private String analysisDetails;
 
-    private State analysisState;
+    private AnalysisState analysisState;
 
-    private AnalysisJustification analysisJustification;
+    private AnalysisJustificationEnum analysisJustification;
 
-    private AnalysisVendorResponse analysisResponse;
+    private AnalysisVendorResponseEnum analysisResponse;
 
     private boolean suppressed;
 
@@ -80,21 +78,22 @@ public class AnalysisBuilder {
         return this;
     }
 
-    public AnalysisBuilder withAnalysisState(State s) {
+    public AnalysisBuilder withAnalysisState(AnalysisState s) {
         this.analysisState = s;
         return this;
     }
 
-    public AnalysisBuilder withAnalysisJustification(AnalysisJustification s) {
+    public AnalysisBuilder withAnalysisJustification(AnalysisJustificationEnum s) {
         this.analysisJustification = s;
         return this;
     }
 
-    public AnalysisBuilder withAnalysisResponse(AnalysisVendorResponse s) {
+    public AnalysisBuilder withAnalysisResponse(AnalysisVendorResponseEnum s) {
         this.analysisResponse = s;
         return this;
     }
 
+    @SuppressWarnings("unused")
     public AnalysisBuilder withSuppressed(boolean s) {
         this.suppressed = s;
         this.isSuppressed = s;

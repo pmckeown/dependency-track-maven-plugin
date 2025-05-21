@@ -7,7 +7,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_ANALYSIS_PROJECT_UUID;
+import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_ANALYSIS;
 import static io.github.pmckeown.dependencytrack.TestUtils.asJson;
 import static io.github.pmckeown.dependencytrack.suppressions.AnalysisBuilder.fixType1Analysis;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -44,13 +44,12 @@ public class AnalysisClientTest extends AbstractDependencyTrackIntegrationTest {
 
     @Test
     public void thatAnalysisCouldBeUploaded() throws Exception {
-        stubFor(put(urlPathMatching(V1_ANALYSIS_PROJECT_UUID)).willReturn(
+        stubFor(put(urlPathMatching(V1_ANALYSIS)).willReturn(
             aResponse().withBody(asJson(fixType1Analysis().build()))));
 
-        Response<UploadAnalysisResponse> response = analysisClient.uploadAnalysis(
-            fixType1Analysis().build().getProjectUuid(), fixType1Analysis().build());
+        Response<UploadAnalysisResponse> response = analysisClient.uploadAnalysis(fixType1Analysis().build());
 
-        verify(1, putRequestedFor(urlPathMatching(V1_ANALYSIS_PROJECT_UUID)));
+        verify(1, putRequestedFor(urlPathMatching(V1_ANALYSIS)));
         assertThat(response.isSuccess(), is(equalTo(true)));
         Optional<UploadAnalysisResponse> body = response.getBody();
         if (body.isPresent()) {
@@ -66,12 +65,11 @@ public class AnalysisClientTest extends AbstractDependencyTrackIntegrationTest {
 
     @Test
     public void thatSererErrorResultsInUnsuccessfulResponse() {
-        stubFor(put(urlPathMatching(V1_ANALYSIS_PROJECT_UUID)).willReturn(badRequest()));
+        stubFor(put(urlPathMatching(V1_ANALYSIS)).willReturn(badRequest()));
 
-        Response<UploadAnalysisResponse> response = analysisClient.uploadAnalysis(
-            fixType1Analysis().build().getProjectUuid(), fixType1Analysis().build());
+        Response<UploadAnalysisResponse> response = analysisClient.uploadAnalysis(fixType1Analysis().build());
 
-        verify(1, putRequestedFor(urlPathMatching(V1_ANALYSIS_PROJECT_UUID)));
+        verify(1, putRequestedFor(urlPathMatching(V1_ANALYSIS)));
         assertThat(response.isSuccess(), is(equalTo(false)));
         assertThat(response.getStatus(), is(equalTo(400)));
     }

@@ -1,63 +1,48 @@
 package io.github.pmckeown.dependencytrack.suppressions;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.pmckeown.dependencytrack.finding.Finding;
 import javax.xml.bind.annotation.XmlElement;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import io.github.pmckeown.dependencytrack.finding.Analysis.State;
+import io.github.pmckeown.dependencytrack.finding.AnalysisState;
 
+/**
+ * POJO representaion of an analysis request payload.
+ *
+ * @author Thomas Hucke
+ */
 public class Analysis {
 
-    public enum AnalysisJustification {
-        CODE_NOT_PRESENT,
-        CODE_NOT_REACHABLE,
-        REQUIRES_CONFIGURATION, REQUIRES_DEPENDENCY,
-        REQUIRES_ENVIRONMENT,
-        PROTECTED_BY_COMPILER,
-        PROTECTED_AT_RUNTIME,
-        PROTECTED_AT_PERIMETER,
-        PROTECTED_BY_MITIGATING_CONTROL,
-        NOT_SET
-    }
+    private final String projectUuid;
 
-    public enum AnalysisVendorResponse {
-        CAN_NOT_FIX,
-        WILL_NOT_FIX,
-        UPDATE,
-        ROLLBACK,
-        WORKAROUND_AVAILABLE,
-        NOT_SET
-    }
+    private final String componentUuid;
 
-    private String projectUuid;
+    private final String vulnerabilityUuid;
 
-    private String componentUuid;
+    private final String analysisDetails;
 
-    private String vulnerabilityUuid;
+    private final AnalysisState analysisState;
 
-    private String analysisDetails;
+    private final AnalysisJustificationEnum analysisJustification;
 
-    private State analysisState;
+    private final AnalysisVendorResponseEnum analysisResponse;
 
-    private AnalysisJustification analysisJustification;
+    private final boolean suppressed;
 
-    private AnalysisVendorResponse analysisResponse;
-
-    private boolean suppressed;
-
-    private boolean isSuppressed;
+    private final boolean isSuppressed;
 
     @JsonCreator
-    public Analysis(
+    public Analysis (
         @JsonProperty("project") String projectUuid,
         @JsonProperty("component") String componentUuid,
         @JsonProperty("vulnerability") String vulnerabilityUuid,
         @JsonProperty("analysisDetails") String analysisDetails,
-        @JsonProperty("analysisState") State analysisState,
-        @JsonProperty("analysisJustification") AnalysisJustification analysisJustification,
-        @JsonProperty("analysisResponse") AnalysisVendorResponse analysisResponse,
+        @JsonProperty("analysisState") AnalysisState analysisState,
+        @JsonProperty("analysisJustification") AnalysisJustificationEnum analysisJustification,
+        @JsonProperty("analysisResponse") AnalysisVendorResponseEnum analysisResponse,
         @JsonProperty("suppressed") boolean suppressed,
         @JsonProperty("isSuppressed") boolean isSuppressed
     ) {
@@ -72,12 +57,15 @@ public class Analysis {
         this.suppressed = suppressed;
     }
 
+    @JsonGetter("project")
     @XmlElement
     public String getProjectUuid() { return projectUuid; }
 
+    @JsonGetter("component")
     @XmlElement
     public String getComponentUuid() { return componentUuid; }
 
+    @JsonGetter("vulnerability")
     @XmlElement
     public String getVulnerabilityUuid() { return vulnerabilityUuid; }
 
@@ -85,13 +73,13 @@ public class Analysis {
     public String getAnalysisDetails() { return analysisDetails; }
 
     @XmlElement
-    public State getAnalysisState() { return analysisState; }
+    public AnalysisState getAnalysisState() { return analysisState; }
 
     @XmlElement
-    public AnalysisJustification getAnalysisJustification() { return analysisJustification; }
+    public AnalysisJustificationEnum getAnalysisJustification() { return analysisJustification; }
 
     @XmlElement
-    public AnalysisVendorResponse getAnalysisResponse() { return analysisResponse; }
+    public AnalysisVendorResponseEnum getAnalysisResponse() { return analysisResponse; }
 
     @XmlElement
     public boolean getSuppressed() { return suppressed; }
@@ -105,5 +93,11 @@ public class Analysis {
     }
 
     @Override
-    public String toString() { return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE); }
+    public String toString() {
+        try {
+            return new ObjectMapper().writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            return "";
+        }
+    }
 }

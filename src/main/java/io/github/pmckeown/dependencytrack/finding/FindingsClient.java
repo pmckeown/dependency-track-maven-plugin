@@ -34,7 +34,7 @@ public class FindingsClient {
     }
 
     Response<List<Finding>> getFindingsForProject(Project project, boolean suppressed ) {
-        logger.debug("Getting findings for project: %s-%s", project.getName(), project.getVersion());
+        logger.debug("Getting findings for project: %s:%s", project.getName(), project.getVersion());
         return getFindingsForProject(project.getUuid(), suppressed);
     }
 

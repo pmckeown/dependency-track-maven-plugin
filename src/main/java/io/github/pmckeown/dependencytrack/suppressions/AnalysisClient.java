@@ -9,11 +9,15 @@ import io.github.pmckeown.util.Logger;
 import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
-import kong.unirest.RequestBodyEntity;
 import kong.unirest.Unirest;
+import kong.unirest.UnirestParsingException;
 
+/**
+ * Handles uploading a single analyse request to Dependency Track.
+ *
+ * @author Thomas Hucke
+ */
 @Singleton
 public class AnalysisClient {
 
@@ -27,33 +31,31 @@ public class AnalysisClient {
         this.logger = logger;
     }
 
-    /**
-     * Upload a BOM to the Dependency-Track server.  The BOM is processed asynchronously after the upload is completed
-     * and the response returned.  The response contains a token that can be used later to query if the bom that the
-     * token relates to has been completely processed.
-     *
-     * @param analysis the request object containing the project details and the Base64 encoded bom.xml
-     * @return a response containing a token to later determine if processing the supplied BOM is completed
-     */
-    Response<UploadAnalysisResponse> uploadAnalysis(String projectUuid, Analysis analysis) {
-        RequestBodyEntity requestBodyEntity = Unirest.put(commonConfig.getDependencyTrackBaseUrl() + V1_ANALYSIS )
-            .routeParam("uuid", projectUuid)
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    Optional<UploadAnalysisResponse> body;
+
+    Response<UploadAnalysisResponse> uploadAnalysis(Analysis analysis) {
+        HttpResponse<UploadAnalysisResponse> httpResponse = Unirest.put(commonConfig.getDependencyTrackBaseUrl() + V1_ANALYSIS )
             .header(CONTENT_TYPE, "application/json")
             .header("X-Api-Key", commonConfig.getApiKey())
-            .body(analysis);
-        HttpResponse<UploadAnalysisResponse> httpResponse = requestBodyEntity.asObject(
-            new GenericType<UploadAnalysisResponse>() {});
-
-        Optional<UploadAnalysisResponse> body;
-        if (httpResponse.isSuccess()) {
-            body = Optional.of(httpResponse.getBody());
-        } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Server response body: %s", httpResponse.mapError(String.class));
-            }
-            body = Optional.empty();
-        }
-
+            .body(analysis)
+            .asObject(UploadAnalysisResponse.class)
+            .ifSuccess(response -> body = Optional.of(response.getBody()))
+            .ifFailure(response -> {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Server response body: %s", response.mapError(String.class));
+                    logger.debug("Server response status: %s", response.getStatus());
+                    logger.debug("Server response statusText: %s", response.getStatusText());
+                    logger.debug("Server response isSuccess: %s", response.isSuccess());
+                    if (response.getParsingError().isPresent()) {
+                        UnirestParsingException ex = response.getParsingError().get();
+                        logger.debug("Parsing error OriginalBody: %s", ex.getOriginalBody());
+                        logger.debug("Parsing error Message: %s", ex.getMessage());
+                        logger.debug("Parsing error Clause: %s", ex.getCause());
+                    }
+                }
+                body = Optional.empty();
+            });
         return new Response<>(httpResponse.getStatus(), httpResponse.getStatusText(), httpResponse.isSuccess(), body);
     }
 
