@@ -34,7 +34,7 @@ public class BomParser {
      *
      * Guarantees to return an {@link Optional} containing a {@link ProjectInfo} object if the provided BOM file can
      * be parsed successfully.
-     * An empty {@link Optional} will be returned if the file be parsed.
+     * An empty {@link Optional} will be returned if the file cannot be parsed.
      *
      * @param bomFile File containing a BOM
      * @return an optional that will contain the parsed {@link ProjectInfo} or an empty optional
