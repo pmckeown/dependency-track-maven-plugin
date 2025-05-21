@@ -132,20 +132,23 @@ in the `apiKey` configuration parameter to this plugin.
 The Automation team needs the following permissions:
 
 * In Dependency Track v4.3.x and earlier: 
-  * BOM_UPLOAD
-  * PORTFOLIO_MANAGEMENT
-  * PROJECT_CREATION_UPLOAD
-  * VIEW_PORTFOLIO
-  * VULNERABILITY_ANALYSIS
+  * `BOM_UPLOAD`
+  * `PORTFOLIO_MANAGEMENT`
+  * `PROJECT_CREATION_UPLOAD`
+  * `VIEW_PORTFOLIO`
+  * `VULNERABILITY_ANALYSIS`
 
 * In Dependency Track v4.4.x and later: 
-  * BOM_UPLOAD
-  * PORTFOLIO_MANAGEMENT
+  * `BOM_UPLOAD`
+  * `PORTFOLIO_MANAGEMENT`
   
     Only when project should be automatically created. If a project exists in any version, this permission is not needed.
-  * PROJECT_CREATION_UPLOAD
-  * VIEW_PORTFOLIO
-  * VIEW_VULNERABILITY
+  * `PROJECT_CREATION_UPLOAD`
+  * `VIEW_PORTFOLIO`
+  * `VIEW_VULNERABILITY`
+  * `VULNERABILITY_ANALYSIS`
+
+    Only when the goal `suppressions` is used.
 
 The following options are common to all goals and can be declared centrally in the plugin management definition 
 of this plugin:
