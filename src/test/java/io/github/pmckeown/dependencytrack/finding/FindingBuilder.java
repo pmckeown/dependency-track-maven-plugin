@@ -2,7 +2,11 @@ package io.github.pmckeown.dependencytrack.finding;
 
 import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
+import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.fixAeroxeifeinComponent;
+import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.fixMalkavineComponent;
+import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.fixType1Vulnerability;
 import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
+import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.fixType2Vulnerability;
 
 public class FindingBuilder {
 
@@ -22,6 +26,22 @@ public class FindingBuilder {
         FindingBuilder findingBuilder = new FindingBuilder();
         findingBuilder.withComponent(aComponent());
         findingBuilder.withVulnerability(aVulnerability());
+        findingBuilder.withAnalysis(anAnalysis());
+        return findingBuilder;
+    }
+
+    public static FindingBuilder suppressedType1Finding() {
+        FindingBuilder findingBuilder = new FindingBuilder();
+        findingBuilder.withComponent(fixMalkavineComponent());
+        findingBuilder.withVulnerability(fixType1Vulnerability());
+        findingBuilder.withAnalysis(anAnalysis().withSuppressed(true));
+        return findingBuilder;
+    }
+
+    public static FindingBuilder notSuppressedType2Finding() {
+        FindingBuilder findingBuilder = new FindingBuilder();
+        findingBuilder.withComponent(fixAeroxeifeinComponent());
+        findingBuilder.withVulnerability(fixType2Vulnerability());
         findingBuilder.withAnalysis(anAnalysis());
         return findingBuilder;
     }

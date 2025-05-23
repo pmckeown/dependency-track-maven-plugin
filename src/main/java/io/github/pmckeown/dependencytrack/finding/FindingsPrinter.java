@@ -41,7 +41,7 @@ class FindingsPrinter {
             if (wrappedDescriptionParts != null && !wrappedDescriptionParts.isEmpty()) {
                 wrappedDescriptionParts.forEach(s -> logger.info(s));
             }
-            if (finding.getAnalysis().isSuppressed()) {
+            if (finding.getAnalysis().getIsSuppressed()) {
                 logger.info("");
                 logger.info("Suppressed - %s", finding.getAnalysis().getState().name());
             }

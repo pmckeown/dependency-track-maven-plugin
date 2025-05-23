@@ -49,18 +49,41 @@ public class FindingsActionTest {
                         .withVulnerability(aVulnerability())
                         .withComponent(aComponent()))
                 .build();
-        doReturn(aSuccessResponse().withBody(findings).build()).when(findingClient).getFindingsForProject(project);
+        doReturn(aSuccessResponse().withBody(findings).build()).when(findingClient).getFindingsForProject(project, false);
 
         List<Finding> returnedFindings = findingAction.getFindings(project);
 
         assertThat(returnedFindings.size(), is(equalTo(1)));
-        assertThat(returnedFindings.get(0).getAnalysis().isSuppressed(), is(equalTo(false)));
+        assertThat(returnedFindings.get(0).getAnalysis().getIsSuppressed(), is(equalTo(false)));
+    }
+
+    @Test
+    public void thatSuppressedFindingsAreReturned() throws Exception {
+        Project project = aProject().build();
+        List<Finding> findings = aListOfFindings()
+                .withFinding(aFinding()
+                        .withAnalysis(anAnalysis())
+                        .withVulnerability(aVulnerability())
+                        .withComponent(aComponent()))
+                .withFinding(aFinding()
+                        .withAnalysis(anAnalysis()
+                            .withSuppressed(true))
+                        .withVulnerability(aVulnerability())
+                        .withComponent(aComponent()))
+                .build();
+        doReturn(aSuccessResponse().withBody(findings).build()).when(findingClient).getFindingsForProject(project, true);
+
+        List<Finding> returnedFindings = findingAction.getFindings(project, true);
+
+        assertThat(returnedFindings.size(), is(equalTo(2)));
+        assertThat(returnedFindings.get(0).getAnalysis().getIsSuppressed(), is(equalTo(false)));
+        assertThat(returnedFindings.get(1).getAnalysis().getIsSuppressed(), is(equalTo(true)));
     }
 
     @Test
     public void thatWhenNoFindingsAreReturnedThenAnEmptyListIsReturned() throws Exception {
         Project project = aProject().build();
-        doReturn(aSuccessResponse().build()).when(findingClient).getFindingsForProject(project);
+        doReturn(aSuccessResponse().build()).when(findingClient).getFindingsForProject(project, false);
 
         List<Finding> findings = findingAction.getFindings(project);
         assertThat(findings.isEmpty(), is(equalTo(true)));
@@ -69,7 +92,7 @@ public class FindingsActionTest {
     @Test
     public void thatAnErrorResponseIsReceivedAnExceptionIsThrown() {
         Project project = aProject().build();
-        doReturn(aNotFoundResponse().build()).when(findingClient).getFindingsForProject(project);
+        doReturn(aNotFoundResponse().build()).when(findingClient).getFindingsForProject(project, false);
 
         try {
             findingAction.getFindings(project);
@@ -82,7 +105,7 @@ public class FindingsActionTest {
     @Test
     public void thatWhenAClientExceptionIsEncounteredAnExceptionIsThrown() {
         Project project = aProject().build();
-        doThrow(UnirestException.class).when(findingClient).getFindingsForProject(project);
+        doThrow(UnirestException.class).when(findingClient).getFindingsForProject(project, false);
 
         try {
             findingAction.getFindings(project);

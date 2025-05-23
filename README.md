@@ -132,20 +132,23 @@ in the `apiKey` configuration parameter to this plugin.
 The Automation team needs the following permissions:
 
 * In Dependency Track v4.3.x and earlier: 
-  * BOM_UPLOAD
-  * PORTFOLIO_MANAGEMENT
-  * PROJECT_CREATION_UPLOAD
-  * VIEW_PORTFOLIO
-  * VULNERABILITY_ANALYSIS
+  * `BOM_UPLOAD`
+  * `PORTFOLIO_MANAGEMENT`
+  * `PROJECT_CREATION_UPLOAD`
+  * `VIEW_PORTFOLIO`
+  * `VULNERABILITY_ANALYSIS`
 
 * In Dependency Track v4.4.x and later: 
-  * BOM_UPLOAD
-  * PORTFOLIO_MANAGEMENT
+  * `BOM_UPLOAD`
+  * `PORTFOLIO_MANAGEMENT`
   
     Only when project should be automatically created. If a project exists in any version, this permission is not needed.
-  * PROJECT_CREATION_UPLOAD
-  * VIEW_PORTFOLIO
-  * VIEW_VULNERABILITY
+  * `PROJECT_CREATION_UPLOAD`
+  * `VIEW_PORTFOLIO`
+  * `VIEW_VULNERABILITY`
+  * `VULNERABILITY_ANALYSIS`
+
+    Only when the goal `suppressions` is used.
 
 The following options are common to all goals and can be declared centrally in the plugin management definition 
 of this plugin:
@@ -185,6 +188,7 @@ quality control
 * [Get Inherited Risk Score](#get-inherited-risk-score) - Useful for CI/CD quality control
 * [Get Metrics](#get-metrics) - Useful for CI/CD quality control
 * [Delete Project](#delete-project) - Deletes a project from the Dependency-Track server
+* [Set Suppressions](#set-suppressions) - Set suppressions on a project
 
 
 ### Upload Bill of Material
@@ -547,6 +551,108 @@ whatever overridden values that are supplied.
 
 #### Configuration
 See common configuration above
+
+### Set Suppressions
+Sets suppressions for the current in the Dependency-Track server.
+
+#### POM Usage
+Binds by default to the Verify Phase in the Maven lifecycle.
+
+**Recommendations:**
+* run this goal after the `upload-bom` goal which is in the same phase by default
+* wait for the upload and server processing to finish before running this goal 
+  (see [Polling Configuration](#polling-configuration))
+* run `findings` goal `metrics` goal after this `suppressions`
+
+In Dependency Track manually entered vulnerability suppressions for this project will be removed 
+if they are missing in the configuration.
+
+#### Direct Usage
+```
+mvn io.github.pmckeown:dependency-track-maven-plugin:supprssions \
+  -Ddependency-track.dependencyTrackBaseUrl=${DEPENDENCY_TRACK_BASE_URL} \
+  -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY}
+```
+
+#### Dependencies
+Depends on a project existing in the Dependency-Track server that matches the current project artifactId and version or
+whatever overridden values that are supplied.
+
+#### Configuration
+Note that this goal does not support command line configuration options.
+
+| Property                               | Required | Default Value | Description                                                                            |
+|----------------------------------------|----------|---------------|----------------------------------------------------------------------------------------|
+| suppressions.strictMode                | false    | false         | strict mode fails if suppressions are configured that do not exist as a finding        |
+| suppressions.vulnerabilitySuppressions | false    | N/A           | configuration container for one or more entries of the type `vulnerabilitySuppression` |
+
+##### Configuration `vulnerabilitySuppression`
+
+| Property               | Required | Default Value | Description                                                                                                                                            |
+|------------------------|----------|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| source                 | true     | N/A           | source of the vulnerabilityclassification (e.g. `NVD` or `GITHUB`)as it is displayed in Dependency Track or the `findings` goal.                       |
+| vulnId                 | true     | N/A           | vulnerabilityId of the vulnerabilityclassification (e.g. `NVD` or `GITHUB`)as it is displayed in Dependency Track or the `findings` goal.              |
+| analysisDetails        | false    | N/A           | A detail information to be added to the suppression.<br/>Hint: Should be wrapped by a CDATA tag (e.g. `<![CDATA[Waiting for triage in development.]]`) |
+| analysisState          | false    | N/A           | Desired target state of the suppression (see [Analysis states](#analysis-states))                                                                      |
+| analysisJustification  | false    | N/A           | Desired justification of the suppression (see [Analysis justifications](#analysis-justifications))                                                     |
+| analysisResponse       | false    | N/A           | Desired vendor response of the suppression (see [Analysis Vendor Response](#analysis-vendor-response))                                                 |
+
+###### Analysis states
+Allowed values:
+* `NOT_AFFECTED`
+* `FALSE_POSITIVE`
+* `IN_TRIAGE`
+* `EXPLOITABLE`
+* `NOT_SET`
+
+###### Analysis justifications
+
+According to Dependency Track behaviour this is only valid if `analysisState` is `NOT_AFFECTED`.
+
+Allowed values:
+* `CODE_NOT_PRESENT`
+* `CODE_NOT_REACHABLE`
+* `REQUIRES_CONFIGURATION`
+* `REQUIRES_DEPENDENCY`
+* `REQUIRES_ENVIRONMENT`
+* `PROTECTED_BY_COMPILER`
+* `PROTECTED_AT_RUNTIME`
+* `PROTECTED_AT_PERIMETER`
+* `PROTECTED_BY_MITIGATING_CONTROL`
+* `NOT_SET`
+
+###### Analysis vendor response
+Allowed values:
+* `CAN_NOT_FIX`
+* `WILL_NOT_FIX`
+* `UPDATE`
+* `ROLLBACK`
+* `WORKAROUND_AVAILABLE`
+* `NOT_SET`
+
+#### Example
+The following configuration will cause the build to fail if there are any critical or high issues found, more than 5
+medium issues or more than 10 low issues.
+```xml
+    <suppressions>
+      <vulnerabilitySuppressions>
+        <vulnerabilitySuppression>
+          <source>GITHUB</source>
+          <vulnId>GHSA-83qj-6fr2-vhqg</vulnId>
+          <analysisDetails><![CDATA[Waiting for triage in development.]]></analysisDetails>
+          <analysisState>IN_TRIAGE</analysisState>
+          <analysisJustification>NOT_SET</analysisJustification>
+          <analysisResponse>NOT_SET</analysisResponse>
+        </vulnerabilitySuppression>
+        <vulnerabilitySuppression>
+          <source>NVD</source>
+          <vulnId>CVE-2025-22235</vulnId>
+          <analysisDetails><![CDATA[Waiting for triage in development.]]></analysisDetails>
+          <analysisState>IN_TRIAGE</analysisState>
+        </vulnerabilitySuppression>
+      </vulnerabilitySuppressions>
+    </suppressions>
+```
 
 ## Documentation
 Further docs can be found in [doc/](doc/):

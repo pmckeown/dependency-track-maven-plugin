@@ -9,35 +9,21 @@ import javax.xml.bind.annotation.XmlElement;
 
 public class Analysis {
 
-    public enum State {
-        NOT_AFFECTED,
-        FALSE_POSITIVE,
-        IN_TRIAGE,
-        EXPLOITABLE,
-        NOT_SET
-    }
-
-    private boolean isSuppressed;
-    private State state;
+    private final boolean isSuppressed;
+    private final AnalysisState state;
 
     @JsonCreator
-    public Analysis(@JsonProperty("isSuppressed") boolean isSuppressed, @JsonProperty("state") State state) {
+    public Analysis(@JsonProperty("isSuppressed") boolean isSuppressed, @JsonProperty("state") AnalysisState state) {
         this.isSuppressed = isSuppressed;
         this.state = state;
     }
 
     @XmlElement
-    public boolean isSuppressed() {
-        return isSuppressed;
-    }
+    public boolean getIsSuppressed() { return isSuppressed; }
 
     @XmlElement
-    public State getState() {
-        return state;
-    }
+    public AnalysisState getState() { return state; }
 
     @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
-    }
+    public String toString() { return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE); }
 }

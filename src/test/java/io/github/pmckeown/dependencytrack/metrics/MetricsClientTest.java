@@ -65,7 +65,7 @@ public class MetricsClientTest {
         assertThat(metrics.getVulnerabilities(), is(equalTo(1)));
         assertThat(metrics.getVulnerableComponents(), is(equalTo(1)));
         assertThat(metrics.getComponents(), is(equalTo(151)));
-        assertThat(metrics.getSuppressed(), is(equalTo(0)));
+        assertThat(metrics.getIsSuppressed(), is(equalTo(0)));
         assertThat(metrics.getFindingsTotal(), is(equalTo(1)));
         assertThat(metrics.getFindingsAudited(), is(equalTo(0)));
         assertThat(metrics.getFindingsUnaudited(), is(equalTo(1)));

@@ -10,7 +10,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static io.github.pmckeown.dependencytrack.finding.Analysis.State.FALSE_POSITIVE;
+import static io.github.pmckeown.dependencytrack.finding.AnalysisState.FALSE_POSITIVE;
 import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
 import static io.github.pmckeown.dependencytrack.finding.FindingBuilder.aDefaultFinding;
 import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aListOfFindings;
@@ -27,7 +27,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FindingsAnalyserTest {
+public class FindingsProcessorTest {
 
     @InjectMocks
     private FindingsAnalyser findingAnalyser;

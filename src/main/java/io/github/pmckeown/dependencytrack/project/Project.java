@@ -7,20 +7,17 @@ import io.github.pmckeown.dependencytrack.metrics.Metrics;
 
 import java.util.List;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 /**
  * Model class for the Project object
  *
  * @author Paul McKeown
  */
 public class Project extends Item {
-    private String name;
-    private String version;
-    private Metrics metrics;
-    private Boolean isLatest;
-    private List<ProjectTag> tags;
+    private final String name;
+    private final String version;
+    private final Metrics metrics;
+    private final Boolean isLatest;
+    private final List<ProjectTag> tags;
 
     @JsonCreator
     public Project(@JsonProperty("uuid") String uuid,

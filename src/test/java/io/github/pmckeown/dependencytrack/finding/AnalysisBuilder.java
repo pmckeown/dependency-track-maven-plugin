@@ -3,7 +3,7 @@ package io.github.pmckeown.dependencytrack.finding;
 public class AnalysisBuilder {
 
     private boolean suppressed = false;
-    private Analysis.State state = null;
+    private AnalysisState state = null;
 
     private AnalysisBuilder() {
         // Use builder factory methods
@@ -18,7 +18,7 @@ public class AnalysisBuilder {
         return this;
     }
 
-    public AnalysisBuilder withState(Analysis.State s) {
+    public AnalysisBuilder withState(AnalysisState s) {
         this.state = s;
         return this;
     }

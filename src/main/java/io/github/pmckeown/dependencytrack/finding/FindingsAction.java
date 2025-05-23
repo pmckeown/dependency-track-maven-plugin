@@ -26,10 +26,14 @@ public class FindingsAction {
     }
 
     List<Finding> getFindings(Project project) throws DependencyTrackException {
+        return getFindings(project, false);
+    }
+
+    public List<Finding> getFindings(Project project, boolean suppressed) throws DependencyTrackException {
         logger.info("Getting findings for project %s-%s", project.getName(), project.getVersion());
 
         try {
-            Response<List<Finding>> response = findingClient.getFindingsForProject(project);
+            Response<List<Finding>> response = findingClient.getFindingsForProject(project, suppressed);
             Optional<List<Finding>> body = response.getBody();
             if (response.isSuccess()) {
                 if (body.isPresent()) {

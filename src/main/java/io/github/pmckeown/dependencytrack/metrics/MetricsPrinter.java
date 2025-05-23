@@ -52,7 +52,7 @@ class MetricsPrinter {
         logger.info(formatForPrinting(VULNERABILITIES, metrics.getVulnerabilities()));
         logger.info(formatForPrinting(VULNERABLE_COMPONENTS, metrics.getVulnerableComponents()));
         logger.info(formatForPrinting(COMPONENTS, metrics.getComponents()));
-        logger.info(formatForPrinting(SUPPRESSED, metrics.getSuppressed()));
+        logger.info(formatForPrinting(SUPPRESSED, metrics.getIsSuppressed()));
         logger.info(formatForPrinting(FINDINGS_TOTAL, metrics.getFindingsTotal()));
         logger.info(formatForPrinting(FINDINGS_AUDITED, metrics.getFindingsAudited()));
         logger.info(formatForPrinting(FINDINGS_UNAUDITED, metrics.getFindingsUnaudited()));

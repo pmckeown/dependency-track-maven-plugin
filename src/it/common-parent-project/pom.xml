@@ -61,6 +61,24 @@
                               <projectTags>
                                   <name>dog-food</name>
                               </projectTags>
+                              <suppressions>
+                                  <!-- new goal "suppressions" -->
+                                  <vulnerabilities>
+                                      <suppress>
+                                          <source>GITHUB</source>
+                                          <vulnId>GHSA-mg83-c7gq-rv5c</vulnId>
+                                          <analysisDetails><![CDATA[
+                                            Suppresses a given CVE for a dependency with the given sha1 until the current date is 1 Jan 2020 or beyond.
+                                            ]]>
+                                          </analysisDetails>
+                                          <analysisState>NOT_AFFECTED</analysisState>
+                                      </suppress>
+                                      <suppress>
+                                          <source>NVD</source>
+                                          <vulnId>CVE-2025-22228</vulnId>
+                                      </suppress>
+                                  </vulnerabilities>
+                              </suppressions>
                           </configuration>
                       </execution>
                   </executions>

@@ -17,6 +17,27 @@ public class ComponentBuilder {
         return new ComponentBuilder();
     }
 
+    public static ComponentBuilder fixMalkavineComponent() {
+        return new ComponentBuilder()
+            .withUuid("4fa9fd01-55bc-4810-bb44-a7cba242ea6b")
+            .withName("malkavine-component")
+            .withGroup("eu.malkavine")
+            .withVersion("1.1.11");
+    }
+
+    public static ComponentBuilder fixAeroxeifeinComponent() {
+        return new ComponentBuilder()
+            .withUuid("4fa9fd01-55bc-4810-bb44-a7cba242ea6b")
+            .withName("aeroxeifein-component")
+            .withGroup("dev.aeroxeifein")
+            .withVersion("2.2.22");
+    }
+
+    public ComponentBuilder withUuid(String n) {
+        this.uuid = uuid;
+        return this;
+    }
+
     public ComponentBuilder withName(String n) {
         this.name = n;
         return this;
