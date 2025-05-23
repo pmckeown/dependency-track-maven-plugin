@@ -68,7 +68,7 @@ public class SuppressionsMojoTest {
         doReturn(ProjectBuilder.aProject().build())
             .when(projectAction).getProject(any(ModuleConfig.class));
         doReturn(FindingListBuilder.aListOfFindings().build())
-            .when(findingsProcessor).process(any(Project.class), any(ModuleConfig.class));
+            .when(findingsProcessor).process(any(Project.class), any(ModuleConfig.class), any(Boolean.class));
 
         suppressionsMojo.getSuppressions().setVulnerabilitySuppressions(vulnerabilitySuppressions);
 

@@ -19,7 +19,6 @@ import javax.inject.Singleton;
  *
  * @author Thomas Hucke
  */
-
 @Singleton
 public class FindingsProcessor {
 
@@ -33,20 +32,35 @@ public class FindingsProcessor {
         this.logger = logger;
     }
 
-    private Boolean doesSuppressionAffectFinding(Finding finding, VulnerabilitySuppression vulnerabilitySuppression) {
-        return finding.getVulnerability().getSource().equals(vulnerabilitySuppression.getSource()) &&
-            finding.getVulnerability().getVulnId().equals(vulnerabilitySuppression.getVulnId());
-    }
-
-    Optional<VulnerabilitySuppression> getVulnerabilitySuppression(Finding finding,
+    Optional<VulnerabilitySuppression> getVulnerabilitySuppression(AbstractVulnerability finding,
         List<VulnerabilitySuppression> vulnerabilitySuppressions) {
         return vulnerabilitySuppressions.stream()
-            .filter(v -> doesSuppressionAffectFinding(finding, v)).findFirst();
+            .filter( v -> v.equals(finding)).findFirst();
     }
 
-    public List<Analysis> process(Project project, ModuleConfig moduleConfig) throws DependencyTrackException {
+    private void allSuppressionsExistInFindingsCheck(
+        List<? extends AbstractVulnerability> findings, List<? extends AbstractVulnerability> vulnerabilitySuppressions, boolean strictMode
+    ) throws DependencyTrackException {
+        if (strictMode) {
+            logger.info("Strict mode is enabled, checking if all suppressions exist in findings");
+            List<AbstractVulnerability> matchingVulnerabilitySuppressions =
+                vulnerabilitySuppressions.stream()
+                    .filter(v -> !findings.contains(v))
+                    .collect(Collectors.toList());
+            if (!matchingVulnerabilitySuppressions.isEmpty()) {
+                matchingVulnerabilitySuppressions.forEach(v -> logger.error(
+                    String.format("Vulnerability suppression %s does not exist in findings",
+                        v.getVulnerabilityIdString())));
+                throw new DependencyTrackException("Strict mode violation: not all suppressions exist in findings");
+            }
+        }
+    }
+
+    public List<Analysis> process(Project project, ModuleConfig moduleConfig, boolean strictMode)
+        throws DependencyTrackException {
         List<Finding> findings = findingsAction.getFindings(project, true);
         logger.debug(String.format("Found %d findings", findings.size()));
+        allSuppressionsExistInFindingsCheck(findings, moduleConfig.getVulnerabilitySuppressions(), strictMode);
         return findings.stream()
             .map(finding -> {
                 Optional<VulnerabilitySuppression> vulnerabilitySuppression =
@@ -75,7 +89,7 @@ public class FindingsProcessor {
                         finding.getVulnerability().getSeverity(), finding.getVulnerability().getVulnId(),
                         finding.getComponent().getName()));
                     return new Analysis(
-                        moduleConfig.getProjectUuid(),
+                        project.getUuid(),
                         finding.getComponent().getUuid(),
                         finding.getVulnerability().getUuid(),
                         "Reactivated by dependency-track-maven-plugin",

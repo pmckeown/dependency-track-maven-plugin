@@ -583,6 +583,7 @@ Note that this goal does not support command line configuration options.
 
 | Property                               | Required | Default Value | Description                                                                            |
 |----------------------------------------|----------|---------------|----------------------------------------------------------------------------------------|
+| suppressions.strictMode                | false    | false         | strict mode fails if suppressions are configured that do not exist as a finding        |
 | suppressions.vulnerabilitySuppressions | false    | N/A           | configuration container for one or more entries of the type `vulnerabilitySuppression` |
 
 ##### Configuration `vulnerabilitySuppression`

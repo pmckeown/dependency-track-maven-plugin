@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack.suppressions;
 
 import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aListOfFindings;
 
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.finding.Finding;
 import io.github.pmckeown.dependencytrack.finding.FindingBuilder;
@@ -18,9 +19,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
+import static io.github.pmckeown.dependencytrack.suppressions.VulnerabilitySuppressionBuilder.aDefaultVulnerabilitySuppression;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -40,10 +44,15 @@ public class FindingsProcessorTest {
 
     private List<Finding> findings;
 
+    private Project project;
+
     private final List<VulnerabilitySuppression> vulnerabilitySuppressions = new ArrayList<>();
 
     @Before
     public void setUp() {
+
+        project = aProject().build();
+
         // index 0: "any" finding
         findings = aListOfFindings().withFinding(FindingBuilder.aDefaultFinding()).build();
 
@@ -64,14 +73,38 @@ public class FindingsProcessorTest {
     }
 
     @Test
-    public void thatReturnedAnalysisListIsCorrect() throws Exception {
-        Project project = aProject().build();
-
+    public void thatStrictModeThrowsExceptionWhenSuppressionsDoNotFiTToFindings() throws DependencyTrackException {
+        vulnerabilitySuppressions.add(aDefaultVulnerabilitySuppression().build());
         doReturn(findings).when(findingsAction).getFindings(project, true);
         doReturn(vulnerabilitySuppressions).when(moduleConfig).getVulnerabilitySuppressions();
-        doReturn(project.getUuid()).when(moduleConfig).getProjectUuid();
 
-        List<Analysis> analysisList = findingsProcessor.process(project, moduleConfig);
+        try {
+            findingsProcessor.process(project, moduleConfig, true);
+            fail("DependencyTrackException expected");
+        } catch (Exception ex) {
+            assertThat(ex, instanceOf(DependencyTrackException.class));
+        }
+    }
+
+    @Test
+    public void thatStrictModeThrowsNoExceptionWhenAllSuppressionsFiTToFindings() throws DependencyTrackException {
+        doReturn(findings).when(findingsAction).getFindings(project, true);
+        doReturn(vulnerabilitySuppressions).when(moduleConfig).getVulnerabilitySuppressions();
+
+        try {
+            findingsProcessor.process(project, moduleConfig, true);
+        } catch (Exception ex) {
+            fail("Exception not expected");
+        }
+    }
+
+    @Test
+    public void thatReturnedAnalysisListIsCorrect() throws Exception {
+        doReturn(findings).when(findingsAction).getFindings(project, true);
+        doReturn(vulnerabilitySuppressions).when(moduleConfig).getVulnerabilitySuppressions();
+
+        List<Analysis> analysisList = findingsProcessor.process(project, moduleConfig, true);
+
 
         // should contain 2 entries
         assertThat(analysisList.size(), is(equalTo(2)));

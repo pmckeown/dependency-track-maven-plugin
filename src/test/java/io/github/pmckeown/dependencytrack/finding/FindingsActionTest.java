@@ -49,7 +49,7 @@ public class FindingsActionTest {
                         .withVulnerability(aVulnerability())
                         .withComponent(aComponent()))
                 .build();
-        doReturn(aSuccessResponse().withBody(findings).build()).when(findingClient).getFindingsForProject(project);
+        doReturn(aSuccessResponse().withBody(findings).build()).when(findingClient).getFindingsForProject(project, false);
 
         List<Finding> returnedFindings = findingAction.getFindings(project);
 
@@ -71,9 +71,9 @@ public class FindingsActionTest {
                         .withVulnerability(aVulnerability())
                         .withComponent(aComponent()))
                 .build();
-        doReturn(aSuccessResponse().withBody(findings).build()).when(findingClient).getFindingsForProject(project);
+        doReturn(aSuccessResponse().withBody(findings).build()).when(findingClient).getFindingsForProject(project, true);
 
-        List<Finding> returnedFindings = findingAction.getFindings(project);
+        List<Finding> returnedFindings = findingAction.getFindings(project, true);
 
         assertThat(returnedFindings.size(), is(equalTo(2)));
         assertThat(returnedFindings.get(0).getAnalysis().getIsSuppressed(), is(equalTo(false)));
@@ -83,7 +83,7 @@ public class FindingsActionTest {
     @Test
     public void thatWhenNoFindingsAreReturnedThenAnEmptyListIsReturned() throws Exception {
         Project project = aProject().build();
-        doReturn(aSuccessResponse().build()).when(findingClient).getFindingsForProject(project);
+        doReturn(aSuccessResponse().build()).when(findingClient).getFindingsForProject(project, false);
 
         List<Finding> findings = findingAction.getFindings(project);
         assertThat(findings.isEmpty(), is(equalTo(true)));
@@ -92,7 +92,7 @@ public class FindingsActionTest {
     @Test
     public void thatAnErrorResponseIsReceivedAnExceptionIsThrown() {
         Project project = aProject().build();
-        doReturn(aNotFoundResponse().build()).when(findingClient).getFindingsForProject(project);
+        doReturn(aNotFoundResponse().build()).when(findingClient).getFindingsForProject(project, false);
 
         try {
             findingAction.getFindings(project);
@@ -105,7 +105,7 @@ public class FindingsActionTest {
     @Test
     public void thatWhenAClientExceptionIsEncounteredAnExceptionIsThrown() {
         Project project = aProject().build();
-        doThrow(UnirestException.class).when(findingClient).getFindingsForProject(project);
+        doThrow(UnirestException.class).when(findingClient).getFindingsForProject(project, false);
 
         try {
             findingAction.getFindings(project);

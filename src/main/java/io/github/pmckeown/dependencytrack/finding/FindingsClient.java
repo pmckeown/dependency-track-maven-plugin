@@ -18,9 +18,9 @@ import static kong.unirest.Unirest.get;
 @Singleton
 public class FindingsClient {
 
-    private CommonConfig commonConfig;
+    private final CommonConfig commonConfig;
 
-    private Logger logger;
+    private final Logger logger;
 
     @Inject
     FindingsClient(CommonConfig commonConfig, Logger logger) {
@@ -34,7 +34,8 @@ public class FindingsClient {
     }
 
     Response<List<Finding>> getFindingsForProject(Project project, boolean suppressed ) {
-        logger.debug("Getting findings for project: %s:%s", project.getName(), project.getVersion());
+        logger.debug("Getting findings %s for project: %s:%s",
+            suppressed ? "including suppressed" : "excluding suppressed",  project.getName(), project.getVersion());
         return getFindingsForProject(project.getUuid(), suppressed);
     }
 

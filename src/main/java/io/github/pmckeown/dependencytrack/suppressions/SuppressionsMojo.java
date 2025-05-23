@@ -24,8 +24,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 @Mojo(name = "suppressions", defaultPhase = LifecyclePhase.VERIFY)
 public class SuppressionsMojo extends AbstractDependencyTrackMojo {
 
-    @Parameter(required = true)
-    private Suppressions suppressions = new Suppressions(Collections.emptyList());
+    @Parameter(name = "suppressions")
+    private Suppressions suppressions = new Suppressions();
 
     private final FindingsProcessor findingsProcessor;
 
@@ -54,7 +54,8 @@ public class SuppressionsMojo extends AbstractDependencyTrackMojo {
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
         logger.info("Performing suppression action");
-        if (suppressions.getVulnerabilitySuppressions().stream().anyMatch(vulnerabilitySuppressionValidator::isInValidVulnerabilitySuppression)) {
+        if (suppressions.getVulnerabilitySuppressions().stream()
+            .anyMatch(vulnerabilitySuppressionValidator::isInValidVulnerabilitySuppression)) {
             handleFailure("Maven vulnerability suppression configuration is invalid");
         }
         this.moduleConfig.setVulnerabilitySuppressions(suppressions.getVulnerabilitySuppressions());
@@ -95,7 +96,7 @@ public class SuppressionsMojo extends AbstractDependencyTrackMojo {
             Project project = projectAction.getProject(moduleConfig);
 
             // fetch all findings for the project incl. suppressed ones
-            List<Analysis> analysisList = findingsProcessor.process(project, moduleConfig);
+            List<Analysis> analysisList = findingsProcessor.process(project, moduleConfig, suppressions.isStrictMode());
 
             if (!suppressionsAction.setProjectSuppressions(analysisList)) {
                 handleFailure("Setting suppressions failed");

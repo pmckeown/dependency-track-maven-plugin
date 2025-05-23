@@ -33,7 +33,7 @@ public class FindingsAction {
         logger.info("Getting findings for project %s-%s", project.getName(), project.getVersion());
 
         try {
-            Response<List<Finding>> response = findingClient.getFindingsForProject(project);
+            Response<List<Finding>> response = findingClient.getFindingsForProject(project, suppressed);
             Optional<List<Finding>> body = response.getBody();
             if (response.isSuccess()) {
                 if (body.isPresent()) {
