@@ -17,7 +17,7 @@ import static java.lang.String.format;
 
 /**
  * Provides the capability to find the current Inherited Risk Score as determined by the Dependency Track Server.
- * 
+ *
  * Specific configuration options are:
  * <ol>
  *     <li>inheritedRiskScoreThreshold</li>
@@ -25,7 +25,7 @@ import static java.lang.String.format;
  *
  * @author Paul McKeown
  */
-@Mojo(name = "score", defaultPhase = LifecyclePhase.VERIFY)
+@Mojo(name = "score", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
 public class ScoreMojo extends AbstractDependencyTrackMojo {
 
     @Parameter

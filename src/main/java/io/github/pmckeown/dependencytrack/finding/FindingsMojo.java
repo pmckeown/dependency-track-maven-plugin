@@ -58,7 +58,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
  *
  * @author Paul McKeown
  */
-@Mojo(name = "findings", defaultPhase = VERIFY)
+@Mojo(name = "findings", defaultPhase = VERIFY, threadSafe = true)
 @Singleton
 public class FindingsMojo extends AbstractDependencyTrackMojo {
 
