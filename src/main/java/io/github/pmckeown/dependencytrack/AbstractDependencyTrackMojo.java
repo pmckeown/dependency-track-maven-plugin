@@ -195,6 +195,6 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
      * @return unirestConfiguration
      */
     public AtomicBoolean getUnirestConfiguration() {
-        return this.unirestConfiguration;
+        return unirestConfiguration;
     }
 }
