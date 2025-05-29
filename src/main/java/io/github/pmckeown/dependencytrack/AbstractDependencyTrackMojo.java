@@ -3,13 +3,14 @@ package io.github.pmckeown.dependencytrack;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.Unirest;
 import kong.unirest.jackson.JacksonObjectMapper;
-import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
 import static kong.unirest.HeaderNames.ACCEPT;
@@ -33,7 +34,7 @@ import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
  */
 public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
 
-    private static AtomicBoolean configureUnirest = new AtomicBoolean();
+    private static AtomicBoolean unirestConfiguration = new AtomicBoolean();
 
     @Parameter(required = true, defaultValue = "${project.artifactId}", property = "dependency-track.projectName")
     protected String projectName;
@@ -173,7 +174,7 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
      * configuration.
      */
     private void configureUnirest() {
-        if(configureUnirest.compareAndSet(false, true)) {
+        if(unirestConfiguration.compareAndSet(false, true)) {
             Unirest.config()
                 .setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
                 .setDefaultHeader(ACCEPT_ENCODING, "gzip, deflate")
@@ -186,5 +187,14 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
             // Info print user specified
             logger.info("SSL Verification enabled: %b", verifySsl);
         }
+    }
+
+    /**
+     * Provide access to the unirestConfiguration AtomicBoolean to allow tests to reset this config object
+     *
+     * @return unirestConfiguration
+     */
+    public AtomicBoolean getUnirestConfiguration() {
+        return this.unirestConfiguration;
     }
 }

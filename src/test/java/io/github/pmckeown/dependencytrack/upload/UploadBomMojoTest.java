@@ -8,6 +8,7 @@ import io.github.pmckeown.util.Logger;
 import kong.unirest.Unirest;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,6 +58,11 @@ public class UploadBomMojoTest {
         uploadBomMojo.setCommonConfig(commonConfig);
         uploadBomMojo.setModuleConfig(moduleConfig);
         uploadBomMojo.setMavenProject(project);
+    }
+
+    @After
+    public void tearDown() {
+        uploadBomMojo.getUnirestConfiguration().set(false);
     }
 
     @Test
