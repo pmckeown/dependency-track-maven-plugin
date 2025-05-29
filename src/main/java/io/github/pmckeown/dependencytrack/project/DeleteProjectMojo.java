@@ -18,7 +18,7 @@ import static java.lang.String.format;
  *
  * @author Paul McKeown
  */
-@Mojo(name = "delete-project")
+@Mojo(name = "delete-project", threadSafe = true)
 public class DeleteProjectMojo extends AbstractDependencyTrackMojo {
 
     private ProjectAction projectAction;

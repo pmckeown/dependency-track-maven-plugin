@@ -52,7 +52,7 @@ import javax.inject.Inject;
  *
  * @author Paul McKeown
  */
-@Mojo(name = "metrics", defaultPhase = LifecyclePhase.VERIFY)
+@Mojo(name = "metrics", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
 public class MetricsMojo extends AbstractDependencyTrackMojo {
 
     private MetricsAction metricsAction;

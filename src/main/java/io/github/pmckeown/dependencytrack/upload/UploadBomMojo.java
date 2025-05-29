@@ -34,7 +34,7 @@ import java.util.Set;
  *
  * @author Paul McKeown
  */
-@Mojo(name = "upload-bom", defaultPhase = LifecyclePhase.VERIFY)
+@Mojo(name = "upload-bom", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
 public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     @Parameter(property = "dependency-track.bomLocation")
