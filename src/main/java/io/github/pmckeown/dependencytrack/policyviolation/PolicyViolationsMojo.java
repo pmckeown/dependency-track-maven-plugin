@@ -37,7 +37,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
  *
  * @author Sahiba Mittal
  */
-@Mojo(name = "policy-violations", defaultPhase = VERIFY)
+@Mojo(name = "policy-violations", defaultPhase = VERIFY, threadSafe = true)
 @Singleton
 public class PolicyViolationsMojo extends AbstractDependencyTrackMojo {
 

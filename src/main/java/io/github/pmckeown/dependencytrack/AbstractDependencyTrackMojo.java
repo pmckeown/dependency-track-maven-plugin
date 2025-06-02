@@ -10,6 +10,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
 import static kong.unirest.HeaderNames.ACCEPT;
 import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
@@ -31,6 +33,8 @@ import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
  * @author Paul McKeown
  */
 public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
+
+    private static AtomicBoolean unirestConfiguration = new AtomicBoolean();
 
     @Parameter(required = true, defaultValue = "${project.artifactId}", property = "dependency-track.projectName")
     protected String projectName;
@@ -170,16 +174,27 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
      * configuration.
      */
     private void configureUnirest() {
-        Unirest.config()
+        if(unirestConfiguration.compareAndSet(false, true)) {
+            Unirest.config()
                 .setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
                 .setDefaultHeader(ACCEPT_ENCODING, "gzip, deflate")
                 .setDefaultHeader(ACCEPT, "application/json")
-                .verifySsl(this.verifySsl);
+                .verifySsl(verifySsl);
 
-        // Debug all Unirest config
-        logger.debug("Unirest Configuration: %s", ToStringBuilder.reflectionToString(Unirest.config()));
+            // Debug all Unirest config
+            logger.debug("Unirest Configuration: %s", ToStringBuilder.reflectionToString(Unirest.config()));
 
-        // Info print user specified
-        logger.info("SSL Verification enabled: %b", this.verifySsl);
+            // Info print user specified
+            logger.info("SSL Verification enabled: %b", verifySsl);
+        }
+    }
+
+    /**
+     * Provide access to the unirestConfiguration AtomicBoolean to allow tests to reset this config object
+     *
+     * @return unirestConfiguration
+     */
+    public AtomicBoolean getUnirestConfiguration() {
+        return unirestConfiguration;
     }
 }

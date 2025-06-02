@@ -8,6 +8,7 @@ import io.github.pmckeown.util.BomEncoder;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.Unirest;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -40,6 +41,11 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     public void setup() {
         MockitoAnnotations.initMocks(this);
         doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(anyString(), any(Logger.class));
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        uploadBomMojo(BOM_LOCATION).getUnirestConfiguration().set(false);
     }
 
     @Test

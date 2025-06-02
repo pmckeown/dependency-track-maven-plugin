@@ -1,6 +1,9 @@
 # Compiled class file
 *.class
 
+# Sonar Code Scanner Token
+sonar-token
+
 # Log file
 *.log
 
