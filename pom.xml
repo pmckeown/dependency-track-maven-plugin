@@ -568,10 +568,6 @@
                                     <goals>
                                         <goal>verify</goal>
                                     </goals>
-                                    <properties>
-                                        <dependency-track-maven-plugin.version>${project.version}</dependency-track-maven-plugin.version>
-                                        <cyclonedx-maven-plugin.version>${cyclonedx-maven-plugin.version}</cyclonedx-maven-plugin.version>
-                                    </properties>
                                     <skipInvocation>${skipITs}</skipInvocation>
                                 </configuration>
                             </execution>
