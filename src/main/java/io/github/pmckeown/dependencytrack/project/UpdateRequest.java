@@ -5,7 +5,7 @@ public class UpdateRequest {
     private Project parent;
 
     public boolean hasBomLocation() {
-        return bomLocation!=null;
+        return bomLocation != null;
     }
 
     public String getBomLocation() {
@@ -18,7 +18,7 @@ public class UpdateRequest {
     }
 
     public boolean hasParent() {
-        return parent!=null;
+        return parent != null;
     }
 
     public Project getParent() {

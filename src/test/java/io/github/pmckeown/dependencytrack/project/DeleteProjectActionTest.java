@@ -1,17 +1,8 @@
 package io.github.pmckeown.dependencytrack.project;
 
-import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.util.Logger;
-import kong.unirest.UnirestException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aNotFoundResponse;
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
+import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -22,6 +13,15 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.util.Logger;
+import kong.unirest.UnirestException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DeleteProjectActionTest {
@@ -65,5 +65,4 @@ public class DeleteProjectActionTest {
 
         verify(logger, atLeastOnce()).error(anyString(), any(UnirestException.class));
     }
-
 }

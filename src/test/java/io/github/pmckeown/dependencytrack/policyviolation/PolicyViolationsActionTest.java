@@ -1,17 +1,5 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
-import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.util.Logger;
-import kong.unirest.UnirestException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.List;
-
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aNotFoundResponse;
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
@@ -26,6 +14,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.project.Project;
+import io.github.pmckeown.util.Logger;
+import java.util.List;
+import kong.unirest.UnirestException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PolicyViolationsActionTest {
@@ -45,12 +44,13 @@ public class PolicyViolationsActionTest {
         List<PolicyViolation> policyViolations = aListOfPolicyViolations()
                 .withPolicyViolation(aPolicyViolation()
                         .withType("SEVERITY")
-                        .withPolicyCondition(aPolicyCondition()
-                                .withPolicy(new Policy("testPolicy", ViolationState.INFO)))
+                        .withPolicyCondition(
+                                aPolicyCondition().withPolicy(new Policy("testPolicy", ViolationState.INFO)))
                         .withComponent(aComponent()))
                 .build();
         doReturn(aSuccessResponse().withBody(policyViolations).build())
-                .when(policyClient).getPolicyViolationsForProject(project);
+                .when(policyClient)
+                .getPolicyViolationsForProject(project);
 
         List<PolicyViolation> returnedPolicyViolations = policyAction.getPolicyViolations(project);
 

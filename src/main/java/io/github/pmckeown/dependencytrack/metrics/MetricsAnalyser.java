@@ -1,16 +1,15 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
-import io.github.pmckeown.util.Logger;
-import org.apache.maven.plugin.MojoFailureException;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import static io.github.pmckeown.dependencytrack.Constants.CRITICAL;
 import static io.github.pmckeown.dependencytrack.Constants.HIGH;
-import static io.github.pmckeown.dependencytrack.Constants.MEDIUM;
 import static io.github.pmckeown.dependencytrack.Constants.LOW;
+import static io.github.pmckeown.dependencytrack.Constants.MEDIUM;
 import static io.github.pmckeown.dependencytrack.Constants.UNASSIGNED;
+
+import io.github.pmckeown.util.Logger;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import org.apache.maven.plugin.MojoFailureException;
 
 @Singleton
 public class MetricsAnalyser {

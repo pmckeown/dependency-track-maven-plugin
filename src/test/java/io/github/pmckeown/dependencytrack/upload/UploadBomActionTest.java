@@ -1,17 +1,5 @@
 package io.github.pmckeown.dependencytrack.upload;
 
-import io.github.pmckeown.dependencytrack.*;
-import io.github.pmckeown.util.BomEncoder;
-import io.github.pmckeown.util.Logger;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Optional;
-
 import static io.github.pmckeown.dependencytrack.PollingConfig.TimeUnit.MILLIS;
 import static io.github.pmckeown.dependencytrack.upload.UploadBomResponseBuilder.anUploadBomResponse;
 import static org.hamcrest.CoreMatchers.*;
@@ -20,6 +8,17 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+
+import io.github.pmckeown.dependencytrack.*;
+import io.github.pmckeown.util.BomEncoder;
+import io.github.pmckeown.util.Logger;
+import java.util.Optional;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UploadBomActionTest {
@@ -102,13 +101,14 @@ public class UploadBomActionTest {
         doReturn(new PollingConfig(true, 1, 3, MILLIS)).when(commonConfig).getPollingConfig();
 
         // Create a new candidate as the polling behaviour needs to change for this test
-        UploadBomAction uploadBomAction = new UploadBomAction(bomClient, bomEncoder, new Poller<Boolean>(),
-                commonConfig, logger);
+        UploadBomAction uploadBomAction =
+                new UploadBomAction(bomClient, bomEncoder, new Poller<Boolean>(), commonConfig, logger);
 
         doReturn(aBomProcessingResponse(true))
                 .doReturn(aBomProcessingResponse(true))
                 .doReturn(aBomProcessingResponse(false))
-                .when(bomClient).isBomBeingProcessed(anyString());
+                .when(bomClient)
+                .isBomBeingProcessed(anyString());
 
         uploadBomAction.upload(moduleConfig);
 
@@ -120,17 +120,20 @@ public class UploadBomActionTest {
      */
 
     private Response<BomProcessingResponse> aBomProcessingResponse(boolean processing) {
-        return new Response<>(200, "OK", true,
-                Optional.of(BomProcessingResponseBuilder.aBomProcessingResponse().withProcessing(processing).build()));
+        return new Response<>(
+                200,
+                "OK",
+                true,
+                Optional.of(BomProcessingResponseBuilder.aBomProcessingResponse()
+                        .withProcessing(processing)
+                        .build()));
     }
 
     private Response<UploadBomResponse> anUploadBomSuccessResponse() {
-        return new Response<>(200, "OK", true,
-                Optional.of(anUploadBomResponse().build()));
+        return new Response<>(200, "OK", true, Optional.of(anUploadBomResponse().build()));
     }
 
     private Response aNotFoundResponse() {
         return new Response(404, "Not Found", false, Optional.of("The parent component could not be found."));
     }
-
 }

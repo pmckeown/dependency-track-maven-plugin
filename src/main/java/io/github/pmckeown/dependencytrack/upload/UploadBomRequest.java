@@ -1,18 +1,15 @@
 package io.github.pmckeown.dependencytrack.upload;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.project.ProjectTag;
-
+import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Encapsulates the request payload for uploading a BOM
@@ -40,7 +37,8 @@ public class UploadBomRequest {
         if (CollectionUtils.isEmpty(moduleConfig.getProjectTags())) {
             this.projectTags = null;
         } else {
-            this.projectTags = moduleConfig.getProjectTags().stream().map(ProjectTag::new).collect(Collectors.toList());
+            this.projectTags =
+                    moduleConfig.getProjectTags().stream().map(ProjectTag::new).collect(Collectors.toList());
         }
         this.parentUUID = moduleConfig.getParentUuid();
         if (StringUtils.isNoneBlank(moduleConfig.getParentName(), moduleConfig.getParentVersion())) {

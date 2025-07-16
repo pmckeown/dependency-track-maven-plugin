@@ -5,11 +5,10 @@ import com.evanlennick.retry4j.exception.UnexpectedException;
 import io.github.pmckeown.dependencytrack.*;
 import io.github.pmckeown.util.BomEncoder;
 import io.github.pmckeown.util.Logger;
-import org.apache.commons.lang3.StringUtils;
-
+import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Handles uploading BOMs
@@ -26,8 +25,12 @@ public class UploadBomAction {
     private Poller<Boolean> poller;
 
     @Inject
-    public UploadBomAction(BomClient bomClient, BomEncoder bomEncoder, Poller<Boolean> poller,
-                           CommonConfig commonConfig, Logger logger) {
+    public UploadBomAction(
+            BomClient bomClient,
+            BomEncoder bomEncoder,
+            Poller<Boolean> poller,
+            CommonConfig commonConfig,
+            Logger logger) {
         this.bomClient = bomClient;
         this.bomEncoder = bomEncoder;
         this.poller = poller;
@@ -57,8 +60,7 @@ public class UploadBomAction {
             try {
                 pollUntilBomIsProcessed(uploadBomResponse.get());
             } catch (UnexpectedException | RetriesExhaustedException ex) {
-                logger.error("Polling for processing completion was interrupted so continuing: %s",
-                        ex.getMessage());
+                logger.error("Polling for processing completion was interrupted so continuing: %s", ex.getMessage());
             }
         }
 
@@ -80,18 +82,18 @@ public class UploadBomAction {
         });
     }
 
-    private Optional<UploadBomResponse> doUpload(ModuleConfig moduleConfig, String encodedBom) throws DependencyTrackException {
+    private Optional<UploadBomResponse> doUpload(ModuleConfig moduleConfig, String encodedBom)
+            throws DependencyTrackException {
         try {
-            Response<UploadBomResponse> response = bomClient.uploadBom(
-                    new UploadBomRequest(moduleConfig, encodedBom)
-            );
+            Response<UploadBomResponse> response = bomClient.uploadBom(new UploadBomRequest(moduleConfig, encodedBom));
 
             if (response.isSuccess()) {
                 logger.info("BOM uploaded to Dependency Track server");
                 return response.getBody();
             } else {
-                String message = String.format("Failure integrating with Dependency Track: %d %s", response.getStatus(),
-                        response.getStatusText());
+                String message = String.format(
+                        "Failure integrating with Dependency Track: %d %s",
+                        response.getStatus(), response.getStatusText());
                 logger.error(message);
                 throw new DependencyTrackException(message);
             }

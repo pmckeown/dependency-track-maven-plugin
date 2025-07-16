@@ -1,11 +1,5 @@
 package io.github.pmckeown.dependencytrack.finding;
 
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.junit.Before;
-import org.junit.Test;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -29,6 +23,12 @@ import static io.github.pmckeown.dependencytrack.finding.Severity.UNASSIGNED;
 import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
 import static org.junit.Assert.fail;
 
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.junit.Before;
+import org.junit.Test;
+
 public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     private FindingsMojo findingsMojo;
@@ -44,16 +44,16 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
 
     @Test
     public void thatFindingMojoCanRetrieveFindingsAndPrintThem() throws Exception {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-                aResponse().withBodyFile("api/v1/project/testName-project.json")));
-        stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(
-                aResponse().withBody(asJson(
-                        aListOfFindings()
-                                .withFinding(
-                                        aFinding()
-                                                .withComponent(aComponent().withName("dodgy"))
-                                                .withVulnerability(aVulnerability().withSeverity(LOW))
-                                                .withAnalysis(anAnalysis())).build()))));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
+        stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
+                .willReturn(aResponse()
+                        .withBody(asJson(aListOfFindings()
+                                .withFinding(aFinding()
+                                        .withComponent(aComponent().withName("dodgy"))
+                                        .withVulnerability(aVulnerability().withSeverity(LOW))
+                                        .withAnalysis(anAnalysis()))
+                                .build()))));
 
         findingsMojo.execute();
 
@@ -63,8 +63,8 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
 
     @Test
     public void thatWhenNoFindingsAreFoundTheMojoDoesNotFail() throws Exception {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-                aResponse().withBodyFile("api/v1/project/testName-project.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(ok()));
 
         try {
@@ -78,9 +78,10 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
 
     @Test(expected = MojoExecutionException.class)
     public void thatWhenExceptionOccursWhileGettingFindingsAndFailOnErrorIsTrueTheMojoErrors() throws Exception {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-                aResponse().withBodyFile("api/v1/project/testName-project.json")));
-        stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(aResponse().withFault(RANDOM_DATA_THEN_CLOSE)));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
+        stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
+                .willReturn(aResponse().withFault(RANDOM_DATA_THEN_CLOSE)));
 
         findingsMojo.setFailOnError(true);
 
@@ -90,16 +91,16 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
 
     @Test(expected = MojoFailureException.class)
     public void thatBuildFailsWhenFindingsNumberBreachesDefinedThresholds() throws Exception {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-                aResponse().withBodyFile("api/v1/project/testName-project.json")));
-        stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(
-                aResponse().withBody(asJson(
-                        aListOfFindings()
-                                .withFinding(
-                                        aFinding()
-                                                .withComponent(aComponent().withName("dodgy"))
-                                                .withVulnerability(aVulnerability().withSeverity(LOW))
-                                                .withAnalysis(anAnalysis())).build()))));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
+        stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
+                .willReturn(aResponse()
+                        .withBody(asJson(aListOfFindings()
+                                .withFinding(aFinding()
+                                        .withComponent(aComponent().withName("dodgy"))
+                                        .withVulnerability(aVulnerability().withSeverity(LOW))
+                                        .withAnalysis(anAnalysis()))
+                                .build()))));
 
         findingsMojo.setFindingThresholds(new FindingThresholds(0, 0, 0, 0, 0));
 
@@ -109,16 +110,16 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
 
     @Test
     public void thatBuildDoesNotFailWhenOnlyUnassignedFindingExists() throws Exception {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-                aResponse().withBodyFile("api/v1/project/testName-project.json")));
-        stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(
-                aResponse().withBody(asJson(
-                        aListOfFindings()
-                                .withFinding(
-                                        aFinding()
-                                                .withComponent(aComponent().withName("dodgy"))
-                                                .withVulnerability(aVulnerability().withSeverity(UNASSIGNED))
-                                                .withAnalysis(anAnalysis())).build()))));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
+        stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
+                .willReturn(aResponse()
+                        .withBody(asJson(aListOfFindings()
+                                .withFinding(aFinding()
+                                        .withComponent(aComponent().withName("dodgy"))
+                                        .withVulnerability(aVulnerability().withSeverity(UNASSIGNED))
+                                        .withAnalysis(anAnalysis()))
+                                .build()))));
 
         findingsMojo.setFindingThresholds(new FindingThresholds());
 
@@ -131,16 +132,16 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
 
     @Test
     public void thatFindingsIsSkippedWhenSkipIsTrue() throws Exception {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-                aResponse().withBodyFile("api/v1/project/testName-project.json")));
-        stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(
-                aResponse().withBody(asJson(
-                        aListOfFindings()
-                                .withFinding(
-                                        aFinding()
-                                                .withComponent(aComponent().withName("dodgy"))
-                                                .withVulnerability(aVulnerability().withSeverity(LOW))
-                                                .withAnalysis(anAnalysis())).build()))));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
+        stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
+                .willReturn(aResponse()
+                        .withBody(asJson(aListOfFindings()
+                                .withFinding(aFinding()
+                                        .withComponent(aComponent().withName("dodgy"))
+                                        .withVulnerability(aVulnerability().withSeverity(LOW))
+                                        .withAnalysis(anAnalysis()))
+                                .build()))));
 
         findingsMojo.setSkip("true");
 

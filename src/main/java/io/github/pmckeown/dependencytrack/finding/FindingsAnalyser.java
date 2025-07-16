@@ -1,17 +1,16 @@
 package io.github.pmckeown.dependencytrack.finding;
 
-import io.github.pmckeown.dependencytrack.Constants;
-import io.github.pmckeown.util.Logger;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.List;
-
 import static io.github.pmckeown.dependencytrack.finding.Severity.CRITICAL;
 import static io.github.pmckeown.dependencytrack.finding.Severity.HIGH;
-import static io.github.pmckeown.dependencytrack.finding.Severity.MEDIUM;
 import static io.github.pmckeown.dependencytrack.finding.Severity.LOW;
+import static io.github.pmckeown.dependencytrack.finding.Severity.MEDIUM;
 import static io.github.pmckeown.dependencytrack.finding.Severity.UNASSIGNED;
+
+import io.github.pmckeown.dependencytrack.Constants;
+import io.github.pmckeown.util.Logger;
+import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class FindingsAnalyser {
@@ -68,7 +67,9 @@ public class FindingsAnalyser {
     }
 
     private long getCount(List<Finding> findings, Severity severity) {
-        return findings.stream().filter(f -> f.getVulnerability().getSeverity() == severity
-                && !f.getAnalysis().isSuppressed()).count();
+        return findings.stream()
+                .filter(f -> f.getVulnerability().getSeverity() == severity
+                        && !f.getAnalysis().isSuppressed())
+                .count();
     }
 }

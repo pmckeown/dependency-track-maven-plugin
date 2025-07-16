@@ -1,17 +1,15 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
-import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.util.Logger;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.List;
-
 import static io.github.pmckeown.dependencytrack.Constants.DELIMITER;
 
+import io.github.pmckeown.dependencytrack.project.Project;
+import io.github.pmckeown.util.Logger;
+import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 @Singleton
-public
-class PolicyViolationsPrinter {
+public class PolicyViolationsPrinter {
 
     private Logger logger;
 
@@ -26,18 +24,24 @@ class PolicyViolationsPrinter {
             return;
         }
         logger.info(DELIMITER);
-        logger.info("%d policy violation(s) were retrieved for project: %s", policyViolations.size(),
-                project.getName());
+        logger.info(
+                "%d policy violation(s) were retrieved for project: %s", policyViolations.size(), project.getName());
         logger.info("Printing policy violations for project %s-%s", project.getName(), project.getVersion());
         policyViolations.forEach(policyViolation -> {
             PolicyCondition policyCondition = policyViolation.getPolicyCondition();
             Policy policy = policyCondition.getPolicy();
             logger.info(DELIMITER);
-            logger.info("Policy name: %s (%s)", policy.getName(), policy.getViolationState().name());
-            logger.info("Policy condition: \"subject == %s && value %s %s\"", policyCondition.getSubject(),
-                    policyCondition.getOperator(), policyCondition.getValue());
-            logger.info("Risk type: %s, Component: %s %s", policyViolation.getType(),
-                    policyViolation.getComponent().getName(), policyViolation.getComponent().getVersion());
+            logger.info(
+                    "Policy name: %s (%s)",
+                    policy.getName(), policy.getViolationState().name());
+            logger.info(
+                    "Policy condition: \"subject == %s && value %s %s\"",
+                    policyCondition.getSubject(), policyCondition.getOperator(), policyCondition.getValue());
+            logger.info(
+                    "Risk type: %s, Component: %s %s",
+                    policyViolation.getType(),
+                    policyViolation.getComponent().getName(),
+                    policyViolation.getComponent().getVersion());
             logger.info(""); // Spacer
         });
     }

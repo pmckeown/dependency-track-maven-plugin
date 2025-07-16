@@ -1,18 +1,17 @@
 package io.github.pmckeown.dependencytrack.finding;
 
-import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.util.Logger;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.IntStream;
-
 import static io.github.pmckeown.dependencytrack.Constants.DELIMITER;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.joinWith;
+
+import io.github.pmckeown.dependencytrack.project.Project;
+import io.github.pmckeown.util.Logger;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.IntStream;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import org.apache.commons.lang3.StringUtils;
 
 @Singleton
 class FindingsPrinter {
@@ -71,5 +70,4 @@ class FindingsPrinter {
         Component component = finding.getComponent();
         return joinWith(":", component.getGroup(), component.getName(), component.getVersion());
     }
-
 }

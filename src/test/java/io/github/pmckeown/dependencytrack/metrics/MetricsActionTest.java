@@ -1,5 +1,21 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
+import static io.github.pmckeown.dependencytrack.ResponseBuilder.aNotFoundResponse;
+import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
+import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.Poller;
@@ -13,22 +29,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
-import static io.github.pmckeown.dependencytrack.ResponseBuilder.aNotFoundResponse;
-import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MetricsActionTest {
@@ -52,7 +52,9 @@ public class MetricsActionTest {
 
     @Test
     public void thatMetricsCanBeRetrieved() throws Exception {
-        doReturn(aSuccessResponse().withBody(aMetrics()).build()).when(metricsClient).getMetrics(any(Project.class));
+        doReturn(aSuccessResponse().withBody(aMetrics()).build())
+                .when(metricsClient)
+                .getMetrics(any(Project.class));
         doReturn(PollingConfig.defaults()).when(commonConfig).getPollingConfig();
 
         Metrics metrics = metricsAction.getMetrics(aProject().build());

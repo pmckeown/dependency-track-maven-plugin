@@ -1,12 +1,11 @@
 package io.github.pmckeown.dependencytrack.finding.report;
 
 import io.github.pmckeown.dependencytrack.report.AbstractXmlReportWriter;
-
+import java.io.File;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import java.io.File;
 
 @Singleton
 public class FindingsReportXmlReportWriter extends AbstractXmlReportWriter {

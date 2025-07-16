@@ -4,11 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.pmckeown.dependencytrack.Item;
 import io.github.pmckeown.dependencytrack.metrics.Metrics;
-
 import java.util.List;
-
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * Model class for the Project object
@@ -23,12 +19,13 @@ public class Project extends Item {
     private List<ProjectTag> tags;
 
     @JsonCreator
-    public Project(@JsonProperty("uuid") String uuid,
-                   @JsonProperty("name") String name,
-                   @JsonProperty("version") String version,
-                   @JsonProperty("metrics") Metrics metrics,
-                   @JsonProperty("isLatest") Boolean isLatest,
-                   @JsonProperty("tags") List<ProjectTag> tags) {
+    public Project(
+            @JsonProperty("uuid") String uuid,
+            @JsonProperty("name") String name,
+            @JsonProperty("version") String version,
+            @JsonProperty("metrics") Metrics metrics,
+            @JsonProperty("isLatest") Boolean isLatest,
+            @JsonProperty("tags") List<ProjectTag> tags) {
         super(uuid);
         this.name = name;
         this.version = version;

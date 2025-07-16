@@ -1,17 +1,16 @@
 package io.github.pmckeown.dependencytrack.finding.report;
 
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+
 import io.github.pmckeown.dependencytrack.report.TransformerFactoryProvider;
+import javax.xml.XMLConstants;
+import javax.xml.transform.TransformerFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import javax.xml.XMLConstants;
-import javax.xml.transform.TransformerFactory;
-
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FindingsReportHtmlReportWriterTest {

@@ -20,8 +20,7 @@ public class MetricsBuilder {
     private Date firstOccurrence = new Date();
     private Date lastOccurrence = new Date();
 
-    private MetricsBuilder() {
-    }
+    private MetricsBuilder() {}
 
     public static MetricsBuilder aMetrics() {
         return new MetricsBuilder();
@@ -103,8 +102,21 @@ public class MetricsBuilder {
     }
 
     public Metrics build() {
-        return new Metrics(inheritedRiskScore, critical, high, medium, low, unassigned, vulnerabilities,
-                vulnerableComponents, components, suppressed, findingsTotal, findingsAudited, findingsUnaudited,
-                firstOccurrence, lastOccurrence);
+        return new Metrics(
+                inheritedRiskScore,
+                critical,
+                high,
+                medium,
+                low,
+                unassigned,
+                vulnerabilities,
+                vulnerableComponents,
+                components,
+                suppressed,
+                findingsTotal,
+                findingsAudited,
+                findingsUnaudited,
+                firstOccurrence,
+                lastOccurrence);
     }
 }

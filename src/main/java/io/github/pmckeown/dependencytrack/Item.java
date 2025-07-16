@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-/**
- * Model class so any object that can be referenced by just its UUID
- */
+/** Model class so any object that can be referenced by just its UUID */
 public class Item {
 
     private final String uuid;
