@@ -1,23 +1,5 @@
 package io.github.pmckeown.dependencytrack.upload;
 
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
-import io.github.pmckeown.dependencytrack.PollingConfig;
-import io.github.pmckeown.dependencytrack.ResourceConstants;
-import io.github.pmckeown.dependencytrack.TestResourceConstants;
-import io.github.pmckeown.util.BomEncoder;
-import io.github.pmckeown.util.Logger;
-import kong.unirest.Unirest;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.TestMojoLoader.loadUploadBomMojo;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_BOM;
@@ -29,6 +11,23 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
+
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import io.github.pmckeown.dependencytrack.PollingConfig;
+import io.github.pmckeown.dependencytrack.ResourceConstants;
+import io.github.pmckeown.dependencytrack.TestResourceConstants;
+import io.github.pmckeown.util.BomEncoder;
+import io.github.pmckeown.util.Logger;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import kong.unirest.Unirest;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
@@ -137,9 +136,10 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
         uploadBomMojo.setProjectName("test-project");
         uploadBomMojo.execute();
 
-        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM))
-                .withRequestBody(
-                        matchingJsonPath("$.projectName", equalTo("test-project"))));
+        verify(
+                exactly(1),
+                putRequestedFor(urlEqualTo(V1_BOM))
+                        .withRequestBody(matchingJsonPath("$.projectName", equalTo("test-project"))));
     }
 
     @Test
@@ -149,37 +149,39 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
         UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
         uploadBomMojo.execute();
 
-        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM))
-                .withRequestBody(
-                        matchingJsonPath("$.projectName", equalTo("dependency-track-maven-plugin-test-project"))));
+        verify(
+                exactly(1),
+                putRequestedFor(urlEqualTo(V1_BOM))
+                        .withRequestBody(matchingJsonPath(
+                                "$.projectName", equalTo("dependency-track-maven-plugin-test-project"))));
     }
 
     @Test
     public void thatProjectVersionCanBeProvided() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
-
         UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
         uploadBomMojo.setProjectVersion("99.99.99-RELEASE");
         uploadBomMojo.execute();
 
-        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM))
-                .withRequestBody(
-                        matchingJsonPath("$.projectVersion", equalTo("99.99.99-RELEASE"))));
+        verify(
+                exactly(1),
+                putRequestedFor(urlEqualTo(V1_BOM))
+                        .withRequestBody(matchingJsonPath("$.projectVersion", equalTo("99.99.99-RELEASE"))));
     }
 
     @Test
     public void thatProjectIsLatestCanBeProvided() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
-
         UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
         uploadBomMojo.setLatest(true);
         uploadBomMojo.execute();
 
-        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM))
-                .withRequestBody(
-                        matchingJsonPath("$.isLatestProjectVersion", equalTo("true"))));
+        verify(
+                exactly(1),
+                putRequestedFor(urlEqualTo(V1_BOM))
+                        .withRequestBody(matchingJsonPath("$.isLatestProjectVersion", equalTo("true"))));
     }
 
     @Test
@@ -194,9 +196,11 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
         uploadBomMojo.setProjectTags(tags);
         uploadBomMojo.execute();
 
-        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM))
-            .withRequestBody(
-                matchingJsonPath("$.projectTags", equalToJson("[{\"name\":\"Backend\"},{\"name\":\"Team-1\"}]"))));
+        verify(
+                exactly(1),
+                putRequestedFor(urlEqualTo(V1_BOM))
+                        .withRequestBody(matchingJsonPath(
+                                "$.projectTags", equalToJson("[{\"name\":\"Backend\"},{\"name\":\"Team-1\"}]"))));
     }
 
     @Test
@@ -206,9 +210,10 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
         UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
         uploadBomMojo.execute();
 
-        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM))
-                .withRequestBody(
-                        matchingJsonPath("$.projectVersion", equalTo("0.0.1-SNAPSHOT"))));
+        verify(
+                exactly(1),
+                putRequestedFor(urlEqualTo(V1_BOM))
+                        .withRequestBody(matchingJsonPath("$.projectVersion", equalTo("0.0.1-SNAPSHOT"))));
     }
 
     @Test
@@ -234,13 +239,14 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     @Test
     public void thatProjectParentNameAndVersionCanBeIgnored() throws Exception {
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
-            .willReturn(aResponse().withBodyFile("api/v1/project/test-project.json")));
+                .willReturn(aResponse().withBodyFile("api/v1/project/test-project.json")));
         stubFor(get(urlPathMatching(TestResourceConstants.V1_PROJECT_UUID)).willReturn(ok()));
         stubFor(patch(urlPathMatching(TestResourceConstants.V1_PROJECT_UUID)).willReturn(ok()));
         stubFor(get(urlPathMatching(TestResourceConstants.V1_BOM_TOKEN_UUID)).willReturn(ok()));
-        stubFor(put(urlEqualTo(V1_BOM)).willReturn(
-                aResponse().withBodyFile("api/v1/project/upload-bom-response.json")));
-        stubFor(get(urlPathMatching(TestResourceConstants.V1_METRICS_PROJECT_REFRESH)).willReturn(ok()));
+        stubFor(put(urlEqualTo(V1_BOM))
+                .willReturn(aResponse().withBodyFile("api/v1/project/upload-bom-response.json")));
+        stubFor(get(urlPathMatching(TestResourceConstants.V1_METRICS_PROJECT_REFRESH))
+                .willReturn(ok()));
 
         UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
         uploadBomMojo.setProjectName("test-project");

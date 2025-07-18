@@ -1,12 +1,5 @@
 package io.github.pmckeown.dependencytrack.finding.report;
 
-import io.github.pmckeown.dependencytrack.finding.Finding;
-import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
-import io.github.pmckeown.dependencytrack.finding.Severity;
-import org.junit.Test;
-
-import java.util.List;
-
 import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
 import static io.github.pmckeown.dependencytrack.finding.FindingBuilder.aFinding;
@@ -15,6 +8,12 @@ import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aV
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+
+import io.github.pmckeown.dependencytrack.finding.Finding;
+import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
+import io.github.pmckeown.dependencytrack.finding.Severity;
+import java.util.List;
+import org.junit.Test;
 
 public class FindingsReportTest {
 
@@ -25,14 +24,13 @@ public class FindingsReportTest {
                 .withFinding(aFinding()
                         .withAnalysis(anAnalysis())
                         .withVulnerability(aVulnerability())
-                        .withComponent(aComponent()
-                                .withName("shonky-lib")))
+                        .withComponent(aComponent().withName("shonky-lib")))
                 .build();
         FindingsReport findingsReport = new FindingsReport(findingThresholds, findings, true);
 
         assertThat(findingsReport.getCritical().getCount(), is(equalTo(1)));
-        assertThat(findingsReport.getCritical().getFindings().get(0).getComponent().getName(),
-                is(equalTo("shonky-lib")));
+        assertThat(
+                findingsReport.getCritical().getFindings().get(0).getComponent().getName(), is(equalTo("shonky-lib")));
     }
 
     @Test
@@ -68,5 +66,4 @@ public class FindingsReportTest {
         assertThat(findingsReport.getLow().getCount(), is(equalTo(1)));
         assertThat(findingsReport.getUnassigned().getCount(), is(equalTo(1)));
     }
-
 }

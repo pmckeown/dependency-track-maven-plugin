@@ -4,29 +4,30 @@ import com.evanlennick.retry4j.CallExecutorBuilder;
 import com.evanlennick.retry4j.Status;
 import com.evanlennick.retry4j.config.RetryConfigBuilder;
 import com.evanlennick.retry4j.exception.UnexpectedException;
-
-import javax.inject.Singleton;
 import java.util.Optional;
 import java.util.concurrent.Callable;
+import javax.inject.Singleton;
 
 /**
  * Class for polling a remote server.
  *
- * Polling will continue until the provide callable returns a populated {@link Optional} instance.
+ * <p>Polling will continue until the provide callable returns a populated {@link Optional}
+ * instance.
  *
- * {@link Optional#empty()} will continue the loop until the configured retry limit is me when a
+ * <p>{@link Optional#empty()} will continue the loop until the configured retry limit is me when a
  * {@link com.evanlennick.retry4j.exception.RetriesExhaustedException} will be thrown.
  *
- * Any {@link Exception} encountered will stop the loop and be thrown as an
- * {@link com.evanlennick.retry4j.exception.UnexpectedException}
+ * <p>Any {@link Exception} encountered will stop the loop and be thrown as an {@link
+ * com.evanlennick.retry4j.exception.UnexpectedException}
  *
- * @param <T> The expected return type.  This will be wrapped in an {@link Optional}
+ * @param <T> The expected return type. This will be wrapped in an {@link Optional}
  */
 @Singleton
 public class Poller<T> {
 
     /**
-     * Execute the supplied {@link Callable} until a non-empty Optional value is returned from the Callable.
+     * Execute the supplied {@link Callable} until a non-empty Optional value is returned from the
+     * Callable.
      *
      * @param pollingConfig The polling configuration
      * @param callable The {@link Callable} function to execute one or more times

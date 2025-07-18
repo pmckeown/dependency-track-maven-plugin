@@ -1,16 +1,5 @@
 package io.github.pmckeown.dependencytrack.finding.report;
 
-import io.github.pmckeown.dependencytrack.finding.Analysis;
-import io.github.pmckeown.dependencytrack.finding.Finding;
-import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
-import io.github.pmckeown.dependencytrack.finding.Severity;
-import io.github.pmckeown.dependencytrack.report.TransformerFactoryProvider;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.File;
-import java.util.List;
-
 import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
 import static io.github.pmckeown.dependencytrack.finding.FindingBuilder.aFinding;
@@ -19,6 +8,16 @@ import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aV
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
+
+import io.github.pmckeown.dependencytrack.finding.Analysis;
+import io.github.pmckeown.dependencytrack.finding.Finding;
+import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
+import io.github.pmckeown.dependencytrack.finding.Severity;
+import io.github.pmckeown.dependencytrack.report.TransformerFactoryProvider;
+import java.io.File;
+import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
 
 public class FindingsReportIntegrationTest {
 
@@ -69,7 +68,9 @@ public class FindingsReportIntegrationTest {
                 .withFinding(aFinding()
                         .withVulnerability(aVulnerability().withSeverity(Severity.CRITICAL))
                         .withComponent(aComponent().withName("suppressed"))
-                        .withAnalysis(anAnalysis().withState(Analysis.State.FALSE_POSITIVE).withSuppressed(true)))
+                        .withAnalysis(anAnalysis()
+                                .withState(Analysis.State.FALSE_POSITIVE)
+                                .withSuppressed(true)))
                 .withFinding(aFinding()
                         .withVulnerability(aVulnerability().withSeverity(Severity.HIGH))
                         .withComponent(aComponent())

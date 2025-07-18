@@ -1,10 +1,15 @@
 package io.github.pmckeown.dependencytrack.upload;
 
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.*;
+
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
+import java.util.Collections;
 import kong.unirest.Unirest;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -15,12 +20,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Collections;
-
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UploadBomMojoTest {
@@ -167,7 +166,8 @@ public class UploadBomMojoTest {
             assertThat(ex, instanceOf(MojoExecutionException.class));
         }
 
-        verify(logger).error("Parent update requested but no parent found in parent maven project or provided in " +
-                "config");
+        verify(logger)
+                .error("Parent update requested but no parent found in parent maven project or provided in "
+                        + "config");
     }
 }

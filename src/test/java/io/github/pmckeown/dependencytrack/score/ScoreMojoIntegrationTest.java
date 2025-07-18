@@ -1,11 +1,5 @@
 package io.github.pmckeown.dependencytrack.score;
 
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
-import io.github.pmckeown.dependencytrack.PollingConfig;
-import org.apache.maven.plugin.MojoFailureException;
-import org.junit.Before;
-import org.junit.Test;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.TestMojoLoader.loadScoreMojo;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
@@ -14,6 +8,12 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
+
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import io.github.pmckeown.dependencytrack.PollingConfig;
+import org.apache.maven.plugin.MojoFailureException;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
@@ -29,8 +29,8 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     public void thatAllProjectsCanBeRetrieved() throws Exception {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-            aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
         scoreMojo.execute();
 
@@ -40,8 +40,8 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     @Test
     public void thatARiskScoreHigherThanTheThresholdCausesBuildToFailEvenWithFailOnErrorFalse() throws Exception {
         // The current project score in the JSON file is 3
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-            aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
         scoreMojo.setInheritedRiskScoreThreshold(1);
         scoreMojo.setFailOnError(false);
@@ -57,8 +57,8 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     @Test
     public void thatARiskScoreEqualToTheThresholdDoesNothing() throws Exception {
         // The current project score in the JSON file is 3
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-            aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
         scoreMojo.setInheritedRiskScoreThreshold(3);
 
@@ -72,8 +72,8 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     @Test
     public void thatFailureToGetARiskScoreEqualThrowsAnException() throws Exception {
         // The current project score in the JSON file is 3
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-            aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
         scoreMojo.setInheritedRiskScoreThreshold(3);
 
@@ -87,8 +87,8 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     @Test
     public void thatARiskScoreLowerThanTheThresholdDoesNothing() throws Exception {
         // The current project score in the JSON file is 3
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-            aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
         scoreMojo.setInheritedRiskScoreThreshold(999);
 
@@ -102,10 +102,10 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     @Test
     public void thatWhenNoMetricsHaveBeenCalculatedThenTheMetricsAreRetrieved() throws Exception {
         // The current project score in the JSON file is 3
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-            aResponse().withBodyFile("api/v1/project/noMetrics.json")));
-        stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT)).willReturn(
-                aResponse().withBodyFile("api/v1/metrics/project/project-metrics.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/noMetrics.json")));
+        stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT))
+                .willReturn(aResponse().withBodyFile("api/v1/metrics/project/project-metrics.json")));
 
         scoreMojo.setProjectName("noMetrics");
         scoreMojo.setProjectVersion("1.0.0");
@@ -117,10 +117,10 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     @Test
     public void thatWhenNoMetricsHaveBeenTheTheCallIsRetriedTheCorrectNumberOfTimes() throws Exception {
         // The current project score in the JSON file is 3
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-            aResponse().withBodyFile("api/v1/project/noMetrics.json")));
-        stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT)).willReturn(
-                aResponse().withStatus(404).withBody("The project could not be found.")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/noMetrics.json")));
+        stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT))
+                .willReturn(aResponse().withStatus(404).withBody("The project could not be found.")));
 
         scoreMojo.setProjectName("noMetrics");
         scoreMojo.setProjectVersion("1.0.0");

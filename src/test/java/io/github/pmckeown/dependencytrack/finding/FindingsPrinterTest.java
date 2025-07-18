@@ -1,15 +1,5 @@
 package io.github.pmckeown.dependencytrack.finding;
 
-import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.util.Logger;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.List;
-
 import static io.github.pmckeown.dependencytrack.Constants.DELIMITER;
 import static io.github.pmckeown.dependencytrack.finding.Analysis.State.FALSE_POSITIVE;
 import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
@@ -23,6 +13,15 @@ import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
+import io.github.pmckeown.dependencytrack.project.Project;
+import io.github.pmckeown.util.Logger;
+import java.util.List;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FindingsPrinterTest {
@@ -111,9 +110,7 @@ public class FindingsPrinterTest {
         verify(logger).info("be vulnerable.> > -- [redhat.com](https://bugzilla.redhat.com/show_bug");
     }
 
-    /**
-     * Test for issue: https://github.com/pmckeown/dependency-track-maven-plugin/issues/281
-     */
+    /** Test for issue: https://github.com/pmckeown/dependency-track-maven-plugin/issues/281 */
     @Test
     public void thatSanitisedContentPrintableWhenItShrinksAcrossAChunkBoundary() {
         int chunkSize = findingsPrinter.getPrintWidth();
@@ -129,25 +126,20 @@ public class FindingsPrinterTest {
 
     private List<Finding> findingsList(boolean isSuppressed, final VulnerabilityBuilder vulnerabilityBuilder) {
         return aListOfFindings()
-                .withFinding(
-                        aFinding()
-                                .withComponent(
-                                        aComponent()
-                                                .withGroup("nz.co.dodgy")
-                                                .withName("insecure-encrypter")
-                                                .withVersion("20.0"))
-                                .withVulnerability(vulnerabilityBuilder)
-                                .withAnalysis(
-                                        anAnalysis()
-                                                .withSuppressed(isSuppressed)
-                                                .withState(Analysis.State.FALSE_POSITIVE))).build();
+                .withFinding(aFinding()
+                        .withComponent(aComponent()
+                                .withGroup("nz.co.dodgy")
+                                .withName("insecure-encrypter")
+                                .withVersion("20.0"))
+                        .withVulnerability(vulnerabilityBuilder)
+                        .withAnalysis(
+                                anAnalysis().withSuppressed(isSuppressed).withState(Analysis.State.FALSE_POSITIVE)))
+                .build();
     }
 
     private List<Finding> findingsList(String longDescription, String vulnId, boolean isSuppressed) {
-        VulnerabilityBuilder vulnerabilityBuilder = aVulnerability()
-                .withSeverity(HIGH)
-                .withVulnId(vulnId)
-                .withDescription(longDescription);
+        VulnerabilityBuilder vulnerabilityBuilder =
+                aVulnerability().withSeverity(HIGH).withVulnId(vulnId).withDescription(longDescription);
         return findingsList(isSuppressed, vulnerabilityBuilder);
     }
 

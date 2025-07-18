@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.pmckeown.dtmp.tests</groupId>
     <artifactId>simple-module-project-alt</artifactId>
     <version>1.0.0-@it.snapshot.timestamp@</version>
     <packaging>pom</packaging>
 
-    <properties>
-        <dependency-track-maven-plugin.version>@project.version@</dependency-track-maven-plugin.version>
-    </properties>
-
     <modules>
         <module>child</module>
     </modules>
+
+    <properties>
+        <dependency-track-maven-plugin.version>@project.version@</dependency-track-maven-plugin.version>
+    </properties>
 
     <build>
         <plugins>
@@ -33,10 +33,10 @@
                 <executions>
                     <execution>
                         <id>generate-bom</id>
-                        <phase>verify</phase>
                         <goals>
                             <goal>makeBom</goal>
                         </goals>
+                        <phase>verify</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -53,10 +53,10 @@
                 <executions>
                     <execution>
                         <id>upload-bom</id>
-                        <phase>verify</phase>
                         <goals>
                             <goal>upload-bom</goal>
                         </goals>
+                        <phase>verify</phase>
                         <configuration>
                             <updateProjectInfo>true</updateProjectInfo>
                             <isLatest>true</isLatest>
@@ -70,4 +70,3 @@
         </plugins>
     </build>
 </project>
-

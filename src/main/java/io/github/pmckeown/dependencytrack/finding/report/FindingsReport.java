@@ -4,13 +4,12 @@ import io.github.pmckeown.dependencytrack.finding.Finding;
 import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
 import io.github.pmckeown.dependencytrack.finding.Severity;
 import io.github.pmckeown.dependencytrack.report.Report;
-
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @XmlRootElement(name = "findingsReport")
 @XmlType(propOrder = {"policyApplied", "policyBreached", "critical", "high", "medium", "low", "unassigned"})
@@ -40,17 +39,17 @@ public class FindingsReport implements Report {
         return policyBreached;
     }
 
-    @XmlElement(name="critical")
+    @XmlElement(name = "critical")
     public FindingsWrapper getCritical() {
         return filterFindings(findings, Severity.CRITICAL);
     }
 
-    @XmlElement(name="high")
+    @XmlElement(name = "high")
     public FindingsWrapper getHigh() {
         return filterFindings(findings, Severity.HIGH);
     }
 
-    @XmlElement(name="medium")
+    @XmlElement(name = "medium")
     public FindingsWrapper getMedium() {
         return filterFindings(findings, Severity.MEDIUM);
     }
@@ -66,12 +65,15 @@ public class FindingsReport implements Report {
     }
 
     private FindingsWrapper filterFindings(List<Finding> findings, Severity severity) {
-        List<Finding> filteredFindings = findings.stream().filter(
-                finding -> finding.getVulnerability().getSeverity() ==  severity).collect(Collectors.toList());
+        List<Finding> filteredFindings = findings.stream()
+                .filter(finding -> finding.getVulnerability().getSeverity() == severity)
+                .collect(Collectors.toList());
         return new FindingsWrapper(filteredFindings.size(), filteredFindings);
     }
 
-    @XmlType(propOrder = { "info", "critical", "high", "medium", "low", "unassigned" }, name = "policyApplied")
+    @XmlType(
+            propOrder = {"info", "critical", "high", "medium", "low", "unassigned"},
+            name = "policyApplied")
     static class PolicyApplied {
 
         private static final String NO_POLICY_APPLIED_MESSAGE = "No policy was applied";

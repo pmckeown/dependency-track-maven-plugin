@@ -1,13 +1,11 @@
 package io.github.pmckeown.util;
 
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
-
-import javax.inject.Singleton;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Optional;
+import javax.inject.Singleton;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Encodes a BOM file in the Base64 format.
@@ -20,8 +18,9 @@ public class BomEncoder {
     /**
      * Encodes the file found at the provided location.
      *
-     * Guarantees to return an {@link Optional} containing the Base64 encoded file if one is found at the provided
-     * location.  An empty {@link Optional} will be returned if the file location if invalid or the file cannot be read.
+     * <p>Guarantees to return an {@link Optional} containing the Base64 encoded file if one is found
+     * at the provided location. An empty {@link Optional} will be returned if the file location if
+     * invalid or the file cannot be read.
      *
      * @param bomLocation the location to find the file to encode
      * @param logger Common logging wrapper

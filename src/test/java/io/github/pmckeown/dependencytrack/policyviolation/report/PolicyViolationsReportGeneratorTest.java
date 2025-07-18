@@ -1,17 +1,5 @@
 package io.github.pmckeown.dependencytrack.policyviolation.report;
 
-import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.policyviolation.PolicyViolation;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static io.github.pmckeown.dependencytrack.policyviolation.PolicyViolationListBuilder.aListOfPolicyViolations;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -22,6 +10,17 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.policyviolation.PolicyViolation;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PolicyViolationsReportGeneratorTest {
@@ -48,7 +47,9 @@ public class PolicyViolationsReportGeneratorTest {
     @Test
     public void thatExceptionWhenWritingXmlReportIsHandledAndHtmlIsNotAttempted() throws Exception {
 
-        doThrow(DependencyTrackException.class).when(xmlReportWriter).write(isNull(), any(PolicyViolationsReport.class));
+        doThrow(DependencyTrackException.class)
+                .when(xmlReportWriter)
+                .write(isNull(), any(PolicyViolationsReport.class));
 
         try {
             policyViolationReportGenerator.generate(null, new ArrayList<>());

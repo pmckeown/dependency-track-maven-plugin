@@ -3,7 +3,7 @@ package io.github.pmckeown.dependencytrack.project;
 /**
  * Builder class for thr {@link ProjectInfo} object.
  *
- * Currently only supports the Group property.
+ * <p>Currently only supports the Group property.
  */
 public class ProjectInfoBuilder {
 

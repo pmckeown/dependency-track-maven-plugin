@@ -1,15 +1,13 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
+import static java.lang.String.format;
 
 import io.github.pmckeown.dependencytrack.*;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
-
+import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Optional;
-
-import static java.lang.String.format;
 
 /**
  * Handles the integration to Dependency Track for getting Metrics
@@ -54,8 +52,8 @@ public class MetricsAction {
             logger.debug("Metrics found for project: %s", project.getUuid());
             return body.get();
         } else {
-            throw new DependencyTrackException("No metrics have yet been calculated. Request a metrics analysis " +
-                    "in the Dependency Track UI.");
+            throw new DependencyTrackException(
+                    "No metrics have yet been calculated. Request a metrics analysis " + "in the Dependency Track UI.");
         }
     }
 
@@ -73,5 +71,4 @@ public class MetricsAction {
             logger.error("Failed to refresh metrics with exception: %s", ex.getMessage());
         }
     }
-
 }

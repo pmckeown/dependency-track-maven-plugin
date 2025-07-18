@@ -1,14 +1,5 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
-import io.github.pmckeown.util.Logger;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-
 import static io.github.pmckeown.dependencytrack.Constants.COMPONENTS;
 import static io.github.pmckeown.dependencytrack.Constants.CRITICAL;
 import static io.github.pmckeown.dependencytrack.Constants.DELIMITER;
@@ -28,6 +19,14 @@ import static io.github.pmckeown.dependencytrack.Constants.VALUE;
 import static io.github.pmckeown.dependencytrack.Constants.VULNERABILITIES;
 import static io.github.pmckeown.dependencytrack.Constants.VULNERABLE_COMPONENTS;
 import static org.apache.commons.lang3.StringUtils.leftPad;
+
+import io.github.pmckeown.util.Logger;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 class MetricsPrinter {

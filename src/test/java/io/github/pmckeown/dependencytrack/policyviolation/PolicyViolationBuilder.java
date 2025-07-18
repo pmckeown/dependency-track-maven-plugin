@@ -1,10 +1,10 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
-import io.github.pmckeown.dependencytrack.finding.Component;
-import io.github.pmckeown.dependencytrack.finding.ComponentBuilder;
-
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
 import static io.github.pmckeown.dependencytrack.policyviolation.PolicyConditionBuilder.aPolicyCondition;
+
+import io.github.pmckeown.dependencytrack.finding.Component;
+import io.github.pmckeown.dependencytrack.finding.ComponentBuilder;
 
 public class PolicyViolationBuilder {
 
