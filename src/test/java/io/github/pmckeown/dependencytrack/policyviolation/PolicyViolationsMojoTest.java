@@ -1,19 +1,18 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
+import static org.mockito.Mockito.*;
+
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.policyviolation.report.PolicyViolationsReportGenerator;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
+import java.util.ArrayList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-
-import static org.mockito.Mockito.*;
 
 @SuppressWarnings("unused")
 @RunWith(MockitoJUnitRunner.class)
@@ -50,8 +49,7 @@ public class PolicyViolationsMojoTest {
     public void thatReportIsAlwaysGeneratedEvenWhenNoFindingsArePresent() throws Exception {
         policyMojo.performAction();
 
-        verify(policyViolationReportGenerator, times(1)).generate(
-                null, new ArrayList<>());
+        verify(policyViolationReportGenerator, times(1)).generate(null, new ArrayList<>());
     }
 
     @Test
@@ -62,5 +60,4 @@ public class PolicyViolationsMojoTest {
 
         verifyNoInteractions(policyViolationReportGenerator);
     }
-
 }

@@ -2,11 +2,10 @@ package io.github.pmckeown.dependencytrack.policyviolation.report;
 
 import io.github.pmckeown.dependencytrack.report.AbstractHtmlReportWriter;
 import io.github.pmckeown.dependencytrack.report.TransformerFactoryProvider;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.io.File;
 import java.io.InputStream;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class PolicyViolationsHtmlReportWriter extends AbstractHtmlReportWriter {
@@ -31,5 +30,4 @@ public class PolicyViolationsHtmlReportWriter extends AbstractHtmlReportWriter {
         return PolicyViolationsHtmlReportWriter.class.getResourceAsStream(
                 PolicyViolationsReportConstants.XSL_STYLESHEET_FILENAME);
     }
-
 }

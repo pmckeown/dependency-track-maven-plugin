@@ -1,5 +1,17 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
+import static io.github.pmckeown.dependencytrack.Constants.CRITICAL;
+import static io.github.pmckeown.dependencytrack.Constants.HIGH;
+import static io.github.pmckeown.dependencytrack.Constants.LOW;
+import static io.github.pmckeown.dependencytrack.Constants.MEDIUM;
+import static io.github.pmckeown.dependencytrack.Constants.UNASSIGNED;
+import static io.github.pmckeown.dependencytrack.metrics.MetricsAnalyser.ERROR_TEMPLATE;
+import static io.github.pmckeown.dependencytrack.metrics.MetricsBuilder.aMetrics;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.verify;
+
 import io.github.pmckeown.util.Logger;
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.Test;
@@ -7,18 +19,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import static io.github.pmckeown.dependencytrack.Constants.CRITICAL;
-import static io.github.pmckeown.dependencytrack.Constants.HIGH;
-import static io.github.pmckeown.dependencytrack.Constants.MEDIUM;
-import static io.github.pmckeown.dependencytrack.Constants.LOW;
-import static io.github.pmckeown.dependencytrack.Constants.UNASSIGNED;
-import static io.github.pmckeown.dependencytrack.metrics.MetricsBuilder.aMetrics;
-import static io.github.pmckeown.dependencytrack.metrics.MetricsAnalyser.ERROR_TEMPLATE;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MetricsAnalyserTest {
@@ -106,7 +106,8 @@ public class MetricsAnalyserTest {
                 .withHigh(200)
                 .withMedium(300)
                 .withLow(400)
-                .withUnassigned(500).build();
+                .withUnassigned(500)
+                .build();
 
         try {
             metricsAnalyser.analyse(metrics, new MetricsThresholds(0, 0, 0, 0, 0));

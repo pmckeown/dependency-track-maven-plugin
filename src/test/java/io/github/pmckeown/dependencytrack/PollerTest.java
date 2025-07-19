@@ -1,13 +1,5 @@
 package io.github.pmckeown.dependencytrack;
 
-import com.evanlennick.retry4j.exception.RetriesExhaustedException;
-import com.evanlennick.retry4j.exception.UnexpectedException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Optional;
-
 import static io.github.pmckeown.dependencytrack.PollingConfig.TimeUnit.MILLIS;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -15,6 +7,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
+
+import com.evanlennick.retry4j.exception.RetriesExhaustedException;
+import com.evanlennick.retry4j.exception.UnexpectedException;
+import java.util.Optional;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PollerTest {
@@ -36,14 +35,14 @@ public class PollerTest {
 
     @Test
     public void thatThatEmptyOptionalLoopsTheMaximumNumberOfTimesThenThrowsException() {
-        PollingConfig pollingConfig = new PollingConfig(true, 1 ,5, MILLIS);
+        PollingConfig pollingConfig = new PollingConfig(true, 1, 5, MILLIS);
         Poller<String> poller = new Poller<>();
         final int[] pollLoopCounter = {0};
 
         try {
             Optional<String> optionalString = poller.poll(pollingConfig, () -> {
-                    pollLoopCounter[0]++;
-                    return Optional.empty();
+                pollLoopCounter[0]++;
+                return Optional.empty();
             });
             fail("RetriesExhaustedException expected");
         } catch (Exception ex) {
@@ -54,7 +53,7 @@ public class PollerTest {
 
     @Test
     public void thatThatExceptionDuringPollingExitsWithException() {
-        PollingConfig pollingConfig = new PollingConfig(true, 1 ,1, MILLIS);
+        PollingConfig pollingConfig = new PollingConfig(true, 1, 1, MILLIS);
         Poller<String> poller = new Poller<>();
 
         try {
@@ -70,7 +69,7 @@ public class PollerTest {
 
     @Test
     public void IfPollingDisabledTheCallableIsExecutedOnlyOnce() {
-        PollingConfig pollingConfig = new PollingConfig(false, 1 ,5, MILLIS);
+        PollingConfig pollingConfig = new PollingConfig(false, 1, 5, MILLIS);
         Poller<String> poller = new Poller<>();
         final int[] pollLoopCounter = {0};
 

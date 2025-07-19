@@ -1,12 +1,11 @@
 package io.github.pmckeown.dependencytrack;
 
-import org.junit.Test;
-
-import java.time.temporal.ChronoUnit;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.time.temporal.ChronoUnit;
+import org.junit.Test;
 
 public class PollingConfigTest {
 

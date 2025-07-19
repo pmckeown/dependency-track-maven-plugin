@@ -1,18 +1,17 @@
 package io.github.pmckeown.dependencytrack.bom;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import io.github.pmckeown.dependencytrack.project.ProjectInfo;
 import io.github.pmckeown.util.Logger;
+import java.io.File;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.io.File;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BomParserTest {
@@ -28,21 +27,31 @@ public class BomParserTest {
         File bomFile = new File(BomParserTest.class.getResource("bom.xml").getFile());
         ProjectInfo info = bomParser.getProjectInfo(bomFile).get();
         assertThat(info.getGroup(), is(equalTo("io.github.pmckeown")));
-        assertThat(info.getDescription(), is(equalTo("Maven plugin to integrate with a Dependency Track server to " +
-                "submit dependency manifests and gather project metrics.")));
-        assertThat(info.getPurl(), is(equalTo("pkg:maven/io.github.pmckeown/dependency-track-maven-plugin@1.2.1-" +
-                "SNAPSHOT?type=maven-plugin")));
+        assertThat(
+                info.getDescription(),
+                is(equalTo("Maven plugin to integrate with a Dependency Track server to "
+                        + "submit dependency manifests and gather project metrics.")));
+        assertThat(
+                info.getPurl(),
+                is(equalTo("pkg:maven/io.github.pmckeown/dependency-track-maven-plugin@1.2.1-"
+                        + "SNAPSHOT?type=maven-plugin")));
         assertThat(info.getClassifier(), is(equalTo("LIBRARY")));
     }
+
     @Test
     public void thatProjectInfoCanBeParsedFromBomWithByteOrder() {
-        File bomFile = new File(BomParserTest.class.getResource("bom_byteorder.xml").getFile());
+        File bomFile =
+                new File(BomParserTest.class.getResource("bom_byteorder.xml").getFile());
         ProjectInfo info = bomParser.getProjectInfo(bomFile).get();
         assertThat(info.getGroup(), is(equalTo("io.github.pmckeown")));
-        assertThat(info.getDescription(), is(equalTo("Maven plugin to integrate with a Dependency Track server to " +
-                "submit dependency manifests and gather project metrics.")));
-        assertThat(info.getPurl(), is(equalTo("pkg:maven/io.github.pmckeown/dependency-track-maven-plugin@1.2.1-" +
-                "SNAPSHOT?type=maven-plugin")));
+        assertThat(
+                info.getDescription(),
+                is(equalTo("Maven plugin to integrate with a Dependency Track server to "
+                        + "submit dependency manifests and gather project metrics.")));
+        assertThat(
+                info.getPurl(),
+                is(equalTo("pkg:maven/io.github.pmckeown/dependency-track-maven-plugin@1.2.1-"
+                        + "SNAPSHOT?type=maven-plugin")));
         assertThat(info.getClassifier(), is(equalTo("LIBRARY")));
     }
 
@@ -53,13 +62,15 @@ public class BomParserTest {
 
     @Test
     public void thatEmptyIsReturnedWhenBomHasNoMetadata() {
-        File bomFile = new File(BomParserTest.class.getResource("bom-without-metadata.xml").getFile());
+        File bomFile = new File(
+                BomParserTest.class.getResource("bom-without-metadata.xml").getFile());
         assertThat(bomParser.getProjectInfo(bomFile).isPresent(), is(equalTo(false)));
     }
 
     @Test
     public void thatEmptyIsReturnedWhenBomHasNoMetadataComponent() {
-        File bomFile = new File(BomParserTest.class.getResource("bom-without-component.xml").getFile());
+        File bomFile = new File(
+                BomParserTest.class.getResource("bom-without-component.xml").getFile());
         assertThat(bomParser.getProjectInfo(bomFile).isPresent(), is(equalTo(false)));
     }
 

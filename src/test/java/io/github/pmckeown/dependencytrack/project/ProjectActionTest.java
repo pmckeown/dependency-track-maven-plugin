@@ -1,21 +1,5 @@
 package io.github.pmckeown.dependencytrack.project;
 
-import io.github.pmckeown.dependencytrack.CommonConfig;
-import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.ModuleConfig;
-import io.github.pmckeown.dependencytrack.Response;
-import io.github.pmckeown.dependencytrack.bom.BomParser;
-import io.github.pmckeown.util.Logger;
-import kong.unirest.UnirestException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.io.File;
-import java.util.*;
-
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -24,6 +8,21 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+
+import io.github.pmckeown.dependencytrack.CommonConfig;
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
+import io.github.pmckeown.dependencytrack.Response;
+import io.github.pmckeown.dependencytrack.bom.BomParser;
+import io.github.pmckeown.util.Logger;
+import java.io.File;
+import java.util.*;
+import kong.unirest.UnirestException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectActionTest {
@@ -49,7 +48,9 @@ public class ProjectActionTest {
 
     @Test
     public void thatProjectCanBeRetrievedByCommonConfig() throws Exception {
-        doReturn(aSuccessResponse().withBody(project2()).build()).when(projectClient).getProject(anyString(), anyString(), anyString());
+        doReturn(aSuccessResponse().withBody(project2()).build())
+                .when(projectClient)
+                .getProject(anyString(), anyString(), anyString());
 
         Project project = projectAction.getProject(getModuleConfig());
 
@@ -59,7 +60,9 @@ public class ProjectActionTest {
 
     @Test
     public void thatProjectCanBeRetrievedByNameAndVersion() throws Exception {
-        doReturn(aSuccessResponse().withBody(project2()).build()).when(projectClient).getProject(anyString(), anyString(), anyString());
+        doReturn(aSuccessResponse().withBody(project2()).build())
+                .when(projectClient)
+                .getProject(anyString(), anyString(), anyString());
 
         Project project = projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
 
@@ -69,7 +72,9 @@ public class ProjectActionTest {
 
     @Test
     public void thatProjectCanBeRetrievedByUuid() throws Exception {
-        doReturn(aSuccessResponse().withBody(project2()).build()).when(projectClient).getProject(anyString(), anyString(), anyString());
+        doReturn(aSuccessResponse().withBody(project2()).build())
+                .when(projectClient)
+                .getProject(anyString(), anyString(), anyString());
 
         Project project = projectAction.getProject(UUID_2);
 
@@ -119,7 +124,8 @@ public class ProjectActionTest {
         doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
         UpdateRequest updateReq = new UpdateRequest();
-        updateReq.withBomLocation(String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+        updateReq.withBomLocation(
+                String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
         boolean projectInfoUpdated = projectAction.updateProject(project1(), updateReq);
         assertThat(projectInfoUpdated, is(equalTo(true)));
     }
@@ -130,7 +136,8 @@ public class ProjectActionTest {
         doReturn(aNotFoundResponse()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
         UpdateRequest updateReq = new UpdateRequest();
-        updateReq.withBomLocation(String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+        updateReq.withBomLocation(
+                String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
         boolean projectInfoUpdated = projectAction.updateProject(project1(), updateReq);
         assertThat(projectInfoUpdated, is(equalTo(false)));
     }
@@ -141,7 +148,8 @@ public class ProjectActionTest {
         doThrow(UnirestException.class).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
         try {
             UpdateRequest updateReq = new UpdateRequest();
-            updateReq.withBomLocation(String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+            updateReq.withBomLocation(String.valueOf(
+                    new File(BomParser.class.getResource("bom.xml").getPath())));
             projectAction.updateProject(project1(), updateReq);
             fail("Exception expected");
         } catch (Exception ex) {
@@ -183,7 +191,8 @@ public class ProjectActionTest {
         doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
         UpdateRequest updateReq = new UpdateRequest();
-        updateReq.withBomLocation(String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+        updateReq.withBomLocation(
+                String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
         assertTrue(projectAction.updateProject(project3(), updateReq));
     }
 
@@ -193,7 +202,8 @@ public class ProjectActionTest {
         doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
         UpdateRequest updateReq = new UpdateRequest();
-        updateReq.withBomLocation(String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+        updateReq.withBomLocation(
+                String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
         assertTrue(projectAction.updateProject(project1(), updateReq));
     }
 

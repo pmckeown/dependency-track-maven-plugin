@@ -2,17 +2,15 @@ package io.github.pmckeown.dependencytrack.bom;
 
 import io.github.pmckeown.dependencytrack.project.ProjectInfo;
 import io.github.pmckeown.util.Logger;
+import java.io.File;
+import java.util.Optional;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BOMInputStream;
-
 import org.cyclonedx.model.Bom;
 import org.cyclonedx.model.Component;
 import org.cyclonedx.parsers.BomParserFactory;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.io.File;
-import java.util.Optional;
 
 /**
  * Encodes a BOM file in the Base64 format.
@@ -32,9 +30,9 @@ public class BomParser {
     /**
      * Parses the Project Info from a BOM {@link File}.
      *
-     * Guarantees to return an {@link Optional} containing a {@link ProjectInfo} object if the provided BOM file can
-     * be parsed successfully.
-     * An empty {@link Optional} will be returned if the file be parsed.
+     * <p>Guarantees to return an {@link Optional} containing a {@link ProjectInfo} object if the
+     * provided BOM file can be parsed successfully. An empty {@link Optional} will be returned if the
+     * file be parsed.
      *
      * @param bomFile File containing a BOM
      * @return an optional that will contain the parsed {@link ProjectInfo} or an empty optional
@@ -45,7 +43,8 @@ public class BomParser {
             return Optional.empty();
         }
         Bom bom;
-        try (BOMInputStream bis = BOMInputStream.builder().setFile(bomFile).setInclude(false).get()) {
+        try (BOMInputStream bis =
+                BOMInputStream.builder().setFile(bomFile).setInclude(false).get()) {
             byte[] bytes = IOUtils.toByteArray(bis);
             bom = BomParserFactory.createParser(bytes).parse(bytes);
         } catch (Exception ex) {
@@ -57,7 +56,7 @@ public class BomParser {
             return Optional.empty();
         }
 
-        Component component =  bom.getMetadata().getComponent();
+        Component component = bom.getMetadata().getComponent();
         ProjectInfo info = new ProjectInfo();
         if (component.getType() != null) {
             info.setClassifier(component.getType().name());

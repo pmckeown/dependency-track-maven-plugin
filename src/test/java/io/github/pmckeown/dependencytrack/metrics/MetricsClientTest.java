@@ -1,19 +1,5 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import io.github.pmckeown.dependencytrack.CommonConfig;
-import io.github.pmckeown.dependencytrack.Response;
-import io.github.pmckeown.util.Logger;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Date;
-import java.util.Optional;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
@@ -27,6 +13,19 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.doReturn;
+
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import io.github.pmckeown.dependencytrack.CommonConfig;
+import io.github.pmckeown.dependencytrack.Response;
+import io.github.pmckeown.util.Logger;
+import java.util.Date;
+import java.util.Optional;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MetricsClientTest {
@@ -47,8 +46,8 @@ public class MetricsClientTest {
     public void thatMetricsAreReturnedCorrectly() {
         doReturn("http://localhost:" + wireMockRule.port()).when(commonConfig).getDependencyTrackBaseUrl();
         doReturn("api123").when(commonConfig).getApiKey();
-        stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT)).willReturn(
-                aResponse().withBodyFile("api/v1/metrics/project/project-metrics.json")));
+        stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT))
+                .willReturn(aResponse().withBodyFile("api/v1/metrics/project/project-metrics.json")));
 
         Response<Metrics> metricsResponse = metricsClient.getMetrics(aProject().build());
 

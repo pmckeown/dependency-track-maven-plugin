@@ -6,6 +6,7 @@ public class PolicyConditionBuilder {
     private String subject = "Severity";
     private String operator = "==";
     private String value = "IS HIGH";
+
     private PolicyConditionBuilder() {
         // Use builder factory method
     }

@@ -1,5 +1,8 @@
 package io.github.pmckeown.dependencytrack.score;
 
+import static io.github.pmckeown.dependencytrack.Constants.DELIMITER;
+import static java.lang.String.format;
+
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
@@ -9,13 +12,9 @@ import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectClient;
 import io.github.pmckeown.util.Logger;
-
+import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Optional;
-
-import static io.github.pmckeown.dependencytrack.Constants.DELIMITER;
-import static java.lang.String.format;
 
 /**
  * Handles score retrieval and processing
@@ -30,22 +29,25 @@ class ScoreAction {
     private Logger logger;
 
     @Inject
-    public ScoreAction(ProjectClient projectClient, MetricsAction metricsAction, CommonConfig commonConfig,
-                       Logger logger) {
+    public ScoreAction(
+            ProjectClient projectClient, MetricsAction metricsAction, CommonConfig commonConfig, Logger logger) {
         this.projectClient = projectClient;
         this.metricsAction = metricsAction;
         this.logger = logger;
     }
 
-    Integer determineScore(ModuleConfig moduleConfig, Integer inheritedRiskScoreThreshold) throws DependencyTrackException {
+    Integer determineScore(ModuleConfig moduleConfig, Integer inheritedRiskScoreThreshold)
+            throws DependencyTrackException {
         try {
-            Response<Project> response = projectClient.getProject(moduleConfig.getProjectUuid(), moduleConfig.getProjectName(), moduleConfig.getProjectVersion());
+            Response<Project> response = projectClient.getProject(
+                    moduleConfig.getProjectUuid(), moduleConfig.getProjectName(), moduleConfig.getProjectVersion());
 
             Optional<Project> body = response.getBody();
             if (response.isSuccess() && body.isPresent()) {
                 return generateResult(body.get(), inheritedRiskScoreThreshold);
             } else {
-                throw new DependencyTrackException(format("Failed to get projects from Dependency Track: %d %s",
+                throw new DependencyTrackException(format(
+                        "Failed to get projects from Dependency Track: %d %s",
                         response.getStatus(), response.getStatusText()));
             }
         } catch (Exception ex) {
@@ -88,5 +90,4 @@ class ScoreAction {
         }
         logger.info(DELIMITER);
     }
-
 }

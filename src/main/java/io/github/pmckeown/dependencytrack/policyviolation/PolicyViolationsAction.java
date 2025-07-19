@@ -4,13 +4,12 @@ import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
-import kong.unirest.UnirestException;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import kong.unirest.UnirestException;
 
 @Singleton
 public class PolicyViolationsAction {
@@ -35,8 +34,9 @@ public class PolicyViolationsAction {
                 if (body.isPresent()) {
                     return body.get();
                 } else {
-                    logger.info("No policy violations available for project %s-%s", project.getName(),
-                            project.getVersion());
+                    logger.info(
+                            "No policy violations available for project %s-%s",
+                            project.getName(), project.getVersion());
                     return Collections.emptyList();
                 }
             } else {

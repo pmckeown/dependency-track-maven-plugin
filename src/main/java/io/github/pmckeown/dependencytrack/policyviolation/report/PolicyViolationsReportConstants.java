@@ -8,11 +8,10 @@ class PolicyViolationsReportConstants {
 
     static final String META_INF_DIRECTORY = "/META-INF";
 
-    static final String XSL_STYLESHEET_FILENAME = META_INF_DIRECTORY +
-            "/dependency-track-policy-violations-transformer.xsl";
+    static final String XSL_STYLESHEET_FILENAME =
+            META_INF_DIRECTORY + "/dependency-track-policy-violations-transformer.xsl";
 
     private PolicyViolationsReportConstants() {
         // Do no instantiate
     }
-
 }

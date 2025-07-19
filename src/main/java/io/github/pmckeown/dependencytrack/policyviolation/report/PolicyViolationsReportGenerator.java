@@ -2,11 +2,10 @@ package io.github.pmckeown.dependencytrack.policyviolation.report;
 
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.policyviolation.PolicyViolation;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.io.File;
 import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class PolicyViolationsReportGenerator {

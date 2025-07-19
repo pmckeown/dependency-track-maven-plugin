@@ -1,11 +1,11 @@
 package io.github.pmckeown.util;
 
+import javax.inject.Singleton;
 import org.apache.maven.plugin.logging.Log;
 
-import javax.inject.Singleton;
-
 /**
- * Wrapper service around the Maven {@link Log} implementation.  Provides convenient shortcuts to common log methods.
+ * Wrapper service around the Maven {@link Log} implementation. Provides convenient shortcuts to
+ * common log methods.
  *
  * @author Paul McKeown
  */
@@ -18,7 +18,7 @@ public class Logger {
         // For dependency injection
     }
 
-    public Logger (Log log) {
+    public Logger(Log log) {
         // For testing
         this.log = log;
     }
@@ -35,21 +35,21 @@ public class Logger {
 
     public void info(String template, Object... params) {
         assertLogSupplied();
-        if(log.isInfoEnabled()) {
+        if (log.isInfoEnabled()) {
             log.info(String.format(template, params));
         }
     }
 
     public void warn(String template, Object... params) {
         assertLogSupplied();
-        if(log.isWarnEnabled()) {
+        if (log.isWarnEnabled()) {
             log.warn(String.format(template, params));
         }
     }
 
     public void debug(String template, Object... params) {
         assertLogSupplied();
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug(String.format(template, params));
         }
     }
@@ -60,7 +60,7 @@ public class Logger {
 
     public void error(String template, Object... params) {
         assertLogSupplied();
-        if(log.isErrorEnabled()) {
+        if (log.isErrorEnabled()) {
             log.error(String.format(template, params));
         }
     }

@@ -1,5 +1,7 @@
 package io.github.pmckeown.dependencytrack.project;
 
+import static java.lang.String.format;
+
 import com.networknt.schema.utils.StringUtils;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.Item;
@@ -7,15 +9,12 @@ import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.bom.BomParser;
 import io.github.pmckeown.util.Logger;
-import kong.unirest.UnirestException;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.lang.String.format;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import kong.unirest.UnirestException;
 
 @Singleton
 public class ProjectAction {
@@ -33,9 +32,7 @@ public class ProjectAction {
 
     public Project getProject(ModuleConfig moduleConfig) throws DependencyTrackException {
         return getProject(
-                moduleConfig.getProjectUuid(),
-                moduleConfig.getProjectName(),
-                moduleConfig.getProjectVersion());
+                moduleConfig.getProjectUuid(), moduleConfig.getProjectName(), moduleConfig.getProjectVersion());
     }
 
     public Project getProject(String uuid) throws DependencyTrackException {
@@ -56,13 +53,10 @@ public class ProjectAction {
                     return body.get();
                 } else {
                     if (StringUtils.isBlank(uuid)) {
-                        throw new DependencyTrackException(
-                                format("Requested project not found by UUUID: %s", uuid)
-                        );
+                        throw new DependencyTrackException(format("Requested project not found by UUUID: %s", uuid));
                     } else {
                         throw new DependencyTrackException(
-                                format("Requested project not found by name/version: %s-%s", name, version)
-                        );
+                                format("Requested project not found by name/version: %s-%s", name, version));
                     }
                 }
             } else {
@@ -78,7 +72,8 @@ public class ProjectAction {
         return updateProject(project, updateReq, Collections.emptySet());
     }
 
-    public boolean updateProject(Project project, UpdateRequest updateReq, Set<String> projectTags) throws DependencyTrackException {
+    public boolean updateProject(Project project, UpdateRequest updateReq, Set<String> projectTags)
+            throws DependencyTrackException {
         ProjectInfo info = null;
         if (updateReq.hasBomLocation()) {
             logger.info("Project info will be updated");
