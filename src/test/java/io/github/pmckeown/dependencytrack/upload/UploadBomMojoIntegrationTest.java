@@ -10,7 +10,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.lenient;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.PollingConfig;
@@ -26,9 +26,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     private static final String BOM_LOCATION = "target/test-classes/projects/run/bom.xml";
@@ -38,8 +40,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
-        doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(anyString(), any(Logger.class));
+        lenient().doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(anyString(), any(Logger.class));
     }
 
     @After

@@ -190,7 +190,7 @@ public class UploadBomMojoTest {
         uploadBomMojo.setFailOnError(true);
 
         MojoExecutionException exception = assertThrows(MojoExecutionException.class, () -> uploadBomMojo.execute());
-            assertThat(exception.getCause(), is(cause));
+        assertThat(exception.getCause(), is(cause));
 
         verify(mavenLogger).error("Error occurred during upload", cause);
     }
