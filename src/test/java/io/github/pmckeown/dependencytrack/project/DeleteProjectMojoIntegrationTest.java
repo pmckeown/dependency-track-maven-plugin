@@ -81,11 +81,7 @@ public class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMoj
         deleteProjectMojo.setProjectName("unknown");
         deleteProjectMojo.setProjectVersion("1.2.3-SNAPSHOT");
 
-        try {
-            deleteProjectMojo.execute();
-        } catch (MojoExecutionException ex) {
-            assertThat(ex, is(instanceOf(MojoExecutionException.class)));
-        }
+        deleteProjectMojo.execute();
 
         verify(exactly(0), deleteRequestedFor(urlPathMatching(V1_PROJECT_UUID)));
     }
@@ -101,6 +97,7 @@ public class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMoj
 
         try {
             deleteProjectMojo.execute();
+            fail("Exception expected");
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(MojoExecutionException.class)));
         }

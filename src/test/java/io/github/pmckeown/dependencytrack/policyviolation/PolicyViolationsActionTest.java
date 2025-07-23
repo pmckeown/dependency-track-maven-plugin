@@ -76,7 +76,6 @@ public class PolicyViolationsActionTest {
             policyAction.getPolicyViolations(project);
             fail("Exception expected");
         } catch (Exception ex) {
-            logger.debug("DependencyTrackException ", ex.getMessage());
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
     }
@@ -90,7 +89,6 @@ public class PolicyViolationsActionTest {
             policyAction.getPolicyViolations(project);
             fail("Exception expected");
         } catch (Exception ex) {
-            logger.debug("DependencyTrackException ", ex.getMessage());
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
     }

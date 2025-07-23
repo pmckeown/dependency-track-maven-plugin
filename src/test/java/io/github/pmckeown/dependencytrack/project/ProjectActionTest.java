@@ -88,6 +88,7 @@ public class ProjectActionTest {
 
         try {
             projectAction.getProject(getModuleConfig());
+            fail("Exception expected");
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
@@ -106,6 +107,7 @@ public class ProjectActionTest {
 
         try {
             projectAction.getProject(getModuleConfig());
+            fail("Exception expected");
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }

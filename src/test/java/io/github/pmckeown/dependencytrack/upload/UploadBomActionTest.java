@@ -84,10 +84,14 @@ public class UploadBomActionTest {
 
     @Test
     public void thatBomUploadExceptionResultsInException() {
+        doReturn(BOM_LOCATION).when(moduleConfig).getBomLocation();
+        doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
+        doThrow(RuntimeException.class).when(bomClient).uploadBom(any());
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
         try {
             uploadBomAction.upload(moduleConfig);
+            fail("Exception expected");
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
