@@ -2,9 +2,12 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
@@ -12,6 +15,7 @@ import io.github.pmckeown.util.Logger;
 import java.util.Collections;
 import kong.unirest.Unirest;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.junit.After;
 import org.junit.Before;
@@ -30,6 +34,9 @@ public class UploadBomMojoTest {
 
     @InjectMocks
     private UploadBomMojo uploadBomMojo;
+
+    @Mock
+    private Log mavenLogger;
 
     @Mock
     private MavenProject project;
@@ -54,6 +61,7 @@ public class UploadBomMojoTest {
 
     @Before
     public void setup() {
+        uploadBomMojo.setLog(mavenLogger);
         uploadBomMojo.setCommonConfig(commonConfig);
         uploadBomMojo.setModuleConfig(moduleConfig);
         uploadBomMojo.setMavenProject(project);
@@ -142,11 +150,13 @@ public class UploadBomMojoTest {
 
         try {
             uploadBomMojo.performAction();
+            fail("Exception expected");
         } catch (Exception ex) {
             assertThat(ex, instanceOf(MojoExecutionException.class));
         }
 
         verify(logger).error("Failed to update project info");
+        verify(mavenLogger).error(eq("Error occurred during upload"), any());
     }
 
     @Test
@@ -161,13 +171,37 @@ public class UploadBomMojoTest {
 
         try {
             uploadBomMojo.performAction();
+            fail("Exception expected");
         } catch (Exception ex) {
-            ex.printStackTrace();
             assertThat(ex, instanceOf(MojoExecutionException.class));
         }
 
         verify(logger)
                 .error("Parent update requested but no parent found in parent maven project or provided in "
                         + "config");
+        verify(mavenLogger).error(eq("Error occurred during upload"), any());
+    }
+
+    @Test
+    public void thatUploadErrorsAreCorrectlyReported() throws Exception {
+        DependencyTrackException cause = new DependencyTrackException("PKIX path building failed");
+        doThrow(cause).when(uploadBomAction).upload(any());
+
+        uploadBomMojo.setFailOnError(true);
+
+        MojoExecutionException exception = assertThrows(MojoExecutionException.class, () -> uploadBomMojo.execute());
+            assertThat(exception.getCause(), is(cause));
+
+        verify(mavenLogger).error("Error occurred during upload", cause);
+    }
+
+    @Test
+    public void thatUploadErrorsIsReportedEvenWhenItShouldNotFail() throws Exception {
+        DependencyTrackException cause = new DependencyTrackException("PKIX path building failed");
+        doThrow(cause).when(uploadBomAction).upload(any());
+
+        uploadBomMojo.execute();
+
+        verify(mavenLogger).error("Error occurred during upload", cause);
     }
 }
