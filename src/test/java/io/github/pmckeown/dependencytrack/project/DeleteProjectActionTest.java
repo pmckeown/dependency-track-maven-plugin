@@ -7,6 +7,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
@@ -59,6 +60,7 @@ public class DeleteProjectActionTest {
 
         try {
             projectAction.deleteProject(aProject().build());
+            fail("Exception expected");
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
