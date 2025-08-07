@@ -56,7 +56,7 @@ class MetricsPrinter {
         logger.info(formatForPrinting(FINDINGS_AUDITED, metrics.getFindingsAudited()));
         logger.info(formatForPrinting(FINDINGS_UNAUDITED, metrics.getFindingsUnaudited()));
         logger.info(formatForPrinting(FIRST_OCCURRENCE, formatDate(metrics.getFirstOccurrence())));
-        logger.info(formatForPrinting(LAST_OCCURRENCE, formatDate(metrics.getFirstOccurrence())));
+        logger.info(formatForPrinting(LAST_OCCURRENCE, formatDate(metrics.getLastOccurrence())));
         logger.info(DELIMITER);
     }
 
