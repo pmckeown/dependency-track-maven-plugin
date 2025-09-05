@@ -2,15 +2,25 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import static io.github.pmckeown.dependencytrack.PollingConfig.TimeUnit.MILLIS;
 import static io.github.pmckeown.dependencytrack.upload.UploadBomResponseBuilder.anUploadBomResponse;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
-import io.github.pmckeown.dependencytrack.*;
-import io.github.pmckeown.util.BomEncoder;
+import io.github.pmckeown.dependencytrack.CommonConfig;
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
+import io.github.pmckeown.dependencytrack.Poller;
+import io.github.pmckeown.dependencytrack.PollingConfig;
+import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.util.Logger;
 import java.util.Optional;
 import org.junit.Test;
@@ -27,9 +37,6 @@ public class UploadBomActionTest {
 
     @InjectMocks
     private UploadBomAction uploadBomAction;
-
-    @Mock
-    private BomEncoder bomEncoder;
 
     @Mock
     private BomClient bomClient;
@@ -50,7 +57,7 @@ public class UploadBomActionTest {
     public void thatWhenNoBomIsFoundThenFalseIsReturned() throws Exception {
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
-        boolean success = uploadBomAction.upload(moduleConfig);
+        boolean success = uploadBomAction.upload(moduleConfig, false);
 
         assertThat(success, is(equalTo(false)));
     }
@@ -58,11 +65,10 @@ public class UploadBomActionTest {
     @Test
     public void thatBomCanBeUploadedSuccessfully() throws Exception {
         doReturn(BOM_LOCATION).when(moduleConfig).getBomLocation();
-        doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
-        doReturn(anUploadBomSuccessResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class));
+        doReturn(anUploadBomSuccessResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class), anyBoolean());
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
-        boolean success = uploadBomAction.upload(moduleConfig);
+        boolean success = uploadBomAction.upload(moduleConfig, false);
 
         assertThat(success, is(equalTo(true)));
     }
@@ -70,12 +76,11 @@ public class UploadBomActionTest {
     @Test
     public void thatBomUploadFailureReturnsFalse() {
         doReturn(BOM_LOCATION).when(moduleConfig).getBomLocation();
-        doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
-        doReturn(aNotFoundResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class));
+        doReturn(aNotFoundResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class), anyBoolean());
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
         try {
-            uploadBomAction.upload(moduleConfig);
+            uploadBomAction.upload(moduleConfig, false);
             fail("DependencyTrackException expected");
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
@@ -85,12 +90,11 @@ public class UploadBomActionTest {
     @Test
     public void thatBomUploadExceptionResultsInException() {
         doReturn(BOM_LOCATION).when(moduleConfig).getBomLocation();
-        doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
-        doThrow(RuntimeException.class).when(bomClient).uploadBom(any());
+        doThrow(RuntimeException.class).when(bomClient).uploadBom(any(), anyBoolean());
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
         try {
-            uploadBomAction.upload(moduleConfig);
+            uploadBomAction.upload(moduleConfig, false);
             fail("Exception expected");
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
@@ -100,13 +104,11 @@ public class UploadBomActionTest {
     @Test
     public void thatWhenPollingIsEnabledThatTheServerIsQueriedUntilBomIsFullyProcessed() throws Exception {
         doReturn(BOM_LOCATION).when(moduleConfig).getBomLocation();
-        doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(BOM_LOCATION, logger);
-        doReturn(anUploadBomSuccessResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class));
+        doReturn(anUploadBomSuccessResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class), anyBoolean());
         doReturn(new PollingConfig(true, 1, 3, MILLIS)).when(commonConfig).getPollingConfig();
 
         // Create a new candidate as the polling behaviour needs to change for this test
-        UploadBomAction uploadBomAction =
-                new UploadBomAction(bomClient, bomEncoder, new Poller<Boolean>(), commonConfig, logger);
+        UploadBomAction uploadBomAction = new UploadBomAction(bomClient, new Poller<Boolean>(), commonConfig, logger);
 
         doReturn(aBomProcessingResponse(true))
                 .doReturn(aBomProcessingResponse(true))
@@ -114,7 +116,7 @@ public class UploadBomActionTest {
                 .when(bomClient)
                 .isBomBeingProcessed(anyString());
 
-        uploadBomAction.upload(moduleConfig);
+        uploadBomAction.upload(moduleConfig, false);
 
         verify(bomClient, times(3)).isBomBeingProcessed(anyString());
     }

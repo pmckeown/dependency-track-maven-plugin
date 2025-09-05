@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.*;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
@@ -139,7 +140,7 @@ public class UploadBomMojoTest {
         config.setProjectVersion("1.2.3");
         config.setUpdateParent(true);
 
-        doReturn(true).when(uploadBomAction).upload(config);
+        doReturn(true).when(uploadBomAction).upload(config, false);
 
         uploadBomMojo.setModuleConfig(config);
         uploadBomMojo.setParentName("project-parent");
@@ -161,7 +162,7 @@ public class UploadBomMojoTest {
 
     @Test
     public void thatUpdateParentFailsWhenParentNameIsNull() throws Exception {
-        doReturn(true).when(uploadBomAction).upload(moduleConfig);
+        doReturn(true).when(uploadBomAction).upload(moduleConfig, false);
 
         uploadBomMojo.setParentName(null);
         uploadBomMojo.setParentVersion(null);
@@ -185,7 +186,7 @@ public class UploadBomMojoTest {
     @Test
     public void thatUploadErrorsAreCorrectlyReported() throws Exception {
         DependencyTrackException cause = new DependencyTrackException("PKIX path building failed");
-        doThrow(cause).when(uploadBomAction).upload(any());
+        doThrow(cause).when(uploadBomAction).upload(any(), anyBoolean());
 
         uploadBomMojo.setFailOnError(true);
 
@@ -198,7 +199,7 @@ public class UploadBomMojoTest {
     @Test
     public void thatUploadErrorsIsReportedEvenWhenItShouldNotFail() throws Exception {
         DependencyTrackException cause = new DependencyTrackException("PKIX path building failed");
-        doThrow(cause).when(uploadBomAction).upload(any());
+        doThrow(cause).when(uploadBomAction).upload(any(), anyBoolean());
 
         uploadBomMojo.execute();
 

@@ -1,6 +1,24 @@
 package io.github.pmckeown.dependencytrack.upload;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.notFound;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.patch;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static io.github.pmckeown.TestMojoLoader.loadUploadBomMojo;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_BOM;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
@@ -8,40 +26,24 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.lenient;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.ResourceConstants;
 import io.github.pmckeown.dependencytrack.TestResourceConstants;
-import io.github.pmckeown.util.BomEncoder;
-import io.github.pmckeown.util.Logger;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import kong.unirest.Unirest;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     private static final String BOM_LOCATION = "target/test-classes/projects/run/bom.xml";
-
-    @Mock
-    private BomEncoder bomEncoder;
-
-    @Before
-    public void setup() {
-        lenient().doReturn(Optional.of("encoded-bom")).when(bomEncoder).encodeBom(anyString(), any(Logger.class));
-    }
 
     @After
     public void tearDown() throws Exception {
@@ -50,6 +52,18 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
 
     @Test
     public void thatBomCanBeUploadedSuccessfully() throws Exception {
+        stubFor(post(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(ok()));
+
+        UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
+        // default test config uses PUT instead of the default Mojo config of POST
+        uploadBomMojo.setUploadWithPut(false);
+        uploadBomMojo.execute();
+
+        verify(exactly(1), postRequestedFor(urlEqualTo(ResourceConstants.V1_BOM)));
+    }
+
+    @Test
+    public void thatBomCanBeUploadedSuccessfullyWithPut() throws Exception {
         stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(ok()));
 
         uploadBomMojo(BOM_LOCATION).execute();
@@ -271,6 +285,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
             uploadBomMojo.setBomLocation(bomLocation);
         }
         uploadBomMojo.setApiKey("ABC123");
+        uploadBomMojo.setUploadWithPut(true);
         return uploadBomMojo;
     }
 }

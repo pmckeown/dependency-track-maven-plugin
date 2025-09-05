@@ -267,12 +267,18 @@ From Dependency-Track server 4.12.0 onwards you can set `isLatest` and `projectT
 | parentVersion      | false    |                        | ${project.parent.version}             |
 | isLatest           | false    |                        | true                                  |
 | projectTags[].name | false    |                        | <name>tag1</name>                     |
+| uploadWithPut      | false    | false                  | false                                 |
 
 The `isLatest` option sets the flag on the project to indicate that it is the latest version.
 
 The `projectTags` option allows for tags to be added to a project.  This adds project tags only, and doesn't reconcile 
 the tags on the remote server, so if they are removed from the list or modified, they will need to be removed or 
 modified on the server to reflect the new state.
+
+When `uploadWithPut` is set to `true` the PUT API will be used to upload the BOM to Dependency Track, 
+which was the standard behavior of this plugin up to and including version 1.10.2. 
+The new default is to use the POST API, which uses a multipart request body. This API is less restrained on the maximum SBOM size,
+and it plays better with WebApplication Firewalls.
 
 Example:
 
