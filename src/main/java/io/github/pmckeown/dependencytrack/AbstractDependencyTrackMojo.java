@@ -1,8 +1,10 @@
 package io.github.pmckeown.dependencytrack;
 
+import static io.github.pmckeown.dependencytrack.Constants.VERSION;
 import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObjectMapper;
 import static kong.unirest.HeaderNames.ACCEPT;
 import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
+import static kong.unirest.HeaderNames.USER_AGENT;
 
 import io.github.pmckeown.util.Logger;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -179,6 +181,10 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
         if (unirestConfiguration.compareAndSet(false, true)) {
             Unirest.config()
                     .setObjectMapper(new JacksonObjectMapper(relaxedObjectMapper()))
+                    .setDefaultHeader(
+                            USER_AGENT,
+                            "dependency-track-maven-plugin/" + VERSION
+                                    + " (+https://github.com/pmckeown/dependency-track-maven-plugin)")
                     .setDefaultHeader(ACCEPT_ENCODING, "gzip, deflate")
                     .setDefaultHeader(ACCEPT, "application/json")
                     .verifySsl(verifySsl);

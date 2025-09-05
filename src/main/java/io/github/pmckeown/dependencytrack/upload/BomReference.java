@@ -19,7 +19,7 @@ public class BomReference {
 
     public BomReference(File bomFile) {
         if (bomFile == null) {
-            throw new NullPointerException("bom file cannot be null");
+            throw new IllegalArgumentException("bom file cannot be null");
         }
         this.file = bomFile;
         this.string = null;
@@ -27,7 +27,7 @@ public class BomReference {
 
     public BomReference(String bom) {
         if (bom == null) {
-            throw new NullPointerException("bom cannot be null");
+            throw new IllegalArgumentException("bom cannot be null");
         }
         this.string = bom;
         this.file = null;
