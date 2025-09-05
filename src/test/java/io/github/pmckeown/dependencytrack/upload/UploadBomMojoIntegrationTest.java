@@ -29,7 +29,6 @@ import static org.junit.Assert.fail;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.PollingConfig;
-import io.github.pmckeown.dependencytrack.ResourceConstants;
 import io.github.pmckeown.dependencytrack.TestResourceConstants;
 import java.util.HashSet;
 import java.util.Set;
@@ -52,28 +51,28 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
 
     @Test
     public void thatBomCanBeUploadedSuccessfully() throws Exception {
-        stubFor(post(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(ok()));
+        stubFor(post(urlEqualTo(V1_BOM)).willReturn(ok()));
 
         UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
         // default test config uses PUT instead of the default Mojo config of POST
         uploadBomMojo.setUploadWithPut(false);
         uploadBomMojo.execute();
 
-        verify(exactly(1), postRequestedFor(urlEqualTo(ResourceConstants.V1_BOM)));
+        verify(exactly(1), postRequestedFor(urlEqualTo(V1_BOM)));
     }
 
     @Test
     public void thatBomCanBeUploadedSuccessfullyWithPut() throws Exception {
-        stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(ok()));
+        stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
         uploadBomMojo(BOM_LOCATION).execute();
 
-        verify(exactly(1), putRequestedFor(urlEqualTo(ResourceConstants.V1_BOM)));
+        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM)));
     }
 
     @Test
     public void thatWhenFailOnErrorIsFalseAFailureFromToDependencyTrackDoesNotFailTheBuild() throws Exception {
-        stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(notFound()));
+        stubFor(put(urlEqualTo(V1_BOM)).willReturn(notFound()));
 
         try {
             UploadBomMojo uploadBomMojo = uploadBomMojo(BOM_LOCATION);
@@ -83,12 +82,12 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
             fail("No exception expected");
         }
 
-        verify(exactly(1), putRequestedFor(urlEqualTo(ResourceConstants.V1_BOM)));
+        verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM)));
     }
 
     @Test
     public void thatWhenFailOnErrorIsTrueAFailureFromToDependencyTrackDoesFailTheBuild() throws Exception {
-        stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(notFound()));
+        stubFor(put(urlEqualTo(V1_BOM)).willReturn(notFound()));
 
         UploadBomMojo uploadBomMojo = null;
         try {
@@ -233,7 +232,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
 
     @Test
     public void thatTheUploadIsSkippedWhenSkipIsTrue() throws Exception {
-        stubFor(put(urlEqualTo(ResourceConstants.V1_BOM)).willReturn(ok()));
+        stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
         UploadBomMojo uploadBomMojo = uploadBomMojo("target/test-classes/projects/skip/bom.xml");
         uploadBomMojo.setSkip("true");

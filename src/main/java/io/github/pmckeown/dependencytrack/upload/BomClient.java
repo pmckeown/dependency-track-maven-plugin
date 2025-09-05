@@ -94,18 +94,22 @@ class BomClient {
         objectMapper.addMixIn(UploadBomRequest.class, UploadBomRequestPostMixin.class);
         Map<String, Object> requestFields = objectMapper.convertValue(bom, new TypeReference<Map<String, Object>>() {});
 
-        InputStream inputStream;
-        try {
-            inputStream = bom.getBom().getInputStream();
-        } catch (IOException e) {
-            logger.debug("Opening an input stream to the BOM reference fail. ", e.getMessage());
-            throw new IllegalStateException("Failure reading BOM source", e);
-        }
-
-        return Unirest.post(commonConfig.getDependencyTrackBaseUrl() + V1_BOM)
+        MultipartBody request = Unirest.post(commonConfig.getDependencyTrackBaseUrl() + V1_BOM)
                 .header("X-Api-Key", commonConfig.getApiKey())
-                .fields(requestFields)
-                .field("bom", inputStream, ContentType.APPLICATION_OCTET_STREAM, "bom.xml");
+                .fields(requestFields);
+
+        if (bom.getBom().isFileReference()) {
+            request.field("bom", bom.getBom().getFile(), ContentType.APPLICATION_OCTET_STREAM.toString());
+        } else {
+            try {
+                InputStream inputStream = bom.getBom().getInputStream();
+                request.field("bom", inputStream, ContentType.APPLICATION_OCTET_STREAM, "bom.xml");
+            } catch (IOException e) {
+                logger.debug("Opening an input stream to the BOM reference failed. %s", e.getMessage());
+                throw new IllegalStateException("Failure reading BOM source", e);
+            }
+        }
+        return request;
     }
 
     /**
