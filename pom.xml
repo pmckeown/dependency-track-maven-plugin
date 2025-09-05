@@ -75,12 +75,18 @@
             <groupId>com.konghq</groupId>
             <artifactId>unirest-java</artifactId>
             <version>3.14.5</version>
-            <classifier>standalone</classifier>
+            <!--<classifier>standalone</classifier>-->
         </dependency>
         <dependency>
             <groupId>com.konghq</groupId>
             <artifactId>unirest-objectmapper-jackson</artifactId>
             <version>3.14.5</version>
+        </dependency>
+        <dependency>
+            <!-- unirest imports httpclient which includes commons-logging 1.2.0 which does not recognize slf4j, which maven uses -->
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.3.5</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
