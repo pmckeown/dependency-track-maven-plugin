@@ -25,10 +25,11 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.http.Fault;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackIntegrationTest;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.Response;
@@ -36,13 +37,16 @@ import io.github.pmckeown.util.Logger;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import kong.unirest.UnirestException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.WARN)
+@ExtendWith(MockitoExtension.class)
 public class BomClientIntegrationTest extends AbstractDependencyTrackIntegrationTest {
 
     @Mock
@@ -50,9 +54,9 @@ public class BomClientIntegrationTest extends AbstractDependencyTrackIntegration
 
     private BomClient client;
 
-    @Before
-    public void setup() {
-        client = new BomClient(getCommonConfig(), logger);
+    @BeforeEach
+    public void setUp(WireMockRuntimeInfo wmri) {
+        client = new BomClient(getCommonConfig(wmri), logger);
     }
 
     @Test

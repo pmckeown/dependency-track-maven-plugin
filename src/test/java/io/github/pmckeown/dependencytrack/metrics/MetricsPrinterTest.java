@@ -23,27 +23,22 @@ import static org.mockito.Mockito.verify;
 import io.github.pmckeown.util.Logger;
 import java.util.Arrays;
 import java.util.Collection;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(Parameterized.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.WARN)
 public class MetricsPrinterTest {
 
     static final String ISO_OFFSET_DATE_TIME_PATTERN =
             "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}([+|-][0-9]{2}:[0-9]{2}|Z)";
 
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-    @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
             {INHERITED_RISK_SCORE, "1"},
@@ -70,14 +65,13 @@ public class MetricsPrinterTest {
     @Mock
     private Logger logger;
 
-    @Parameter(0)
     public String key;
-
-    @Parameter(1)
     public String value;
 
-    @Test
-    public void thatEachMetricIsPrintedCorrectly() {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void thatEachMetricIsPrintedCorrectly(String key, String value) {
+        initMetricsPrinterTest(key, value);
         metricsPrinter.print(metrics());
 
         verify(logger, atLeastOnce()).info(matches("\\s*" + key + " \\| " + value));
@@ -101,5 +95,10 @@ public class MetricsPrinterTest {
                 .withFirstOccurrence(1562223415567L)
                 .withLastOccurrence(1563445047035L)
                 .build();
+    }
+
+    public void initMetricsPrinterTest(String key, String value) {
+        this.key = key;
+        this.value = value;
     }
 }

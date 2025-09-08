@@ -10,7 +10,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import io.github.pmckeown.dependencytrack.policyviolation.Policy;
 import io.github.pmckeown.dependencytrack.policyviolation.ViolationState;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class PolicyViolationsReportTest {
 

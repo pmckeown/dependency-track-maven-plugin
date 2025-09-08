@@ -9,29 +9,30 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static io.github.pmckeown.TestMojoLoader.loadDeleteProjectMojo;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_PROJECT_UUID;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.github.tomakehurst.wiremock.http.Fault;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     private DeleteProjectMojo deleteProjectMojo;
 
-    @Before
-    public void setup() throws Exception {
-        deleteProjectMojo = loadDeleteProjectMojo(mojoRule);
-        deleteProjectMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
+    @BeforeEach
+    public void setUp(WireMockRuntimeInfo wmri) throws Exception {
+        deleteProjectMojo = resolveMojo("delete-project");
+        deleteProjectMojo.setDependencyTrackBaseUrl("http://localhost:" + wmri.getHttpPort());
         deleteProjectMojo.setProjectName("dependency-track");
         deleteProjectMojo.setProjectVersion("3.6.0-SNAPSHOT");
         deleteProjectMojo.setFailOnError(false);
@@ -63,16 +64,19 @@ public class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMoj
         }
     }
 
-    @Test(expected = MojoFailureException.class)
+    @Test
     public void thatWhenProjectDeletionFailedAndFailOnErrorTrueThenMojoFailureExceptionIsThrown()
-            throws MojoExecutionException, MojoFailureException {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
-                .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
-        stubFor(delete(urlPathMatching(V1_PROJECT_UUID)).willReturn(aResponse().withStatus(500)));
+            throws MojoExecutionException {
+        assertThrows(MojoFailureException.class, () -> {
+            stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                    .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
+            stubFor(delete(urlPathMatching(V1_PROJECT_UUID))
+                    .willReturn(aResponse().withStatus(500)));
 
-        deleteProjectMojo.setFailOnError(true);
+            deleteProjectMojo.setFailOnError(true);
 
-        deleteProjectMojo.execute();
+            deleteProjectMojo.execute();
+        });
     }
 
     @Test

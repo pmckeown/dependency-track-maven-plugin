@@ -4,7 +4,7 @@ import static io.github.pmckeown.dependencytrack.policyviolation.PolicyViolation
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
@@ -15,14 +15,17 @@ import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.policyviolation.PolicyViolation;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.WARN)
+@ExtendWith(MockitoExtension.class)
 public class PolicyViolationsReportGeneratorTest {
 
     @InjectMocks
@@ -34,7 +37,7 @@ public class PolicyViolationsReportGeneratorTest {
     @Mock
     private PolicyViolationsHtmlReportWriter htmlReportWriter;
 
-    @Ignore("Until HTML report is generated")
+    @Disabled("Until HTML report is generated")
     @Test
     public void thatBothReportsAreGenerated() throws Exception {
         List<PolicyViolation> policyViolations = aListOfPolicyViolations().build();
@@ -61,7 +64,7 @@ public class PolicyViolationsReportGeneratorTest {
         verifyNoInteractions(htmlReportWriter);
     }
 
-    @Ignore("Until HTML report is generated")
+    @Disabled("Until HTML report is generated")
     @Test
     public void thatExceptionWhenWritingHtmlReportIsHandled() throws Exception {
 

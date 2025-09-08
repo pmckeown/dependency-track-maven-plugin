@@ -10,7 +10,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.http.Fault.RANDOM_DATA_THEN_CLOSE;
-import static io.github.pmckeown.TestMojoLoader.loadFindingsMojo;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_FINDING_PROJECT_UUID;
 import static io.github.pmckeown.dependencytrack.TestUtils.asJson;
@@ -21,22 +20,24 @@ import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aLis
 import static io.github.pmckeown.dependencytrack.finding.Severity.LOW;
 import static io.github.pmckeown.dependencytrack.finding.Severity.UNASSIGNED;
 import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     private FindingsMojo findingsMojo;
 
-    @Before
-    public void setup() throws Exception {
-        findingsMojo = loadFindingsMojo(mojoRule);
-        findingsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
+    @BeforeEach
+    public void setUp(WireMockRuntimeInfo wmri) throws Exception {
+        findingsMojo = resolveMojo("findings");
+        findingsMojo.setDependencyTrackBaseUrl("http://localhost:" + wmri.getHttpPort());
         findingsMojo.setApiKey("abc123");
         findingsMojo.setProjectName("testName");
         findingsMojo.setProjectVersion("99.99");
@@ -76,36 +77,40 @@ public class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest
         }
     }
 
-    @Test(expected = MojoExecutionException.class)
+    @Test
     public void thatWhenExceptionOccursWhileGettingFindingsAndFailOnErrorIsTrueTheMojoErrors() throws Exception {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
-                .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
-        stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
-                .willReturn(aResponse().withFault(RANDOM_DATA_THEN_CLOSE)));
+        assertThrows(MojoExecutionException.class, () -> {
+            stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                    .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
+            stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
+                    .willReturn(aResponse().withFault(RANDOM_DATA_THEN_CLOSE)));
 
-        findingsMojo.setFailOnError(true);
+            findingsMojo.setFailOnError(true);
 
-        findingsMojo.execute();
-        fail("Exception expected");
+            findingsMojo.execute();
+            fail("Exception expected");
+        });
     }
 
-    @Test(expected = MojoFailureException.class)
+    @Test
     public void thatBuildFailsWhenFindingsNumberBreachesDefinedThresholds() throws Exception {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
-                .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
-        stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
-                .willReturn(aResponse()
-                        .withBody(asJson(aListOfFindings()
-                                .withFinding(aFinding()
-                                        .withComponent(aComponent().withName("dodgy"))
-                                        .withVulnerability(aVulnerability().withSeverity(LOW))
-                                        .withAnalysis(anAnalysis()))
-                                .build()))));
+        assertThrows(MojoFailureException.class, () -> {
+            stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                    .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
+            stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
+                    .willReturn(aResponse()
+                            .withBody(asJson(aListOfFindings()
+                                    .withFinding(aFinding()
+                                            .withComponent(aComponent().withName("dodgy"))
+                                            .withVulnerability(aVulnerability().withSeverity(LOW))
+                                            .withAnalysis(anAnalysis()))
+                                    .build()))));
 
-        findingsMojo.setFindingThresholds(new FindingThresholds(0, 0, 0, 0, 0));
+            findingsMojo.setFindingThresholds(new FindingThresholds(0, 0, 0, 0, 0));
 
-        findingsMojo.execute();
-        fail("Exception expected");
+            findingsMojo.execute();
+            fail("Exception expected");
+        });
     }
 
     @Test

@@ -6,7 +6,7 @@ import static io.github.pmckeown.dependencytrack.policyviolation.PolicyViolation
 import static io.github.pmckeown.dependencytrack.policyviolation.PolicyViolationListBuilder.aListOfPolicyViolations;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import io.github.pmckeown.dependencytrack.policyviolation.Policy;
 import io.github.pmckeown.dependencytrack.policyviolation.PolicyViolation;
@@ -14,16 +14,16 @@ import io.github.pmckeown.dependencytrack.policyviolation.ViolationState;
 import io.github.pmckeown.dependencytrack.report.TransformerFactoryProvider;
 import java.io.File;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class PolicyViolationsReportIntegrationTest {
 
     private PolicyViolationsXmlReportWriter xmlReportWriter;
     private PolicyViolationsHtmlReportWriter htmlReportWriter;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         PolicyViolationsReportMarshallerService PolicyViolationsMarshallerService =
                 new PolicyViolationsReportMarshallerService();
@@ -43,7 +43,7 @@ public class PolicyViolationsReportIntegrationTest {
         }
     }
 
-    @Ignore("Until XSL Stylesheet is created")
+    @Disabled("Until XSL Stylesheet is created")
     @Test
     public void thatXmlFileCanBeTransformed() {
         try {

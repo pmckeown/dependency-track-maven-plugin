@@ -1,28 +1,36 @@
 package io.github.pmckeown.dependencytrack.score;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static io.github.pmckeown.TestMojoLoader.loadScoreMojo;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.notFound;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_METRICS_PROJECT_CURRENT;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.PollingConfig;
 import org.apache.maven.plugin.MojoFailureException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     private ScoreMojo scoreMojo;
 
-    @Before
-    public void setup() throws Exception {
-        scoreMojo = loadScoreMojo(mojoRule);
-        scoreMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
+    @BeforeEach
+    public void setUp(WireMockRuntimeInfo wmri) throws Exception {
+        scoreMojo = resolveMojo("score");
+        scoreMojo.setDependencyTrackBaseUrl("http://localhost:" + wmri.getHttpPort());
         scoreMojo.setProjectName("dependency-track");
         scoreMojo.setProjectVersion("3.6.0-SNAPSHOT");
     }
@@ -192,8 +200,8 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    public void thatTheScoreIsSkippedWhenSkipIsTrue() throws Exception {
-        scoreMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
+    public void thatTheScoreIsSkippedWhenSkipIsTrue(WireMockRuntimeInfo wmri) throws Exception {
+        scoreMojo.setDependencyTrackBaseUrl("http://localhost:" + wmri.getHttpPort());
         scoreMojo.setProjectName("dependency-track");
         scoreMojo.setProjectVersion("3.6.0-SNAPSHOT");
         scoreMojo.setSkip("true");

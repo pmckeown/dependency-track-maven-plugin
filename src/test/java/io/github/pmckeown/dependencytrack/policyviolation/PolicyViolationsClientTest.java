@@ -20,23 +20,27 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.github.tomakehurst.wiremock.http.Fault;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackIntegrationTest;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.util.Logger;
 import java.util.List;
 import java.util.Optional;
 import kong.unirest.UnirestException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.WARN)
+@ExtendWith(MockitoExtension.class)
 public class PolicyViolationsClientTest extends AbstractDependencyTrackIntegrationTest {
 
     @InjectMocks
@@ -45,9 +49,9 @@ public class PolicyViolationsClientTest extends AbstractDependencyTrackIntegrati
     @Mock
     private Logger logger;
 
-    @Before
-    public void setup() {
-        policyClient = new PolicyViolationsClient(getCommonConfig(), logger);
+    @BeforeEach
+    public void setUp(WireMockRuntimeInfo wmri) {
+        policyClient = new PolicyViolationsClient(getCommonConfig(wmri), logger);
     }
 
     @Test

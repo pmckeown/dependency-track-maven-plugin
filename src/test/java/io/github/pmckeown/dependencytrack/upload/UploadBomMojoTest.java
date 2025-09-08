@@ -2,8 +2,8 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.*;
 
@@ -18,15 +18,18 @@ import kong.unirest.Unirest;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.WARN)
+@ExtendWith(MockitoExtension.class)
 public class UploadBomMojoTest {
 
     private static final String PROJECT_NAME = "test";
@@ -60,7 +63,7 @@ public class UploadBomMojoTest {
     @Mock
     private ModuleConfig moduleConfig;
 
-    @Before
+    @BeforeEach
     public void setup() {
         uploadBomMojo.setLog(mavenLogger);
         uploadBomMojo.setCommonConfig(commonConfig);
@@ -68,7 +71,7 @@ public class UploadBomMojoTest {
         uploadBomMojo.setMavenProject(project);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         uploadBomMojo.getUnirestConfiguration().set(false);
     }

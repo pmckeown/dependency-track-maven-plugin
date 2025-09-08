@@ -7,7 +7,7 @@ import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aLis
 import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import io.github.pmckeown.dependencytrack.finding.Analysis;
 import io.github.pmckeown.dependencytrack.finding.Finding;
@@ -16,15 +16,15 @@ import io.github.pmckeown.dependencytrack.finding.Severity;
 import io.github.pmckeown.dependencytrack.report.TransformerFactoryProvider;
 import java.io.File;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FindingsReportIntegrationTest {
 
     private FindingsReportXmlReportWriter xmlReportWriter;
     private FindingsReportHtmlReportWriter htmlReportWriter;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         FindingsReportMarshallerService findingsReportMarshallerService = new FindingsReportMarshallerService();
         xmlReportWriter = new FindingsReportXmlReportWriter(findingsReportMarshallerService);

@@ -3,7 +3,7 @@ package io.github.pmckeown.dependencytrack.project;
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -18,13 +18,16 @@ import io.github.pmckeown.util.Logger;
 import java.io.File;
 import java.util.*;
 import kong.unirest.UnirestException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.WARN)
+@ExtendWith(MockitoExtension.class)
 public class ProjectActionTest {
 
     private static final String UUID_2 = "project-uuid-2";
@@ -94,11 +97,13 @@ public class ProjectActionTest {
         }
     }
 
-    @Test(expected = DependencyTrackException.class)
-    public void thatANotFoundResponseResultsInAnException() throws DependencyTrackException {
-        doReturn(aNotFoundResponse()).when(projectClient).getProject(anyString(), anyString(), anyString());
+    @Test
+    public void thatANotFoundResponseResultsInAnException() {
+        assertThrows(DependencyTrackException.class, () -> {
+            doReturn(aNotFoundResponse()).when(projectClient).getProject(anyString(), anyString(), anyString());
 
-        projectAction.getProject(getModuleConfig());
+            projectAction.getProject(getModuleConfig());
+        });
     }
 
     @Test
@@ -113,11 +118,13 @@ public class ProjectActionTest {
         }
     }
 
-    @Test(expected = DependencyTrackException.class)
-    public void thatRequestedProjectCannotBeFoundAnExceptionIsThrown() throws DependencyTrackException {
-        doReturn(aSuccessResponse().build()).when(projectClient).getProject(anyString(), anyString(), anyString());
+    @Test
+    public void thatRequestedProjectCannotBeFoundAnExceptionIsThrown() {
+        assertThrows(DependencyTrackException.class, () -> {
+            doReturn(aSuccessResponse().build()).when(projectClient).getProject(anyString(), anyString(), anyString());
 
-        projectAction.getProject(getModuleConfig());
+            projectAction.getProject(getModuleConfig());
+        });
     }
 
     @Test

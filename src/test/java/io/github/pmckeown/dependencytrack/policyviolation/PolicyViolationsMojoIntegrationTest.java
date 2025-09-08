@@ -10,28 +10,28 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.http.Fault.RANDOM_DATA_THEN_CLOSE;
-import static io.github.pmckeown.TestMojoLoader.loadPolicyMojo;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_POLICY_VIOLATION_PROJECT_UUID;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class PolicyViolationsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     private PolicyViolationsMojo policyMojo;
 
-    @Before
-    public void setup() throws Exception {
-        policyMojo = loadPolicyMojo(mojoRule);
-        policyMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
+    @BeforeEach
+    public void setUp(WireMockRuntimeInfo wmri) throws Exception {
+        policyMojo = resolveMojo("policy-violations");
+        policyMojo.setDependencyTrackBaseUrl("http://localhost:" + wmri.getHttpPort());
         policyMojo.setApiKey("abc123");
         policyMojo.setProjectName("testName");
         policyMojo.setProjectVersion("99.99");
