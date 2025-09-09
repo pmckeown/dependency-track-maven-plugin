@@ -43,7 +43,7 @@ class PollerTest {
         final int[] pollLoopCounter = {0};
 
         try {
-            Optional<String> optionalString = poller.poll(pollingConfig, () -> {
+            poller.poll(pollingConfig, () -> {
                 pollLoopCounter[0]++;
                 return Optional.empty();
             });
@@ -71,13 +71,13 @@ class PollerTest {
     }
 
     @Test
-    void IfPollingDisabledTheCallableIsExecutedOnlyOnce() {
+    void ifPollingDisabledTheCallableIsExecutedOnlyOnce() {
         PollingConfig pollingConfig = new PollingConfig(false, 1, 5, MILLIS);
         Poller<String> poller = new Poller<>();
         final int[] pollLoopCounter = {0};
 
         try {
-            Optional<String> optionalString = poller.poll(pollingConfig, () -> {
+            poller.poll(pollingConfig, () -> {
                 pollLoopCounter[0]++;
                 return Optional.empty();
             });

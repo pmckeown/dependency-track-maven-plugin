@@ -59,7 +59,7 @@ class ScoreActionTest {
     @Test
     void thatWhenNoProjectsAreFoundThenAnExceptionIsThrown() {
         assertThrows(DependencyTrackException.class, () -> {
-            doReturn(new Response(404, "Not Found", false))
+            doReturn(new Response<Void>(404, "Not Found", false))
                     .when(projectClient)
                     .getProject(anyString(), anyString(), anyString());
 

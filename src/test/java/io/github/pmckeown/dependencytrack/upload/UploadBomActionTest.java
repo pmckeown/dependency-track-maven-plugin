@@ -111,7 +111,7 @@ class UploadBomActionTest {
         doReturn(new PollingConfig(true, 1, 3, MILLIS)).when(commonConfig).getPollingConfig();
 
         // Create a new candidate as the polling behaviour needs to change for this test
-        UploadBomAction uploadBomAction = new UploadBomAction(bomClient, new Poller<Boolean>(), commonConfig, logger);
+        UploadBomAction action = new UploadBomAction(bomClient, new Poller<Boolean>(), commonConfig, logger);
 
         doReturn(aBomProcessingResponse(true))
                 .doReturn(aBomProcessingResponse(true))
@@ -119,7 +119,7 @@ class UploadBomActionTest {
                 .when(bomClient)
                 .isBomBeingProcessed(anyString());
 
-        uploadBomAction.upload(moduleConfig, false);
+        action.upload(moduleConfig, false);
 
         verify(bomClient, times(3)).isBomBeingProcessed(anyString());
     }
@@ -142,7 +142,7 @@ class UploadBomActionTest {
         return new Response<>(200, "OK", true, Optional.of(anUploadBomResponse().build()));
     }
 
-    private Response aNotFoundResponse() {
-        return new Response(404, "Not Found", false, Optional.of("The parent component could not be found."));
+    private Response<String> aNotFoundResponse() {
+        return new Response<>(404, "Not Found", false, Optional.of("The parent component could not be found."));
     }
 }

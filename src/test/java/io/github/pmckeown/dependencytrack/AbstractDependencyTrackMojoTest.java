@@ -13,13 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 
 @WireMockTest
 public abstract class AbstractDependencyTrackMojoTest {
-    static class MojoTestSupport extends AbstractMojoTestCase {
-        @Override
-        public void setUp() throws Exception {
-            super.setUp();
-        }
-    }
-
     private static final String TEST_PROJECT = "target/test-classes/projects/run";
 
     private MojoTestSupport baseTest;
@@ -56,5 +49,12 @@ public abstract class AbstractDependencyTrackMojoTest {
         assertNotNull(pom);
         assertTrue(pom.exists());
         return pom;
+    }
+    
+    static class MojoTestSupport extends AbstractMojoTestCase {
+        @Override
+        public void setUp() throws Exception {
+            super.setUp();
+        }
     }
 }

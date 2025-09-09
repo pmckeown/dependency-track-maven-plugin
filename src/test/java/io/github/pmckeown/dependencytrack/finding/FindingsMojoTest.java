@@ -12,7 +12,6 @@ import io.github.pmckeown.dependencytrack.finding.report.FindingsReportGenerator
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
 import java.util.ArrayList;
-import java.util.List;
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -72,9 +71,7 @@ class FindingsMojoTest {
 
     @Test
     void thatThresholdLowOptionCanBeSetDirectly() throws Exception {
-        doReturn(true)
-                .when(findingsAnalyser)
-                .doNumberOfFindingsBreachPolicy(any(List.class), any(FindingThresholds.class));
+        doReturn(true).when(findingsAnalyser).doNumberOfFindingsBreachPolicy(any(), any());
 
         findingsMojo.setThresholdLow(1);
 
