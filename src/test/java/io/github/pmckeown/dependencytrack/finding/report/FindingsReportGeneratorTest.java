@@ -25,7 +25,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class FindingsReportGeneratorTest {
+class FindingsReportGeneratorTest {
 
     @InjectMocks
     private FindingsReportGenerator findingsReportGenerator;
@@ -37,7 +37,7 @@ public class FindingsReportGeneratorTest {
     private FindingsReportHtmlReportWriter htmlReportWriter;
 
     @Test
-    public void thatBothReportsAreGenerated() throws Exception {
+    void thatBothReportsAreGenerated() throws Exception {
         FindingThresholds findingThresholds = new FindingThresholds(1, null, null, null, null);
         List<Finding> findings = aListOfFindings().build();
         findingsReportGenerator.generate(null, findings, findingThresholds, false);
@@ -46,7 +46,7 @@ public class FindingsReportGeneratorTest {
     }
 
     @Test
-    public void thatExceptionWhenWritingXmlReportIsHandledAndHtmlIsNotAttempted() throws Exception {
+    void thatExceptionWhenWritingXmlReportIsHandledAndHtmlIsNotAttempted() throws Exception {
         FindingThresholds findingThresholds = new FindingThresholds(1, null, null, null, null);
         List<Finding> findings = aListOfFindings().build();
 
@@ -63,7 +63,7 @@ public class FindingsReportGeneratorTest {
     }
 
     @Test
-    public void thatExceptionWhenWritingHtmlReportIsHandled() throws Exception {
+    void thatExceptionWhenWritingHtmlReportIsHandled() throws Exception {
         FindingThresholds findingThresholds = new FindingThresholds(1, null, null, null, null);
         List<Finding> findings = aListOfFindings().build();
 

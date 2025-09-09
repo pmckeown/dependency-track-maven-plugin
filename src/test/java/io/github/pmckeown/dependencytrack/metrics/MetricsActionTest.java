@@ -23,6 +23,7 @@ import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.UnirestException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,7 +35,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class MetricsActionTest {
+class MetricsActionTest {
 
     private static final int INHERITED_RISK_SCORE = 1;
 
@@ -54,7 +55,7 @@ public class MetricsActionTest {
     private Logger logger;
 
     @Test
-    public void thatMetricsCanBeRetrieved() throws Exception {
+    void thatMetricsCanBeRetrieved() throws Exception {
         doReturn(aSuccessResponse().withBody(aMetrics()).build())
                 .when(metricsClient)
                 .getMetrics(any(Project.class));
@@ -67,7 +68,7 @@ public class MetricsActionTest {
     }
 
     @Test
-    public void thatAnExceptionOccursWhenNoMetricsCanBeFound() {
+    void thatAnExceptionOccursWhenNoMetricsCanBeFound() {
         doReturn(aSuccessResponse().build()).when(metricsClient).getMetrics(any(Project.class));
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
@@ -80,7 +81,7 @@ public class MetricsActionTest {
     }
 
     @Test
-    public void thatAnExceptionOccurringResultsInAnException() {
+    void thatAnExceptionOccurringResultsInAnException() {
         doThrow(UnirestException.class).when(metricsClient).getMetrics(any(Project.class));
         doReturn(PollingConfig.defaults()).when(commonConfig).getPollingConfig();
 
@@ -93,36 +94,36 @@ public class MetricsActionTest {
     }
 
     @Test
-    public void thatRefreshMetricsCanBeCalled() {
+    void thatRefreshMetricsCanBeCalled() {
         doReturn(aSuccessResponse().build()).when(metricsClient).refreshMetrics(any(Project.class));
-        try {
-            metricsAction.refreshMetrics(aProject().build());
-        } catch (Exception e) {
-            fail("No exception expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    metricsAction.refreshMetrics(aProject().build());
+                },
+                "No exception expected");
         verify(logger).debug(anyString());
     }
 
     @Test
-    public void thatRefreshMetricsDoesNotErrorWhenProjectNotFound() {
+    void thatRefreshMetricsDoesNotErrorWhenProjectNotFound() {
         doReturn(aNotFoundResponse().build()).when(metricsClient).refreshMetrics(any(Project.class));
-        try {
-            metricsAction.refreshMetrics(aProject().build());
-        } catch (Exception e) {
-            fail("No exception expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    metricsAction.refreshMetrics(aProject().build());
+                },
+                "No exception expected");
         verify(logger).debug(anyString(), anyString());
     }
 
     @Test
-    public void thatNoExceptionsAreThrownIfRefreshMetricsErrors() {
+    void thatNoExceptionsAreThrownIfRefreshMetricsErrors() {
         doThrow(new UnirestException("Boom")).when(metricsClient).refreshMetrics(any(Project.class));
 
-        try {
-            metricsAction.refreshMetrics(aProject().build());
-        } catch (Exception e) {
-            fail("No exception expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    metricsAction.refreshMetrics(aProject().build());
+                },
+                "No exception expected");
         verify(logger).error(anyString(), anyString());
     }
 

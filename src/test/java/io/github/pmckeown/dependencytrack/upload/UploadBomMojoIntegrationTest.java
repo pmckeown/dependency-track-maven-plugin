@@ -35,6 +35,7 @@ import java.util.Set;
 import kong.unirest.Unirest;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,14 +45,14 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
+class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     private static final String BOM_LOCATION = "target/test-classes/projects/run/bom.xml";
 
     UploadBomMojo uploadBomMojo;
 
     @BeforeEach
-    public void setUp(WireMockRuntimeInfo wmri) throws Exception {
+    void setUp(WireMockRuntimeInfo wmri) throws Exception {
         uploadBomMojo = resolveMojo("upload-bom");
         uploadBomMojo.setDependencyTrackBaseUrl("http://localhost:" + wmri.getHttpPort());
         uploadBomMojo.setPollingConfig(PollingConfig.disabled());
@@ -61,12 +62,12 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         uploadBomMojo.getUnirestConfiguration().set(false);
     }
 
     @Test
-    public void thatBomCanBeUploadedSuccessfully() throws Exception {
+    void thatBomCanBeUploadedSuccessfully() throws Exception {
         stubFor(post(urlEqualTo(V1_BOM)).willReturn(ok()));
 
         // default test config uses PUT instead of the default Mojo config of POST
@@ -77,7 +78,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatBomCanBeUploadedSuccessfullyWithPut() throws Exception {
+    void thatBomCanBeUploadedSuccessfullyWithPut() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
         uploadBomMojo.execute();
@@ -86,30 +87,29 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatWhenFailOnErrorIsFalseAFailureFromToDependencyTrackDoesNotFailTheBuild() throws Exception {
+    void thatWhenFailOnErrorIsFalseAFailureFromToDependencyTrackDoesNotFailTheBuild() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(notFound()));
 
-        try {
-
-            uploadBomMojo.setFailOnError(false);
-            uploadBomMojo.execute();
-        } catch (Exception ex) {
-            fail("No exception expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    uploadBomMojo.setFailOnError(false);
+                    uploadBomMojo.execute();
+                },
+                "No exception expected");
 
         verify(exactly(1), putRequestedFor(urlEqualTo(V1_BOM)));
     }
 
     @Test
-    public void thatWhenFailOnErrorIsTrueAFailureFromToDependencyTrackDoesFailTheBuild() throws Exception {
+    void thatWhenFailOnErrorIsTrueAFailureFromToDependencyTrackDoesFailTheBuild() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(notFound()));
 
-        try {
-            uploadBomMojo.setDependencyTrackBaseUrl("http://localghost:80");
-            uploadBomMojo.setFailOnError(true);
-        } catch (Exception ex) {
-            fail("Exception not expected yet");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    uploadBomMojo.setDependencyTrackBaseUrl("http://localghost:80");
+                    uploadBomMojo.setFailOnError(true);
+                },
+                "Exception not expected yet");
 
         try {
             uploadBomMojo.execute();
@@ -120,29 +120,28 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatWhenFailOnErrorIsFalseAFailureToConnectToDependencyTrackDoesNotFailTheBuild() throws Exception {
+    void thatWhenFailOnErrorIsFalseAFailureToConnectToDependencyTrackDoesNotFailTheBuild() throws Exception {
         // No Wiremock Stubbing
 
-        try {
-
-            uploadBomMojo.setDependencyTrackBaseUrl("http://localghost:80");
-            uploadBomMojo.setFailOnError(false);
-            uploadBomMojo.execute();
-        } catch (Exception ex) {
-            fail("No exception expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    uploadBomMojo.setDependencyTrackBaseUrl("http://localghost:80");
+                    uploadBomMojo.setFailOnError(false);
+                    uploadBomMojo.execute();
+                },
+                "No exception expected");
     }
 
     @Test
-    public void thatWhenFailOnErrorIsTrueAFailureToConnectToDependencyTrackDoesFailTheBuild() throws Exception {
+    void thatWhenFailOnErrorIsTrueAFailureToConnectToDependencyTrackDoesFailTheBuild() throws Exception {
         // No Wiremock Stubbing
 
-        try {
-            uploadBomMojo.setDependencyTrackBaseUrl("http://localghost:80");
-            uploadBomMojo.setFailOnError(true);
-        } catch (Exception ex) {
-            fail("Exception not expected yet");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    uploadBomMojo.setDependencyTrackBaseUrl("http://localghost:80");
+                    uploadBomMojo.setFailOnError(true);
+                },
+                "Exception not expected yet");
 
         try {
             uploadBomMojo.execute();
@@ -153,7 +152,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatProjectNameCanBeProvided() throws Exception {
+    void thatProjectNameCanBeProvided() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
         uploadBomMojo.setProjectName("test-project");
@@ -166,7 +165,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatProjectNameDefaultsToArtifactId() throws Exception {
+    void thatProjectNameDefaultsToArtifactId() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
         uploadBomMojo.execute();
@@ -179,7 +178,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatProjectVersionCanBeProvided() throws Exception {
+    void thatProjectVersionCanBeProvided() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
         uploadBomMojo.setProjectVersion("99.99.99-RELEASE");
@@ -192,7 +191,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatProjectIsLatestCanBeProvided() throws Exception {
+    void thatProjectIsLatestCanBeProvided() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
         uploadBomMojo.setLatest(true);
@@ -205,7 +204,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatProjectTagsCanBeProvided() throws Exception {
+    void thatProjectTagsCanBeProvided() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
         uploadBomMojo.setLatest(true);
@@ -223,7 +222,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatProjectVersionDefaultsToPomVersion() throws Exception {
+    void thatProjectVersionDefaultsToPomVersion() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
         uploadBomMojo.execute();
@@ -235,7 +234,7 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatTheUploadIsSkippedWhenSkipIsTrue() throws Exception {
+    void thatTheUploadIsSkippedWhenSkipIsTrue() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
 
         uploadBomMojo.setSkip("true");
@@ -246,14 +245,14 @@ public class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatSslVerifyDefaultsToTrue() throws Exception {
+    void thatSslVerifyDefaultsToTrue() throws Exception {
         uploadBomMojo.setSkip("true");
         uploadBomMojo.execute();
         assertThat(Unirest.config().isVerifySsl(), is(true));
     }
 
     @Test
-    public void thatProjectParentNameAndVersionCanBeIgnored() throws Exception {
+    void thatProjectParentNameAndVersionCanBeIgnored() throws Exception {
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/test-project.json")));
         stubFor(get(urlPathMatching(TestResourceConstants.V1_PROJECT_UUID)).willReturn(ok()));

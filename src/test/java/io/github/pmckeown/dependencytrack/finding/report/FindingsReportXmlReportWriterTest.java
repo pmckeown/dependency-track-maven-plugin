@@ -31,7 +31,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class FindingsReportXmlReportWriterTest {
+class FindingsReportXmlReportWriterTest {
 
     @InjectMocks
     private FindingsReportXmlReportWriter xmlReportWriter;
@@ -43,12 +43,12 @@ public class FindingsReportXmlReportWriterTest {
     private Marshaller marshaller;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         doReturn(marshaller).when(marshallerService).getMarshaller();
     }
 
     @Test
-    public void thatFindingReportCanBeMarshalled() {
+    void thatFindingReportCanBeMarshalled() {
         try {
             xmlReportWriter.write(null, new FindingsReport(someFindingThresholds(), someFindings(), true));
         } catch (Exception ex) {
@@ -57,7 +57,7 @@ public class FindingsReportXmlReportWriterTest {
     }
 
     @Test
-    public void thatAnExceptionIsThrownWhenMarshallingFails() throws Exception {
+    void thatAnExceptionIsThrownWhenMarshallingFails() throws Exception {
         doThrow(JAXBException.class).when(marshaller).marshal(any(FindingsReport.class), any(File.class));
         try {
             xmlReportWriter.write(null, new FindingsReport(someFindingThresholds(), someFindings(), true));

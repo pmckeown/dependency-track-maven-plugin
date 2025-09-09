@@ -70,7 +70,7 @@ public class MetricsPrinterTest {
 
     @MethodSource("data")
     @ParameterizedTest
-    public void thatEachMetricIsPrintedCorrectly(String key, String value) {
+    void thatEachMetricIsPrintedCorrectly(String key, String value) {
         initMetricsPrinterTest(key, value);
         metricsPrinter.print(metrics());
 

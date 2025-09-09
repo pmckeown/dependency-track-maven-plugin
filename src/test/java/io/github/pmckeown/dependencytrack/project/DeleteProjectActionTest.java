@@ -28,7 +28,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class DeleteProjectActionTest {
+class DeleteProjectActionTest {
 
     @InjectMocks
     private ProjectAction projectAction;
@@ -40,7 +40,7 @@ public class DeleteProjectActionTest {
     private Logger logger;
 
     @Test
-    public void thatWhenProjectIsDeletedThenTrueIsReturn() throws Exception {
+    void thatWhenProjectIsDeletedThenTrueIsReturn() throws Exception {
         doReturn(aSuccessResponse().build()).when(projectClient).deleteProject(any(Project.class));
 
         boolean deleted = projectAction.deleteProject(aProject().build());
@@ -49,7 +49,7 @@ public class DeleteProjectActionTest {
     }
 
     @Test
-    public void thatWhenProjectIsNotDeletedThenFalseIsReturn() throws Exception {
+    void thatWhenProjectIsNotDeletedThenFalseIsReturn() throws Exception {
         doReturn(aNotFoundResponse().build()).when(projectClient).deleteProject(any(Project.class));
 
         boolean deleted = projectAction.deleteProject(aProject().build());
@@ -58,7 +58,7 @@ public class DeleteProjectActionTest {
     }
 
     @Test
-    public void thatWhenAnExceptionOccursWhenDeletingProjectThenCorrectExceptionIsThrown() throws Exception {
+    void thatWhenAnExceptionOccursWhenDeletingProjectThenCorrectExceptionIsThrown() throws Exception {
         doThrow(UnirestException.class).when(projectClient).deleteProject(any(Project.class));
 
         try {

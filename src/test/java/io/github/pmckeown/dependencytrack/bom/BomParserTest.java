@@ -17,7 +17,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class BomParserTest {
+class BomParserTest {
 
     @InjectMocks
     private BomParser bomParser;
@@ -26,7 +26,7 @@ public class BomParserTest {
     private Logger logger;
 
     @Test
-    public void thatProjectInfoCanBeParsedFromBom() {
+    void thatProjectInfoCanBeParsedFromBom() {
         File bomFile = new File(BomParserTest.class.getResource("bom.xml").getFile());
         ProjectInfo info = bomParser.getProjectInfo(bomFile).get();
         assertThat(info.getGroup(), is(equalTo("io.github.pmckeown")));
@@ -42,7 +42,7 @@ public class BomParserTest {
     }
 
     @Test
-    public void thatProjectInfoCanBeParsedFromBomWithByteOrder() {
+    void thatProjectInfoCanBeParsedFromBomWithByteOrder() {
         File bomFile =
                 new File(BomParserTest.class.getResource("bom_byteorder.xml").getFile());
         ProjectInfo info = bomParser.getProjectInfo(bomFile).get();
@@ -59,32 +59,32 @@ public class BomParserTest {
     }
 
     @Test
-    public void thatEmptyIsReturnedWhenMissingBomFile() {
+    void thatEmptyIsReturnedWhenMissingBomFile() {
         assertThat(bomParser.getProjectInfo(new File("no-such-file")).isPresent(), is(equalTo(false)));
     }
 
     @Test
-    public void thatEmptyIsReturnedWhenBomHasNoMetadata() {
+    void thatEmptyIsReturnedWhenBomHasNoMetadata() {
         File bomFile = new File(
                 BomParserTest.class.getResource("bom-without-metadata.xml").getFile());
         assertThat(bomParser.getProjectInfo(bomFile).isPresent(), is(equalTo(false)));
     }
 
     @Test
-    public void thatEmptyIsReturnedWhenBomHasNoMetadataComponent() {
+    void thatEmptyIsReturnedWhenBomHasNoMetadataComponent() {
         File bomFile = new File(
                 BomParserTest.class.getResource("bom-without-component.xml").getFile());
         assertThat(bomParser.getProjectInfo(bomFile).isPresent(), is(equalTo(false)));
     }
 
     @Test
-    public void thatParsingProjectInfoFromOldBomVersionReturnsNoProjectInfo() {
+    void thatParsingProjectInfoFromOldBomVersionReturnsNoProjectInfo() {
         File bomFile = new File(BomParserTest.class.getResource("bom-1.1.xml").getFile());
         assertThat(bomParser.getProjectInfo(bomFile).isPresent(), is(equalTo(false)));
     }
 
     @Test
-    public void thatParsingProjectInfoFailsWhenProvidedInvalidJsonFile() {
+    void thatParsingProjectInfoFailsWhenProvidedInvalidJsonFile() {
         File invalidFile = new File("target/test-classes/__files/api/v1/project/get-all-projects.json");
         assertThat(bomParser.getProjectInfo(invalidFile).isPresent(), is(equalTo(false)));
     }

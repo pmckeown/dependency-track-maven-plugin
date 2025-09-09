@@ -16,7 +16,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class FindingsReportHtmlReportWriterTest {
+class FindingsReportHtmlReportWriterTest {
 
     @InjectMocks
     private FindingsReportHtmlReportWriter candidate;
@@ -28,7 +28,7 @@ public class FindingsReportHtmlReportWriterTest {
     private TransformerFactory transformerFactory;
 
     @Test
-    public void thatSecureProcessingIsEnabledInTransformerFactoryToProtectFromXxeAttacks() throws Exception {
+    void thatSecureProcessingIsEnabledInTransformerFactoryToProtectFromXxeAttacks() throws Exception {
         doReturn(transformerFactory).when(transformerFactoryProvider).provide();
 
         candidate.getSecureTransformerFactory();

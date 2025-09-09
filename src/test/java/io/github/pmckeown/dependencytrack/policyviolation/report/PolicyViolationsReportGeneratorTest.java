@@ -26,7 +26,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class PolicyViolationsReportGeneratorTest {
+class PolicyViolationsReportGeneratorTest {
 
     @InjectMocks
     private PolicyViolationsReportGenerator policyViolationReportGenerator;
@@ -39,7 +39,7 @@ public class PolicyViolationsReportGeneratorTest {
 
     @Disabled("Until HTML report is generated")
     @Test
-    public void thatBothReportsAreGenerated() throws Exception {
+    void thatBothReportsAreGenerated() throws Exception {
         List<PolicyViolation> policyViolations = aListOfPolicyViolations().build();
         policyViolationReportGenerator.generate(null, policyViolations);
 
@@ -48,7 +48,7 @@ public class PolicyViolationsReportGeneratorTest {
     }
 
     @Test
-    public void thatExceptionWhenWritingXmlReportIsHandledAndHtmlIsNotAttempted() throws Exception {
+    void thatExceptionWhenWritingXmlReportIsHandledAndHtmlIsNotAttempted() throws Exception {
 
         doThrow(DependencyTrackException.class)
                 .when(xmlReportWriter)
@@ -66,7 +66,7 @@ public class PolicyViolationsReportGeneratorTest {
 
     @Disabled("Until HTML report is generated")
     @Test
-    public void thatExceptionWhenWritingHtmlReportIsHandled() throws Exception {
+    void thatExceptionWhenWritingHtmlReportIsHandled() throws Exception {
 
         doThrow(DependencyTrackException.class).when(htmlReportWriter).write(isNull());
 

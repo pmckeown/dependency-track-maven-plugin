@@ -19,10 +19,10 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class PollerTest {
+class PollerTest {
 
     @Test
-    public void thatThatPopulatedOptionalExitsThePollingLoop() {
+    void thatThatPopulatedOptionalExitsThePollingLoop() {
         String returnValue = "Returned from callable";
 
         Poller<String> poller = new Poller<>();
@@ -37,7 +37,7 @@ public class PollerTest {
     }
 
     @Test
-    public void thatThatEmptyOptionalLoopsTheMaximumNumberOfTimesThenThrowsException() {
+    void thatThatEmptyOptionalLoopsTheMaximumNumberOfTimesThenThrowsException() {
         PollingConfig pollingConfig = new PollingConfig(true, 1, 5, MILLIS);
         Poller<String> poller = new Poller<>();
         final int[] pollLoopCounter = {0};
@@ -55,7 +55,7 @@ public class PollerTest {
     }
 
     @Test
-    public void thatThatExceptionDuringPollingExitsWithException() {
+    void thatThatExceptionDuringPollingExitsWithException() {
         PollingConfig pollingConfig = new PollingConfig(true, 1, 1, MILLIS);
         Poller<String> poller = new Poller<>();
 
@@ -71,7 +71,7 @@ public class PollerTest {
     }
 
     @Test
-    public void IfPollingDisabledTheCallableIsExecutedOnlyOnce() {
+    void IfPollingDisabledTheCallableIsExecutedOnlyOnce() {
         PollingConfig pollingConfig = new PollingConfig(false, 1, 5, MILLIS);
         Poller<String> poller = new Poller<>();
         final int[] pollLoopCounter = {0};

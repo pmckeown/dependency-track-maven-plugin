@@ -30,7 +30,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class ScoreActionTest {
+class ScoreActionTest {
 
     private static final Integer INHERITED_RISK_SCORE_THRESHOLD = 3;
 
@@ -47,7 +47,7 @@ public class ScoreActionTest {
     private Logger logger;
 
     @Test
-    public void thatWhenAnExceptionOccursGettingProjectsThenAnExceptionIsThrown() {
+    void thatWhenAnExceptionOccursGettingProjectsThenAnExceptionIsThrown() {
         assertThrows(DependencyTrackException.class, () -> {
             doThrow(UnirestException.class).when(projectClient).getProject(anyString(), anyString(), anyString());
 
@@ -57,7 +57,7 @@ public class ScoreActionTest {
     }
 
     @Test
-    public void thatWhenNoProjectsAreFoundThenAnExceptionIsThrown() {
+    void thatWhenNoProjectsAreFoundThenAnExceptionIsThrown() {
         assertThrows(DependencyTrackException.class, () -> {
             doReturn(new Response(404, "Not Found", false))
                     .when(projectClient)
@@ -69,7 +69,7 @@ public class ScoreActionTest {
     }
 
     @Test
-    public void thatWhenTheCurrentProjectHasMetricsInItThenTheScoreIsReturned() throws Exception {
+    void thatWhenTheCurrentProjectHasMetricsInItThenTheScoreIsReturned() throws Exception {
         Project project =
                 aProject().withMetrics(aMetrics().withInheritedRiskScore(100)).build();
         doReturn(aSuccessResponse().withBody(project).build())
@@ -83,7 +83,7 @@ public class ScoreActionTest {
     }
 
     @Test
-    public void thatWhenTheCurrentProjectHasNoMetricsInItTheyAreRequestedAndThenTheScoreIsReturned() throws Exception {
+    void thatWhenTheCurrentProjectHasNoMetricsInItTheyAreRequestedAndThenTheScoreIsReturned() throws Exception {
         Project project = aProject().build();
         doReturn(aSuccessResponse().withBody(project).build())
                 .when(projectClient)
@@ -99,7 +99,7 @@ public class ScoreActionTest {
     }
 
     @Test
-    public void thatWhenTheCurrentProjectScoreIsZeroThenTheScoreIsReturned() throws Exception {
+    void thatWhenTheCurrentProjectScoreIsZeroThenTheScoreIsReturned() throws Exception {
         Project project = aProject().build();
         doReturn(aSuccessResponse().withBody(project).build())
                 .when(projectClient)

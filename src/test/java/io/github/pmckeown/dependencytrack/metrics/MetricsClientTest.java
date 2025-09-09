@@ -32,7 +32,7 @@ import org.mockito.quality.Strictness;
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
 @WireMockTest
-public class MetricsClientTest {
+class MetricsClientTest {
 
     @InjectMocks
     private MetricsClient metricsClient;
@@ -44,7 +44,7 @@ public class MetricsClientTest {
     private CommonConfig commonConfig;
 
     @Test
-    public void thatMetricsAreReturnedCorrectly(WireMockRuntimeInfo wmri) {
+    void thatMetricsAreReturnedCorrectly(WireMockRuntimeInfo wmri) {
         doReturn("http://localhost:" + wmri.getHttpPort()).when(commonConfig).getDependencyTrackBaseUrl();
         doReturn("api123").when(commonConfig).getApiKey();
         stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT))
@@ -74,7 +74,7 @@ public class MetricsClientTest {
     }
 
     @Test
-    public void thatASuccessfulMetricsRefreshReturnsAnEmptyResponse(WireMockRuntimeInfo wmri) {
+    void thatASuccessfulMetricsRefreshReturnsAnEmptyResponse(WireMockRuntimeInfo wmri) {
         doReturn("http://localhost:" + wmri.getHttpPort()).when(commonConfig).getDependencyTrackBaseUrl();
         doReturn("api123").when(commonConfig).getApiKey();
         stubFor(get(urlPathMatching(V1_METRICS_PROJECT_REFRESH)).willReturn(ok()));

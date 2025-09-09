@@ -12,10 +12,10 @@ import io.github.pmckeown.dependencytrack.policyviolation.Policy;
 import io.github.pmckeown.dependencytrack.policyviolation.ViolationState;
 import org.junit.jupiter.api.Test;
 
-public class PolicyViolationsReportTest {
+class PolicyViolationsReportTest {
 
     @Test
-    public void thatAPolicyViolationReportCanBeGenerated() {
+    void thatAPolicyViolationReportCanBeGenerated() {
         PolicyViolationsReport policyViolationReport = new PolicyViolationsReport(aListOfPolicyViolations()
                 .withPolicyViolation(aPolicyViolation()
                         .withType("SEVERITY")

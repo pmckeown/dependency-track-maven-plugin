@@ -30,7 +30,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class PolicyViolationsActionTest {
+class PolicyViolationsActionTest {
 
     @InjectMocks
     private PolicyViolationsAction policyAction;
@@ -42,7 +42,7 @@ public class PolicyViolationsActionTest {
     private Logger logger;
 
     @Test
-    public void thatPolicyViolationsAreReturned() throws Exception {
+    void thatPolicyViolationsAreReturned() throws Exception {
         Project project = aProject().build();
         List<PolicyViolation> policyViolations = aListOfPolicyViolations()
                 .withPolicyViolation(aPolicyViolation()
@@ -62,7 +62,7 @@ public class PolicyViolationsActionTest {
     }
 
     @Test
-    public void thatWhenNoViolationsAreReturnedThenAnEmptyListIsReturned() throws Exception {
+    void thatWhenNoViolationsAreReturnedThenAnEmptyListIsReturned() throws Exception {
         Project project = aProject().build();
         doReturn(aSuccessResponse().build()).when(policyClient).getPolicyViolationsForProject(project);
 
@@ -71,7 +71,7 @@ public class PolicyViolationsActionTest {
     }
 
     @Test
-    public void thatAnErrorResponseIsReceivedAnExceptionIsThrown() {
+    void thatAnErrorResponseIsReceivedAnExceptionIsThrown() {
         Project project = aProject().build();
         doReturn(aNotFoundResponse().build()).when(policyClient).getPolicyViolationsForProject(project);
 
@@ -84,7 +84,7 @@ public class PolicyViolationsActionTest {
     }
 
     @Test
-    public void thatWhenAClientExceptionIsEncounteredAnExceptionIsThrown() {
+    void thatWhenAClientExceptionIsEncounteredAnExceptionIsThrown() {
         Project project = aProject().build();
         doThrow(UnirestException.class).when(policyClient).getPolicyViolationsForProject(project);
 

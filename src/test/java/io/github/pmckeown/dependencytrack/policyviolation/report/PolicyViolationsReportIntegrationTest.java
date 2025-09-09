@@ -14,17 +14,18 @@ import io.github.pmckeown.dependencytrack.policyviolation.ViolationState;
 import io.github.pmckeown.dependencytrack.report.TransformerFactoryProvider;
 import java.io.File;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class PolicyViolationsReportIntegrationTest {
+class PolicyViolationsReportIntegrationTest {
 
     private PolicyViolationsXmlReportWriter xmlReportWriter;
     private PolicyViolationsHtmlReportWriter htmlReportWriter;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         PolicyViolationsReportMarshallerService PolicyViolationsMarshallerService =
                 new PolicyViolationsReportMarshallerService();
         xmlReportWriter = new PolicyViolationsXmlReportWriter(PolicyViolationsMarshallerService);
@@ -32,20 +33,21 @@ public class PolicyViolationsReportIntegrationTest {
     }
 
     @Test
-    public void thatXmlFileCanBeGenerated() {
-        try {
-            File outputDirectory = new File("target");
-            xmlReportWriter.write(outputDirectory, new PolicyViolationsReport(policyViolations()));
-            assertThat(
-                    new File(outputDirectory, PolicyViolationsReportConstants.XML_REPORT_FILENAME).exists(), is(true));
-        } catch (Exception ex) {
-            fail("Exception not expected");
-        }
+    void thatXmlFileCanBeGenerated() {
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    File outputDirectory = new File("target");
+                    xmlReportWriter.write(outputDirectory, new PolicyViolationsReport(policyViolations()));
+                    assertThat(
+                            new File(outputDirectory, PolicyViolationsReportConstants.XML_REPORT_FILENAME).exists(),
+                            is(true));
+                },
+                "Exception not expected");
     }
 
     @Disabled("Until XSL Stylesheet is created")
     @Test
-    public void thatXmlFileCanBeTransformed() {
+    void thatXmlFileCanBeTransformed() {
         try {
             File outputDirectory = new File("target");
             xmlReportWriter.write(outputDirectory, new PolicyViolationsReport(policyViolations()));

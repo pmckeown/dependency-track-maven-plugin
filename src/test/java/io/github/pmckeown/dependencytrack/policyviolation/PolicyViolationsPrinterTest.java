@@ -22,7 +22,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class PolicyViolationsPrinterTest {
+class PolicyViolationsPrinterTest {
 
     @InjectMocks
     private PolicyViolationsPrinter policyViolationsPrinter;
@@ -31,7 +31,7 @@ public class PolicyViolationsPrinterTest {
     private Logger logger;
 
     @Test
-    public void thatWhenNoViolationsAreRetrievedThatIsLogged() {
+    void thatWhenNoViolationsAreRetrievedThatIsLogged() {
         // Act
         Project project = aProject().withName("X").build();
         policyViolationsPrinter.printPolicyViolations(project, null);
@@ -41,7 +41,7 @@ public class PolicyViolationsPrinterTest {
     }
 
     @Test
-    public void thatAPolicyViolationIsPrintedCorrectly() {
+    void thatAPolicyViolationIsPrintedCorrectly() {
         Project project = aProject().withName("a").withVersion("1").build();
         List<PolicyViolation> policyViolations = policyViolationsList("SEVERITY", "p1", ViolationState.INFO);
         policyViolationsPrinter.printPolicyViolations(project, policyViolations);
@@ -53,7 +53,7 @@ public class PolicyViolationsPrinterTest {
     }
 
     @Test
-    public void thatMultiplePolicyViolationsArePrintedCorrectly() {
+    void thatMultiplePolicyViolationsArePrintedCorrectly() {
         Project project = aProject().withName("a").withVersion("1").build();
         policyViolationsPrinter.printPolicyViolations(
                 project,

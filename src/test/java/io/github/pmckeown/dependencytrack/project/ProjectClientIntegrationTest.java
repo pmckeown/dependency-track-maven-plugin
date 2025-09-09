@@ -26,7 +26,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTest {
+class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @InjectMocks
     private ProjectClient projectClient;
@@ -38,13 +38,13 @@ public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTes
     private ModuleConfig moduleConfig;
 
     @BeforeEach
-    public void setUp(WireMockRuntimeInfo wmri) {
+    void setUp(WireMockRuntimeInfo wmri) {
         doReturn("http://localhost:" + wmri.getHttpPort()).when(commonConfig).getDependencyTrackBaseUrl();
         projectClient = new ProjectClient(commonConfig);
     }
 
     @Test
-    public void thatProjectInfoUpdateReturnsSuccessWhenServerReturnsSuccess() {
+    void thatProjectInfoUpdateReturnsSuccessWhenServerReturnsSuccess() {
         stubFor(patch(urlPathMatching(V1_PROJECT_UUID)).willReturn(aResponse().withStatus(HttpStatus.OK)));
 
         Response<Void> response = projectClient.patchProject(
@@ -54,7 +54,7 @@ public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatProjectParsingWorks() {
+    void thatProjectParsingWorks() {
         doReturn("doesn't matter").when(moduleConfig).getProjectName();
         doReturn("doesn't matter").when(moduleConfig).getProjectVersion();
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
@@ -74,7 +74,7 @@ public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatProjectInfoUpdateReturnsSuccessWhenServerReturnsNotModified() {
+    void thatProjectInfoUpdateReturnsSuccessWhenServerReturnsNotModified() {
         stubFor(patch(urlPathMatching(V1_PROJECT_UUID)).willReturn(aResponse().withStatus(HttpStatus.NOT_MODIFIED)));
 
         Response<Void> response = projectClient.patchProject(
@@ -84,7 +84,7 @@ public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatProjectInfoUpdateReturnsFailedWhenServerReturnsTeapot() {
+    void thatProjectInfoUpdateReturnsFailedWhenServerReturnsTeapot() {
         stubFor(patch(urlPathMatching(V1_PROJECT_UUID)).willReturn(aResponse().withStatus(HttpStatus.IM_A_TEAPOT)));
 
         Response<Void> response = projectClient.patchProject(

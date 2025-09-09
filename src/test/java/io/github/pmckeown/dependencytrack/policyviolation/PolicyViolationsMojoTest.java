@@ -19,7 +19,7 @@ import org.mockito.quality.Strictness;
 @MockitoSettings(strictness = Strictness.WARN)
 @SuppressWarnings("unused")
 @ExtendWith(MockitoExtension.class)
-public class PolicyViolationsMojoTest {
+class PolicyViolationsMojoTest {
 
     @InjectMocks
     private PolicyViolationsMojo policyMojo;
@@ -49,14 +49,14 @@ public class PolicyViolationsMojoTest {
     private Logger logger;
 
     @Test
-    public void thatReportIsAlwaysGeneratedEvenWhenNoFindingsArePresent() throws Exception {
+    void thatReportIsAlwaysGeneratedEvenWhenNoFindingsArePresent() throws Exception {
         policyMojo.performAction();
 
         verify(policyViolationReportGenerator, times(1)).generate(null, new ArrayList<>());
     }
 
     @Test
-    public void thatReportIsNotGeneratedWhenSkipIsTrue() throws Exception {
+    void thatReportIsNotGeneratedWhenSkipIsTrue() throws Exception {
         policyMojo.setSkip("true");
 
         policyMojo.execute();

@@ -31,7 +31,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class FindingsActionTest {
+class FindingsActionTest {
 
     @InjectMocks
     private FindingsAction findingAction;
@@ -43,7 +43,7 @@ public class FindingsActionTest {
     private Logger logger;
 
     @Test
-    public void thatFindingsAreReturned() throws Exception {
+    void thatFindingsAreReturned() throws Exception {
         Project project = aProject().build();
         List<Finding> findings = aListOfFindings()
                 .withFinding(aFinding()
@@ -62,7 +62,7 @@ public class FindingsActionTest {
     }
 
     @Test
-    public void thatWhenNoFindingsAreReturnedThenAnEmptyListIsReturned() throws Exception {
+    void thatWhenNoFindingsAreReturnedThenAnEmptyListIsReturned() throws Exception {
         Project project = aProject().build();
         doReturn(aSuccessResponse().build()).when(findingClient).getFindingsForProject(project);
 
@@ -71,7 +71,7 @@ public class FindingsActionTest {
     }
 
     @Test
-    public void thatAnErrorResponseIsReceivedAnExceptionIsThrown() {
+    void thatAnErrorResponseIsReceivedAnExceptionIsThrown() {
         Project project = aProject().build();
         doReturn(aNotFoundResponse().build()).when(findingClient).getFindingsForProject(project);
 
@@ -84,7 +84,7 @@ public class FindingsActionTest {
     }
 
     @Test
-    public void thatWhenAClientExceptionIsEncounteredAnExceptionIsThrown() {
+    void thatWhenAClientExceptionIsEncounteredAnExceptionIsThrown() {
         Project project = aProject().build();
         doThrow(UnirestException.class).when(findingClient).getFindingsForProject(project);
 

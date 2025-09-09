@@ -34,7 +34,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class UploadBomActionTest {
+class UploadBomActionTest {
 
     private static final String BOM_LOCATION = "target/test-classes/projects/run/bom.xml";
 
@@ -57,7 +57,7 @@ public class UploadBomActionTest {
     private Logger logger;
 
     @Test
-    public void thatWhenNoBomIsFoundThenFalseIsReturned() throws Exception {
+    void thatWhenNoBomIsFoundThenFalseIsReturned() throws Exception {
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
         boolean success = uploadBomAction.upload(moduleConfig, false);
@@ -66,7 +66,7 @@ public class UploadBomActionTest {
     }
 
     @Test
-    public void thatBomCanBeUploadedSuccessfully() throws Exception {
+    void thatBomCanBeUploadedSuccessfully() throws Exception {
         doReturn(BOM_LOCATION).when(moduleConfig).getBomLocation();
         doReturn(anUploadBomSuccessResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class), anyBoolean());
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
@@ -77,7 +77,7 @@ public class UploadBomActionTest {
     }
 
     @Test
-    public void thatBomUploadFailureReturnsFalse() {
+    void thatBomUploadFailureReturnsFalse() {
         doReturn(BOM_LOCATION).when(moduleConfig).getBomLocation();
         doReturn(aNotFoundResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class), anyBoolean());
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
@@ -91,7 +91,7 @@ public class UploadBomActionTest {
     }
 
     @Test
-    public void thatBomUploadExceptionResultsInException() {
+    void thatBomUploadExceptionResultsInException() {
         doReturn(BOM_LOCATION).when(moduleConfig).getBomLocation();
         doThrow(RuntimeException.class).when(bomClient).uploadBom(any(), anyBoolean());
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
@@ -105,7 +105,7 @@ public class UploadBomActionTest {
     }
 
     @Test
-    public void thatWhenPollingIsEnabledThatTheServerIsQueriedUntilBomIsFullyProcessed() throws Exception {
+    void thatWhenPollingIsEnabledThatTheServerIsQueriedUntilBomIsFullyProcessed() throws Exception {
         doReturn(BOM_LOCATION).when(moduleConfig).getBomLocation();
         doReturn(anUploadBomSuccessResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class), anyBoolean());
         doReturn(new PollingConfig(true, 1, 3, MILLIS)).when(commonConfig).getPollingConfig();

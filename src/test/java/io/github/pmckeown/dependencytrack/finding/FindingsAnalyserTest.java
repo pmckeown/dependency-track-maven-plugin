@@ -14,11 +14,11 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import io.github.pmckeown.util.Logger;
 import java.util.List;
 import org.apache.maven.plugin.MojoFailureException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,7 +29,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class FindingsAnalyserTest {
+class FindingsAnalyserTest {
 
     @InjectMocks
     private FindingsAnalyser findingAnalyser;
@@ -38,7 +38,7 @@ public class FindingsAnalyserTest {
     private Logger logger;
 
     @Test
-    public void thatWhenNoThresholdIsProvidedThePolicyCannotBeBreached() {
+    void thatWhenNoThresholdIsProvidedThePolicyCannotBeBreached() {
         boolean isPolicyBreached =
                 findingAnalyser.doNumberOfFindingsBreachPolicy(aListOfFindings().build(), null);
 
@@ -46,7 +46,7 @@ public class FindingsAnalyserTest {
     }
 
     @Test
-    public void thatACriticalIssueCountGreaterThanTheDefinedThresholdWillThrowMojoFailureException() {
+    void thatACriticalIssueCountGreaterThanTheDefinedThresholdWillThrowMojoFailureException() {
         List<Finding> findings = aListOfFindings()
                 .withFinding(
                         aDefaultFinding().withVulnerability(aVulnerability().withSeverity(CRITICAL)))
@@ -60,36 +60,37 @@ public class FindingsAnalyserTest {
     }
 
     @Test
-    public void thatACriticalIssueCountLessThanTheDefinedThresholdWillNotThrowMojoFailureException() {
+    void thatACriticalIssueCountLessThanTheDefinedThresholdWillNotThrowMojoFailureException() {
         List<Finding> findings = aListOfFindings()
                 .withFinding(
                         aDefaultFinding().withVulnerability(aVulnerability().withSeverity(CRITICAL)))
                 .build();
 
-        try {
-            findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(2, 0, 0, 0, 0));
-        } catch (Exception ex) {
-            fail("No exception expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(2, 0, 0, 0, 0));
+                },
+                "No exception expected");
     }
 
     @Test
-    public void thatASuppressedCriticalIssueCountWillNotThrowMojoFailureException() {
+    void thatASuppressedCriticalIssueCountWillNotThrowMojoFailureException() {
         List<Finding> findings = aListOfFindings()
                 .withFinding(aDefaultFinding()
                         .withVulnerability(aVulnerability().withSeverity(CRITICAL))
                         .withAnalysis(anAnalysis().withSuppressed(true).withState(FALSE_POSITIVE)))
                 .build();
 
-        try {
-            findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(0, null, null, null, null));
-        } catch (Exception ex) {
-            fail("No exception expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    findingAnalyser.doNumberOfFindingsBreachPolicy(
+                            findings, new FindingThresholds(0, null, null, null, null));
+                },
+                "No exception expected");
     }
 
     @Test
-    public void thatAHighIssueCountGreaterThanTheDefinedThresholdWillThrowMojoFailureException() {
+    void thatAHighIssueCountGreaterThanTheDefinedThresholdWillThrowMojoFailureException() {
         List<Finding> findings = aListOfFindings()
                 .withFinding(
                         aDefaultFinding().withVulnerability(aVulnerability().withSeverity(HIGH)))
@@ -103,36 +104,37 @@ public class FindingsAnalyserTest {
     }
 
     @Test
-    public void thatAHighIssueCountLessThanTheDefinedThresholdWillNotThrowMojoFailureException() {
+    void thatAHighIssueCountLessThanTheDefinedThresholdWillNotThrowMojoFailureException() {
         List<Finding> findings = aListOfFindings()
                 .withFinding(
                         aDefaultFinding().withVulnerability(aVulnerability().withSeverity(HIGH)))
                 .build();
 
-        try {
-            findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(0, 2, 0, 0, 0));
-        } catch (Exception ex) {
-            fail("No exception expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(0, 2, 0, 0, 0));
+                },
+                "No exception expected");
     }
 
     @Test
-    public void thatASuppressedHighIssueCountWillNotThrowMojoFailureException() {
+    void thatASuppressedHighIssueCountWillNotThrowMojoFailureException() {
         List<Finding> findings = aListOfFindings()
                 .withFinding(aDefaultFinding()
                         .withVulnerability(aVulnerability().withSeverity(HIGH))
                         .withAnalysis(anAnalysis().withSuppressed(true).withState(FALSE_POSITIVE)))
                 .build();
 
-        try {
-            findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(null, 0, null, null, null));
-        } catch (Exception ex) {
-            fail("No exception expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    findingAnalyser.doNumberOfFindingsBreachPolicy(
+                            findings, new FindingThresholds(null, 0, null, null, null));
+                },
+                "No exception expected");
     }
 
     @Test
-    public void thatAMediumIssueCountGreaterThanTheDefinedThresholdWillThrowMojoFailureException() {
+    void thatAMediumIssueCountGreaterThanTheDefinedThresholdWillThrowMojoFailureException() {
         List<Finding> findings = aListOfFindings()
                 .withFinding(
                         aDefaultFinding().withVulnerability(aVulnerability().withSeverity(MEDIUM)))
@@ -146,36 +148,37 @@ public class FindingsAnalyserTest {
     }
 
     @Test
-    public void thatAMediumIssueCountLessThanTheDefinedThresholdWillNotThrowMojoFailureException() {
+    void thatAMediumIssueCountLessThanTheDefinedThresholdWillNotThrowMojoFailureException() {
         List<Finding> findings = aListOfFindings()
                 .withFinding(
                         aDefaultFinding().withVulnerability(aVulnerability().withSeverity(MEDIUM)))
                 .build();
 
-        try {
-            findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(0, 0, 2, 0, 0));
-        } catch (Exception ex) {
-            fail("No exception expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(0, 0, 2, 0, 0));
+                },
+                "No exception expected");
     }
 
     @Test
-    public void thatASuppressedMediumIssueCountWillNotThrowMojoFailureException() {
+    void thatASuppressedMediumIssueCountWillNotThrowMojoFailureException() {
         List<Finding> findings = aListOfFindings()
                 .withFinding(aDefaultFinding()
                         .withVulnerability(aVulnerability().withSeverity(MEDIUM))
                         .withAnalysis(anAnalysis().withSuppressed(true).withState(FALSE_POSITIVE)))
                 .build();
 
-        try {
-            findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(null, null, 0, null, null));
-        } catch (Exception ex) {
-            fail("No exception expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    findingAnalyser.doNumberOfFindingsBreachPolicy(
+                            findings, new FindingThresholds(null, null, 0, null, null));
+                },
+                "No exception expected");
     }
 
     @Test
-    public void thatALowIssueCountGreaterThanTheDefinedThresholdWillThrowMojoFailureException() {
+    void thatALowIssueCountGreaterThanTheDefinedThresholdWillThrowMojoFailureException() {
         List<Finding> findings = aListOfFindings()
                 .withFinding(
                         aDefaultFinding().withVulnerability(aVulnerability().withSeverity(LOW)))
@@ -189,36 +192,37 @@ public class FindingsAnalyserTest {
     }
 
     @Test
-    public void thatALowIssueCountLessThanTheDefinedThresholdWillNotThrowMojoFailureException() {
+    void thatALowIssueCountLessThanTheDefinedThresholdWillNotThrowMojoFailureException() {
         List<Finding> findings = aListOfFindings()
                 .withFinding(
                         aDefaultFinding().withVulnerability(aVulnerability().withSeverity(LOW)))
                 .build();
 
-        try {
-            findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(0, 0, 0, 2, 0));
-        } catch (Exception ex) {
-            fail("No exception expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(0, 0, 0, 2, 0));
+                },
+                "No exception expected");
     }
 
     @Test
-    public void thatASuppressedLowIssueCountWillNotThrowMojoFailureException() {
+    void thatASuppressedLowIssueCountWillNotThrowMojoFailureException() {
         List<Finding> findings = aListOfFindings()
                 .withFinding(aDefaultFinding()
                         .withVulnerability(aVulnerability().withSeverity(LOW))
                         .withAnalysis(anAnalysis().withSuppressed(true).withState(FALSE_POSITIVE)))
                 .build();
 
-        try {
-            findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(null, null, null, 0, null));
-        } catch (Exception ex) {
-            fail("No exception expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    findingAnalyser.doNumberOfFindingsBreachPolicy(
+                            findings, new FindingThresholds(null, null, null, 0, null));
+                },
+                "No exception expected");
     }
 
     @Test
-    public void thatAUnassignedIssueCountGreaterThanTheDefinedThresholdWillThrowMojoFailureException() {
+    void thatAUnassignedIssueCountGreaterThanTheDefinedThresholdWillThrowMojoFailureException() {
         List<Finding> findings = aListOfFindings()
                 .withFinding(
                         aDefaultFinding().withVulnerability(aVulnerability().withSeverity(UNASSIGNED)))
@@ -232,31 +236,32 @@ public class FindingsAnalyserTest {
     }
 
     @Test
-    public void thatAUnassignedIssueCountLessThanTheDefinedThresholdWillNotThrowMojoFailureException() {
+    void thatAUnassignedIssueCountLessThanTheDefinedThresholdWillNotThrowMojoFailureException() {
         List<Finding> findings = aListOfFindings()
                 .withFinding(
                         aDefaultFinding().withVulnerability(aVulnerability().withSeverity(UNASSIGNED)))
                 .build();
 
-        try {
-            findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(0, 0, 0, 0, 2));
-        } catch (Exception ex) {
-            fail("No exception expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(0, 0, 0, 0, 2));
+                },
+                "No exception expected");
     }
 
     @Test
-    public void thatASuppressedUnassignedIssueCountWillNotThrowMojoFailureException() {
+    void thatASuppressedUnassignedIssueCountWillNotThrowMojoFailureException() {
         List<Finding> findings = aListOfFindings()
                 .withFinding(aDefaultFinding()
                         .withVulnerability(aVulnerability().withSeverity(UNASSIGNED))
                         .withAnalysis(anAnalysis().withSuppressed(true).withState(FALSE_POSITIVE)))
                 .build();
 
-        try {
-            findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(null, null, null, null, 0));
-        } catch (Exception ex) {
-            fail("No exception expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    findingAnalyser.doNumberOfFindingsBreachPolicy(
+                            findings, new FindingThresholds(null, null, null, null, 0));
+                },
+                "No exception expected");
     }
 }

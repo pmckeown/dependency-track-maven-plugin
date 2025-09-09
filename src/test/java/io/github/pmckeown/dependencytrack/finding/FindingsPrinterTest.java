@@ -27,7 +27,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class FindingsPrinterTest {
+class FindingsPrinterTest {
 
     @InjectMocks
     private FindingsPrinter findingsPrinter;
@@ -36,7 +36,7 @@ public class FindingsPrinterTest {
     private Logger logger;
 
     @Test
-    public void thatWhenNoFindingsAreRetrievedThatIsLogged() {
+    void thatWhenNoFindingsAreRetrievedThatIsLogged() {
         // Act
         Project project = aProject().withName("X").build();
         findingsPrinter.printFindings(project, null);
@@ -46,7 +46,7 @@ public class FindingsPrinterTest {
     }
 
     @Test
-    public void thatWhenSomeFindingsAreRetrievedThatIsLogged() {
+    void thatWhenSomeFindingsAreRetrievedThatIsLogged() {
         // Act
         Project project = aProject().withName("X").build();
         List<Finding> findings = findingsList("whatever", true);
@@ -57,7 +57,7 @@ public class FindingsPrinterTest {
     }
 
     @Test
-    public void thatAnUnsuppressedSingleFindingIsPrintedCorrectly() {
+    void thatAnUnsuppressedSingleFindingIsPrintedCorrectly() {
         String descriptionPart = repeat("x", DELIMITER.length());
         String longDescription = repeat(descriptionPart, 4);
         Project project = aProject().withName("a").withVersion("1").build();
@@ -73,7 +73,7 @@ public class FindingsPrinterTest {
     }
 
     @Test
-    public void thatASuppressedSingleFindingIsPrintedCorrectly() {
+    void thatASuppressedSingleFindingIsPrintedCorrectly() {
         Project project = aProject().withName("a").withVersion("1").build();
         List<Finding> findings = findingsList(null, true);
         findingsPrinter.printFindings(project, findings);
@@ -89,7 +89,7 @@ public class FindingsPrinterTest {
      * Regression test for issue: https://github.com/pmckeown/dependency-track-maven-plugin/issues/89
      */
     @Test
-    public void thatPercentCharactersInFindingsOutputAreEscapedForFormatting() {
+    void thatPercentCharactersInFindingsOutputAreEscapedForFormatting() {
         String findingContent = "crafted value that contains both ${} and %{} sequences, which causes";
         Project project = aProject().withName("a").withVersion("1").build();
         List<Finding> findings = findingsList(findingContent, false);
@@ -103,7 +103,7 @@ public class FindingsPrinterTest {
      * Regression test for issue: https://github.com/pmckeown/dependency-track-maven-plugin/issues/89
      */
     @Test
-    public void thatNewLineCharactersInFindingsOutputAreRemovedForFormatting() {
+    void thatNewLineCharactersInFindingsOutputAreRemovedForFormatting() {
         String findingContent = "be vulnerable.\n> \n> -- [redhat.com](https://bugzilla.redhat.com/show_bug";
         Project project = aProject().withName("a").withVersion("1").build();
         List<Finding> findings = findingsList(findingContent, false);
@@ -115,7 +115,7 @@ public class FindingsPrinterTest {
 
     /** Test for issue: https://github.com/pmckeown/dependency-track-maven-plugin/issues/281 */
     @Test
-    public void thatSanitisedContentPrintableWhenItShrinksAcrossAChunkBoundary() {
+    void thatSanitisedContentPrintableWhenItShrinksAcrossAChunkBoundary() {
         int chunkSize = findingsPrinter.getPrintWidth();
         String findingContent = repeat("x", chunkSize - 1) + repeat("\n", 3) + repeat("y", chunkSize - 1);
         Project project = aProject().withName("a").withVersion("1").build();

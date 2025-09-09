@@ -18,7 +18,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class ModuleConfigTest {
+class ModuleConfigTest {
 
     @Mock
     private MavenProject project;
@@ -27,13 +27,13 @@ public class ModuleConfigTest {
     private ModuleConfig moduleConfig;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         moduleConfig = new ModuleConfig();
         moduleConfig.setMavenProject(project);
     }
 
     @Test
-    public void thatTheBomLocationIsDefaultedWhenNotSupplied() {
+    void thatTheBomLocationIsDefaultedWhenNotSupplied() {
         doReturn(new File(".")).when(project).getBasedir();
 
         assertThat(moduleConfig.getBomLocation(), is(equalTo("./target/bom.xml")));

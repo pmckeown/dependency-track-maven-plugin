@@ -22,7 +22,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class PolicyViolationsAnalyserTest {
+class PolicyViolationsAnalyserTest {
 
     @InjectMocks
     private PolicyViolationsAnalyser policyAnalyser;
@@ -31,7 +31,7 @@ public class PolicyViolationsAnalyserTest {
     private Logger logger;
 
     @Test
-    public void thatInfoLevelPolicyViolationsWithFailOnWarnFalseDoesNotResultInPolicyBreach() {
+    void thatInfoLevelPolicyViolationsWithFailOnWarnFalseDoesNotResultInPolicyBreach() {
         boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
                 aListOfPolicyViolations()
                         .withPolicyViolation(aPolicyViolation()
@@ -48,7 +48,7 @@ public class PolicyViolationsAnalyserTest {
     }
 
     @Test
-    public void thatInfoLevelPolicyViolationsWithFailOnWarnTrueDoesNotResultInPolicyBreach() {
+    void thatInfoLevelPolicyViolationsWithFailOnWarnTrueDoesNotResultInPolicyBreach() {
         boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
                 aListOfPolicyViolations()
                         .withPolicyViolation(aPolicyViolation()
@@ -65,7 +65,7 @@ public class PolicyViolationsAnalyserTest {
     }
 
     @Test
-    public void thatWarnLevelPolicyViolationsWithFailOnWarnFalseDoesNotResultInPolicyBreach() {
+    void thatWarnLevelPolicyViolationsWithFailOnWarnFalseDoesNotResultInPolicyBreach() {
         boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
                 aListOfPolicyViolations()
                         .withPolicyViolation(aPolicyViolation()
@@ -82,7 +82,7 @@ public class PolicyViolationsAnalyserTest {
     }
 
     @Test
-    public void thatWarnLevelPolicyViolationsWithFailOnWarnTrueDoesResultInPolicyBreach() {
+    void thatWarnLevelPolicyViolationsWithFailOnWarnTrueDoesResultInPolicyBreach() {
         boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
                 aListOfPolicyViolations()
                         .withPolicyViolation(aPolicyViolation()
@@ -99,7 +99,7 @@ public class PolicyViolationsAnalyserTest {
     }
 
     @Test
-    public void thatFailLevelPolicyViolationsWithFailOnWarnFalseDoesResultInPolicyBreach() {
+    void thatFailLevelPolicyViolationsWithFailOnWarnFalseDoesResultInPolicyBreach() {
         boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
                 aListOfPolicyViolations()
                         .withPolicyViolation(aPolicyViolation()
@@ -116,7 +116,7 @@ public class PolicyViolationsAnalyserTest {
     }
 
     @Test
-    public void thatFailLevelPolicyViolationsWithFailOnWarnTrueDoesResultInPolicyBreach() {
+    void thatFailLevelPolicyViolationsWithFailOnWarnTrueDoesResultInPolicyBreach() {
         boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
                 aListOfPolicyViolations()
                         .withPolicyViolation(aPolicyViolation()

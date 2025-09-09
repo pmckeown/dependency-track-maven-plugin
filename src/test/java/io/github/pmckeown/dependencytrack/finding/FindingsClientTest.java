@@ -43,7 +43,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class FindingsClientTest extends AbstractDependencyTrackIntegrationTest {
+class FindingsClientTest extends AbstractDependencyTrackIntegrationTest {
 
     @InjectMocks
     private FindingsClient findingClient;
@@ -52,12 +52,12 @@ public class FindingsClientTest extends AbstractDependencyTrackIntegrationTest {
     private Logger logger;
 
     @BeforeEach
-    public void setUp(WireMockRuntimeInfo wmri) {
+    void setUp(WireMockRuntimeInfo wmri) {
         findingClient = new FindingsClient(getCommonConfig(wmri), logger);
     }
 
     @Test
-    public void thatFindingsCanBeRetrieved() throws Exception {
+    void thatFindingsCanBeRetrieved() throws Exception {
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
                 .willReturn(aResponse()
                         .withBody(asJson(aListOfFindings()
@@ -85,7 +85,7 @@ public class FindingsClientTest extends AbstractDependencyTrackIntegrationTest {
     }
 
     @Test
-    public void thatFailureToGetFindingsReturnsAnErrorResponse() {
+    void thatFailureToGetFindingsReturnsAnErrorResponse() {
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(badRequest()));
 
         Response<List<Finding>> response =
@@ -97,7 +97,7 @@ public class FindingsClientTest extends AbstractDependencyTrackIntegrationTest {
     }
 
     @Test
-    public void thatAnErrorToGetFindingsThrowsException() {
+    void thatAnErrorToGetFindingsThrowsException() {
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
                 .willReturn(aResponse().withFault(Fault.RANDOM_DATA_THEN_CLOSE)));
 

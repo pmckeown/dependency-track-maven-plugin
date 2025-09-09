@@ -16,34 +16,36 @@ import io.github.pmckeown.dependencytrack.finding.Severity;
 import io.github.pmckeown.dependencytrack.report.TransformerFactoryProvider;
 import java.io.File;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class FindingsReportIntegrationTest {
+class FindingsReportIntegrationTest {
 
     private FindingsReportXmlReportWriter xmlReportWriter;
     private FindingsReportHtmlReportWriter htmlReportWriter;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         FindingsReportMarshallerService findingsReportMarshallerService = new FindingsReportMarshallerService();
         xmlReportWriter = new FindingsReportXmlReportWriter(findingsReportMarshallerService);
         htmlReportWriter = new FindingsReportHtmlReportWriter(new TransformerFactoryProvider());
     }
 
     @Test
-    public void thatXmlFileCanBeGenerated() {
-        try {
-            File outputDirectory = new File("target");
-            xmlReportWriter.write(outputDirectory, new FindingsReport(thresholds(), findings(), true));
-            assertThat(new File(outputDirectory, FindingsReportConstants.XML_REPORT_FILENAME).exists(), is(true));
-        } catch (Exception ex) {
-            fail("Exception not expected");
-        }
+    void thatXmlFileCanBeGenerated() {
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    File outputDirectory = new File("target");
+                    xmlReportWriter.write(outputDirectory, new FindingsReport(thresholds(), findings(), true));
+                    assertThat(
+                            new File(outputDirectory, FindingsReportConstants.XML_REPORT_FILENAME).exists(), is(true));
+                },
+                "Exception not expected");
     }
 
     @Test
-    public void thatXmlFileCanBeTransformed() {
+    void thatXmlFileCanBeTransformed() {
         try {
             File outputDirectory = new File("target");
             xmlReportWriter.write(outputDirectory, new FindingsReport(thresholds(), findings(), true));

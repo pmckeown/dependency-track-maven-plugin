@@ -20,15 +20,16 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.PollingConfig;
 import org.apache.maven.plugin.MojoFailureException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
+class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     private ScoreMojo scoreMojo;
 
     @BeforeEach
-    public void setUp(WireMockRuntimeInfo wmri) throws Exception {
+    void setUp(WireMockRuntimeInfo wmri) throws Exception {
         scoreMojo = resolveMojo("score");
         scoreMojo.setDependencyTrackBaseUrl("http://localhost:" + wmri.getHttpPort());
         scoreMojo.setProjectName("dependency-track");
@@ -36,7 +37,7 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    public void thatAllProjectsCanBeRetrieved() throws Exception {
+    void thatAllProjectsCanBeRetrieved() throws Exception {
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
@@ -46,7 +47,7 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    public void thatARiskScoreHigherThanTheThresholdCausesBuildToFailEvenWithFailOnErrorFalse() throws Exception {
+    void thatARiskScoreHigherThanTheThresholdCausesBuildToFailEvenWithFailOnErrorFalse() throws Exception {
         // The current project score in the JSON file is 3
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
@@ -63,52 +64,52 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    public void thatARiskScoreEqualToTheThresholdDoesNothing() throws Exception {
+    void thatARiskScoreEqualToTheThresholdDoesNothing() throws Exception {
         // The current project score in the JSON file is 3
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
         scoreMojo.setInheritedRiskScoreThreshold(3);
 
-        try {
-            scoreMojo.execute();
-        } catch (MojoFailureException ex) {
-            fail("Exception not expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    scoreMojo.execute();
+                },
+                "Exception not expected");
     }
 
     @Test
-    public void thatFailureToGetARiskScoreEqualThrowsAnException() throws Exception {
+    void thatFailureToGetARiskScoreEqualThrowsAnException() throws Exception {
         // The current project score in the JSON file is 3
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
         scoreMojo.setInheritedRiskScoreThreshold(3);
 
-        try {
-            scoreMojo.execute();
-        } catch (MojoFailureException ex) {
-            fail("Exception not expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    scoreMojo.execute();
+                },
+                "Exception not expected");
     }
 
     @Test
-    public void thatARiskScoreLowerThanTheThresholdDoesNothing() throws Exception {
+    void thatARiskScoreLowerThanTheThresholdDoesNothing() throws Exception {
         // The current project score in the JSON file is 3
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
         scoreMojo.setInheritedRiskScoreThreshold(999);
 
-        try {
-            scoreMojo.execute();
-        } catch (MojoFailureException ex) {
-            fail("Exception not expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    scoreMojo.execute();
+                },
+                "Exception not expected");
     }
 
     @Test
-    public void thatWhenNoMetricsHaveBeenCalculatedThenTheMetricsAreRetrieved() throws Exception {
+    void thatWhenNoMetricsHaveBeenCalculatedThenTheMetricsAreRetrieved() throws Exception {
         // The current project score in the JSON file is 3
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/noMetrics.json")));
@@ -123,7 +124,7 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    public void thatWhenNoMetricsHaveBeenTheTheCallIsRetriedTheCorrectNumberOfTimes() throws Exception {
+    void thatWhenNoMetricsHaveBeenTheTheCallIsRetriedTheCorrectNumberOfTimes() throws Exception {
         // The current project score in the JSON file is 3
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/noMetrics.json")));
@@ -146,21 +147,21 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    public void thatWhenFailOnErrorIsFalseAFailureFromToDependencyTrackDoesNotFailTheBuild() {
+    void thatWhenFailOnErrorIsFalseAFailureFromToDependencyTrackDoesNotFailTheBuild() {
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(notFound()));
 
-        try {
-            scoreMojo.setFailOnError(false);
-            scoreMojo.execute();
-        } catch (Exception ex) {
-            fail("No exception expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    scoreMojo.setFailOnError(false);
+                    scoreMojo.execute();
+                },
+                "No exception expected");
 
         verify(exactly(1), getRequestedFor(urlPathEqualTo(V1_PROJECT_LOOKUP)));
     }
 
     @Test
-    public void thatWhenFailOnErrorIsTrueAFailureFromToDependencyTrackDoesFailTheBuild() throws Exception {
+    void thatWhenFailOnErrorIsTrueAFailureFromToDependencyTrackDoesFailTheBuild() throws Exception {
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(notFound()));
 
         try {
@@ -173,20 +174,20 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    public void thatWhenFailOnErrorIsFalseAFailureToConnectToDependencyTrackDoesNotFailTheBuild() {
+    void thatWhenFailOnErrorIsFalseAFailureToConnectToDependencyTrackDoesNotFailTheBuild() {
         // No Wiremock Stubbing
 
-        try {
-            scoreMojo.setDependencyTrackBaseUrl("http://localghost:80");
-            scoreMojo.setFailOnError(false);
-            scoreMojo.execute();
-        } catch (Exception ex) {
-            fail("No exception expected");
-        }
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    scoreMojo.setDependencyTrackBaseUrl("http://localghost:80");
+                    scoreMojo.setFailOnError(false);
+                    scoreMojo.execute();
+                },
+                "No exception expected");
     }
 
     @Test
-    public void thatWhenFailOnErrorIsTrueAFailureToConnectToDependencyTrackDoesFailTheBuild() throws Exception {
+    void thatWhenFailOnErrorIsTrueAFailureToConnectToDependencyTrackDoesFailTheBuild() throws Exception {
         // No Wiremock Stubbing
 
         try {
@@ -200,7 +201,7 @@ public class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    public void thatTheScoreIsSkippedWhenSkipIsTrue(WireMockRuntimeInfo wmri) throws Exception {
+    void thatTheScoreIsSkippedWhenSkipIsTrue(WireMockRuntimeInfo wmri) throws Exception {
         scoreMojo.setDependencyTrackBaseUrl("http://localhost:" + wmri.getHttpPort());
         scoreMojo.setProjectName("dependency-track");
         scoreMojo.setProjectVersion("3.6.0-SNAPSHOT");

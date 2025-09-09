@@ -18,7 +18,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class LoggerTest {
+class LoggerTest {
 
     private static final String CONTENT = "interesting log stuff";
 
@@ -29,7 +29,7 @@ public class LoggerTest {
     private Log log;
 
     @Test
-    public void thatWhenInfoIsEnabledLogIsInvoked() {
+    void thatWhenInfoIsEnabledLogIsInvoked() {
         doReturn(true).when(log).isInfoEnabled();
 
         candidate.info(CONTENT);
@@ -38,7 +38,7 @@ public class LoggerTest {
     }
 
     @Test
-    public void thatWhenInfoIsDisabledLogIsNotInvoked() {
+    void thatWhenInfoIsDisabledLogIsNotInvoked() {
         doReturn(false).when(log).isInfoEnabled();
 
         candidate.info(CONTENT);
@@ -47,7 +47,7 @@ public class LoggerTest {
     }
 
     @Test
-    public void thatWhenWarningIsEnabledLogIsInvoked() {
+    void thatWhenWarningIsEnabledLogIsInvoked() {
         doReturn(true).when(log).isWarnEnabled();
 
         candidate.warn(CONTENT);
@@ -56,7 +56,7 @@ public class LoggerTest {
     }
 
     @Test
-    public void thatWhenWarnIsDisabledLogIsNotInvoked() {
+    void thatWhenWarnIsDisabledLogIsNotInvoked() {
         doReturn(false).when(log).isWarnEnabled();
 
         candidate.warn(CONTENT);
@@ -65,7 +65,7 @@ public class LoggerTest {
     }
 
     @Test
-    public void thatWhenErrorIsEnabledLogIsInvoked() {
+    void thatWhenErrorIsEnabledLogIsInvoked() {
         doReturn(true).when(log).isErrorEnabled();
 
         candidate.error(CONTENT);
@@ -74,7 +74,7 @@ public class LoggerTest {
     }
 
     @Test
-    public void thatWhenErrorIsDisabledLogIsNotInvoked() {
+    void thatWhenErrorIsDisabledLogIsNotInvoked() {
         doReturn(false).when(log).isErrorEnabled();
 
         candidate.error(CONTENT);
@@ -83,7 +83,7 @@ public class LoggerTest {
     }
 
     @Test
-    public void thatWhenDebugIsEnabledLogIsInvoked() {
+    void thatWhenDebugIsEnabledLogIsInvoked() {
         doReturn(true).when(log).isDebugEnabled();
 
         candidate.debug(CONTENT);
@@ -92,7 +92,7 @@ public class LoggerTest {
     }
 
     @Test
-    public void thatWhenDebugIsDisabledLogIsNotInvoked() {
+    void thatWhenDebugIsDisabledLogIsNotInvoked() {
         doReturn(false).when(log).isDebugEnabled();
 
         candidate.debug(CONTENT);
@@ -101,7 +101,7 @@ public class LoggerTest {
     }
 
     @Test
-    public void thatWhenNoLoggerIsSuppliedAnExceptionIsThrown() {
+    void thatWhenNoLoggerIsSuppliedAnExceptionIsThrown() {
         try {
             new Logger(null);
         } catch (Exception ex) {

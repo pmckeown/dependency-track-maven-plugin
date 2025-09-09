@@ -41,7 +41,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class PolicyViolationsClientTest extends AbstractDependencyTrackIntegrationTest {
+class PolicyViolationsClientTest extends AbstractDependencyTrackIntegrationTest {
 
     @InjectMocks
     private PolicyViolationsClient policyClient;
@@ -50,12 +50,12 @@ public class PolicyViolationsClientTest extends AbstractDependencyTrackIntegrati
     private Logger logger;
 
     @BeforeEach
-    public void setUp(WireMockRuntimeInfo wmri) {
+    void setUp(WireMockRuntimeInfo wmri) {
         policyClient = new PolicyViolationsClient(getCommonConfig(wmri), logger);
     }
 
     @Test
-    public void thatPolicyViolationsCanBeRetrieved() throws Exception {
+    void thatPolicyViolationsCanBeRetrieved() throws Exception {
         stubFor(get(urlPathMatching(V1_POLICY_VIOLATION_PROJECT_UUID))
                 .willReturn(aResponse()
                         .withBody(asJson(aListOfPolicyViolations()
@@ -84,7 +84,7 @@ public class PolicyViolationsClientTest extends AbstractDependencyTrackIntegrati
     }
 
     @Test
-    public void thatFailureToGetViolationsReturnsAnErrorResponse() {
+    void thatFailureToGetViolationsReturnsAnErrorResponse() {
         stubFor(get(urlPathMatching(V1_POLICY_VIOLATION_PROJECT_UUID)).willReturn(badRequest()));
 
         Response<List<PolicyViolation>> response =
@@ -96,7 +96,7 @@ public class PolicyViolationsClientTest extends AbstractDependencyTrackIntegrati
     }
 
     @Test
-    public void thatAnErrorToGetFindingsThrowsException() {
+    void thatAnErrorToGetFindingsThrowsException() {
         stubFor(get(urlPathMatching(V1_POLICY_VIOLATION_PROJECT_UUID))
                 .willReturn(aResponse().withFault(Fault.RANDOM_DATA_THEN_CLOSE)));
 

@@ -28,7 +28,7 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-public class ProjectActionTest {
+class ProjectActionTest {
 
     private static final String UUID_2 = "project-uuid-2";
     private static final String PROJECT_NAME_2 = "projectName2";
@@ -50,7 +50,7 @@ public class ProjectActionTest {
     private Logger logger;
 
     @Test
-    public void thatProjectCanBeRetrievedByCommonConfig() throws Exception {
+    void thatProjectCanBeRetrievedByCommonConfig() throws Exception {
         doReturn(aSuccessResponse().withBody(project2()).build())
                 .when(projectClient)
                 .getProject(anyString(), anyString(), anyString());
@@ -62,7 +62,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatProjectCanBeRetrievedByNameAndVersion() throws Exception {
+    void thatProjectCanBeRetrievedByNameAndVersion() throws Exception {
         doReturn(aSuccessResponse().withBody(project2()).build())
                 .when(projectClient)
                 .getProject(anyString(), anyString(), anyString());
@@ -74,7 +74,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatProjectCanBeRetrievedByUuid() throws Exception {
+    void thatProjectCanBeRetrievedByUuid() throws Exception {
         doReturn(aSuccessResponse().withBody(project2()).build())
                 .when(projectClient)
                 .getProject(anyString(), anyString(), anyString());
@@ -86,7 +86,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatExceptionIsThrownWhenConnectionFails() {
+    void thatExceptionIsThrownWhenConnectionFails() {
         doThrow(UnirestException.class).when(projectClient).getProject(anyString(), anyString(), anyString());
 
         try {
@@ -98,7 +98,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatANotFoundResponseResultsInAnException() {
+    void thatANotFoundResponseResultsInAnException() {
         assertThrows(DependencyTrackException.class, () -> {
             doReturn(aNotFoundResponse()).when(projectClient).getProject(anyString(), anyString(), anyString());
 
@@ -107,7 +107,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatNoProjectsAreFoundAnExceptionIsThrown() {
+    void thatNoProjectsAreFoundAnExceptionIsThrown() {
         doReturn(aSuccessResponse().build()).when(projectClient).getProject(anyString(), anyString(), anyString());
 
         try {
@@ -119,7 +119,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatRequestedProjectCannotBeFoundAnExceptionIsThrown() {
+    void thatRequestedProjectCannotBeFoundAnExceptionIsThrown() {
         assertThrows(DependencyTrackException.class, () -> {
             doReturn(aSuccessResponse().build()).when(projectClient).getProject(anyString(), anyString(), anyString());
 
@@ -128,7 +128,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatWhenProjectInfoIsUpdatedTrueIsReturned() throws Exception {
+    void thatWhenProjectInfoIsUpdatedTrueIsReturned() throws Exception {
         doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
         doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
@@ -140,7 +140,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatWhenProjectInfoIsNotUpdatedFalseIsReturned() throws Exception {
+    void thatWhenProjectInfoIsNotUpdatedFalseIsReturned() throws Exception {
         doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
         doReturn(aNotFoundResponse()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
@@ -152,7 +152,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatWhenProjectInfoUpdateErrorsAnExceptionIsThrown() {
+    void thatWhenProjectInfoUpdateErrorsAnExceptionIsThrown() {
         doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
         doThrow(UnirestException.class).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
         try {
@@ -167,7 +167,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatWhenProjectParentIsUpdatedTrueIsReturned() throws Exception {
+    void thatWhenProjectParentIsUpdatedTrueIsReturned() throws Exception {
         doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
         UpdateRequest updateReq = new UpdateRequest();
@@ -175,7 +175,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatWhenProjectParentIsNotUpdatedFalseIsReturned() throws Exception {
+    void thatWhenProjectParentIsNotUpdatedFalseIsReturned() throws Exception {
         doReturn(aNotFoundResponse()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
         UpdateRequest updateReq = new UpdateRequest();
@@ -183,7 +183,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatWhenUpdateProjectParentErrorsAnExceptionIsThrown() {
+    void thatWhenUpdateProjectParentErrorsAnExceptionIsThrown() {
         doThrow(UnirestException.class).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
         try {
             UpdateRequest updateReq = new UpdateRequest();
@@ -195,7 +195,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatWhenProjectBomAndIsLatestTrueIsProvidedNoExceptionIsReturned() throws Exception {
+    void thatWhenProjectBomAndIsLatestTrueIsProvidedNoExceptionIsReturned() throws Exception {
         doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
         doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
@@ -206,7 +206,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatWhenProjectBomAndIsLatestFalseIsProvidedNoExceptionIsReturned() throws Exception {
+    void thatWhenProjectBomAndIsLatestFalseIsProvidedNoExceptionIsReturned() throws Exception {
         doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
         doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
@@ -217,7 +217,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatProjectTagsAreUpdated() throws Exception {
+    void thatProjectTagsAreUpdated() throws Exception {
         doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
         Set<String> tags = new HashSet<>();
@@ -230,7 +230,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatProjectTagsAreUpdatedAndMerged() throws Exception {
+    void thatProjectTagsAreUpdatedAndMerged() throws Exception {
         doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
         Set<String> tags = new HashSet<>();
