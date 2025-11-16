@@ -248,7 +248,7 @@ From Dependency-Track server 4.8.0 onwards, you can set the project parent by se
 parent name will be defaulted to that POM's project parent name. If you wish to override that value, or there is 
 no parent set within the `pom.xml`, then explicitly set `parentName`.
 
-**Note 1:** Both `parentName` and `parentVersion` must be configured, otherwise either value is omitted in the upload.
+**Note 1:** Both `parentName` and `parentVersion` must be configured, otherwise both values are omitted in the upload.
 
 **Note 2:** If both `parentUuid` and `parentName` / `parentVersion` are provided in configuration, `parentUuid` will
 take precedence.
