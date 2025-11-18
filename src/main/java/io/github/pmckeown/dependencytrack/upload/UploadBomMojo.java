@@ -65,8 +65,8 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Parameter(property = "dependency-track.projectTags")
     private Set<String> projectTags;
 
-    @Parameter(property = "dependency-track.uploadWithPut")
-    private boolean uploadWithPut;
+    @Parameter(property = "dependency-track.uploadWithPut", defaultValue = "true")
+    private boolean uploadWithPut = true;
 
     private final UploadBomAction uploadBomAction;
 

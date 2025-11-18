@@ -148,6 +148,7 @@ public class UploadBomMojoTest {
         uploadBomMojo.setUpdateParent(true);
         uploadBomMojo.setFailOnError(true);
         uploadBomMojo.setProjectTags(Collections.emptySet());
+        uploadBomMojo.setUploadWithPut(false);
 
         try {
             uploadBomMojo.performAction();
@@ -169,6 +170,7 @@ public class UploadBomMojoTest {
         uploadBomMojo.setUpdateParent(true);
         uploadBomMojo.setFailOnError(true);
         uploadBomMojo.setProjectTags(Collections.emptySet());
+        uploadBomMojo.setUploadWithPut(false);
 
         try {
             uploadBomMojo.performAction();
