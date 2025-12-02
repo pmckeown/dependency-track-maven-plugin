@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.project.ProjectTag;
 import java.util.List;
@@ -21,18 +22,18 @@ public class UploadBomRequest {
     private final String projectName;
     private final String projectVersion;
     private final boolean autoCreate;
-    private final String base64EncodedBom;
+    private final BomReference bom;
     private final Boolean isLatest;
     private final List<ProjectTag> projectTags;
     private final String parentUUID;
     private final String parentName;
     private final String parentVersion;
 
-    UploadBomRequest(ModuleConfig moduleConfig, String base64EncodedBom) {
+    UploadBomRequest(ModuleConfig moduleConfig, BomReference bomReference) {
         this.projectName = moduleConfig.getProjectName();
         this.projectVersion = moduleConfig.getProjectVersion();
         this.autoCreate = moduleConfig.isAutoCreate();
-        this.base64EncodedBom = base64EncodedBom;
+        this.bom = bomReference;
         this.isLatest = moduleConfig.isLatest();
         if (CollectionUtils.isEmpty(moduleConfig.getProjectTags())) {
             this.projectTags = null;
@@ -69,8 +70,9 @@ public class UploadBomRequest {
         return isLatest;
     }
 
-    public String getBom() {
-        return base64EncodedBom;
+    @JsonSerialize(using = BomReference.Base64Serializer.class)
+    public BomReference getBom() {
+        return bom;
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

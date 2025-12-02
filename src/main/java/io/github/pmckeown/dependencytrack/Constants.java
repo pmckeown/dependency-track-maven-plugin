@@ -1,10 +1,11 @@
 package io.github.pmckeown.dependencytrack;
 
+import java.io.InputStream;
+import java.util.Properties;
+
 public final class Constants {
 
-    private Constants() {
-        // Hiding implicit constructor
-    }
+    public static final String VERSION;
 
     public static final String DELIMITER = "========================================================================";
 
@@ -25,4 +26,23 @@ public final class Constants {
     public static final String FINDINGS_AUDITED = "Findings Audited";
     public static final String FIRST_OCCURRENCE = "First Occurrence";
     public static final String LAST_OCCURRENCE = "Last Occurrence";
+
+    static {
+        String version = "unknown";
+        try (InputStream is = Constants.class.getResourceAsStream(
+                "/META-INF/maven/io.github.pmckeown/dependency-track-maven-plugin/pom.properties")) {
+            if (is != null) {
+                Properties properties = new Properties();
+                properties.load(is);
+                version = properties.getProperty("version", version);
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        VERSION = version;
+    }
+
+    private Constants() {
+        // Hiding implicit constructor
+    }
 }

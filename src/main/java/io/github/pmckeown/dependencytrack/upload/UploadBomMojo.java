@@ -65,6 +65,9 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Parameter(property = "dependency-track.projectTags")
     private Set<String> projectTags;
 
+    @Parameter(property = "dependency-track.uploadWithPut", defaultValue = "true")
+    private boolean uploadWithPut = true;
+
     private final UploadBomAction uploadBomAction;
 
     private final MetricsAction metricsAction;
@@ -91,7 +94,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         logger.info("Update Project Parent : %s", moduleConfig.getUpdateParent());
 
         try {
-            if (!uploadBomAction.upload(moduleConfig)) {
+            if (!uploadBomAction.upload(moduleConfig, uploadWithPut)) {
                 handleFailure("Bom upload failed");
             }
             Project project = projectAction.getProject(moduleConfig);
@@ -241,5 +244,9 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     void setProjectTags(Set<String> projectTags) {
         this.projectTags = projectTags;
         moduleConfig.setProjectTags(projectTags);
+    }
+
+    void setUploadWithPut(boolean uploadWithPut) {
+        this.uploadWithPut = uploadWithPut;
     }
 }
