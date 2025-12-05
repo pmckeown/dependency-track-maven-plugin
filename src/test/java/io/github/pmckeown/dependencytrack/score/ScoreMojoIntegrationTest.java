@@ -5,6 +5,7 @@ import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LO
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_METRICS_PROJECT_CURRENT;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
@@ -14,7 +15,6 @@ import org.apache.maven.api.plugin.testing.Basedir;
 import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.apache.maven.plugin.MojoFailureException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -60,14 +60,14 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatARiskScoreEqualToTheThresholdDoesNothing() throws Exception {
+    void thatARiskScoreEqualToTheThresholdDoesNothing() {
         // The current project score in the JSON file is 3
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
         scoreMojo.setInheritedRiskScoreThreshold(3);
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     scoreMojo.execute();
                 },
@@ -75,14 +75,14 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatFailureToGetARiskScoreEqualThrowsAnException() throws Exception {
+    void thatFailureToGetARiskScoreEqualThrowsAnException() {
         // The current project score in the JSON file is 3
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
         scoreMojo.setInheritedRiskScoreThreshold(3);
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     scoreMojo.execute();
                 },
@@ -90,14 +90,14 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatARiskScoreLowerThanTheThresholdDoesNothing() throws Exception {
+    void thatARiskScoreLowerThanTheThresholdDoesNothing() {
         // The current project score in the JSON file is 3
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
         scoreMojo.setInheritedRiskScoreThreshold(999);
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     scoreMojo.execute();
                 },
@@ -146,7 +146,7 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     void thatWhenFailOnErrorIsFalseAFailureFromToDependencyTrackDoesNotFailTheBuild() {
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(notFound()));
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     scoreMojo.setFailOnError(false);
                     scoreMojo.execute();
@@ -173,7 +173,7 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     void thatWhenFailOnErrorIsFalseAFailureToConnectToDependencyTrackDoesNotFailTheBuild() {
         // No Wiremock Stubbing
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     scoreMojo.setDependencyTrackBaseUrl("http://localghost:80");
                     scoreMojo.setFailOnError(false);

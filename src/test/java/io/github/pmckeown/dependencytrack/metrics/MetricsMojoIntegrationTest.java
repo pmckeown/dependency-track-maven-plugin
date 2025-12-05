@@ -61,7 +61,7 @@ class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatExceptionIsThrownWhenMetricsCannotBeRetrievedForCurrentProject() throws Exception {
+    void thatExceptionIsThrownWhenMetricsCannotBeRetrievedForCurrentProject() {
         assertThrows(MojoExecutionException.class, () -> {
             stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                     .willReturn(aResponse().withBodyFile("api/v1/project/noMetrics.json")));
@@ -77,7 +77,7 @@ class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatAnyCriticalIssuesPresentCanFailTheBuild() throws Exception {
+    void thatAnyCriticalIssuesPresentCanFailTheBuild() {
         assertThrows(MojoFailureException.class, () -> {
             stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                     .willReturn(aResponse()

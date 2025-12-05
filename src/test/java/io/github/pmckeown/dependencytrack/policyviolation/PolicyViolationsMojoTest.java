@@ -13,11 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
-@MockitoSettings(strictness = Strictness.WARN)
-@SuppressWarnings("unused")
 @ExtendWith(MockitoExtension.class)
 class PolicyViolationsMojoTest {
 

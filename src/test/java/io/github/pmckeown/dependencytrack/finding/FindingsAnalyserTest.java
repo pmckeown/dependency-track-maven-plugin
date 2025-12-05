@@ -13,21 +13,18 @@ import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aV
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import io.github.pmckeown.util.Logger;
 import java.util.List;
 import org.apache.maven.plugin.MojoFailureException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
-@MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
 class FindingsAnalyserTest {
 
@@ -66,7 +63,7 @@ class FindingsAnalyserTest {
                         aDefaultFinding().withVulnerability(aVulnerability().withSeverity(CRITICAL)))
                 .build();
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(2, 0, 0, 0, 0));
                 },
@@ -81,7 +78,7 @@ class FindingsAnalyserTest {
                         .withAnalysis(anAnalysis().withSuppressed(true).withState(FALSE_POSITIVE)))
                 .build();
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     findingAnalyser.doNumberOfFindingsBreachPolicy(
                             findings, new FindingThresholds(0, null, null, null, null));
@@ -110,7 +107,7 @@ class FindingsAnalyserTest {
                         aDefaultFinding().withVulnerability(aVulnerability().withSeverity(HIGH)))
                 .build();
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(0, 2, 0, 0, 0));
                 },
@@ -125,7 +122,7 @@ class FindingsAnalyserTest {
                         .withAnalysis(anAnalysis().withSuppressed(true).withState(FALSE_POSITIVE)))
                 .build();
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     findingAnalyser.doNumberOfFindingsBreachPolicy(
                             findings, new FindingThresholds(null, 0, null, null, null));
@@ -154,7 +151,7 @@ class FindingsAnalyserTest {
                         aDefaultFinding().withVulnerability(aVulnerability().withSeverity(MEDIUM)))
                 .build();
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(0, 0, 2, 0, 0));
                 },
@@ -169,7 +166,7 @@ class FindingsAnalyserTest {
                         .withAnalysis(anAnalysis().withSuppressed(true).withState(FALSE_POSITIVE)))
                 .build();
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     findingAnalyser.doNumberOfFindingsBreachPolicy(
                             findings, new FindingThresholds(null, null, 0, null, null));
@@ -198,7 +195,7 @@ class FindingsAnalyserTest {
                         aDefaultFinding().withVulnerability(aVulnerability().withSeverity(LOW)))
                 .build();
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(0, 0, 0, 2, 0));
                 },
@@ -213,7 +210,7 @@ class FindingsAnalyserTest {
                         .withAnalysis(anAnalysis().withSuppressed(true).withState(FALSE_POSITIVE)))
                 .build();
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     findingAnalyser.doNumberOfFindingsBreachPolicy(
                             findings, new FindingThresholds(null, null, null, 0, null));
@@ -242,7 +239,7 @@ class FindingsAnalyserTest {
                         aDefaultFinding().withVulnerability(aVulnerability().withSeverity(UNASSIGNED)))
                 .build();
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     findingAnalyser.doNumberOfFindingsBreachPolicy(findings, new FindingThresholds(0, 0, 0, 0, 2));
                 },
@@ -257,7 +254,7 @@ class FindingsAnalyserTest {
                         .withAnalysis(anAnalysis().withSuppressed(true).withState(FALSE_POSITIVE)))
                 .build();
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     findingAnalyser.doNumberOfFindingsBreachPolicy(
                             findings, new FindingThresholds(null, null, null, null, 0));

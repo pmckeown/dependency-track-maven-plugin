@@ -6,6 +6,7 @@ import static io.github.pmckeown.dependencytrack.policyviolation.PolicyViolation
 import static io.github.pmckeown.dependencytrack.policyviolation.PolicyViolationListBuilder.aListOfPolicyViolations;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import io.github.pmckeown.dependencytrack.policyviolation.Policy;
@@ -14,7 +15,6 @@ import io.github.pmckeown.dependencytrack.policyviolation.ViolationState;
 import io.github.pmckeown.dependencytrack.report.TransformerFactoryProvider;
 import java.io.File;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -26,15 +26,15 @@ class PolicyViolationsReportIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        PolicyViolationsReportMarshallerService PolicyViolationsMarshallerService =
+        PolicyViolationsReportMarshallerService policyViolationsMarshallerService =
                 new PolicyViolationsReportMarshallerService();
-        xmlReportWriter = new PolicyViolationsXmlReportWriter(PolicyViolationsMarshallerService);
+        xmlReportWriter = new PolicyViolationsXmlReportWriter(policyViolationsMarshallerService);
         htmlReportWriter = new PolicyViolationsHtmlReportWriter(new TransformerFactoryProvider());
     }
 
     @Test
     void thatXmlFileCanBeGenerated() {
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     File outputDirectory = new File("target");
                     xmlReportWriter.write(outputDirectory, new PolicyViolationsReport(policyViolations()));
@@ -61,13 +61,12 @@ class PolicyViolationsReportIntegrationTest {
     }
 
     private List<PolicyViolation> policyViolations() {
-        List<PolicyViolation> policyViolations = aListOfPolicyViolations()
+        return aListOfPolicyViolations()
                 .withPolicyViolation(aPolicyViolation()
                         .withType("SEVERITY")
                         .withPolicyCondition(
                                 aPolicyCondition().withPolicy(new Policy("testPolicy1", ViolationState.INFO)))
                         .withComponent(aComponent()))
                 .build();
-        return policyViolations;
     }
 }

@@ -26,10 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
-@MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
 class FindingsReportXmlReportWriterTest {
 
@@ -72,12 +69,11 @@ class FindingsReportXmlReportWriterTest {
     }
 
     private List<Finding> someFindings() {
-        List<Finding> findings = aListOfFindings()
+        return aListOfFindings()
                 .withFinding(aFinding()
                         .withAnalysis(anAnalysis())
                         .withVulnerability(aVulnerability())
                         .withComponent(aComponent()))
                 .build();
-        return findings;
     }
 }

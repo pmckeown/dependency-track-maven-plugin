@@ -6,6 +6,7 @@ import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LO
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_POLICY_VIOLATION_PROJECT_UUID;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
@@ -14,7 +15,6 @@ import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -116,7 +116,7 @@ class PolicyViolationsMojoIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    void thatWhenExceptionOccursWhileGettingFindingsAndFailOnErrorIsFalseTheMojoSucceeds() throws Exception {
+    void thatWhenExceptionOccursWhileGettingFindingsAndFailOnErrorIsFalseTheMojoSucceeds() {
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(get(urlPathMatching(V1_POLICY_VIOLATION_PROJECT_UUID))
@@ -124,7 +124,7 @@ class PolicyViolationsMojoIntegrationTest extends AbstractDependencyTrackMojoTes
 
         policyMojo.setFailOnError(false);
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     policyMojo.execute();
                 },

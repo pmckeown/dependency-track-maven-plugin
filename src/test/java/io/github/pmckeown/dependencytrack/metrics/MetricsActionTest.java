@@ -9,6 +9,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -23,17 +24,13 @@ import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
 import kong.unirest.UnirestException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
-@MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
 class MetricsActionTest {
 
@@ -96,7 +93,7 @@ class MetricsActionTest {
     @Test
     void thatRefreshMetricsCanBeCalled() {
         doReturn(aSuccessResponse().build()).when(metricsClient).refreshMetrics(any(Project.class));
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     metricsAction.refreshMetrics(aProject().build());
                 },
@@ -107,7 +104,7 @@ class MetricsActionTest {
     @Test
     void thatRefreshMetricsDoesNotErrorWhenProjectNotFound() {
         doReturn(aNotFoundResponse().build()).when(metricsClient).refreshMetrics(any(Project.class));
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     metricsAction.refreshMetrics(aProject().build());
                 },
@@ -119,7 +116,7 @@ class MetricsActionTest {
     void thatNoExceptionsAreThrownIfRefreshMetricsErrors() {
         doThrow(new UnirestException("Boom")).when(metricsClient).refreshMetrics(any(Project.class));
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     metricsAction.refreshMetrics(aProject().build());
                 },

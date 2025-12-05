@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 /**
  * Wrapper for API responses from the Dependency Track server
  *
+ * @param <B> Body type
  * @author Paul McKeown
  */
 public class Response<B> {

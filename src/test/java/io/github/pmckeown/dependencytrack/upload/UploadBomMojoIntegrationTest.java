@@ -24,6 +24,7 @@ import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LO
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
@@ -37,15 +38,11 @@ import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
-@MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
 class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
@@ -97,7 +94,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     void thatWhenFailOnErrorIsFalseAFailureFromToDependencyTrackDoesNotFailTheBuild() {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(notFound()));
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     uploadBomMojo.setFailOnError(false);
                     uploadBomMojo.execute();
@@ -111,7 +108,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     void thatWhenFailOnErrorIsTrueAFailureFromToDependencyTrackDoesFailTheBuild() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(notFound()));
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     uploadBomMojo.setDependencyTrackBaseUrl("http://localghost:80");
                     uploadBomMojo.setFailOnError(true);
@@ -130,7 +127,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     void thatWhenFailOnErrorIsFalseAFailureToConnectToDependencyTrackDoesNotFailTheBuild() {
         // No Wiremock Stubbing
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     uploadBomMojo.setDependencyTrackBaseUrl("http://localghost:80");
                     uploadBomMojo.setFailOnError(false);
@@ -143,7 +140,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     void thatWhenFailOnErrorIsTrueAFailureToConnectToDependencyTrackDoesFailTheBuild() throws Exception {
         // No Wiremock Stubbing
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     uploadBomMojo.setDependencyTrackBaseUrl("http://localghost:80");
                     uploadBomMojo.setFailOnError(true);

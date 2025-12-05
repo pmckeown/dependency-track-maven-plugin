@@ -7,6 +7,7 @@ import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aLis
 import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import io.github.pmckeown.dependencytrack.finding.Analysis;
@@ -16,7 +17,6 @@ import io.github.pmckeown.dependencytrack.finding.Severity;
 import io.github.pmckeown.dependencytrack.report.TransformerFactoryProvider;
 import java.io.File;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +34,7 @@ class FindingsReportIntegrationTest {
 
     @Test
     void thatXmlFileCanBeGenerated() {
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     File outputDirectory = new File("target");
                     xmlReportWriter.write(outputDirectory, new FindingsReport(thresholds(), findings(), true));
