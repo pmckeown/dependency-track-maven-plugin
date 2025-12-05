@@ -1,14 +1,6 @@
 package io.github.pmckeown.dependencytrack.finding;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.ok;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.http.Fault.RANDOM_DATA_THEN_CLOSE;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_FINDING_PROJECT_UUID;
@@ -20,28 +12,29 @@ import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aLis
 import static io.github.pmckeown.dependencytrack.finding.Severity.LOW;
 import static io.github.pmckeown.dependencytrack.finding.Severity.UNASSIGNED;
 import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import org.apache.maven.api.plugin.testing.Basedir;
+import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
-    private FindingsMojo findingsMojo;
+    FindingsMojo findingsMojo;
 
     @BeforeEach
-    void setUp(WireMockRuntimeInfo wmri) throws Exception {
-        findingsMojo = resolveMojo("findings");
-        findingsMojo.setDependencyTrackBaseUrl("http://localhost:" + wmri.getHttpPort());
-        findingsMojo.setApiKey("abc123");
-        findingsMojo.setProjectName("testName");
-        findingsMojo.setProjectVersion("99.99");
+    @Basedir(TEST_PROJECT)
+    @InjectMojo(goal = "findings")
+    @MojoParameter(name = "projectName", value = "testName")
+    @MojoParameter(name = "projectVersion", value = "99.99")
+    void setUp(FindingsMojo mojo) {
+        findingsMojo = mojo;
+        configureMojo(findingsMojo);
     }
 
     @Test
@@ -64,12 +57,12 @@ class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenNoFindingsAreFoundTheMojoDoesNotFail() throws Exception {
+    void thatWhenNoFindingsAreFoundTheMojoDoesNotFail() {
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(ok()));
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     findingsMojo.execute();
                     verify(exactly(1), getRequestedFor(urlPathEqualTo(V1_PROJECT_LOOKUP)));
@@ -79,7 +72,7 @@ class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenExceptionOccursWhileGettingFindingsAndFailOnErrorIsTrueTheMojoErrors() throws Exception {
+    void thatWhenExceptionOccursWhileGettingFindingsAndFailOnErrorIsTrueTheMojoErrors() {
         assertThrows(MojoExecutionException.class, () -> {
             stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                     .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
@@ -94,7 +87,7 @@ class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatBuildFailsWhenFindingsNumberBreachesDefinedThresholds() throws Exception {
+    void thatBuildFailsWhenFindingsNumberBreachesDefinedThresholds() {
         assertThrows(MojoFailureException.class, () -> {
             stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                     .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
@@ -129,7 +122,7 @@ class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
         findingsMojo.setFindingThresholds(new FindingThresholds());
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     findingsMojo.execute();
                 },

@@ -1,42 +1,35 @@
 package io.github.pmckeown.dependencytrack.project;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
-import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_PROJECT_UUID;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.http.Fault;
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import org.apache.maven.api.plugin.testing.Basedir;
+import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
-    private DeleteProjectMojo deleteProjectMojo;
+    DeleteProjectMojo deleteProjectMojo;
 
     @BeforeEach
-    void setUp(WireMockRuntimeInfo wmri) throws Exception {
-        deleteProjectMojo = resolveMojo("delete-project");
-        deleteProjectMojo.setDependencyTrackBaseUrl("http://localhost:" + wmri.getHttpPort());
-        deleteProjectMojo.setProjectName("dependency-track");
-        deleteProjectMojo.setProjectVersion("3.6.0-SNAPSHOT");
-        deleteProjectMojo.setFailOnError(false);
+    @Basedir(TEST_PROJECT)
+    @InjectMojo(goal = "delete-project")
+    @MojoParameter(name = "projectName", value = "dependency-track")
+    @MojoParameter(name = "projectVersion", value = "3.6.0-SNAPSHOT")
+    @MojoParameter(name = "failOnError", value = "false")
+    void setUp(DeleteProjectMojo mojo) {
+        deleteProjectMojo = mojo;
+        configureMojo(deleteProjectMojo);
     }
 
     @Test
@@ -58,7 +51,7 @@ class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
         deleteProjectMojo.setFailOnError(false);
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     deleteProjectMojo.execute();
                 },
@@ -66,7 +59,7 @@ class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenProjectDeletionFailedAndFailOnErrorTrueThenMojoFailureExceptionIsThrown() throws Exception {
+    void thatWhenProjectDeletionFailedAndFailOnErrorTrueThenMojoFailureExceptionIsThrown() {
         assertThrows(MojoFailureException.class, () -> {
             stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                     .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
@@ -116,7 +109,7 @@ class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
         deleteProjectMojo.setFailOnError(false);
 
-        Assertions.assertDoesNotThrow(
+        assertDoesNotThrow(
                 () -> {
                     deleteProjectMojo.execute();
                 },

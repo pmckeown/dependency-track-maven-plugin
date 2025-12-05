@@ -5,12 +5,11 @@ import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LO
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_PROJECT_UUID;
 import static io.github.pmckeown.dependencytrack.project.ProjectInfoBuilder.aProjectInfo;
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.doReturn;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.Response;
@@ -26,7 +25,8 @@ import org.mockito.quality.Strictness;
 
 @MockitoSettings(strictness = Strictness.WARN)
 @ExtendWith(MockitoExtension.class)
-class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTest {
+@WireMockTest
+class ProjectClientIntegrationTest {
 
     @InjectMocks
     private ProjectClient projectClient;

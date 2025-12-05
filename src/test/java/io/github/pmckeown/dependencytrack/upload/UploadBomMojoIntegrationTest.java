@@ -26,13 +26,15 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.TestResourceConstants;
 import java.util.HashSet;
 import java.util.Set;
 import kong.unirest.Unirest;
+import org.apache.maven.api.plugin.testing.Basedir;
+import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -47,22 +49,27 @@ import org.mockito.quality.Strictness;
 @ExtendWith(MockitoExtension.class)
 class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
-    private static final String BOM_LOCATION = "target/test-classes/projects/run/bom.xml";
+    static final String BOM_LOCATION = TEST_PROJECT + "/bom.xml";
 
     UploadBomMojo uploadBomMojo;
 
     @BeforeEach
-    void setUp(WireMockRuntimeInfo wmri) throws Exception {
-        uploadBomMojo = resolveMojo("upload-bom");
-        uploadBomMojo.setDependencyTrackBaseUrl("http://localhost:" + wmri.getHttpPort());
+    @Basedir(TEST_PROJECT)
+    @InjectMojo(goal = "upload-bom")
+    @MojoParameter(name = "bomLocation", value = BOM_LOCATION)
+    @MojoParameter(name = "uploadWithPut", value = "true")
+    void setUp(UploadBomMojo mojo) {
+        uploadBomMojo = mojo;
+        configureMojo(uploadBomMojo);
         uploadBomMojo.setPollingConfig(PollingConfig.disabled());
-        uploadBomMojo.setBomLocation(BOM_LOCATION);
-        uploadBomMojo.setApiKey("ABC123");
-        uploadBomMojo.setUploadWithPut(true);
+
+        // testing-harness 3.4.0 does not resolve default value expessions based on the provided pom
+        uploadBomMojo.setProjectName("dependency-track-maven-plugin-test-project");
+        uploadBomMojo.setProjectVersion("0.0.1-SNAPSHOT");
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    void tearDown() {
         uploadBomMojo.getUnirestConfiguration().set(false);
     }
 
@@ -87,7 +94,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenFailOnErrorIsFalseAFailureFromToDependencyTrackDoesNotFailTheBuild() throws Exception {
+    void thatWhenFailOnErrorIsFalseAFailureFromToDependencyTrackDoesNotFailTheBuild() {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(notFound()));
 
         Assertions.assertDoesNotThrow(
@@ -120,7 +127,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenFailOnErrorIsFalseAFailureToConnectToDependencyTrackDoesNotFailTheBuild() throws Exception {
+    void thatWhenFailOnErrorIsFalseAFailureToConnectToDependencyTrackDoesNotFailTheBuild() {
         // No Wiremock Stubbing
 
         Assertions.assertDoesNotThrow(

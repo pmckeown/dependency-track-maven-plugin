@@ -1,25 +1,18 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_METRICS_PROJECT_CURRENT;
 import static io.github.pmckeown.dependencytrack.TestUtils.asJson;
 import static io.github.pmckeown.dependencytrack.metrics.MetricsBuilder.aMetrics;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.http.Fault;
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.project.ProjectBuilder;
+import org.apache.maven.api.plugin.testing.Basedir;
+import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,13 +20,14 @@ import org.junit.jupiter.api.Test;
 
 class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
-    private MetricsMojo metricsMojo;
+    MetricsMojo metricsMojo;
 
     @BeforeEach
-    void setUp(WireMockRuntimeInfo wmri) throws Exception {
-        metricsMojo = resolveMojo("metrics");
-        metricsMojo.setDependencyTrackBaseUrl("http://localhost:" + wmri.getHttpPort());
-        metricsMojo.setApiKey("abc123");
+    @Basedir(TEST_PROJECT)
+    @InjectMojo(goal = "metrics")
+    void setUp(MetricsMojo mojo) {
+        metricsMojo = mojo;
+        configureMojo(metricsMojo);
     }
 
     @Test

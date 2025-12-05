@@ -1,24 +1,17 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.http.Fault.RANDOM_DATA_THEN_CLOSE;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_POLICY_VIOLATION_PROJECT_UUID;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import org.apache.maven.api.plugin.testing.Basedir;
+import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.jupiter.api.Assertions;
@@ -27,15 +20,16 @@ import org.junit.jupiter.api.Test;
 
 class PolicyViolationsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
-    private PolicyViolationsMojo policyMojo;
+    PolicyViolationsMojo policyMojo;
 
     @BeforeEach
-    void setUp(WireMockRuntimeInfo wmri) throws Exception {
-        policyMojo = resolveMojo("policy-violations");
-        policyMojo.setDependencyTrackBaseUrl("http://localhost:" + wmri.getHttpPort());
-        policyMojo.setApiKey("abc123");
-        policyMojo.setProjectName("testName");
-        policyMojo.setProjectVersion("99.99");
+    @Basedir(TEST_PROJECT)
+    @InjectMojo(goal = "policy-violations")
+    @MojoParameter(name = "projectName", value = "testName")
+    @MojoParameter(name = "projectVersion", value = "99.99")
+    void setUp(PolicyViolationsMojo mojo) {
+        policyMojo = mojo;
+        configureMojo(policyMojo);
     }
 
     @Test
