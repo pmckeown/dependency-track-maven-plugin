@@ -12,14 +12,14 @@ import static org.mockito.Mockito.verify;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PolicyViolationsPrinterTest {
+@ExtendWith(MockitoExtension.class)
+class PolicyViolationsPrinterTest {
 
     @InjectMocks
     private PolicyViolationsPrinter policyViolationsPrinter;
@@ -28,7 +28,7 @@ public class PolicyViolationsPrinterTest {
     private Logger logger;
 
     @Test
-    public void thatWhenNoViolationsAreRetrievedThatIsLogged() {
+    void thatWhenNoViolationsAreRetrievedThatIsLogged() {
         // Act
         Project project = aProject().withName("X").build();
         policyViolationsPrinter.printPolicyViolations(project, null);
@@ -38,7 +38,7 @@ public class PolicyViolationsPrinterTest {
     }
 
     @Test
-    public void thatAPolicyViolationIsPrintedCorrectly() {
+    void thatAPolicyViolationIsPrintedCorrectly() {
         Project project = aProject().withName("a").withVersion("1").build();
         List<PolicyViolation> policyViolations = policyViolationsList("SEVERITY", "p1", ViolationState.INFO);
         policyViolationsPrinter.printPolicyViolations(project, policyViolations);
@@ -50,7 +50,7 @@ public class PolicyViolationsPrinterTest {
     }
 
     @Test
-    public void thatMultiplePolicyViolationsArePrintedCorrectly() {
+    void thatMultiplePolicyViolationsArePrintedCorrectly() {
         Project project = aProject().withName("a").withVersion("1").build();
         policyViolationsPrinter.printPolicyViolations(
                 project,

@@ -1,6 +1,6 @@
 package io.github.pmckeown.dependencytrack;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import io.github.pmckeown.dependencytrack.project.Project;
 import java.io.File;
@@ -10,12 +10,12 @@ import kong.unirest.GenericType;
 import kong.unirest.jackson.JacksonObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ObjectMapperFactoryTest {
+class ObjectMapperFactoryTest {
 
     @Test
-    public void thatUnknownPropertiesAreIgnoredWhenDeserializingJson() throws Exception {
+    void thatUnknownPropertiesAreIgnoredWhenDeserializingJson() throws Exception {
         JacksonObjectMapper om = new JacksonObjectMapper(ObjectMapperFactory.relaxedObjectMapper());
 
         List<Project> projects = om.readValue(

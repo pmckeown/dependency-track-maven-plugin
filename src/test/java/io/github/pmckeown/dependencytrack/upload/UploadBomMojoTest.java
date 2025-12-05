@@ -2,8 +2,8 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.*;
 
@@ -18,16 +18,16 @@ import kong.unirest.Unirest;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class UploadBomMojoTest {
+@ExtendWith(MockitoExtension.class)
+class UploadBomMojoTest {
 
     private static final String PROJECT_NAME = "test";
 
@@ -60,21 +60,21 @@ public class UploadBomMojoTest {
     @Mock
     private ModuleConfig moduleConfig;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         uploadBomMojo.setLog(mavenLogger);
         uploadBomMojo.setCommonConfig(commonConfig);
         uploadBomMojo.setModuleConfig(moduleConfig);
         uploadBomMojo.setMavenProject(project);
     }
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         uploadBomMojo.getUnirestConfiguration().set(false);
     }
 
     @Test
-    public void thatTheUploadBomIsSkippedWhenSkipIsTrue() throws Exception {
+    void thatTheUploadBomIsSkippedWhenSkipIsTrue() throws Exception {
         uploadBomMojo.setSkip("true");
         uploadBomMojo.setProjectName(PROJECT_NAME);
         uploadBomMojo.setProjectVersion(PROJECT_VERSION);
@@ -89,7 +89,7 @@ public class UploadBomMojoTest {
     }
 
     @Test
-    public void thatTheUploadBomIsSkippedWhenSkipIsReleases() throws Exception {
+    void thatTheUploadBomIsSkippedWhenSkipIsReleases() throws Exception {
         uploadBomMojo.setSkip("releases");
         uploadBomMojo.setProjectName(PROJECT_NAME);
         uploadBomMojo.setProjectVersion(PROJECT_VERSION);
@@ -104,7 +104,7 @@ public class UploadBomMojoTest {
     }
 
     @Test
-    public void thatTheUploadBomIsSkippedWhenSkipIsSnapshots() throws Exception {
+    void thatTheUploadBomIsSkippedWhenSkipIsSnapshots() throws Exception {
         String snapshotVersion = "1.0-SNAPSHOT";
         uploadBomMojo.setSkip("snapshots");
         uploadBomMojo.setProjectName(PROJECT_NAME);
@@ -120,21 +120,21 @@ public class UploadBomMojoTest {
     }
 
     @Test
-    public void thatUnirestConfiguredWithSslVerifyOnWhenAsked() throws Exception {
+    void thatUnirestConfiguredWithSslVerifyOnWhenAsked() throws Exception {
         uploadBomMojo.setVerifySsl(true);
         uploadBomMojo.execute();
         assertThat(Unirest.config().isVerifySsl(), is(equalTo(true)));
     }
 
     @Test
-    public void thatUnirestIsConfiguredWithSslVerifyOffWhenAsked() throws Exception {
+    void thatUnirestIsConfiguredWithSslVerifyOffWhenAsked() throws Exception {
         uploadBomMojo.setVerifySsl(false);
         uploadBomMojo.execute();
         assertThat(Unirest.config().isVerifySsl(), is(equalTo(false)));
     }
 
     @Test
-    public void thatWhenUpdateParentFailsTheLoggerIsCalledAndBuildFails() throws Exception {
+    void thatWhenUpdateParentFailsTheLoggerIsCalledAndBuildFails() throws Exception {
         ModuleConfig config = new ModuleConfig();
         config.setProjectName("project-parent");
         config.setProjectVersion("1.2.3");
@@ -162,7 +162,7 @@ public class UploadBomMojoTest {
     }
 
     @Test
-    public void thatUpdateParentFailsWhenParentNameIsNull() throws Exception {
+    void thatUpdateParentFailsWhenParentNameIsNull() throws Exception {
         doReturn(true).when(uploadBomAction).upload(moduleConfig, false);
 
         uploadBomMojo.setParentName(null);
@@ -186,7 +186,7 @@ public class UploadBomMojoTest {
     }
 
     @Test
-    public void thatUploadErrorsAreCorrectlyReported() throws Exception {
+    void thatUploadErrorsAreCorrectlyReported() throws Exception {
         DependencyTrackException cause = new DependencyTrackException("PKIX path building failed");
         doThrow(cause).when(uploadBomAction).upload(any(), anyBoolean());
 
@@ -199,7 +199,7 @@ public class UploadBomMojoTest {
     }
 
     @Test
-    public void thatUploadErrorsIsReportedEvenWhenItShouldNotFail() throws Exception {
+    void thatUploadErrorsIsReportedEvenWhenItShouldNotFail() throws Exception {
         DependencyTrackException cause = new DependencyTrackException("PKIX path building failed");
         doThrow(cause).when(uploadBomAction).upload(any(), anyBoolean());
 

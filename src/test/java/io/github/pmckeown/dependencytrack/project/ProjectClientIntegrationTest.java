@@ -5,24 +5,25 @@ import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LO
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_PROJECT_UUID;
 import static io.github.pmckeown.dependencytrack.project.ProjectInfoBuilder.aProjectInfo;
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.doReturn;
 
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import kong.unirest.HttpStatus;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTest {
+@ExtendWith(MockitoExtension.class)
+@WireMockTest
+class ProjectClientIntegrationTest {
 
     @InjectMocks
     private ProjectClient projectClient;
@@ -33,14 +34,14 @@ public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTes
     @Mock
     private ModuleConfig moduleConfig;
 
-    @Before
-    public void setUp() {
-        doReturn("http://localhost:" + wireMockRule.port()).when(commonConfig).getDependencyTrackBaseUrl();
+    @BeforeEach
+    void setUp(WireMockRuntimeInfo wmri) {
+        doReturn("http://localhost:" + wmri.getHttpPort()).when(commonConfig).getDependencyTrackBaseUrl();
         projectClient = new ProjectClient(commonConfig);
     }
 
     @Test
-    public void thatProjectInfoUpdateReturnsSuccessWhenServerReturnsSuccess() {
+    void thatProjectInfoUpdateReturnsSuccessWhenServerReturnsSuccess() {
         stubFor(patch(urlPathMatching(V1_PROJECT_UUID)).willReturn(aResponse().withStatus(HttpStatus.OK)));
 
         Response<Void> response = projectClient.patchProject(
@@ -50,7 +51,7 @@ public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatProjectParsingWorks() {
+    void thatProjectParsingWorks() {
         doReturn("doesn't matter").when(moduleConfig).getProjectName();
         doReturn("doesn't matter").when(moduleConfig).getProjectVersion();
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
@@ -70,7 +71,7 @@ public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatProjectInfoUpdateReturnsSuccessWhenServerReturnsNotModified() {
+    void thatProjectInfoUpdateReturnsSuccessWhenServerReturnsNotModified() {
         stubFor(patch(urlPathMatching(V1_PROJECT_UUID)).willReturn(aResponse().withStatus(HttpStatus.NOT_MODIFIED)));
 
         Response<Void> response = projectClient.patchProject(
@@ -80,7 +81,7 @@ public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatProjectInfoUpdateReturnsFailedWhenServerReturnsTeapot() {
+    void thatProjectInfoUpdateReturnsFailedWhenServerReturnsTeapot() {
         stubFor(patch(urlPathMatching(V1_PROJECT_UUID)).willReturn(aResponse().withStatus(HttpStatus.IM_A_TEAPOT)));
 
         Response<Void> response = projectClient.patchProject(

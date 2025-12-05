@@ -4,16 +4,17 @@ import static io.github.pmckeown.dependencytrack.ObjectMapperFactory.relaxedObje
 import static kong.unirest.HeaderNames.ACCEPT;
 import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import kong.unirest.Unirest;
 import kong.unirest.jackson.JacksonObjectMapper;
-import org.junit.Rule;
 
 /**
  * Base class for Dependency Track integrations
  *
  * @author Paul McKeown
  */
+@WireMockTest
 public abstract class AbstractDependencyTrackIntegrationTest {
 
     /**
@@ -32,12 +33,9 @@ public abstract class AbstractDependencyTrackIntegrationTest {
     protected static final String API_KEY = "api123";
     protected static final String HOST = "http://localhost:";
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(0);
-
-    protected CommonConfig getCommonConfig() {
+    protected CommonConfig getCommonConfig(WireMockRuntimeInfo wmri) {
         CommonConfig config = new CommonConfig();
-        config.setDependencyTrackBaseUrl(HOST + wireMockRule.port());
+        config.setDependencyTrackBaseUrl(HOST + wmri.getHttpPort());
         config.setApiKey(API_KEY);
         config.setPollingConfig(PollingConfig.disabled());
         return config;
