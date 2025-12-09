@@ -6,7 +6,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -23,15 +23,15 @@ import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.util.Logger;
 import java.util.Optional;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class UploadBomActionTest {
+@ExtendWith(MockitoExtension.class)
+class UploadBomActionTest {
 
     private static final String BOM_LOCATION = "target/test-classes/projects/run/bom.xml";
 
@@ -54,7 +54,7 @@ public class UploadBomActionTest {
     private Logger logger;
 
     @Test
-    public void thatWhenNoBomIsFoundThenFalseIsReturned() throws Exception {
+    void thatWhenNoBomIsFoundThenFalseIsReturned() throws Exception {
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
 
         boolean success = uploadBomAction.upload(moduleConfig, false);
@@ -63,7 +63,7 @@ public class UploadBomActionTest {
     }
 
     @Test
-    public void thatBomCanBeUploadedSuccessfully() throws Exception {
+    void thatBomCanBeUploadedSuccessfully() throws Exception {
         doReturn(BOM_LOCATION).when(moduleConfig).getBomLocation();
         doReturn(anUploadBomSuccessResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class), anyBoolean());
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
@@ -74,7 +74,7 @@ public class UploadBomActionTest {
     }
 
     @Test
-    public void thatBomUploadFailureReturnsFalse() {
+    void thatBomUploadFailureReturnsFalse() {
         doReturn(BOM_LOCATION).when(moduleConfig).getBomLocation();
         doReturn(aNotFoundResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class), anyBoolean());
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
@@ -88,7 +88,7 @@ public class UploadBomActionTest {
     }
 
     @Test
-    public void thatBomUploadExceptionResultsInException() {
+    void thatBomUploadExceptionResultsInException() {
         doReturn(BOM_LOCATION).when(moduleConfig).getBomLocation();
         doThrow(RuntimeException.class).when(bomClient).uploadBom(any(), anyBoolean());
         doReturn(PollingConfig.disabled()).when(commonConfig).getPollingConfig();
@@ -102,13 +102,13 @@ public class UploadBomActionTest {
     }
 
     @Test
-    public void thatWhenPollingIsEnabledThatTheServerIsQueriedUntilBomIsFullyProcessed() throws Exception {
+    void thatWhenPollingIsEnabledThatTheServerIsQueriedUntilBomIsFullyProcessed() throws Exception {
         doReturn(BOM_LOCATION).when(moduleConfig).getBomLocation();
         doReturn(anUploadBomSuccessResponse()).when(bomClient).uploadBom(any(UploadBomRequest.class), anyBoolean());
         doReturn(new PollingConfig(true, 1, 3, MILLIS)).when(commonConfig).getPollingConfig();
 
         // Create a new candidate as the polling behaviour needs to change for this test
-        UploadBomAction uploadBomAction = new UploadBomAction(bomClient, new Poller<Boolean>(), commonConfig, logger);
+        UploadBomAction action = new UploadBomAction(bomClient, new Poller<Boolean>(), commonConfig, logger);
 
         doReturn(aBomProcessingResponse(true))
                 .doReturn(aBomProcessingResponse(true))
@@ -116,7 +116,7 @@ public class UploadBomActionTest {
                 .when(bomClient)
                 .isBomBeingProcessed(anyString());
 
-        uploadBomAction.upload(moduleConfig, false);
+        action.upload(moduleConfig, false);
 
         verify(bomClient, times(3)).isBomBeingProcessed(anyString());
     }
@@ -139,7 +139,7 @@ public class UploadBomActionTest {
         return new Response<>(200, "OK", true, Optional.of(anUploadBomResponse().build()));
     }
 
-    private Response aNotFoundResponse() {
-        return new Response(404, "Not Found", false, Optional.of("The parent component could not be found."));
+    private Response<String> aNotFoundResponse() {
+        return new Response<>(404, "Not Found", false, Optional.of("The parent component could not be found."));
     }
 }
