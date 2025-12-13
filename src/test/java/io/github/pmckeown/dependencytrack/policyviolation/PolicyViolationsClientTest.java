@@ -1,20 +1,5 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
-import com.github.tomakehurst.wiremock.http.Fault;
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackIntegrationTest;
-import io.github.pmckeown.dependencytrack.Response;
-import io.github.pmckeown.util.Logger;
-import kong.unirest.UnirestException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.List;
-import java.util.Optional;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -35,10 +20,25 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PolicyViolationsClientTest extends AbstractDependencyTrackIntegrationTest {
+import com.github.tomakehurst.wiremock.http.Fault;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackIntegrationTest;
+import io.github.pmckeown.dependencytrack.Response;
+import io.github.pmckeown.util.Logger;
+import java.util.List;
+import java.util.Optional;
+import kong.unirest.UnirestException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+class PolicyViolationsClientTest extends AbstractDependencyTrackIntegrationTest {
 
     @InjectMocks
     private PolicyViolationsClient policyClient;
@@ -46,24 +46,25 @@ public class PolicyViolationsClientTest extends AbstractDependencyTrackIntegrati
     @Mock
     private Logger logger;
 
-    @Before
-    public void setup() {
-        policyClient = new PolicyViolationsClient(getCommonConfig(), logger);
+    @BeforeEach
+    void setUp(WireMockRuntimeInfo wmri) {
+        policyClient = new PolicyViolationsClient(getCommonConfig(wmri), logger);
     }
 
     @Test
-    public void thatPolicyViolationsCanBeRetrieved() throws Exception {
-        stubFor(get(urlPathMatching(V1_POLICY_VIOLATION_PROJECT_UUID)).willReturn(
-                aResponse().withBody(asJson(
-                        aListOfPolicyViolations()
-                                .withPolicyViolation(
-                                        aPolicyViolation()
-                                                .withType("SEVERITY")
-                                                .withPolicyCondition(aPolicyCondition()
-                                                        .withPolicy(new Policy("testPolicy", ViolationState.INFO)))
-                                                .withComponent(aComponent())).build()))));
+    void thatPolicyViolationsCanBeRetrieved() throws Exception {
+        stubFor(get(urlPathMatching(V1_POLICY_VIOLATION_PROJECT_UUID))
+                .willReturn(aResponse()
+                        .withBody(asJson(aListOfPolicyViolations()
+                                .withPolicyViolation(aPolicyViolation()
+                                        .withType("SEVERITY")
+                                        .withPolicyCondition(aPolicyCondition()
+                                                .withPolicy(new Policy("testPolicy", ViolationState.INFO)))
+                                        .withComponent(aComponent()))
+                                .build()))));
 
-        Response<List<PolicyViolation>> response = policyClient.getPolicyViolationsForProject(aProject().build());
+        Response<List<PolicyViolation>> response =
+                policyClient.getPolicyViolationsForProject(aProject().build());
 
         verify(1, getRequestedFor(urlPathMatching(V1_POLICY_VIOLATION_PROJECT_UUID)));
         assertThat(response.isSuccess(), is(equalTo(true)));
@@ -80,10 +81,11 @@ public class PolicyViolationsClientTest extends AbstractDependencyTrackIntegrati
     }
 
     @Test
-    public void thatFailureToGetViolationsReturnsAnErrorResponse() {
+    void thatFailureToGetViolationsReturnsAnErrorResponse() {
         stubFor(get(urlPathMatching(V1_POLICY_VIOLATION_PROJECT_UUID)).willReturn(badRequest()));
 
-        Response<List<PolicyViolation>> response = policyClient.getPolicyViolationsForProject(aProject().build());
+        Response<List<PolicyViolation>> response =
+                policyClient.getPolicyViolationsForProject(aProject().build());
 
         verify(1, getRequestedFor(urlPathMatching(V1_POLICY_VIOLATION_PROJECT_UUID)));
         assertThat(response.isSuccess(), is(equalTo(false)));
@@ -91,9 +93,9 @@ public class PolicyViolationsClientTest extends AbstractDependencyTrackIntegrati
     }
 
     @Test
-    public void thatAnErrorToGetFindingsThrowsException() {
-        stubFor(get(urlPathMatching(V1_POLICY_VIOLATION_PROJECT_UUID)).willReturn(
-                aResponse().withFault(Fault.RANDOM_DATA_THEN_CLOSE)));
+    void thatAnErrorToGetFindingsThrowsException() {
+        stubFor(get(urlPathMatching(V1_POLICY_VIOLATION_PROJECT_UUID))
+                .willReturn(aResponse().withFault(Fault.RANDOM_DATA_THEN_CLOSE)));
 
         try {
             policyClient.getPolicyViolationsForProject(aProject().build());
@@ -102,5 +104,4 @@ public class PolicyViolationsClientTest extends AbstractDependencyTrackIntegrati
             assertThat(ex, is(instanceOf(UnirestException.class)));
         }
     }
-
 }

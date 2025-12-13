@@ -1,19 +1,5 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import io.github.pmckeown.dependencytrack.CommonConfig;
-import io.github.pmckeown.dependencytrack.Response;
-import io.github.pmckeown.util.Logger;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Date;
-import java.util.Optional;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
@@ -28,11 +14,22 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.doReturn;
 
-@RunWith(MockitoJUnitRunner.class)
-public class MetricsClientTest {
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import io.github.pmckeown.dependencytrack.CommonConfig;
+import io.github.pmckeown.dependencytrack.Response;
+import io.github.pmckeown.util.Logger;
+import java.util.Date;
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(0);
+@ExtendWith(MockitoExtension.class)
+@WireMockTest
+class MetricsClientTest {
 
     @InjectMocks
     private MetricsClient metricsClient;
@@ -44,11 +41,11 @@ public class MetricsClientTest {
     private CommonConfig commonConfig;
 
     @Test
-    public void thatMetricsAreReturnedCorrectly() {
-        doReturn("http://localhost:" + wireMockRule.port()).when(commonConfig).getDependencyTrackBaseUrl();
+    void thatMetricsAreReturnedCorrectly(WireMockRuntimeInfo wmri) {
+        doReturn("http://localhost:" + wmri.getHttpPort()).when(commonConfig).getDependencyTrackBaseUrl();
         doReturn("api123").when(commonConfig).getApiKey();
-        stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT)).willReturn(
-                aResponse().withBodyFile("api/v1/metrics/project/project-metrics.json")));
+        stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT))
+                .willReturn(aResponse().withBodyFile("api/v1/metrics/project/project-metrics.json")));
 
         Response<Metrics> metricsResponse = metricsClient.getMetrics(aProject().build());
 
@@ -74,8 +71,8 @@ public class MetricsClientTest {
     }
 
     @Test
-    public void thatASuccessfulMetricsRefreshReturnsAnEmptyResponse() {
-        doReturn("http://localhost:" + wireMockRule.port()).when(commonConfig).getDependencyTrackBaseUrl();
+    void thatASuccessfulMetricsRefreshReturnsAnEmptyResponse(WireMockRuntimeInfo wmri) {
+        doReturn("http://localhost:" + wmri.getHttpPort()).when(commonConfig).getDependencyTrackBaseUrl();
         doReturn("api123").when(commonConfig).getApiKey();
         stubFor(get(urlPathMatching(V1_METRICS_PROJECT_REFRESH)).willReturn(ok()));
 

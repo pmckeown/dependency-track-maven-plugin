@@ -1,10 +1,9 @@
 package io.github.pmckeown.dependencytrack.finding.report;
 
 import io.github.pmckeown.dependencytrack.finding.Finding;
-
+import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import java.util.List;
 
 public class FindingsWrapper {
 

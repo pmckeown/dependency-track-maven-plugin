@@ -1,28 +1,29 @@
 package io.github.pmckeown.dependencytrack.project;
 
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
-import io.github.pmckeown.dependencytrack.CommonConfig;
-import io.github.pmckeown.dependencytrack.ModuleConfig;
-import io.github.pmckeown.dependencytrack.Response;
-import kong.unirest.HttpStatus;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_PROJECT_UUID;
 import static io.github.pmckeown.dependencytrack.project.ProjectInfoBuilder.aProjectInfo;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.doReturn;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTest {
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import io.github.pmckeown.dependencytrack.CommonConfig;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
+import io.github.pmckeown.dependencytrack.Response;
+import kong.unirest.HttpStatus;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+@WireMockTest
+class ProjectClientIntegrationTest {
 
     @InjectMocks
     private ProjectClient projectClient;
@@ -33,32 +34,31 @@ public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTes
     @Mock
     private ModuleConfig moduleConfig;
 
-    @Before
-    public void setUp() {
-        doReturn("http://localhost:" + wireMockRule.port()).when(commonConfig).getDependencyTrackBaseUrl();
+    @BeforeEach
+    void setUp(WireMockRuntimeInfo wmri) {
+        doReturn("http://localhost:" + wmri.getHttpPort()).when(commonConfig).getDependencyTrackBaseUrl();
         projectClient = new ProjectClient(commonConfig);
     }
 
     @Test
-    public void thatProjectInfoUpdateReturnsSuccessWhenServerReturnsSuccess() {
-        stubFor(patch(urlPathMatching(V1_PROJECT_UUID)).willReturn(
-                aResponse().withStatus(HttpStatus.OK)));
+    void thatProjectInfoUpdateReturnsSuccessWhenServerReturnsSuccess() {
+        stubFor(patch(urlPathMatching(V1_PROJECT_UUID)).willReturn(aResponse().withStatus(HttpStatus.OK)));
 
-        Response<Void> response = projectClient.patchProject("3b2fa278-6380-4430-b646-a353107e9fbe", aProjectInfo().build());
+        Response<Void> response = projectClient.patchProject(
+                "3b2fa278-6380-4430-b646-a353107e9fbe", aProjectInfo().build());
         assertThat(response.isSuccess(), is(equalTo(true)));
         verify(exactly(1), patchRequestedFor(urlPathMatching(V1_PROJECT_UUID)));
     }
 
     @Test
-    public void thatProjectParsingWorks() {
+    void thatProjectParsingWorks() {
         doReturn("doesn't matter").when(moduleConfig).getProjectName();
         doReturn("doesn't matter").when(moduleConfig).getProjectVersion();
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-                aResponse()
-                        .withStatus(HttpStatus.OK)
-                        .withBodyFile("api/v1/project/tags-project.json")));
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withStatus(HttpStatus.OK).withBodyFile("api/v1/project/tags-project.json")));
 
-        Response<Project> response = projectClient.getProject(moduleConfig.getProjectUuid(), moduleConfig.getProjectName(), moduleConfig.getProjectVersion());
+        Response<Project> response = projectClient.getProject(
+                moduleConfig.getProjectUuid(), moduleConfig.getProjectName(), moduleConfig.getProjectVersion());
         assertThat(response.isSuccess(), is(equalTo(true)));
         assertThat(response.getBody().isPresent(), is(equalTo(true)));
         Project project = response.getBody().get();
@@ -71,21 +71,21 @@ public class ProjectClientIntegrationTest extends AbstractDependencyTrackMojoTes
     }
 
     @Test
-    public void thatProjectInfoUpdateReturnsSuccessWhenServerReturnsNotModified() {
-        stubFor(patch(urlPathMatching(V1_PROJECT_UUID)).willReturn(
-                aResponse().withStatus(HttpStatus.NOT_MODIFIED)));
+    void thatProjectInfoUpdateReturnsSuccessWhenServerReturnsNotModified() {
+        stubFor(patch(urlPathMatching(V1_PROJECT_UUID)).willReturn(aResponse().withStatus(HttpStatus.NOT_MODIFIED)));
 
-        Response<Void> response = projectClient.patchProject("3b2fa278-6380-4430-b646-a353107e9fbe", aProjectInfo().build());
+        Response<Void> response = projectClient.patchProject(
+                "3b2fa278-6380-4430-b646-a353107e9fbe", aProjectInfo().build());
         assertThat(response.isSuccess(), is(equalTo(true)));
         verify(exactly(1), patchRequestedFor(urlPathMatching(V1_PROJECT_UUID)));
     }
 
     @Test
-    public void thatProjectInfoUpdateReturnsFailedWhenServerReturnsTeapot() {
-        stubFor(patch(urlPathMatching(V1_PROJECT_UUID)).willReturn(
-                aResponse().withStatus(HttpStatus.IM_A_TEAPOT)));
+    void thatProjectInfoUpdateReturnsFailedWhenServerReturnsTeapot() {
+        stubFor(patch(urlPathMatching(V1_PROJECT_UUID)).willReturn(aResponse().withStatus(HttpStatus.IM_A_TEAPOT)));
 
-        Response<Void> response = projectClient.patchProject("3b2fa278-6380-4430-b646-a353107e9fbe", aProjectInfo().build());
+        Response<Void> response = projectClient.patchProject(
+                "3b2fa278-6380-4430-b646-a353107e9fbe", aProjectInfo().build());
         assertThat(response.isSuccess(), is(equalTo(false)));
         verify(exactly(1), patchRequestedFor(urlPathMatching(V1_PROJECT_UUID)));
     }

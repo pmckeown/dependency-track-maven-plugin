@@ -1,17 +1,5 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
-import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.util.Logger;
-import kong.unirest.UnirestException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.List;
-
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aNotFoundResponse;
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
@@ -23,12 +11,23 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PolicyViolationsActionTest {
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.project.Project;
+import io.github.pmckeown.util.Logger;
+import java.util.List;
+import kong.unirest.UnirestException;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+class PolicyViolationsActionTest {
 
     @InjectMocks
     private PolicyViolationsAction policyAction;
@@ -40,17 +39,18 @@ public class PolicyViolationsActionTest {
     private Logger logger;
 
     @Test
-    public void thatPolicyViolationsAreReturned() throws Exception {
+    void thatPolicyViolationsAreReturned() throws Exception {
         Project project = aProject().build();
         List<PolicyViolation> policyViolations = aListOfPolicyViolations()
                 .withPolicyViolation(aPolicyViolation()
                         .withType("SEVERITY")
-                        .withPolicyCondition(aPolicyCondition()
-                                .withPolicy(new Policy("testPolicy", ViolationState.INFO)))
+                        .withPolicyCondition(
+                                aPolicyCondition().withPolicy(new Policy("testPolicy", ViolationState.INFO)))
                         .withComponent(aComponent()))
                 .build();
         doReturn(aSuccessResponse().withBody(policyViolations).build())
-                .when(policyClient).getPolicyViolationsForProject(project);
+                .when(policyClient)
+                .getPolicyViolationsForProject(project);
 
         List<PolicyViolation> returnedPolicyViolations = policyAction.getPolicyViolations(project);
 
@@ -59,7 +59,7 @@ public class PolicyViolationsActionTest {
     }
 
     @Test
-    public void thatWhenNoViolationsAreReturnedThenAnEmptyListIsReturned() throws Exception {
+    void thatWhenNoViolationsAreReturnedThenAnEmptyListIsReturned() throws Exception {
         Project project = aProject().build();
         doReturn(aSuccessResponse().build()).when(policyClient).getPolicyViolationsForProject(project);
 
@@ -68,7 +68,7 @@ public class PolicyViolationsActionTest {
     }
 
     @Test
-    public void thatAnErrorResponseIsReceivedAnExceptionIsThrown() {
+    void thatAnErrorResponseIsReceivedAnExceptionIsThrown() {
         Project project = aProject().build();
         doReturn(aNotFoundResponse().build()).when(policyClient).getPolicyViolationsForProject(project);
 
@@ -76,13 +76,12 @@ public class PolicyViolationsActionTest {
             policyAction.getPolicyViolations(project);
             fail("Exception expected");
         } catch (Exception ex) {
-            logger.debug("DependencyTrackException ", ex.getMessage());
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
     }
 
     @Test
-    public void thatWhenAClientExceptionIsEncounteredAnExceptionIsThrown() {
+    void thatWhenAClientExceptionIsEncounteredAnExceptionIsThrown() {
         Project project = aProject().build();
         doThrow(UnirestException.class).when(policyClient).getPolicyViolationsForProject(project);
 
@@ -90,7 +89,6 @@ public class PolicyViolationsActionTest {
             policyAction.getPolicyViolations(project);
             fail("Exception expected");
         } catch (Exception ex) {
-            logger.debug("DependencyTrackException ", ex.getMessage());
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
     }

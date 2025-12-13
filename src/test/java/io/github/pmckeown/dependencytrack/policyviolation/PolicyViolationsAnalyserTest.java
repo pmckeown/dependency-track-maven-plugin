@@ -1,25 +1,25 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
-import io.github.pmckeown.util.Logger;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
 import static io.github.pmckeown.dependencytrack.policyviolation.PolicyConditionBuilder.aPolicyCondition;
 import static io.github.pmckeown.dependencytrack.policyviolation.PolicyViolationBuilder.aPolicyViolation;
 import static io.github.pmckeown.dependencytrack.policyviolation.PolicyViolationListBuilder.aListOfPolicyViolations;
 import static io.github.pmckeown.dependencytrack.policyviolation.PolicyViolationsAnalyser.ERROR_TEMPLATE;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PolicyViolationsAnalyserTest {
+import io.github.pmckeown.util.Logger;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+class PolicyViolationsAnalyserTest {
 
     @InjectMocks
     private PolicyViolationsAnalyser policyAnalyser;
@@ -28,13 +28,16 @@ public class PolicyViolationsAnalyserTest {
     private Logger logger;
 
     @Test
-    public void thatInfoLevelPolicyViolationsWithFailOnWarnFalseDoesNotResultInPolicyBreach() {
-        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(aListOfPolicyViolations()
-                .withPolicyViolation(aPolicyViolation()
-                        .withType("SEVERITY")
-                        .withPolicyCondition(aPolicyCondition()
-                                .withPolicy(new Policy("Info Severity Policy", ViolationState.INFO)))
-                        .withComponent(aComponent())).build(), false);
+    void thatInfoLevelPolicyViolationsWithFailOnWarnFalseDoesNotResultInPolicyBreach() {
+        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
+                aListOfPolicyViolations()
+                        .withPolicyViolation(aPolicyViolation()
+                                .withType("SEVERITY")
+                                .withPolicyCondition(aPolicyCondition()
+                                        .withPolicy(new Policy("Info Severity Policy", ViolationState.INFO)))
+                                .withComponent(aComponent()))
+                        .build(),
+                false);
         assertFalse(isPolicyBreached);
 
         verify(logger).info(anyString());
@@ -42,13 +45,16 @@ public class PolicyViolationsAnalyserTest {
     }
 
     @Test
-    public void thatInfoLevelPolicyViolationsWithFailOnWarnTrueDoesNotResultInPolicyBreach() {
-        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(aListOfPolicyViolations()
-                .withPolicyViolation(aPolicyViolation()
-                        .withType("SEVERITY")
-                        .withPolicyCondition(aPolicyCondition()
-                                .withPolicy(new Policy("Info Severity Policy", ViolationState.INFO)))
-                        .withComponent(aComponent())).build(), true);
+    void thatInfoLevelPolicyViolationsWithFailOnWarnTrueDoesNotResultInPolicyBreach() {
+        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
+                aListOfPolicyViolations()
+                        .withPolicyViolation(aPolicyViolation()
+                                .withType("SEVERITY")
+                                .withPolicyCondition(aPolicyCondition()
+                                        .withPolicy(new Policy("Info Severity Policy", ViolationState.INFO)))
+                                .withComponent(aComponent()))
+                        .build(),
+                true);
         assertFalse(isPolicyBreached);
 
         verify(logger).info(anyString());
@@ -56,13 +62,16 @@ public class PolicyViolationsAnalyserTest {
     }
 
     @Test
-    public void thatWarnLevelPolicyViolationsWithFailOnWarnFalseDoesNotResultInPolicyBreach() {
-        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(aListOfPolicyViolations()
-                .withPolicyViolation(aPolicyViolation()
-                        .withType("SEVERITY")
-                        .withPolicyCondition(aPolicyCondition()
-                                .withPolicy(new Policy("Warn Severity Policy", ViolationState.WARN)))
-                        .withComponent(aComponent())).build(), false);
+    void thatWarnLevelPolicyViolationsWithFailOnWarnFalseDoesNotResultInPolicyBreach() {
+        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
+                aListOfPolicyViolations()
+                        .withPolicyViolation(aPolicyViolation()
+                                .withType("SEVERITY")
+                                .withPolicyCondition(aPolicyCondition()
+                                        .withPolicy(new Policy("Warn Severity Policy", ViolationState.WARN)))
+                                .withComponent(aComponent()))
+                        .build(),
+                false);
         assertFalse(isPolicyBreached);
 
         verify(logger).info(anyString());
@@ -70,13 +79,16 @@ public class PolicyViolationsAnalyserTest {
     }
 
     @Test
-    public void thatWarnLevelPolicyViolationsWithFailOnWarnTrueDoesResultInPolicyBreach() {
-        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(aListOfPolicyViolations()
-                .withPolicyViolation(aPolicyViolation()
-                        .withType("SEVERITY")
-                        .withPolicyCondition(aPolicyCondition()
-                                .withPolicy(new Policy("Warn Severity Policy", ViolationState.WARN)))
-                        .withComponent(aComponent())).build(), true);
+    void thatWarnLevelPolicyViolationsWithFailOnWarnTrueDoesResultInPolicyBreach() {
+        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
+                aListOfPolicyViolations()
+                        .withPolicyViolation(aPolicyViolation()
+                                .withType("SEVERITY")
+                                .withPolicyCondition(aPolicyCondition()
+                                        .withPolicy(new Policy("Warn Severity Policy", ViolationState.WARN)))
+                                .withComponent(aComponent()))
+                        .build(),
+                true);
         assertTrue(isPolicyBreached);
 
         verify(logger).info(anyString());
@@ -84,13 +96,16 @@ public class PolicyViolationsAnalyserTest {
     }
 
     @Test
-    public void thatFailLevelPolicyViolationsWithFailOnWarnFalseDoesResultInPolicyBreach() {
-        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(aListOfPolicyViolations()
-                .withPolicyViolation(aPolicyViolation()
-                        .withType("SEVERITY")
-                        .withPolicyCondition(aPolicyCondition()
-                                .withPolicy(new Policy("Fail Severity Policy", ViolationState.FAIL)))
-                        .withComponent(aComponent())).build(), false);
+    void thatFailLevelPolicyViolationsWithFailOnWarnFalseDoesResultInPolicyBreach() {
+        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
+                aListOfPolicyViolations()
+                        .withPolicyViolation(aPolicyViolation()
+                                .withType("SEVERITY")
+                                .withPolicyCondition(aPolicyCondition()
+                                        .withPolicy(new Policy("Fail Severity Policy", ViolationState.FAIL)))
+                                .withComponent(aComponent()))
+                        .build(),
+                false);
         assertTrue(isPolicyBreached);
 
         verify(logger).info(anyString());
@@ -98,13 +113,16 @@ public class PolicyViolationsAnalyserTest {
     }
 
     @Test
-    public void thatFailLevelPolicyViolationsWithFailOnWarnTrueDoesResultInPolicyBreach() {
-        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(aListOfPolicyViolations()
-                .withPolicyViolation(aPolicyViolation()
-                        .withType("SEVERITY")
-                        .withPolicyCondition(aPolicyCondition()
-                                .withPolicy(new Policy("Fail Severity Policy", ViolationState.FAIL)))
-                        .withComponent(aComponent())).build(), true);
+    void thatFailLevelPolicyViolationsWithFailOnWarnTrueDoesResultInPolicyBreach() {
+        boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
+                aListOfPolicyViolations()
+                        .withPolicyViolation(aPolicyViolation()
+                                .withType("SEVERITY")
+                                .withPolicyCondition(aPolicyCondition()
+                                        .withPolicy(new Policy("Fail Severity Policy", ViolationState.FAIL)))
+                                .withComponent(aComponent()))
+                        .build(),
+                true);
         assertTrue(isPolicyBreached);
 
         verify(logger).info(anyString());

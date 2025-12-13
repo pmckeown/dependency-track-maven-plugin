@@ -1,29 +1,26 @@
 package io.github.pmckeown.dependencytrack.finding;
 
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.finding.report.FindingsReportGenerator;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
+import java.util.ArrayList;
 import org.apache.maven.plugin.MojoFailureException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
-@SuppressWarnings("unused")
-@RunWith(MockitoJUnitRunner.class)
-public class FindingsMojoTest {
+@ExtendWith(MockitoExtension.class)
+class FindingsMojoTest {
 
     @InjectMocks
     private FindingsMojo findingsMojo;
@@ -53,15 +50,14 @@ public class FindingsMojoTest {
     private Logger logger;
 
     @Test
-    public void thatReportIsAlwaysGeneratedEvenWhenNoFindingsArePresent() throws Exception {
+    void thatReportIsAlwaysGeneratedEvenWhenNoFindingsArePresent() throws Exception {
         findingsMojo.performAction();
 
-        verify(findingsReportGenerator, times(1)).generate(
-                null, new ArrayList<>(), null, false);
+        verify(findingsReportGenerator, times(1)).generate(null, new ArrayList<>(), null, false);
     }
 
     @Test
-    public void thatReportIsNotGeneratedWhenSkipIsTrue() throws Exception {
+    void thatReportIsNotGeneratedWhenSkipIsTrue() throws Exception {
         findingsMojo.setSkip("true");
 
         findingsMojo.execute();
@@ -70,9 +66,8 @@ public class FindingsMojoTest {
     }
 
     @Test
-    public void thatThresholdLowOptionCanBeSetDirectly() throws Exception {
-        doReturn(true).when(findingsAnalyser).doNumberOfFindingsBreachPolicy(
-                any(List.class), any(FindingThresholds.class));
+    void thatThresholdLowOptionCanBeSetDirectly() throws Exception {
+        doReturn(true).when(findingsAnalyser).doNumberOfFindingsBreachPolicy(any(), any());
 
         findingsMojo.setThresholdLow(1);
 
@@ -85,38 +80,37 @@ public class FindingsMojoTest {
     }
 
     @Test
-    public void thatThresholdCriticalOptionIsAddedToFindingThresholds() {
+    void thatThresholdCriticalOptionIsAddedToFindingThresholds() {
         findingsMojo.setThresholdCritical(1);
         findingsMojo.populateThresholdFromCliOptions();
         assertThat(findingsMojo.getFindingThresholds().getCritical(), is(equalTo(1)));
     }
 
     @Test
-    public void thatThresholdHighOptionIsAddedToFindingThresholds() {
+    void thatThresholdHighOptionIsAddedToFindingThresholds() {
         findingsMojo.setThresholdHigh(1);
         findingsMojo.populateThresholdFromCliOptions();
         assertThat(findingsMojo.getFindingThresholds().getHigh(), is(equalTo(1)));
     }
 
     @Test
-    public void thatThresholdMediumOptionIsAddedToFindingThresholds() {
+    void thatThresholdMediumOptionIsAddedToFindingThresholds() {
         findingsMojo.setThresholdMedium(1);
         findingsMojo.populateThresholdFromCliOptions();
         assertThat(findingsMojo.getFindingThresholds().getMedium(), is(equalTo(1)));
     }
 
     @Test
-    public void thatThresholdLowOptionIsAddedToFindingThresholds() {
+    void thatThresholdLowOptionIsAddedToFindingThresholds() {
         findingsMojo.setThresholdLow(1);
         findingsMojo.populateThresholdFromCliOptions();
         assertThat(findingsMojo.getFindingThresholds().getLow(), is(equalTo(1)));
     }
 
     @Test
-    public void thatThresholdUnassignedOptionIsAddedToFindingThresholds() {
+    void thatThresholdUnassignedOptionIsAddedToFindingThresholds() {
         findingsMojo.setThresholdUnassigned(1);
         findingsMojo.populateThresholdFromCliOptions();
         assertThat(findingsMojo.getFindingThresholds().getUnassigned(), is(equalTo(1)));
     }
-
 }

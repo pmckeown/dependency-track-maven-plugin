@@ -1,22 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.pmckeown</groupId>
     <artifactId>dependency-track-maven-plugin</artifactId>
-    <version>1.10.1-SNAPSHOT</version>
+    <version>1.10.3-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Dependency Track Maven Plugin</name>
+    <description>Maven plugin to integrate with a Dependency Track server to submit dependency manifests and gather project metrics. Can be used within build pipelines to analyse the current project and optionally fail the build if vulnerabilities are found.</description>
     <url>https://github.com/pmckeown/dependency-track-maven-plugin</url>
-    <description>
-        Maven plugin to integrate with a Dependency Track server to submit dependency manifests and gather project
-        metrics.  Can be used within build pipelines to analyse the current project and optionally fail the build if
-        vulnerabilities are found.
-    </description>
     <inceptionYear>2019</inceptionYear>
 
     <licenses>
@@ -38,9 +32,9 @@
 
     <scm>
         <connection>scm:git:git@github.com:pmckeown/dependency-track-maven-plugin.git</connection>
-        <url>https://github.com/pmckeown/dependency-track-maven-plugin.git</url>
         <developerConnection>scm:git:git@github.com:pmckeown/dependency-track-maven-plugin.git</developerConnection>
         <tag>HEAD</tag>
+        <url>https://github.com/pmckeown/dependency-track-maven-plugin.git</url>
     </scm>
 
     <issueManagement>
@@ -54,19 +48,23 @@
     </ciManagement>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
         <repository>
             <id>ossrh</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Compile target -->
+        <java.version>8</java.version>
         <maven.version>3.9.5</maven.version>
+        <!-- Version required to build the project -->
+        <java.build.version>11</java.build.version>
         <sonar.organization>pmckeown</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <cyclonedx-maven-plugin.version>2.7.10</cyclonedx-maven-plugin.version>
@@ -77,12 +75,17 @@
             <groupId>com.konghq</groupId>
             <artifactId>unirest-java</artifactId>
             <version>3.14.5</version>
-            <classifier>standalone</classifier>
         </dependency>
         <dependency>
             <groupId>com.konghq</groupId>
             <artifactId>unirest-objectmapper-jackson</artifactId>
             <version>3.14.5</version>
+        </dependency>
+        <dependency>
+            <!-- unirest imports httpclient which includes commons-logging 1.2.0 which does not recognize slf4j, which maven uses -->
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.3.5</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -182,27 +185,27 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
+            <groupId>org.apache.maven.plugin-testing</groupId>
+            <artifactId>maven-plugin-testing-harness</artifactId>
+            <version>3.4.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.maven.plugin-testing</groupId>
-            <artifactId>maven-plugin-testing-harness</artifactId>
-            <version>3.3.0</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>5.14.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
-            <version>3.0.4</version>
+            <version>3.13.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>5.14.2</version>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.20.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -224,9 +227,9 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.13.0</version>
                     <configuration>
-                        <release>8</release>
-                        <source>8</source>
-                        <target>8</target>
+                        <release>${java.version}</release>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -282,6 +285,29 @@
 
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>${maven.version}</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>${java.build.version}</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <executions>
@@ -299,10 +325,10 @@
                     </execution>
                     <execution>
                         <id>jacoco-site</id>
-                        <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <phase>verify</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -311,10 +337,10 @@
                 <executions>
                     <execution>
                         <id>copy-resources</id>
-                        <phase>validate</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
+                        <phase>validate</phase>
                         <configuration>
                             <outputDirectory>${basedir}/target/classes/META-INF</outputDirectory>
                             <resources>
@@ -324,6 +350,35 @@
                                 </resource>
                             </resources>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>2.45.0</version>
+                <configuration>
+                    <java>
+                        <palantirJavaFormat/>
+                        <removeUnusedImports/>
+                    </java>
+                    <pom>
+                        <includes>
+                            <include>pom.xml</include>
+                            <include>src/it/*/pom.xml</include>
+                        </includes>
+                        <sortPom>
+                            <nrOfIndentSpace>4</nrOfIndentSpace>
+                            <indentAttribute>schemaLocation</indentAttribute>
+                        </sortPom>
+                    </pom>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>verify</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -384,10 +439,10 @@
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
-                                <phase>verify</phase>
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <phase>verify</phase>
                             </execution>
                         </executions>
                     </plugin>
@@ -408,10 +463,10 @@
                         <executions>
                             <execution>
                                 <id>generate-index</id>
-                                <phase>package</phase>
                                 <goals>
                                     <goal>index</goal>
                                 </goals>
+                                <phase>package</phase>
                             </execution>
                         </executions>
                     </plugin>
@@ -443,10 +498,10 @@
                         <artifactId>sonar-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <phase>verify</phase>
                                 <goals>
                                     <goal>sonar</goal>
                                 </goals>
+                                <phase>verify</phase>
                             </execution>
                         </executions>
                     </plugin>
@@ -485,10 +540,10 @@
                         <executions>
                             <execution>
                                 <id>generate-bom</id>
-                                <phase>verify</phase>
                                 <goals>
                                     <goal>makeAggregateBom</goal>
                                 </goals>
+                                <phase>verify</phase>
                             </execution>
                         </executions>
                     </plugin>
@@ -506,10 +561,10 @@
                         <executions>
                             <execution>
                                 <id>upload-bom</id>
-                                <phase>verify</phase>
                                 <goals>
                                     <goal>upload-bom</goal>
                                 </goals>
+                                <phase>verify</phase>
                                 <configuration>
                                     <updateProjectInfo>true</updateProjectInfo>
                                     <isLatest>true</isLatest>
@@ -520,10 +575,10 @@
                             </execution>
                             <execution>
                                 <id>fail-if-vulnerabilities-present</id>
-                                <phase>verify</phase>
                                 <goals>
                                     <goal>findings</goal>
                                 </goals>
+                                <phase>verify</phase>
                                 <configuration>
                                     <findingThresholds>
                                         <critical>0</critical>
@@ -541,10 +596,10 @@
                         <version>3.6.0</version>
                         <executions>
                             <execution>
-                                <phase>validate</phase>
                                 <goals>
                                     <goal>timestamp-property</goal>
                                 </goals>
+                                <phase>validate</phase>
                                 <configuration>
                                     <pattern>yyyyMMddHHmmss</pattern>
                                     <name>it.snapshot.timestamp</name>

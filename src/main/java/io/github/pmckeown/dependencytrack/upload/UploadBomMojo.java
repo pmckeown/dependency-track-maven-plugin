@@ -9,6 +9,8 @@ import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.dependencytrack.project.UpdateRequest;
 import io.github.pmckeown.util.Logger;
+import java.util.Set;
+import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -17,24 +19,23 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import javax.inject.Inject;
-import java.util.Set;
-
 /**
  * Provides the capability to upload a Bill of Material (BOM) to your Dependency Track server.
- * <p>
- * The BOM may any format supported by your Dependency Track server, has only been tested with the output from the
- * <a href="https://github.com/CycloneDX/cyclonedx-maven-plugin">cyclonedx-maven-plugin</a> in the
- * <a href="https://cyclonedx.org/">CycloneDX</a> format
- * <p>
- * Specific configuration options are:
+ *
+ * <p>The BOM may any format supported by your Dependency Track server, has only been tested with
+ * the output from the <a
+ * href="https://github.com/CycloneDX/cyclonedx-maven-plugin">cyclonedx-maven-plugin</a> in the <a
+ * href="https://cyclonedx.org/">CycloneDX</a> format
+ *
+ * <p>Specific configuration options are:
+ *
  * <ol>
- *     <li>bomLocation</li>
+ *   <li>bomLocation
  * </ol>
  *
  * @author Paul McKeown
  */
-@Mojo(name = "upload-bom", defaultPhase = LifecyclePhase.VERIFY)
+@Mojo(name = "upload-bom", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
 public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     @Parameter(property = "dependency-track.bomLocation")
@@ -64,6 +65,9 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Parameter(property = "dependency-track.projectTags")
     private Set<String> projectTags;
 
+    @Parameter(property = "dependency-track.uploadWithPut", defaultValue = "true")
+    private boolean uploadWithPut = true;
+
     private final UploadBomAction uploadBomAction;
 
     private final MetricsAction metricsAction;
@@ -71,8 +75,13 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     private final ProjectAction projectAction;
 
     @Inject
-    public UploadBomMojo(UploadBomAction uploadBomAction, MetricsAction metricsAction, ProjectAction projectAction,
-                         CommonConfig commonConfig, ModuleConfig moduleConfig, Logger logger) {
+    public UploadBomMojo(
+            UploadBomAction uploadBomAction,
+            MetricsAction metricsAction,
+            ProjectAction projectAction,
+            CommonConfig commonConfig,
+            ModuleConfig moduleConfig,
+            Logger logger) {
         super(commonConfig, moduleConfig, logger);
         this.uploadBomAction = uploadBomAction;
         this.metricsAction = metricsAction;
@@ -85,7 +94,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         logger.info("Update Project Parent : %s", moduleConfig.getUpdateParent());
 
         try {
-            if (!uploadBomAction.upload(moduleConfig)) {
+            if (!uploadBomAction.upload(moduleConfig, uploadWithPut)) {
                 handleFailure("Bom upload failed");
             }
             Project project = projectAction.getProject(moduleConfig);
@@ -130,8 +139,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         } else {
             if (StringUtils.isBlank(moduleConfig.getParentUuid()))
                 return getProjectParentByNameAndVersion(moduleConfig.getParentName(), moduleConfig.getParentVersion());
-            else
-                return getProjectParentByUuid(moduleConfig.getParentUuid());
+            else return getProjectParentByUuid(moduleConfig.getParentUuid());
         }
     }
 
@@ -140,9 +148,11 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         try {
             return projectAction.getProject(uuid);
         } catch (DependencyTrackException ex) {
-            logger.error("Failed to find parent project with UUID ['%s']. Check the update parent " +
-                    "your settings for this plugin and verify if a matching parent project exists in the " +
-                    "server.", uuid);
+            logger.error(
+                    "Failed to find parent project with UUID ['%s']. Check the update parent "
+                            + "your settings for this plugin and verify if a matching parent project exists in the "
+                            + "server.",
+                    uuid);
             throw ex;
         }
     }
@@ -152,9 +162,11 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         try {
             return projectAction.getProject(name, version);
         } catch (DependencyTrackException ex) {
-            logger.error("Failed to find parent project with name ['%s-%s']. Check the update parent " +
-                    "your settings for this plugin and verify if a matching parent project exists in the " +
-                    "server.", name, version);
+            logger.error(
+                    "Failed to find parent project with name ['%s-%s']. Check the update parent "
+                            + "your settings for this plugin and verify if a matching parent project exists in the "
+                            + "server.",
+                    name, version);
             throw ex;
         }
     }
@@ -232,5 +244,9 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     void setProjectTags(Set<String> projectTags) {
         this.projectTags = projectTags;
         moduleConfig.setProjectTags(projectTags);
+    }
+
+    void setUploadWithPut(boolean uploadWithPut) {
+        this.uploadWithPut = uploadWithPut;
     }
 }

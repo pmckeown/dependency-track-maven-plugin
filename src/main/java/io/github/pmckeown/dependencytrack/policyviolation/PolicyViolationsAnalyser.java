@@ -1,12 +1,11 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
 import io.github.pmckeown.util.Logger;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class PolicyViolationsAnalyser {
@@ -27,12 +26,12 @@ public class PolicyViolationsAnalyser {
         List<PolicyViolation> policyWarnings = new ArrayList<>();
         boolean policyBreached = false;
 
-        policyFailures.addAll(policyViolations.stream().filter(p ->
-                p.getPolicyCondition().getPolicy().getViolationState() == ViolationState.FAIL)
+        policyFailures.addAll(policyViolations.stream()
+                .filter(p -> p.getPolicyCondition().getPolicy().getViolationState() == ViolationState.FAIL)
                 .collect(Collectors.toList()));
 
-        policyWarnings.addAll(policyViolations.stream().filter(p ->
-                p.getPolicyCondition().getPolicy().getViolationState() == ViolationState.WARN)
+        policyWarnings.addAll(policyViolations.stream()
+                .filter(p -> p.getPolicyCondition().getPolicy().getViolationState() == ViolationState.WARN)
                 .collect(Collectors.toList()));
 
         if (!policyFailures.isEmpty()) {
@@ -49,8 +48,10 @@ public class PolicyViolationsAnalyser {
     }
 
     private void logPolicyBreach(List<PolicyViolation> policyViolationsBreached) {
-        policyViolationsBreached.forEach(policyViolation ->
-            logger.warn(ERROR_TEMPLATE, policyViolation.getPolicyCondition().getPolicy().getName(),
-                    policyViolation.getComponent().getName(), policyViolation.getComponent().getVersion()));
+        policyViolationsBreached.forEach(policyViolation -> logger.warn(
+                ERROR_TEMPLATE,
+                policyViolation.getPolicyCondition().getPolicy().getName(),
+                policyViolation.getComponent().getName(),
+                policyViolation.getComponent().getVersion()));
     }
 }

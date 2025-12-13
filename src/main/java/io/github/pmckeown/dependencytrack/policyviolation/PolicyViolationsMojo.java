@@ -1,5 +1,7 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
+import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
+
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
@@ -8,36 +10,36 @@ import io.github.pmckeown.dependencytrack.policyviolation.report.PolicyViolation
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
+import java.io.File;
+import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.io.File;
-import java.util.List;
-
-import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
-
 /**
- * Print the policy violations retrieved from the Dependency Track Server after a BOM upload.  This is calculated
- * immediately by the server and as such can be used in situations where you want to know if a change to your
- * application pom.xml has breached a Policy defined on the Dependency Track server.
- * <p>
- * The build will fail if any Policies are breached that are configured with a violation state of FAIL.
- * <p>
- * The build will pass if any Policies are breached that are configured with a violation state of INFO.
- * <p>
- * The build will pass if any Policies are breached that are configured with a violation state of WARN unless the
- * `failOnWarn` option is supplied.
- * <p>
- * This allows you to tune build failures to your risk appetite.
+ * Print the policy violations retrieved from the Dependency Track Server after a BOM upload. This
+ * is calculated immediately by the server and as such can be used in situations where you want to
+ * know if a change to your application pom.xml has breached a Policy defined on the Dependency
+ * Track server.
+ *
+ * <p>The build will fail if any Policies are breached that are configured with a violation state of
+ * FAIL.
+ *
+ * <p>The build will pass if any Policies are breached that are configured with a violation state of
+ * INFO.
+ *
+ * <p>The build will pass if any Policies are breached that are configured with a violation state of
+ * WARN unless the `failOnWarn` option is supplied.
+ *
+ * <p>This allows you to tune build failures to your risk appetite.
  *
  * @author Sahiba Mittal
  */
-@Mojo(name = "policy-violations", defaultPhase = VERIFY)
+@Mojo(name = "policy-violations", defaultPhase = VERIFY, threadSafe = true)
 @Singleton
 public class PolicyViolationsMojo extends AbstractDependencyTrackMojo {
 
@@ -54,9 +56,15 @@ public class PolicyViolationsMojo extends AbstractDependencyTrackMojo {
     private PolicyViolationsAnalyser policyAnalyser;
 
     @Inject
-    public PolicyViolationsMojo(ProjectAction projectAction, PolicyViolationsReportGenerator policyViolationReportGenerator,
-                                CommonConfig commonConfig, ModuleConfig moduleConfig, Logger logger, PolicyViolationsAction policyAction,
-                                PolicyViolationsPrinter policyViolationsPrinter, PolicyViolationsAnalyser policyAnalyser) {
+    public PolicyViolationsMojo(
+            ProjectAction projectAction,
+            PolicyViolationsReportGenerator policyViolationReportGenerator,
+            CommonConfig commonConfig,
+            ModuleConfig moduleConfig,
+            Logger logger,
+            PolicyViolationsAction policyAction,
+            PolicyViolationsPrinter policyViolationsPrinter,
+            PolicyViolationsAnalyser policyAnalyser) {
         super(commonConfig, moduleConfig, logger);
         this.projectAction = projectAction;
         this.policyViolationReportGenerator = policyViolationReportGenerator;
@@ -72,8 +80,8 @@ public class PolicyViolationsMojo extends AbstractDependencyTrackMojo {
             Project project = projectAction.getProject(moduleConfig);
             policyViolations = policyAction.getPolicyViolations(project);
             policyViolationsPrinter.printPolicyViolations(project, policyViolations);
-            boolean policyViolationsBreached = policyAnalyser.isAnyPolicyViolationBreached(policyViolations,
-                    failOnWarn);
+            boolean policyViolationsBreached =
+                    policyAnalyser.isAnyPolicyViolationBreached(policyViolations, failOnWarn);
             policyViolationReportGenerator.generate(getOutputDirectory(), policyViolations);
 
             if (policyViolationsBreached) {

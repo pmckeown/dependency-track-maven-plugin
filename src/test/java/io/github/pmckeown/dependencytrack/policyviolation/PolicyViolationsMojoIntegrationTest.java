@@ -1,48 +1,43 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.junit.Before;
-import org.junit.Test;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.http.Fault.RANDOM_DATA_THEN_CLOSE;
-import static io.github.pmckeown.TestMojoLoader.loadPolicyMojo;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_POLICY_VIOLATION_PROJECT_UUID;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class PolicyViolationsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import org.apache.maven.api.plugin.testing.Basedir;
+import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.apache.maven.api.plugin.testing.MojoParameter;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-    private PolicyViolationsMojo policyMojo;
+class PolicyViolationsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
-    @Before
-    public void setup() throws Exception {
-        policyMojo = loadPolicyMojo(mojoRule);
-        policyMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
-        policyMojo.setApiKey("abc123");
-        policyMojo.setProjectName("testName");
-        policyMojo.setProjectVersion("99.99");
+    PolicyViolationsMojo policyMojo;
+
+    @BeforeEach
+    @Basedir(TEST_PROJECT)
+    @InjectMojo(goal = "policy-violations")
+    @MojoParameter(name = "projectName", value = "testName")
+    @MojoParameter(name = "projectVersion", value = "99.99")
+    void setUp(PolicyViolationsMojo mojo) {
+        policyMojo = mojo;
+        configureMojo(policyMojo);
     }
 
     @Test
-    public void thatPolicyMojoCanRetrievePolicyViolationWarningsAndNotFailIfFailOnWarnFalse() throws Exception {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-                aResponse().withBodyFile("api/v1/project/testName-project.json")));
-        stubFor(get(urlMatching(V1_POLICY_VIOLATION_PROJECT_UUID)).willReturn(
-                aResponse().withBodyFile("api/v1/violation/project/policy-violation-warnings.json")));
+    void thatPolicyMojoCanRetrievePolicyViolationWarningsAndNotFailIfFailOnWarnFalse() throws Exception {
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
+        stubFor(get(urlMatching(V1_POLICY_VIOLATION_PROJECT_UUID))
+                .willReturn(aResponse().withBodyFile("api/v1/violation/project/policy-violation-warnings.json")));
         policyMojo.setFailOnWarn(false);
         policyMojo.execute();
 
@@ -50,11 +45,11 @@ public class PolicyViolationsMojoIntegrationTest extends AbstractDependencyTrack
     }
 
     @Test
-    public void thatPolicyMojoCanRetrievePolicyViolationWarningsAndFailIfFailOnWarnTrue() {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-                aResponse().withBodyFile("api/v1/project/testName-project.json")));
-        stubFor(get(urlMatching(V1_POLICY_VIOLATION_PROJECT_UUID)).willReturn(
-                aResponse().withBodyFile("api/v1/violation/project/policy-violation-warnings.json")));
+    void thatPolicyMojoCanRetrievePolicyViolationWarningsAndFailIfFailOnWarnTrue() {
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
+        stubFor(get(urlMatching(V1_POLICY_VIOLATION_PROJECT_UUID))
+                .willReturn(aResponse().withBodyFile("api/v1/violation/project/policy-violation-warnings.json")));
         policyMojo.setFailOnWarn(true);
 
         try {
@@ -68,11 +63,11 @@ public class PolicyViolationsMojoIntegrationTest extends AbstractDependencyTrack
     }
 
     @Test
-    public void thatPolicyMojoCanRetrievePolicyViolationFailuresAndFailIfFailOnWarnFalse() {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-                aResponse().withBodyFile("api/v1/project/testName-project.json")));
-        stubFor(get(urlMatching(V1_POLICY_VIOLATION_PROJECT_UUID)).willReturn(
-                aResponse().withBodyFile("api/v1/violation/project/policy-violation-failures.json")));
+    void thatPolicyMojoCanRetrievePolicyViolationFailuresAndFailIfFailOnWarnFalse() {
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
+        stubFor(get(urlMatching(V1_POLICY_VIOLATION_PROJECT_UUID))
+                .willReturn(aResponse().withBodyFile("api/v1/violation/project/policy-violation-failures.json")));
         policyMojo.setFailOnWarn(false);
 
         try {
@@ -86,11 +81,11 @@ public class PolicyViolationsMojoIntegrationTest extends AbstractDependencyTrack
     }
 
     @Test
-    public void thatPolicyMojoCanRetrievePolicyViolationFailuresAndFailIfFailOnWarnTrue() {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-                aResponse().withBodyFile("api/v1/project/testName-project.json")));
-        stubFor(get(urlMatching(V1_POLICY_VIOLATION_PROJECT_UUID)).willReturn(
-                aResponse().withBodyFile("api/v1/violation/project/policy-violation-failures.json")));
+    void thatPolicyMojoCanRetrievePolicyViolationFailuresAndFailIfFailOnWarnTrue() {
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
+        stubFor(get(urlMatching(V1_POLICY_VIOLATION_PROJECT_UUID))
+                .willReturn(aResponse().withBodyFile("api/v1/violation/project/policy-violation-failures.json")));
         policyMojo.setFailOnWarn(true);
 
         try {
@@ -104,9 +99,9 @@ public class PolicyViolationsMojoIntegrationTest extends AbstractDependencyTrack
     }
 
     @Test
-    public void thatWhenExceptionOccursWhileGettingFindingsAndFailOnErrorIsTrueTheMojoErrors() throws Exception {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-                aResponse().withBodyFile("api/v1/project/testName-project.json")));
+    void thatWhenExceptionOccursWhileGettingFindingsAndFailOnErrorIsTrueTheMojoErrors() throws Exception {
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(get(urlPathMatching(V1_POLICY_VIOLATION_PROJECT_UUID))
                 .willReturn(aResponse().withFault(RANDOM_DATA_THEN_CLOSE)));
 
@@ -121,23 +116,23 @@ public class PolicyViolationsMojoIntegrationTest extends AbstractDependencyTrack
     }
 
     @Test
-    public void thatWhenExceptionOccursWhileGettingFindingsAndFailOnErrorIsFalseTheMojoSucceeds() throws Exception {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(
-                aResponse().withBodyFile("api/v1/project/testName-project.json")));
+    void thatWhenExceptionOccursWhileGettingFindingsAndFailOnErrorIsFalseTheMojoSucceeds() {
+        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(get(urlPathMatching(V1_POLICY_VIOLATION_PROJECT_UUID))
                 .willReturn(aResponse().withFault(RANDOM_DATA_THEN_CLOSE)));
 
         policyMojo.setFailOnError(false);
 
-        try {
-            policyMojo.execute();
-        } catch (Exception ex) {
-            fail("Exception not expected");
-        }
+        assertDoesNotThrow(
+                () -> {
+                    policyMojo.execute();
+                },
+                "Exception not expected");
     }
 
     @Test
-    public void thatPolicyViolationsIsSkippedWhenSkipIsTrue() throws Exception {
+    void thatPolicyViolationsIsSkippedWhenSkipIsTrue() throws Exception {
         policyMojo.setSkip("true");
 
         policyMojo.execute();

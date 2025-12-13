@@ -1,11 +1,9 @@
 package io.github.pmckeown.dependencytrack.project;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ProjectTag {
 
@@ -26,12 +24,9 @@ public class ProjectTag {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
         ProjectTag other = (ProjectTag) obj;
         return Objects.equals(name, other.name);
     }

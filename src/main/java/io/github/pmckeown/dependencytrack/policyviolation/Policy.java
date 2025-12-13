@@ -2,10 +2,9 @@ package io.github.pmckeown.dependencytrack.policyviolation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import javax.xml.bind.annotation.XmlElement;
 
 public class Policy {
 

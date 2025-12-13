@@ -1,27 +1,27 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
-import io.github.pmckeown.util.Logger;
-import org.apache.maven.plugin.MojoFailureException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import static io.github.pmckeown.dependencytrack.Constants.CRITICAL;
 import static io.github.pmckeown.dependencytrack.Constants.HIGH;
-import static io.github.pmckeown.dependencytrack.Constants.MEDIUM;
 import static io.github.pmckeown.dependencytrack.Constants.LOW;
+import static io.github.pmckeown.dependencytrack.Constants.MEDIUM;
 import static io.github.pmckeown.dependencytrack.Constants.UNASSIGNED;
-import static io.github.pmckeown.dependencytrack.metrics.MetricsBuilder.aMetrics;
 import static io.github.pmckeown.dependencytrack.metrics.MetricsAnalyser.ERROR_TEMPLATE;
+import static io.github.pmckeown.dependencytrack.metrics.MetricsBuilder.aMetrics;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class MetricsAnalyserTest {
+import io.github.pmckeown.util.Logger;
+import org.apache.maven.plugin.MojoFailureException;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+class MetricsAnalyserTest {
 
     @InjectMocks
     private MetricsAnalyser metricsAnalyser;
@@ -30,7 +30,7 @@ public class MetricsAnalyserTest {
     private Logger logger;
 
     @Test
-    public void thatIfCriticalIssuesExistThenAnErrorIsReturned() throws Exception {
+    void thatIfCriticalIssuesExistThenAnErrorIsReturned() throws Exception {
         Metrics metrics = aMetrics().withCritical(100).build();
 
         try {
@@ -44,7 +44,7 @@ public class MetricsAnalyserTest {
     }
 
     @Test
-    public void thatIfHighIssuesExistThenAnErrorIsReturned() throws Exception {
+    void thatIfHighIssuesExistThenAnErrorIsReturned() throws Exception {
         Metrics metrics = aMetrics().withHigh(200).build();
 
         try {
@@ -58,7 +58,7 @@ public class MetricsAnalyserTest {
     }
 
     @Test
-    public void thatIfMediumIssuesExistThenAnErrorIsReturned() throws Exception {
+    void thatIfMediumIssuesExistThenAnErrorIsReturned() throws Exception {
         Metrics metrics = aMetrics().withMedium(300).build();
 
         try {
@@ -72,7 +72,7 @@ public class MetricsAnalyserTest {
     }
 
     @Test
-    public void thatIfLowIssuesExistThenAnErrorIsReturned() throws Exception {
+    void thatIfLowIssuesExistThenAnErrorIsReturned() throws Exception {
         Metrics metrics = aMetrics().withLow(400).build();
 
         try {
@@ -86,7 +86,7 @@ public class MetricsAnalyserTest {
     }
 
     @Test
-    public void thatIfUnassignedIssuesExistThenAnErrorIsReturned() throws Exception {
+    void thatIfUnassignedIssuesExistThenAnErrorIsReturned() throws Exception {
         Metrics metrics = aMetrics().withUnassigned(500).build();
 
         try {
@@ -100,13 +100,14 @@ public class MetricsAnalyserTest {
     }
 
     @Test
-    public void thatIfIssuesExistInMultipleCategoriesThenAllAreLogged() throws Exception {
+    void thatIfIssuesExistInMultipleCategoriesThenAllAreLogged() throws Exception {
         Metrics metrics = aMetrics()
                 .withCritical(100)
                 .withHigh(200)
                 .withMedium(300)
                 .withLow(400)
-                .withUnassigned(500).build();
+                .withUnassigned(500)
+                .build();
 
         try {
             metricsAnalyser.analyse(metrics, new MetricsThresholds(0, 0, 0, 0, 0));

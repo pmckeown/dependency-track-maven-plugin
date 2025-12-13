@@ -8,7 +8,7 @@
         <version>1.0.0</version>
         <relativePath>../common-parent-project</relativePath>
     </parent>
-    <artifactId>project-with-parent</artifactId>
+    <artifactId>put-upload</artifactId>
     <version>1.0.0-@it.snapshot.timestamp@</version>
 
     <dependencies>
@@ -28,6 +28,9 @@
             <plugin>
                 <groupId>io.github.pmckeown</groupId>
                 <artifactId>dependency-track-maven-plugin</artifactId>
+                <configuration>
+                    <uploadWithPut>true</uploadWithPut>
+                </configuration>
             </plugin>
         </plugins>
     </build>

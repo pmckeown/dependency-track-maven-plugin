@@ -1,13 +1,13 @@
 package io.github.pmckeown.dependencytrack;
 
+import java.util.Optional;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import java.util.Optional;
 
 /**
  * Wrapper for API responses from the Dependency Track server
  *
+ * @param <B> Body type
  * @author Paul McKeown
  */
 public class Response<B> {

@@ -1,15 +1,5 @@
 package io.github.pmckeown.dependencytrack.finding;
 
-import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.util.Logger;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.List;
-
 import static io.github.pmckeown.dependencytrack.Constants.DELIMITER;
 import static io.github.pmckeown.dependencytrack.finding.Analysis.State.FALSE_POSITIVE;
 import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
@@ -24,8 +14,17 @@ import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class FindingsPrinterTest {
+import io.github.pmckeown.dependencytrack.project.Project;
+import io.github.pmckeown.util.Logger;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+class FindingsPrinterTest {
 
     @InjectMocks
     private FindingsPrinter findingsPrinter;
@@ -34,7 +33,7 @@ public class FindingsPrinterTest {
     private Logger logger;
 
     @Test
-    public void thatWhenNoFindingsAreRetrievedThatIsLogged() {
+    void thatWhenNoFindingsAreRetrievedThatIsLogged() {
         // Act
         Project project = aProject().withName("X").build();
         findingsPrinter.printFindings(project, null);
@@ -44,7 +43,7 @@ public class FindingsPrinterTest {
     }
 
     @Test
-    public void thatWhenSomeFindingsAreRetrievedThatIsLogged() {
+    void thatWhenSomeFindingsAreRetrievedThatIsLogged() {
         // Act
         Project project = aProject().withName("X").build();
         List<Finding> findings = findingsList("whatever", true);
@@ -55,7 +54,7 @@ public class FindingsPrinterTest {
     }
 
     @Test
-    public void thatAnUnsuppressedSingleFindingIsPrintedCorrectly() {
+    void thatAnUnsuppressedSingleFindingIsPrintedCorrectly() {
         String descriptionPart = repeat("x", DELIMITER.length());
         String longDescription = repeat(descriptionPart, 4);
         Project project = aProject().withName("a").withVersion("1").build();
@@ -71,7 +70,7 @@ public class FindingsPrinterTest {
     }
 
     @Test
-    public void thatASuppressedSingleFindingIsPrintedCorrectly() {
+    void thatASuppressedSingleFindingIsPrintedCorrectly() {
         Project project = aProject().withName("a").withVersion("1").build();
         List<Finding> findings = findingsList(null, true);
         findingsPrinter.printFindings(project, findings);
@@ -87,7 +86,7 @@ public class FindingsPrinterTest {
      * Regression test for issue: https://github.com/pmckeown/dependency-track-maven-plugin/issues/89
      */
     @Test
-    public void thatPercentCharactersInFindingsOutputAreEscapedForFormatting() {
+    void thatPercentCharactersInFindingsOutputAreEscapedForFormatting() {
         String findingContent = "crafted value that contains both ${} and %{} sequences, which causes";
         Project project = aProject().withName("a").withVersion("1").build();
         List<Finding> findings = findingsList(findingContent, false);
@@ -101,7 +100,7 @@ public class FindingsPrinterTest {
      * Regression test for issue: https://github.com/pmckeown/dependency-track-maven-plugin/issues/89
      */
     @Test
-    public void thatNewLineCharactersInFindingsOutputAreRemovedForFormatting() {
+    void thatNewLineCharactersInFindingsOutputAreRemovedForFormatting() {
         String findingContent = "be vulnerable.\n> \n> -- [redhat.com](https://bugzilla.redhat.com/show_bug";
         Project project = aProject().withName("a").withVersion("1").build();
         List<Finding> findings = findingsList(findingContent, false);
@@ -111,11 +110,9 @@ public class FindingsPrinterTest {
         verify(logger).info("be vulnerable.> > -- [redhat.com](https://bugzilla.redhat.com/show_bug");
     }
 
-    /**
-     * Test for issue: https://github.com/pmckeown/dependency-track-maven-plugin/issues/281
-     */
+    /** Test for issue: https://github.com/pmckeown/dependency-track-maven-plugin/issues/281 */
     @Test
-    public void thatSanitisedContentPrintableWhenItShrinksAcrossAChunkBoundary() {
+    void thatSanitisedContentPrintableWhenItShrinksAcrossAChunkBoundary() {
         int chunkSize = findingsPrinter.getPrintWidth();
         String findingContent = repeat("x", chunkSize - 1) + repeat("\n", 3) + repeat("y", chunkSize - 1);
         Project project = aProject().withName("a").withVersion("1").build();
@@ -129,25 +126,20 @@ public class FindingsPrinterTest {
 
     private List<Finding> findingsList(boolean isSuppressed, final VulnerabilityBuilder vulnerabilityBuilder) {
         return aListOfFindings()
-                .withFinding(
-                        aFinding()
-                                .withComponent(
-                                        aComponent()
-                                                .withGroup("nz.co.dodgy")
-                                                .withName("insecure-encrypter")
-                                                .withVersion("20.0"))
-                                .withVulnerability(vulnerabilityBuilder)
-                                .withAnalysis(
-                                        anAnalysis()
-                                                .withSuppressed(isSuppressed)
-                                                .withState(Analysis.State.FALSE_POSITIVE))).build();
+                .withFinding(aFinding()
+                        .withComponent(aComponent()
+                                .withGroup("nz.co.dodgy")
+                                .withName("insecure-encrypter")
+                                .withVersion("20.0"))
+                        .withVulnerability(vulnerabilityBuilder)
+                        .withAnalysis(
+                                anAnalysis().withSuppressed(isSuppressed).withState(Analysis.State.FALSE_POSITIVE)))
+                .build();
     }
 
     private List<Finding> findingsList(String longDescription, String vulnId, boolean isSuppressed) {
-        VulnerabilityBuilder vulnerabilityBuilder = aVulnerability()
-                .withSeverity(HIGH)
-                .withVulnId(vulnId)
-                .withDescription(longDescription);
+        VulnerabilityBuilder vulnerabilityBuilder =
+                aVulnerability().withSeverity(HIGH).withVulnId(vulnId).withDescription(longDescription);
         return findingsList(isSuppressed, vulnerabilityBuilder);
     }
 

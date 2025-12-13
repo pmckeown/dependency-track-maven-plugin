@@ -1,20 +1,5 @@
 package io.github.pmckeown.dependencytrack.finding.report;
 
-import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.finding.Finding;
-import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import java.io.File;
-import java.util.List;
-
 import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
 import static io.github.pmckeown.dependencytrack.finding.FindingBuilder.aFinding;
@@ -23,13 +8,27 @@ import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aV
 import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
-@RunWith(MockitoJUnitRunner.class)
-public class FindingsReportXmlReportWriterTest {
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.finding.Finding;
+import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
+import java.io.File;
+import java.util.List;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+class FindingsReportXmlReportWriterTest {
 
     @InjectMocks
     private FindingsReportXmlReportWriter xmlReportWriter;
@@ -40,13 +39,13 @@ public class FindingsReportXmlReportWriterTest {
     @Mock
     private Marshaller marshaller;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         doReturn(marshaller).when(marshallerService).getMarshaller();
     }
 
     @Test
-    public void thatFindingReportCanBeMarshalled() {
+    void thatFindingReportCanBeMarshalled() {
         try {
             xmlReportWriter.write(null, new FindingsReport(someFindingThresholds(), someFindings(), true));
         } catch (Exception ex) {
@@ -55,7 +54,7 @@ public class FindingsReportXmlReportWriterTest {
     }
 
     @Test
-    public void thatAnExceptionIsThrownWhenMarshallingFails() throws Exception {
+    void thatAnExceptionIsThrownWhenMarshallingFails() throws Exception {
         doThrow(JAXBException.class).when(marshaller).marshal(any(FindingsReport.class), any(File.class));
         try {
             xmlReportWriter.write(null, new FindingsReport(someFindingThresholds(), someFindings(), true));
@@ -70,12 +69,11 @@ public class FindingsReportXmlReportWriterTest {
     }
 
     private List<Finding> someFindings() {
-        List<Finding> findings = aListOfFindings()
+        return aListOfFindings()
                 .withFinding(aFinding()
                         .withAnalysis(anAnalysis())
                         .withVulnerability(aVulnerability())
                         .withComponent(aComponent()))
                 .build();
-        return findings;
     }
 }

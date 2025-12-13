@@ -2,14 +2,17 @@ package io.github.pmckeown.dependencytrack.upload;
 
 import com.evanlennick.retry4j.exception.RetriesExhaustedException;
 import com.evanlennick.retry4j.exception.UnexpectedException;
-import io.github.pmckeown.dependencytrack.*;
-import io.github.pmckeown.util.BomEncoder;
+import io.github.pmckeown.dependencytrack.CommonConfig;
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
+import io.github.pmckeown.dependencytrack.Poller;
+import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.util.Logger;
-import org.apache.commons.lang3.StringUtils;
-
+import java.io.File;
+import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Handles uploading BOMs
@@ -20,22 +23,19 @@ import java.util.Optional;
 public class UploadBomAction {
 
     private BomClient bomClient;
-    private BomEncoder bomEncoder;
     private CommonConfig commonConfig;
     private Logger logger;
     private Poller<Boolean> poller;
 
     @Inject
-    public UploadBomAction(BomClient bomClient, BomEncoder bomEncoder, Poller<Boolean> poller,
-                           CommonConfig commonConfig, Logger logger) {
+    public UploadBomAction(BomClient bomClient, Poller<Boolean> poller, CommonConfig commonConfig, Logger logger) {
         this.bomClient = bomClient;
-        this.bomEncoder = bomEncoder;
         this.poller = poller;
         this.commonConfig = commonConfig;
         this.logger = logger;
     }
 
-    public boolean upload(ModuleConfig moduleConfig) throws DependencyTrackException {
+    public boolean upload(ModuleConfig moduleConfig, boolean uploadWithPut) throws DependencyTrackException {
         logger.info("Project Name: %s", moduleConfig.getProjectName());
         logger.info("Project Version: %s", moduleConfig.getProjectVersion());
         logger.info("Project is latest: %s", Boolean.TRUE.equals(moduleConfig.isLatest()));
@@ -45,20 +45,19 @@ public class UploadBomAction {
         logger.info("Parent Version: %s", moduleConfig.getParentVersion());
         logger.info("%s", commonConfig.getPollingConfig());
 
-        Optional<String> encodedBomOptional = bomEncoder.encodeBom(moduleConfig.getBomLocation(), logger);
-        if (!encodedBomOptional.isPresent()) {
+        Optional<BomReference> bomFileReference = createBomFileReference(moduleConfig.getBomLocation());
+        if (!bomFileReference.isPresent()) {
             logger.error("No bom.xml could be located at: %s", moduleConfig.getBomLocation());
             return false;
         }
 
-        Optional<UploadBomResponse> uploadBomResponse = doUpload(moduleConfig, encodedBomOptional.get());
+        Optional<UploadBomResponse> uploadBomResponse = doUpload(moduleConfig, uploadWithPut, bomFileReference.get());
 
         if (commonConfig.getPollingConfig().isEnabled() && uploadBomResponse.isPresent()) {
             try {
                 pollUntilBomIsProcessed(uploadBomResponse.get());
             } catch (UnexpectedException | RetriesExhaustedException ex) {
-                logger.error("Polling for processing completion was interrupted so continuing: %s",
-                        ex.getMessage());
+                logger.error("Polling for processing completion was interrupted so continuing: %s", ex.getMessage());
             }
         }
 
@@ -80,23 +79,39 @@ public class UploadBomAction {
         });
     }
 
-    private Optional<UploadBomResponse> doUpload(ModuleConfig moduleConfig, String encodedBom) throws DependencyTrackException {
+    private Optional<UploadBomResponse> doUpload(
+            ModuleConfig moduleConfig, boolean uploadWithPut, BomReference bomFileReference)
+            throws DependencyTrackException {
         try {
-            Response<UploadBomResponse> response = bomClient.uploadBom(
-                    new UploadBomRequest(moduleConfig, encodedBom)
-            );
+            Response<UploadBomResponse> response =
+                    bomClient.uploadBom(new UploadBomRequest(moduleConfig, bomFileReference), uploadWithPut);
 
             if (response.isSuccess()) {
                 logger.info("BOM uploaded to Dependency Track server");
                 return response.getBody();
             } else {
-                String message = String.format("Failure integrating with Dependency Track: %d %s", response.getStatus(),
-                        response.getStatusText());
+                String message = String.format(
+                        "Failure integrating with Dependency Track: %d %s",
+                        response.getStatus(), response.getStatusText());
                 logger.error(message);
                 throw new DependencyTrackException(message);
             }
         } catch (Exception ex) {
             throw new DependencyTrackException(ex.getMessage(), ex);
+        }
+    }
+
+    private Optional<BomReference> createBomFileReference(String bomLocation) {
+        logger.debug("Current working directory: %s", System.getProperty("user.dir"));
+        logger.debug("looking for bom.xml at %s", bomLocation);
+        if (StringUtils.isBlank(bomLocation)) {
+            return Optional.empty();
+        }
+        File file = new File(bomLocation);
+        if (!file.canRead()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(new BomReference(file));
         }
     }
 }

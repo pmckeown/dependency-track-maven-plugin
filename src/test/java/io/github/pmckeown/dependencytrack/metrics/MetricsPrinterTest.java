@@ -1,20 +1,5 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
-import io.github.pmckeown.util.Logger;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
-import java.util.Arrays;
-import java.util.Collection;
-
 import static io.github.pmckeown.dependencytrack.Constants.COMPONENTS;
 import static io.github.pmckeown.dependencytrack.Constants.CRITICAL;
 import static io.github.pmckeown.dependencytrack.Constants.FINDINGS_AUDITED;
@@ -35,33 +20,39 @@ import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
-@RunWith(Parameterized.class)
+import io.github.pmckeown.util.Logger;
+import java.util.Arrays;
+import java.util.Collection;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
 public class MetricsPrinterTest {
 
     static final String ISO_OFFSET_DATE_TIME_PATTERN =
             "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}([+|-][0-9]{2}:[0-9]{2}|Z)";
 
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-    @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-                { INHERITED_RISK_SCORE, "1" },
-                { CRITICAL, "100" },
-                { HIGH, "200" },
-                { MEDIUM, "300" },
-                { LOW, "400" },
-                { UNASSIGNED, "500" },
-                { VULNERABILITIES, "600" },
-                { VULNERABLE_COMPONENTS, "700" },
-                { COMPONENTS, "800" },
-                { SUPPRESSED, "900" },
-                { FINDINGS_TOTAL, "1000" },
-                { FINDINGS_AUDITED, "1100" },
-                { FINDINGS_UNAUDITED, "1200" },
-                { FIRST_OCCURRENCE, ISO_OFFSET_DATE_TIME_PATTERN },
-                { LAST_OCCURRENCE, ISO_OFFSET_DATE_TIME_PATTERN }
+            {INHERITED_RISK_SCORE, "1"},
+            {CRITICAL, "100"},
+            {HIGH, "200"},
+            {MEDIUM, "300"},
+            {LOW, "400"},
+            {UNASSIGNED, "500"},
+            {VULNERABILITIES, "600"},
+            {VULNERABLE_COMPONENTS, "700"},
+            {COMPONENTS, "800"},
+            {SUPPRESSED, "900"},
+            {FINDINGS_TOTAL, "1000"},
+            {FINDINGS_AUDITED, "1100"},
+            {FINDINGS_UNAUDITED, "1200"},
+            {FIRST_OCCURRENCE, ISO_OFFSET_DATE_TIME_PATTERN},
+            {LAST_OCCURRENCE, ISO_OFFSET_DATE_TIME_PATTERN}
         });
     }
 
@@ -71,14 +62,13 @@ public class MetricsPrinterTest {
     @Mock
     private Logger logger;
 
-    @Parameter(0)
     public String key;
-
-    @Parameter(1)
     public String value;
 
-    @Test
-    public void thatEachMetricIsPrintedCorrectly() {
+    @MethodSource("data")
+    @ParameterizedTest
+    void thatEachMetricIsPrintedCorrectly(String key, String value) {
+        initMetricsPrinterTest(key, value);
         metricsPrinter.print(metrics());
 
         verify(logger, atLeastOnce()).info(matches("\\s*" + key + " \\| " + value));
@@ -104,4 +94,8 @@ public class MetricsPrinterTest {
                 .build();
     }
 
+    public void initMetricsPrinterTest(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
 }

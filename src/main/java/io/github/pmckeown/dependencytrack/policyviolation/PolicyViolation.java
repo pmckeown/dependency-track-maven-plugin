@@ -3,11 +3,10 @@ package io.github.pmckeown.dependencytrack.policyviolation;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.pmckeown.dependencytrack.finding.Component;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @XmlType
 public class PolicyViolation {
@@ -17,7 +16,8 @@ public class PolicyViolation {
     private String type;
 
     @JsonCreator
-    public PolicyViolation(@JsonProperty("component") Component component,
+    public PolicyViolation(
+            @JsonProperty("component") Component component,
             @JsonProperty("analysis") PolicyCondition policyCondition,
             @JsonProperty("type") String type) {
         this.component = component;

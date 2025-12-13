@@ -1,26 +1,25 @@
 package io.github.pmckeown.dependencytrack;
 
-import com.evanlennick.retry4j.exception.RetriesExhaustedException;
-import com.evanlennick.retry4j.exception.UnexpectedException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Optional;
-
 import static io.github.pmckeown.dependencytrack.PollingConfig.TimeUnit.MILLIS;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PollerTest {
+import com.evanlennick.retry4j.exception.RetriesExhaustedException;
+import com.evanlennick.retry4j.exception.UnexpectedException;
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+class PollerTest {
 
     @Test
-    public void thatThatPopulatedOptionalExitsThePollingLoop() {
+    void thatThatPopulatedOptionalExitsThePollingLoop() {
         String returnValue = "Returned from callable";
 
         Poller<String> poller = new Poller<>();
@@ -35,15 +34,15 @@ public class PollerTest {
     }
 
     @Test
-    public void thatThatEmptyOptionalLoopsTheMaximumNumberOfTimesThenThrowsException() {
-        PollingConfig pollingConfig = new PollingConfig(true, 1 ,5, MILLIS);
+    void thatThatEmptyOptionalLoopsTheMaximumNumberOfTimesThenThrowsException() {
+        PollingConfig pollingConfig = new PollingConfig(true, 1, 5, MILLIS);
         Poller<String> poller = new Poller<>();
         final int[] pollLoopCounter = {0};
 
         try {
-            Optional<String> optionalString = poller.poll(pollingConfig, () -> {
-                    pollLoopCounter[0]++;
-                    return Optional.empty();
+            poller.poll(pollingConfig, () -> {
+                pollLoopCounter[0]++;
+                return Optional.empty();
             });
             fail("RetriesExhaustedException expected");
         } catch (Exception ex) {
@@ -53,8 +52,8 @@ public class PollerTest {
     }
 
     @Test
-    public void thatThatExceptionDuringPollingExitsWithException() {
-        PollingConfig pollingConfig = new PollingConfig(true, 1 ,1, MILLIS);
+    void thatThatExceptionDuringPollingExitsWithException() {
+        PollingConfig pollingConfig = new PollingConfig(true, 1, 1, MILLIS);
         Poller<String> poller = new Poller<>();
 
         try {
@@ -69,13 +68,13 @@ public class PollerTest {
     }
 
     @Test
-    public void IfPollingDisabledTheCallableIsExecutedOnlyOnce() {
-        PollingConfig pollingConfig = new PollingConfig(false, 1 ,5, MILLIS);
+    void thatIfPollingIsDisabledTheCallableIsExecutedOnlyOnce() {
+        PollingConfig pollingConfig = new PollingConfig(false, 1, 5, MILLIS);
         Poller<String> poller = new Poller<>();
         final int[] pollLoopCounter = {0};
 
         try {
-            Optional<String> optionalString = poller.poll(pollingConfig, () -> {
+            poller.poll(pollingConfig, () -> {
                 pollLoopCounter[0]++;
                 return Optional.empty();
             });

@@ -2,7 +2,6 @@ package io.github.pmckeown.dependencytrack.project;
 
 import io.github.pmckeown.dependencytrack.metrics.Metrics;
 import io.github.pmckeown.dependencytrack.metrics.MetricsBuilder;
-
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;

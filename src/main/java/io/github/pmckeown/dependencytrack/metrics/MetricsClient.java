@@ -1,18 +1,17 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
+import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_METRICS_PROJECT_UUID_CURRENT;
+import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_METRICS_PROJECT_UUID_REFRESH;
+import static kong.unirest.Unirest.get;
+
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
+import java.util.Optional;
+import javax.inject.Inject;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
-
-import javax.inject.Inject;
-import java.util.Optional;
-
-import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_METRICS_PROJECT_UUID_CURRENT;
-import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_METRICS_PROJECT_UUID_REFRESH;
-import static kong.unirest.Unirest.get;
 
 /**
  * Client for getting project Metrics from Dependency Track
@@ -33,11 +32,11 @@ class MetricsClient {
 
     Response<Metrics> getMetrics(Project project) {
         logger.debug("Getting metrics for project: %s-%s", project.getName(), project.getVersion());
-        final HttpResponse<Metrics> httpResponse = get(
-                    commonConfig.getDependencyTrackBaseUrl() + V1_METRICS_PROJECT_UUID_CURRENT)
+        final HttpResponse<Metrics> httpResponse = get(commonConfig.getDependencyTrackBaseUrl()
+                        + V1_METRICS_PROJECT_UUID_CURRENT)
                 .header("X-Api-Key", commonConfig.getApiKey())
                 .routeParam("uuid", project.getUuid())
-                .asObject(new GenericType<Metrics>(){});
+                .asObject(new GenericType<Metrics>() {});
 
         Optional<Metrics> body;
         if (httpResponse.isSuccess()) {
@@ -46,14 +45,13 @@ class MetricsClient {
             body = Optional.empty();
         }
 
-        return new Response<>(httpResponse.getStatus(), httpResponse.getStatusText(),
-                httpResponse.isSuccess(), body);
+        return new Response<>(httpResponse.getStatus(), httpResponse.getStatusText(), httpResponse.isSuccess(), body);
     }
 
     public Response<Void> refreshMetrics(Project project) {
         logger.info("Refreshing Metrics for project: %s-%s", project.getName(), project.getVersion());
-        final HttpResponse<?> httpResponse = get(
-                commonConfig.getDependencyTrackBaseUrl() + V1_METRICS_PROJECT_UUID_REFRESH)
+        final HttpResponse<?> httpResponse = get(commonConfig.getDependencyTrackBaseUrl()
+                        + V1_METRICS_PROJECT_UUID_REFRESH)
                 .header("X-Api-Key", commonConfig.getApiKey())
                 .routeParam("uuid", project.getUuid())
                 .asEmpty();

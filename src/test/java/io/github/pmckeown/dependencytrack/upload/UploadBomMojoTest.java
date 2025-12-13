@@ -1,28 +1,33 @@
 package io.github.pmckeown.dependencytrack.upload;
 
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.*;
+
 import io.github.pmckeown.dependencytrack.CommonConfig;
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
+import java.util.Collections;
 import kong.unirest.Unirest;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.*;
-
-@RunWith(MockitoJUnitRunner.class)
-public class UploadBomMojoTest {
+@ExtendWith(MockitoExtension.class)
+class UploadBomMojoTest {
 
     private static final String PROJECT_NAME = "test";
 
@@ -30,6 +35,9 @@ public class UploadBomMojoTest {
 
     @InjectMocks
     private UploadBomMojo uploadBomMojo;
+
+    @Mock
+    private Log mavenLogger;
 
     @Mock
     private MavenProject project;
@@ -52,15 +60,21 @@ public class UploadBomMojoTest {
     @Mock
     private ModuleConfig moduleConfig;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
+        uploadBomMojo.setLog(mavenLogger);
         uploadBomMojo.setCommonConfig(commonConfig);
         uploadBomMojo.setModuleConfig(moduleConfig);
         uploadBomMojo.setMavenProject(project);
     }
 
+    @AfterEach
+    void tearDown() {
+        uploadBomMojo.getUnirestConfiguration().set(false);
+    }
+
     @Test
-    public void thatTheUploadBomIsSkippedWhenSkipIsTrue() throws Exception {
+    void thatTheUploadBomIsSkippedWhenSkipIsTrue() throws Exception {
         uploadBomMojo.setSkip("true");
         uploadBomMojo.setProjectName(PROJECT_NAME);
         uploadBomMojo.setProjectVersion(PROJECT_VERSION);
@@ -75,7 +89,7 @@ public class UploadBomMojoTest {
     }
 
     @Test
-    public void thatTheUploadBomIsSkippedWhenSkipIsReleases() throws Exception {
+    void thatTheUploadBomIsSkippedWhenSkipIsReleases() throws Exception {
         uploadBomMojo.setSkip("releases");
         uploadBomMojo.setProjectName(PROJECT_NAME);
         uploadBomMojo.setProjectVersion(PROJECT_VERSION);
@@ -90,7 +104,7 @@ public class UploadBomMojoTest {
     }
 
     @Test
-    public void thatTheUploadBomIsSkippedWhenSkipIsSnapshots() throws Exception {
+    void thatTheUploadBomIsSkippedWhenSkipIsSnapshots() throws Exception {
         String snapshotVersion = "1.0-SNAPSHOT";
         uploadBomMojo.setSkip("snapshots");
         uploadBomMojo.setProjectName(PROJECT_NAME);
@@ -106,27 +120,27 @@ public class UploadBomMojoTest {
     }
 
     @Test
-    public void thatUnirestConfiguredWithSslVerifyOnWhenAsked() throws Exception {
+    void thatUnirestConfiguredWithSslVerifyOnWhenAsked() throws Exception {
         uploadBomMojo.setVerifySsl(true);
         uploadBomMojo.execute();
         assertThat(Unirest.config().isVerifySsl(), is(equalTo(true)));
     }
 
     @Test
-    public void thatUnirestIsConfiguredWithSslVerifyOffWhenAsked() throws Exception {
+    void thatUnirestIsConfiguredWithSslVerifyOffWhenAsked() throws Exception {
         uploadBomMojo.setVerifySsl(false);
         uploadBomMojo.execute();
         assertThat(Unirest.config().isVerifySsl(), is(equalTo(false)));
     }
 
     @Test
-    public void thatWhenUpdateParentFailsTheLoggerIsCalledAndBuildFails() throws Exception {
+    void thatWhenUpdateParentFailsTheLoggerIsCalledAndBuildFails() throws Exception {
         ModuleConfig config = new ModuleConfig();
         config.setProjectName("project-parent");
         config.setProjectVersion("1.2.3");
         config.setUpdateParent(true);
 
-        doReturn(true).when(uploadBomAction).upload(config);
+        doReturn(true).when(uploadBomAction).upload(config, false);
 
         uploadBomMojo.setModuleConfig(config);
         uploadBomMojo.setParentName("project-parent");
@@ -134,34 +148,63 @@ public class UploadBomMojoTest {
         uploadBomMojo.setUpdateParent(true);
         uploadBomMojo.setFailOnError(true);
         uploadBomMojo.setProjectTags(Collections.emptySet());
+        uploadBomMojo.setUploadWithPut(false);
 
         try {
             uploadBomMojo.performAction();
+            fail("Exception expected");
         } catch (Exception ex) {
             assertThat(ex, instanceOf(MojoExecutionException.class));
         }
 
         verify(logger).error("Failed to update project info");
+        verify(mavenLogger).error(eq("Error occurred during upload"), any());
     }
 
     @Test
-    public void thatUpdateParentFailsWhenParentNameIsNull() throws Exception {
-        doReturn(true).when(uploadBomAction).upload(moduleConfig);
+    void thatUpdateParentFailsWhenParentNameIsNull() throws Exception {
+        doReturn(true).when(uploadBomAction).upload(moduleConfig, false);
 
         uploadBomMojo.setParentName(null);
         uploadBomMojo.setParentVersion(null);
         uploadBomMojo.setUpdateParent(true);
         uploadBomMojo.setFailOnError(true);
         uploadBomMojo.setProjectTags(Collections.emptySet());
+        uploadBomMojo.setUploadWithPut(false);
 
         try {
             uploadBomMojo.performAction();
+            fail("Exception expected");
         } catch (Exception ex) {
-            ex.printStackTrace();
             assertThat(ex, instanceOf(MojoExecutionException.class));
         }
 
-        verify(logger).error("Parent update requested but no parent found in parent maven project or provided in " +
-                "config");
+        verify(logger)
+                .error("Parent update requested but no parent found in parent maven project or provided in "
+                        + "config");
+        verify(mavenLogger).error(eq("Error occurred during upload"), any());
+    }
+
+    @Test
+    void thatUploadErrorsAreCorrectlyReported() throws Exception {
+        DependencyTrackException cause = new DependencyTrackException("PKIX path building failed");
+        doThrow(cause).when(uploadBomAction).upload(any(), anyBoolean());
+
+        uploadBomMojo.setFailOnError(true);
+
+        MojoExecutionException exception = assertThrows(MojoExecutionException.class, () -> uploadBomMojo.execute());
+        assertThat(exception.getCause(), is(cause));
+
+        verify(mavenLogger).error("Error occurred during upload", cause);
+    }
+
+    @Test
+    void thatUploadErrorsIsReportedEvenWhenItShouldNotFail() throws Exception {
+        DependencyTrackException cause = new DependencyTrackException("PKIX path building failed");
+        doThrow(cause).when(uploadBomAction).upload(any(), anyBoolean());
+
+        uploadBomMojo.execute();
+
+        verify(mavenLogger).error("Error occurred during upload", cause);
     }
 }

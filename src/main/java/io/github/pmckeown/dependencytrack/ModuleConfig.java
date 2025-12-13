@@ -1,17 +1,13 @@
 package io.github.pmckeown.dependencytrack;
 
 import io.github.pmckeown.util.Logger;
+import java.util.Collections;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.project.MavenProject;
 
-import java.util.Collections;
-import java.util.Set;
-
-/**
- * Holder for module dependent configuration supplied on Mojo execution
- *
- */
+/** Holder for module dependent configuration supplied on Mojo execution */
 public class ModuleConfig {
 
     private String projectUuid = "";
@@ -147,5 +143,4 @@ public class ModuleConfig {
     public void setProjectTags(Set<String> projectTags) {
         this.projectTags = projectTags;
     }
-
 }

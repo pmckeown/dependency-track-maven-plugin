@@ -1,37 +1,36 @@
 package io.github.pmckeown.dependencytrack;
 
-import org.apache.maven.project.MavenProject;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.io.File;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.doReturn;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ModuleConfigTest {
+import java.io.File;
+import org.apache.maven.project.MavenProject;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+class ModuleConfigTest {
 
     @Mock
-    private MavenProject project;
+    MavenProject project;
 
     @InjectMocks
-    private ModuleConfig moduleConfig;
+    ModuleConfig moduleConfig;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         moduleConfig = new ModuleConfig();
         moduleConfig.setMavenProject(project);
     }
 
     @Test
-    public void thatTheBomLocationIsDefaultedWhenNotSupplied() {
+    void thatTheBomLocationIsDefaultedWhenNotSupplied() {
         doReturn(new File(".")).when(project).getBasedir();
 
         assertThat(moduleConfig.getBomLocation(), is(equalTo("./target/bom.xml")));

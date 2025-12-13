@@ -2,11 +2,10 @@ package io.github.pmckeown.dependencytrack.finding;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @XmlType
 public class Finding {
@@ -16,8 +15,10 @@ public class Finding {
     private Analysis analysis;
 
     @JsonCreator
-    public Finding(@JsonProperty("component") Component component,
-           @JsonProperty("vulnerability") Vulnerability vulnerability, @JsonProperty("analysis") Analysis analysis) {
+    public Finding(
+            @JsonProperty("component") Component component,
+            @JsonProperty("vulnerability") Vulnerability vulnerability,
+            @JsonProperty("analysis") Analysis analysis) {
         this.component = component;
         this.vulnerability = vulnerability;
         this.analysis = analysis;

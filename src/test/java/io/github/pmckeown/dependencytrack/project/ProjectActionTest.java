@@ -1,32 +1,45 @@
 package io.github.pmckeown.dependencytrack.project;
 
+import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.bom.BomParser;
 import io.github.pmckeown.util.Logger;
+import java.io.File;
+import java.net.URL;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import kong.unirest.UnirestException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
-import java.util.*;
-
-import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-
-@RunWith(MockitoJUnitRunner.class)
-public class ProjectActionTest {
+@ExtendWith(MockitoExtension.class)
+class ProjectActionTest {
 
     private static final String UUID_2 = "project-uuid-2";
     private static final String PROJECT_NAME_2 = "projectName2";
@@ -48,8 +61,10 @@ public class ProjectActionTest {
     private Logger logger;
 
     @Test
-    public void thatProjectCanBeRetrievedByCommonConfig() throws Exception {
-        doReturn(aSuccessResponse().withBody(project2()).build()).when(projectClient).getProject(anyString(), anyString(), anyString());
+    void thatProjectCanBeRetrievedByCommonConfig() throws Exception {
+        doReturn(aSuccessResponse().withBody(project2()).build())
+                .when(projectClient)
+                .getProject(anyString(), anyString(), anyString());
 
         Project project = projectAction.getProject(getModuleConfig());
 
@@ -58,8 +73,10 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatProjectCanBeRetrievedByNameAndVersion() throws Exception {
-        doReturn(aSuccessResponse().withBody(project2()).build()).when(projectClient).getProject(anyString(), anyString(), anyString());
+    void thatProjectCanBeRetrievedByNameAndVersion() throws Exception {
+        doReturn(aSuccessResponse().withBody(project2()).build())
+                .when(projectClient)
+                .getProject(anyString(), anyString(), anyString());
 
         Project project = projectAction.getProject(PROJECT_NAME_2, PROJECT_VERSION_2);
 
@@ -68,8 +85,10 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatProjectCanBeRetrievedByUuid() throws Exception {
-        doReturn(aSuccessResponse().withBody(project2()).build()).when(projectClient).getProject(anyString(), anyString(), anyString());
+    void thatProjectCanBeRetrievedByUuid() throws Exception {
+        doReturn(aSuccessResponse().withBody(project2()).build())
+                .when(projectClient)
+                .getProject(anyString(), anyString(), anyString());
 
         Project project = projectAction.getProject(UUID_2);
 
@@ -78,70 +97,76 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatExceptionIsThrownWhenConnectionFails() {
+    void thatExceptionIsThrownWhenConnectionFails() {
         doThrow(UnirestException.class).when(projectClient).getProject(anyString(), anyString(), anyString());
 
         try {
             projectAction.getProject(getModuleConfig());
+            fail("Exception expected");
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
     }
 
-    @Test(expected = DependencyTrackException.class)
-    public void thatANotFoundResponseResultsInAnException() throws DependencyTrackException {
-        doReturn(aNotFoundResponse()).when(projectClient).getProject(anyString(), anyString(), anyString());
+    @Test
+    void thatANotFoundResponseResultsInAnException() {
+        assertThrows(DependencyTrackException.class, () -> {
+            doReturn(aNotFoundResponse()).when(projectClient).getProject(anyString(), anyString(), anyString());
 
-        projectAction.getProject(getModuleConfig());
+            projectAction.getProject(getModuleConfig());
+        });
     }
 
     @Test
-    public void thatNoProjectsAreFoundAnExceptionIsThrown() {
+    void thatNoProjectsAreFoundAnExceptionIsThrown() {
         doReturn(aSuccessResponse().build()).when(projectClient).getProject(anyString(), anyString(), anyString());
 
         try {
             projectAction.getProject(getModuleConfig());
+            fail("Exception expected");
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
     }
 
-    @Test(expected = DependencyTrackException.class)
-    public void thatRequestedProjectCannotBeFoundAnExceptionIsThrown() throws DependencyTrackException {
-        doReturn(aSuccessResponse().build()).when(projectClient).getProject(anyString(), anyString(), anyString());
+    @Test
+    void thatRequestedProjectCannotBeFoundAnExceptionIsThrown() {
+        assertThrows(DependencyTrackException.class, () -> {
+            doReturn(aSuccessResponse().build()).when(projectClient).getProject(anyString(), anyString(), anyString());
 
-        projectAction.getProject(getModuleConfig());
+            projectAction.getProject(getModuleConfig());
+        });
     }
 
     @Test
-    public void thatWhenProjectInfoIsUpdatedTrueIsReturned() throws Exception {
+    void thatWhenProjectInfoIsUpdatedTrueIsReturned() throws Exception {
         doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
         doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
         UpdateRequest updateReq = new UpdateRequest();
-        updateReq.withBomLocation(String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+        updateReq.withBomLocation(getBomLocation());
         boolean projectInfoUpdated = projectAction.updateProject(project1(), updateReq);
         assertThat(projectInfoUpdated, is(equalTo(true)));
     }
 
     @Test
-    public void thatWhenProjectInfoIsNotUpdatedFalseIsReturned() throws Exception {
+    void thatWhenProjectInfoIsNotUpdatedFalseIsReturned() throws Exception {
         doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
         doReturn(aNotFoundResponse()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
         UpdateRequest updateReq = new UpdateRequest();
-        updateReq.withBomLocation(String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+        updateReq.withBomLocation(getBomLocation());
         boolean projectInfoUpdated = projectAction.updateProject(project1(), updateReq);
         assertThat(projectInfoUpdated, is(equalTo(false)));
     }
 
     @Test
-    public void thatWhenProjectInfoUpdateErrorsAnExceptionIsThrown() {
+    void thatWhenProjectInfoUpdateErrorsAnExceptionIsThrown() {
         doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
         doThrow(UnirestException.class).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
         try {
             UpdateRequest updateReq = new UpdateRequest();
-            updateReq.withBomLocation(String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+            updateReq.withBomLocation(getBomLocation());
             projectAction.updateProject(project1(), updateReq);
             fail("Exception expected");
         } catch (Exception ex) {
@@ -150,7 +175,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatWhenProjectParentIsUpdatedTrueIsReturned() throws Exception {
+    void thatWhenProjectParentIsUpdatedTrueIsReturned() throws Exception {
         doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
         UpdateRequest updateReq = new UpdateRequest();
@@ -158,7 +183,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatWhenProjectParentIsNotUpdatedFalseIsReturned() throws Exception {
+    void thatWhenProjectParentIsNotUpdatedFalseIsReturned() throws Exception {
         doReturn(aNotFoundResponse()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
         UpdateRequest updateReq = new UpdateRequest();
@@ -166,7 +191,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatWhenUpdateProjectParentErrorsAnExceptionIsThrown() {
+    void thatWhenUpdateProjectParentErrorsAnExceptionIsThrown() {
         doThrow(UnirestException.class).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
         try {
             UpdateRequest updateReq = new UpdateRequest();
@@ -178,27 +203,27 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatWhenProjectBomAndIsLatestTrueIsProvidedNoExceptionIsReturned() throws Exception {
+    void thatWhenProjectBomAndIsLatestTrueIsProvidedNoExceptionIsReturned() throws Exception {
         doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
         doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
         UpdateRequest updateReq = new UpdateRequest();
-        updateReq.withBomLocation(String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+        updateReq.withBomLocation(getBomLocation());
         assertTrue(projectAction.updateProject(project3(), updateReq));
     }
 
     @Test
-    public void thatWhenProjectBomAndIsLatestFalseIsProvidedNoExceptionIsReturned() throws Exception {
+    void thatWhenProjectBomAndIsLatestFalseIsProvidedNoExceptionIsReturned() throws Exception {
         doReturn(Optional.of(new ProjectInfo())).when(bomParser).getProjectInfo(any(File.class));
         doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
         UpdateRequest updateReq = new UpdateRequest();
-        updateReq.withBomLocation(String.valueOf(new File(BomParser.class.getResource("bom.xml").getPath())));
+        updateReq.withBomLocation(getBomLocation());
         assertTrue(projectAction.updateProject(project1(), updateReq));
     }
 
     @Test
-    public void thatProjectTagsAreUpdated() throws Exception {
+    void thatProjectTagsAreUpdated() throws Exception {
         doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
         Set<String> tags = new HashSet<>();
@@ -211,7 +236,7 @@ public class ProjectActionTest {
     }
 
     @Test
-    public void thatProjectTagsAreUpdatedAndMerged() throws Exception {
+    void thatProjectTagsAreUpdatedAndMerged() throws Exception {
         doReturn(aSuccessResponse().build()).when(projectClient).patchProject(anyString(), any(ProjectInfo.class));
 
         Set<String> tags = new HashSet<>();
@@ -224,8 +249,14 @@ public class ProjectActionTest {
         assertTrue(projectAction.updateProject(projectWithTags(existingProjectTags), updateReq, tags));
     }
 
-    private Response aNotFoundResponse() {
-        return new Response(404, "Not Found", false);
+    private String getBomLocation() {
+        URL bom = BomParser.class.getResource("bom.xml");
+        assertNotNull(bom, "Missing bom.xml");
+        return String.valueOf(new File(bom.getPath()));
+    }
+
+    private Response<Void> aNotFoundResponse() {
+        return new Response<>(404, "Not Found", false);
     }
 
     private Project project1() {

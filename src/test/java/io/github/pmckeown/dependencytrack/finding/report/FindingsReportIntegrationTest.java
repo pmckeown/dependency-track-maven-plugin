@@ -1,16 +1,5 @@
 package io.github.pmckeown.dependencytrack.finding.report;
 
-import io.github.pmckeown.dependencytrack.finding.Analysis;
-import io.github.pmckeown.dependencytrack.finding.Finding;
-import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
-import io.github.pmckeown.dependencytrack.finding.Severity;
-import io.github.pmckeown.dependencytrack.report.TransformerFactoryProvider;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.File;
-import java.util.List;
-
 import static io.github.pmckeown.dependencytrack.finding.AnalysisBuilder.anAnalysis;
 import static io.github.pmckeown.dependencytrack.finding.ComponentBuilder.aComponent;
 import static io.github.pmckeown.dependencytrack.finding.FindingBuilder.aFinding;
@@ -18,33 +7,45 @@ import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aLis
 import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aVulnerability;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class FindingsReportIntegrationTest {
+import io.github.pmckeown.dependencytrack.finding.Analysis;
+import io.github.pmckeown.dependencytrack.finding.Finding;
+import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
+import io.github.pmckeown.dependencytrack.finding.Severity;
+import io.github.pmckeown.dependencytrack.report.TransformerFactoryProvider;
+import java.io.File;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class FindingsReportIntegrationTest {
 
     private FindingsReportXmlReportWriter xmlReportWriter;
     private FindingsReportHtmlReportWriter htmlReportWriter;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         FindingsReportMarshallerService findingsReportMarshallerService = new FindingsReportMarshallerService();
         xmlReportWriter = new FindingsReportXmlReportWriter(findingsReportMarshallerService);
         htmlReportWriter = new FindingsReportHtmlReportWriter(new TransformerFactoryProvider());
     }
 
     @Test
-    public void thatXmlFileCanBeGenerated() {
-        try {
-            File outputDirectory = new File("target");
-            xmlReportWriter.write(outputDirectory, new FindingsReport(thresholds(), findings(), true));
-            assertThat(new File(outputDirectory, FindingsReportConstants.XML_REPORT_FILENAME).exists(), is(true));
-        } catch (Exception ex) {
-            fail("Exception not expected");
-        }
+    void thatXmlFileCanBeGenerated() {
+        assertDoesNotThrow(
+                () -> {
+                    File outputDirectory = new File("target");
+                    xmlReportWriter.write(outputDirectory, new FindingsReport(thresholds(), findings(), true));
+                    assertThat(
+                            new File(outputDirectory, FindingsReportConstants.XML_REPORT_FILENAME).exists(), is(true));
+                },
+                "Exception not expected");
     }
 
     @Test
-    public void thatXmlFileCanBeTransformed() {
+    void thatXmlFileCanBeTransformed() {
         try {
             File outputDirectory = new File("target");
             xmlReportWriter.write(outputDirectory, new FindingsReport(thresholds(), findings(), true));
@@ -69,7 +70,9 @@ public class FindingsReportIntegrationTest {
                 .withFinding(aFinding()
                         .withVulnerability(aVulnerability().withSeverity(Severity.CRITICAL))
                         .withComponent(aComponent().withName("suppressed"))
-                        .withAnalysis(anAnalysis().withState(Analysis.State.FALSE_POSITIVE).withSuppressed(true)))
+                        .withAnalysis(anAnalysis()
+                                .withState(Analysis.State.FALSE_POSITIVE)
+                                .withSuppressed(true)))
                 .withFinding(aFinding()
                         .withVulnerability(aVulnerability().withSeverity(Severity.HIGH))
                         .withComponent(aComponent())

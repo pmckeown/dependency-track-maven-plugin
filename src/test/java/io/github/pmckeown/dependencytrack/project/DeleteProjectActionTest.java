@@ -1,21 +1,13 @@
 package io.github.pmckeown.dependencytrack.project;
 
-import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.util.Logger;
-import kong.unirest.UnirestException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aNotFoundResponse;
 import static io.github.pmckeown.dependencytrack.ResponseBuilder.aSuccessResponse;
+import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
@@ -23,8 +15,17 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class DeleteProjectActionTest {
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.util.Logger;
+import kong.unirest.UnirestException;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+class DeleteProjectActionTest {
 
     @InjectMocks
     private ProjectAction projectAction;
@@ -36,7 +37,7 @@ public class DeleteProjectActionTest {
     private Logger logger;
 
     @Test
-    public void thatWhenProjectIsDeletedThenTrueIsReturn() throws Exception {
+    void thatWhenProjectIsDeletedThenTrueIsReturn() throws Exception {
         doReturn(aSuccessResponse().build()).when(projectClient).deleteProject(any(Project.class));
 
         boolean deleted = projectAction.deleteProject(aProject().build());
@@ -45,7 +46,7 @@ public class DeleteProjectActionTest {
     }
 
     @Test
-    public void thatWhenProjectIsNotDeletedThenFalseIsReturn() throws Exception {
+    void thatWhenProjectIsNotDeletedThenFalseIsReturn() throws Exception {
         doReturn(aNotFoundResponse().build()).when(projectClient).deleteProject(any(Project.class));
 
         boolean deleted = projectAction.deleteProject(aProject().build());
@@ -54,16 +55,16 @@ public class DeleteProjectActionTest {
     }
 
     @Test
-    public void thatWhenAnExceptionOccursWhenDeletingProjectThenCorrectExceptionIsThrown() throws Exception {
+    void thatWhenAnExceptionOccursWhenDeletingProjectThenCorrectExceptionIsThrown() throws Exception {
         doThrow(UnirestException.class).when(projectClient).deleteProject(any(Project.class));
 
         try {
             projectAction.deleteProject(aProject().build());
+            fail("Exception expected");
         } catch (Exception ex) {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
 
         verify(logger, atLeastOnce()).error(anyString(), any(UnirestException.class));
     }
-
 }

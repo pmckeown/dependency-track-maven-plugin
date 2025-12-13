@@ -1,5 +1,7 @@
 package io.github.pmckeown.dependencytrack.finding;
 
+import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
+
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
@@ -8,29 +10,28 @@ import io.github.pmckeown.dependencytrack.finding.report.FindingsReportGenerator
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
+import java.io.File;
+import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.io.File;
-import java.util.List;
-
-import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
-
 /**
- * Print the findings retrieved from the Dependency Track Server after a BOM upload.  This is calculated immediately
- * by the server and as such can be used in situations where you want to know if a change to your application pom.xml
- * has had an impact on the vulnerabilities present in your application.
- * <p>
- * You can optionally define thresholds for failing the build where the number of issues in a particular category
- * is greater than the threshold you define for that category.
- * <p>
- * For example the following configuration with fail the build if there are any Critical or High issues found in the
- * scan, more than 10 medium issues or more than 20 low issues.
+ * Print the findings retrieved from the Dependency Track Server after a BOM upload. This is
+ * calculated immediately by the server and as such can be used in situations where you want to know
+ * if a change to your application pom.xml has had an impact on the vulnerabilities present in your
+ * application.
+ *
+ * <p>You can optionally define thresholds for failing the build where the number of issues in a
+ * particular category is greater than the threshold you define for that category.
+ *
+ * <p>For example the following configuration with fail the build if there are any Critical or High
+ * issues found in the scan, more than 10 medium issues or more than 20 low issues.
+ *
  * <pre>
  * &lt;findingThresholds&gt;
  *     &lt;critical&gt;0&lt;/critical&gt;
@@ -40,25 +41,26 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
  *     &lt;unassigned&gt;30&lt;/unassigned&gt;
  * &lt;/findingThresholds&gt;
  * </pre>
+ *
  * This allows you to tune build failures to your risk appetite.
- * <p>
- * Specific configuration options are:
+ *
+ * <p>Specific configuration options are:
+ *
  * <ol>
- *     <li>findingThresholds</li>
- *     <li>
- *          <ol>
- *              <li>critical</li>
- *              <li>high</li>
- *              <li>medium</li>
- *              <li>low</li>
- *              <li>unassigned</li>
- *          </ol>
- *     </li>
+ *   <li>findingThresholds
+ *   <li>
+ *       <ol>
+ *         <li>critical
+ *         <li>high
+ *         <li>medium
+ *         <li>low
+ *         <li>unassigned
+ *       </ol>
  * </ol>
  *
  * @author Paul McKeown
  */
-@Mojo(name = "findings", defaultPhase = VERIFY)
+@Mojo(name = "findings", defaultPhase = VERIFY, threadSafe = true)
 @Singleton
 public class FindingsMojo extends AbstractDependencyTrackMojo {
 
@@ -90,9 +92,15 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     private FindingsReportGenerator findingsReportGenerator;
 
     @Inject
-    public FindingsMojo(ProjectAction projectAction, FindingsAction findingsAction, FindingsPrinter findingsPrinter,
-                        FindingsAnalyser findingsAnalyser, FindingsReportGenerator findingsReportGenerator,
-                        CommonConfig commonConfig, ModuleConfig moduleConfig, Logger logger) {
+    public FindingsMojo(
+            ProjectAction projectAction,
+            FindingsAction findingsAction,
+            FindingsPrinter findingsPrinter,
+            FindingsAnalyser findingsAnalyser,
+            FindingsReportGenerator findingsReportGenerator,
+            CommonConfig commonConfig,
+            ModuleConfig moduleConfig,
+            Logger logger) {
         super(commonConfig, moduleConfig, logger);
         this.projectAction = projectAction;
         this.findingsAction = findingsAction;
@@ -122,15 +130,23 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     }
 
     /**
-     * If Maven options are provided on the command line and the {@link FindingThresholds} is not already populated
-     * from XML configuration, populate the {@link FindingThresholds} from those options.
+     * If Maven options are provided on the command line and the {@link FindingThresholds} is not
+     * already populated from XML configuration, populate the {@link FindingThresholds} from those
+     * options.
      */
     void populateThresholdFromCliOptions() {
-        if (this.findingThresholds == null && (this.thresholdCritical != null || this.thresholdHigh != null ||
-                this.thresholdMedium != null || this.thresholdLow != null || this.thresholdUnassigned != null)) {
+        if (this.findingThresholds == null
+                && (this.thresholdCritical != null
+                        || this.thresholdHigh != null
+                        || this.thresholdMedium != null
+                        || this.thresholdLow != null
+                        || this.thresholdUnassigned != null)) {
             this.findingThresholds = new FindingThresholds(
-                    this.thresholdCritical, this.thresholdHigh, this.thresholdMedium,
-                    this.thresholdLow, this.thresholdUnassigned);
+                    this.thresholdCritical,
+                    this.thresholdHigh,
+                    this.thresholdMedium,
+                    this.thresholdLow,
+                    this.thresholdUnassigned);
         }
     }
 
