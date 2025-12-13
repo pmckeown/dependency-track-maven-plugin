@@ -68,7 +68,7 @@ class PollerTest {
     }
 
     @Test
-    void ifPollingDisabledTheCallableIsExecutedOnlyOnce() {
+    void thatIfPollingIsDisabledTheCallableIsExecutedOnlyOnce() {
         PollingConfig pollingConfig = new PollingConfig(false, 1, 5, MILLIS);
         Poller<String> poller = new Poller<>();
         final int[] pollLoopCounter = {0};
