@@ -25,10 +25,11 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.http.Fault;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackIntegrationTest;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.Response;
@@ -36,27 +37,27 @@ import io.github.pmckeown.util.Logger;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import kong.unirest.UnirestException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class BomClientIntegrationTest extends AbstractDependencyTrackIntegrationTest {
+@ExtendWith(MockitoExtension.class)
+class BomClientIntegrationTest extends AbstractDependencyTrackIntegrationTest {
 
     @Mock
     private Logger logger;
 
     private BomClient client;
 
-    @Before
-    public void setup() {
-        client = new BomClient(getCommonConfig(), logger);
+    @BeforeEach
+    void setUp(WireMockRuntimeInfo wmri) {
+        client = new BomClient(getCommonConfig(wmri), logger);
     }
 
     @Test
-    public void thatBomCanBeUploadedAndProcessingTokenIsReceived() throws Exception {
+    void thatBomCanBeUploadedAndProcessingTokenIsReceived() throws Exception {
         stubFor(post(urlEqualTo(V1_BOM))
                 .willReturn(ok().withBody(
                                 asJson(anUploadBomResponse().withToken("123").build()))));
@@ -86,7 +87,7 @@ public class BomClientIntegrationTest extends AbstractDependencyTrackIntegration
     }
 
     @Test
-    public void thatBomCanBeUploadedAndProcessingTokenIsReceivedWithPut() throws Exception {
+    void thatBomCanBeUploadedAndProcessingTokenIsReceivedWithPut() throws Exception {
         stubFor(put(urlEqualTo(V1_BOM))
                 .willReturn(ok().withBody(
                                 asJson(anUploadBomResponse().withToken("123").build()))));
@@ -105,7 +106,7 @@ public class BomClientIntegrationTest extends AbstractDependencyTrackIntegration
     }
 
     @Test
-    public void thatHttpErrorsWhenUploadingBomsAreTranslatedIntoAResponse() {
+    void thatHttpErrorsWhenUploadingBomsAreTranslatedIntoAResponse() {
         stubFor(post(urlEqualTo(V1_BOM)).willReturn(status(418)));
 
         Response<UploadBomResponse> response = client.uploadBom(aBom(), false);
@@ -121,7 +122,7 @@ public class BomClientIntegrationTest extends AbstractDependencyTrackIntegration
     }
 
     @Test
-    public void thatHttpErrorsWhenUploadingBomsAreTranslatedIntoAResponseWithPut() {
+    void thatHttpErrorsWhenUploadingBomsAreTranslatedIntoAResponseWithPut() {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(status(418)));
 
         Response<UploadBomResponse> response = client.uploadBom(aBom(), true);
@@ -135,7 +136,7 @@ public class BomClientIntegrationTest extends AbstractDependencyTrackIntegration
     }
 
     @Test
-    public void thatConnectionErrorsWhenUploadingBomsAreTranslatedIntoAResponse() {
+    void thatConnectionErrorsWhenUploadingBomsAreTranslatedIntoAResponse() {
         stubFor(post(urlEqualTo(V1_BOM)).willReturn(notFound()));
 
         Response<UploadBomResponse> response = client.uploadBom(aBom(), false);
@@ -151,7 +152,7 @@ public class BomClientIntegrationTest extends AbstractDependencyTrackIntegration
     }
 
     @Test
-    public void thatConnectionErrorsWhenUploadingBomsAreTranslatedIntoAResponseWithPut() {
+    void thatConnectionErrorsWhenUploadingBomsAreTranslatedIntoAResponseWithPut() {
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(notFound()));
 
         Response<UploadBomResponse> response = client.uploadBom(aBom(), true);
@@ -165,7 +166,7 @@ public class BomClientIntegrationTest extends AbstractDependencyTrackIntegration
     }
 
     @Test
-    public void thatWhenBomIsStillBeingProcessedThenTheProcessingFlagIsTrue() throws Exception {
+    void thatWhenBomIsStillBeingProcessedThenTheProcessingFlagIsTrue() throws Exception {
         stubFor(get(urlPathMatching(V1_BOM_TOKEN_UUID))
                 .willReturn(ok().withBody(asJson(
                         aBomProcessingResponse().withProcessing(true).build()))));
@@ -176,7 +177,7 @@ public class BomClientIntegrationTest extends AbstractDependencyTrackIntegration
     }
 
     @Test
-    public void thatWhenBomProcessingIsFinishedThenTheProcessingFlagIsFalse() throws Exception {
+    void thatWhenBomProcessingIsFinishedThenTheProcessingFlagIsFalse() throws Exception {
         stubFor(get(urlPathMatching(V1_BOM_TOKEN_UUID))
                 .willReturn(ok().withBody(asJson(
                         aBomProcessingResponse().withProcessing(false).build()))));
@@ -187,7 +188,7 @@ public class BomClientIntegrationTest extends AbstractDependencyTrackIntegration
     }
 
     @Test
-    public void thatWhenAnErrorOccursWhileQueryingTheAUnirestExceptionIsThrown() {
+    void thatWhenAnErrorOccursWhileQueryingTheAUnirestExceptionIsThrown() {
         stubFor(get(urlPathMatching(V1_BOM_TOKEN_UUID))
                 .willReturn(aResponse().withFault(Fault.RANDOM_DATA_THEN_CLOSE)));
 

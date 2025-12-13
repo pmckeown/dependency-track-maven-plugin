@@ -22,24 +22,25 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.github.tomakehurst.wiremock.http.Fault;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackIntegrationTest;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.util.Logger;
 import java.util.List;
 import java.util.Optional;
 import kong.unirest.UnirestException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class FindingsClientTest extends AbstractDependencyTrackIntegrationTest {
+@ExtendWith(MockitoExtension.class)
+class FindingsClientTest extends AbstractDependencyTrackIntegrationTest {
 
     @InjectMocks
     private FindingsClient findingClient;
@@ -47,13 +48,13 @@ public class FindingsClientTest extends AbstractDependencyTrackIntegrationTest {
     @Mock
     private Logger logger;
 
-    @Before
-    public void setup() {
-        findingClient = new FindingsClient(getCommonConfig(), logger);
+    @BeforeEach
+    void setUp(WireMockRuntimeInfo wmri) {
+        findingClient = new FindingsClient(getCommonConfig(wmri), logger);
     }
 
     @Test
-    public void thatFindingsCanBeRetrieved() throws Exception {
+    void thatFindingsCanBeRetrieved() throws Exception {
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
                 .willReturn(aResponse()
                         .withBody(asJson(aListOfFindings()
@@ -81,7 +82,7 @@ public class FindingsClientTest extends AbstractDependencyTrackIntegrationTest {
     }
 
     @Test
-    public void thatFailureToGetFindingsReturnsAnErrorResponse() {
+    void thatFailureToGetFindingsReturnsAnErrorResponse() {
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(badRequest()));
 
         Response<List<Finding>> response =
@@ -93,7 +94,7 @@ public class FindingsClientTest extends AbstractDependencyTrackIntegrationTest {
     }
 
     @Test
-    public void thatAnErrorToGetFindingsThrowsException() {
+    void thatAnErrorToGetFindingsThrowsException() {
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
                 .willReturn(aResponse().withFault(Fault.RANDOM_DATA_THEN_CLOSE)));
 

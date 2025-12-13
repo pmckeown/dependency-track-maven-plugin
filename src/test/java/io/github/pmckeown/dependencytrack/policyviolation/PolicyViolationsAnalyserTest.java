@@ -5,21 +5,21 @@ import static io.github.pmckeown.dependencytrack.policyviolation.PolicyCondition
 import static io.github.pmckeown.dependencytrack.policyviolation.PolicyViolationBuilder.aPolicyViolation;
 import static io.github.pmckeown.dependencytrack.policyviolation.PolicyViolationListBuilder.aListOfPolicyViolations;
 import static io.github.pmckeown.dependencytrack.policyviolation.PolicyViolationsAnalyser.ERROR_TEMPLATE;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import io.github.pmckeown.util.Logger;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PolicyViolationsAnalyserTest {
+@ExtendWith(MockitoExtension.class)
+class PolicyViolationsAnalyserTest {
 
     @InjectMocks
     private PolicyViolationsAnalyser policyAnalyser;
@@ -28,7 +28,7 @@ public class PolicyViolationsAnalyserTest {
     private Logger logger;
 
     @Test
-    public void thatInfoLevelPolicyViolationsWithFailOnWarnFalseDoesNotResultInPolicyBreach() {
+    void thatInfoLevelPolicyViolationsWithFailOnWarnFalseDoesNotResultInPolicyBreach() {
         boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
                 aListOfPolicyViolations()
                         .withPolicyViolation(aPolicyViolation()
@@ -45,7 +45,7 @@ public class PolicyViolationsAnalyserTest {
     }
 
     @Test
-    public void thatInfoLevelPolicyViolationsWithFailOnWarnTrueDoesNotResultInPolicyBreach() {
+    void thatInfoLevelPolicyViolationsWithFailOnWarnTrueDoesNotResultInPolicyBreach() {
         boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
                 aListOfPolicyViolations()
                         .withPolicyViolation(aPolicyViolation()
@@ -62,7 +62,7 @@ public class PolicyViolationsAnalyserTest {
     }
 
     @Test
-    public void thatWarnLevelPolicyViolationsWithFailOnWarnFalseDoesNotResultInPolicyBreach() {
+    void thatWarnLevelPolicyViolationsWithFailOnWarnFalseDoesNotResultInPolicyBreach() {
         boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
                 aListOfPolicyViolations()
                         .withPolicyViolation(aPolicyViolation()
@@ -79,7 +79,7 @@ public class PolicyViolationsAnalyserTest {
     }
 
     @Test
-    public void thatWarnLevelPolicyViolationsWithFailOnWarnTrueDoesResultInPolicyBreach() {
+    void thatWarnLevelPolicyViolationsWithFailOnWarnTrueDoesResultInPolicyBreach() {
         boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
                 aListOfPolicyViolations()
                         .withPolicyViolation(aPolicyViolation()
@@ -96,7 +96,7 @@ public class PolicyViolationsAnalyserTest {
     }
 
     @Test
-    public void thatFailLevelPolicyViolationsWithFailOnWarnFalseDoesResultInPolicyBreach() {
+    void thatFailLevelPolicyViolationsWithFailOnWarnFalseDoesResultInPolicyBreach() {
         boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
                 aListOfPolicyViolations()
                         .withPolicyViolation(aPolicyViolation()
@@ -113,7 +113,7 @@ public class PolicyViolationsAnalyserTest {
     }
 
     @Test
-    public void thatFailLevelPolicyViolationsWithFailOnWarnTrueDoesResultInPolicyBreach() {
+    void thatFailLevelPolicyViolationsWithFailOnWarnTrueDoesResultInPolicyBreach() {
         boolean isPolicyBreached = policyAnalyser.isAnyPolicyViolationBreached(
                 aListOfPolicyViolations()
                         .withPolicyViolation(aPolicyViolation()

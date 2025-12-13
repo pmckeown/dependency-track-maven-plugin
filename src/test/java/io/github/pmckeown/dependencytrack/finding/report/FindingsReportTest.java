@@ -13,12 +13,12 @@ import io.github.pmckeown.dependencytrack.finding.Finding;
 import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
 import io.github.pmckeown.dependencytrack.finding.Severity;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class FindingsReportTest {
+class FindingsReportTest {
 
     @Test
-    public void thatAFindingsReportCanBeGenerated() {
+    void thatAFindingsReportCanBeGenerated() {
         FindingThresholds findingThresholds = new FindingThresholds(1, null, null, null, null);
         List<Finding> findings = aListOfFindings()
                 .withFinding(aFinding()
@@ -34,7 +34,7 @@ public class FindingsReportTest {
     }
 
     @Test
-    public void thatAFindingsAreSortedIntoSeparateBuckets() {
+    void thatAFindingsAreSortedIntoSeparateBuckets() {
         FindingThresholds findingThresholds = new FindingThresholds(1, null, null, null, null);
         List<Finding> findings = aListOfFindings()
                 .withFinding(aFinding()

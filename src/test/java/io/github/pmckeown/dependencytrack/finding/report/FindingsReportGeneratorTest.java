@@ -4,7 +4,7 @@ import static io.github.pmckeown.dependencytrack.finding.FindingListBuilder.aLis
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
@@ -15,14 +15,14 @@ import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.finding.Finding;
 import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class FindingsReportGeneratorTest {
+@ExtendWith(MockitoExtension.class)
+class FindingsReportGeneratorTest {
 
     @InjectMocks
     private FindingsReportGenerator findingsReportGenerator;
@@ -34,7 +34,7 @@ public class FindingsReportGeneratorTest {
     private FindingsReportHtmlReportWriter htmlReportWriter;
 
     @Test
-    public void thatBothReportsAreGenerated() throws Exception {
+    void thatBothReportsAreGenerated() throws Exception {
         FindingThresholds findingThresholds = new FindingThresholds(1, null, null, null, null);
         List<Finding> findings = aListOfFindings().build();
         findingsReportGenerator.generate(null, findings, findingThresholds, false);
@@ -43,7 +43,7 @@ public class FindingsReportGeneratorTest {
     }
 
     @Test
-    public void thatExceptionWhenWritingXmlReportIsHandledAndHtmlIsNotAttempted() throws Exception {
+    void thatExceptionWhenWritingXmlReportIsHandledAndHtmlIsNotAttempted() throws Exception {
         FindingThresholds findingThresholds = new FindingThresholds(1, null, null, null, null);
         List<Finding> findings = aListOfFindings().build();
 
@@ -60,7 +60,7 @@ public class FindingsReportGeneratorTest {
     }
 
     @Test
-    public void thatExceptionWhenWritingHtmlReportIsHandled() throws Exception {
+    void thatExceptionWhenWritingHtmlReportIsHandled() throws Exception {
         FindingThresholds findingThresholds = new FindingThresholds(1, null, null, null, null);
         List<Finding> findings = aListOfFindings().build();
 

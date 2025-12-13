@@ -11,7 +11,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
@@ -20,14 +20,14 @@ import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
 import java.util.List;
 import kong.unirest.UnirestException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PolicyViolationsActionTest {
+@ExtendWith(MockitoExtension.class)
+class PolicyViolationsActionTest {
 
     @InjectMocks
     private PolicyViolationsAction policyAction;
@@ -39,7 +39,7 @@ public class PolicyViolationsActionTest {
     private Logger logger;
 
     @Test
-    public void thatPolicyViolationsAreReturned() throws Exception {
+    void thatPolicyViolationsAreReturned() throws Exception {
         Project project = aProject().build();
         List<PolicyViolation> policyViolations = aListOfPolicyViolations()
                 .withPolicyViolation(aPolicyViolation()
@@ -59,7 +59,7 @@ public class PolicyViolationsActionTest {
     }
 
     @Test
-    public void thatWhenNoViolationsAreReturnedThenAnEmptyListIsReturned() throws Exception {
+    void thatWhenNoViolationsAreReturnedThenAnEmptyListIsReturned() throws Exception {
         Project project = aProject().build();
         doReturn(aSuccessResponse().build()).when(policyClient).getPolicyViolationsForProject(project);
 
@@ -68,7 +68,7 @@ public class PolicyViolationsActionTest {
     }
 
     @Test
-    public void thatAnErrorResponseIsReceivedAnExceptionIsThrown() {
+    void thatAnErrorResponseIsReceivedAnExceptionIsThrown() {
         Project project = aProject().build();
         doReturn(aNotFoundResponse().build()).when(policyClient).getPolicyViolationsForProject(project);
 
@@ -81,7 +81,7 @@ public class PolicyViolationsActionTest {
     }
 
     @Test
-    public void thatWhenAClientExceptionIsEncounteredAnExceptionIsThrown() {
+    void thatWhenAClientExceptionIsEncounteredAnExceptionIsThrown() {
         Project project = aProject().build();
         doThrow(UnirestException.class).when(policyClient).getPolicyViolationsForProject(project);
 

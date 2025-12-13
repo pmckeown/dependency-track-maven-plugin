@@ -1,42 +1,37 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static io.github.pmckeown.TestMojoLoader.loadMetricsMojo;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.github.pmckeown.dependencytrack.ResourceConstants.V1_PROJECT_LOOKUP;
 import static io.github.pmckeown.dependencytrack.TestResourceConstants.V1_METRICS_PROJECT_CURRENT;
 import static io.github.pmckeown.dependencytrack.TestUtils.asJson;
 import static io.github.pmckeown.dependencytrack.metrics.MetricsBuilder.aMetrics;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.http.Fault;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.project.ProjectBuilder;
+import org.apache.maven.api.plugin.testing.Basedir;
+import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
+class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
-    private MetricsMojo metricsMojo;
+    MetricsMojo metricsMojo;
 
-    @Before
-    public void setup() throws Exception {
-        metricsMojo = loadMetricsMojo(mojoRule);
-        metricsMojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRule.port());
-        metricsMojo.setApiKey("abc123");
+    @BeforeEach
+    @Basedir(TEST_PROJECT)
+    @InjectMojo(goal = "metrics")
+    void setUp(MetricsMojo mojo) {
+        metricsMojo = mojo;
+        configureMojo(metricsMojo);
     }
 
     @Test
-    public void thatMetricsCanBeRetrievedForCurrentProject() throws Exception {
+    void thatMetricsCanBeRetrievedForCurrentProject() throws Exception {
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
 
@@ -49,7 +44,7 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
     }
 
     @Test
-    public void thatWhenMetricsAreNotInProjectTheyAreRetrievedExplicitly() throws Exception {
+    void thatWhenMetricsAreNotInProjectTheyAreRetrievedExplicitly() throws Exception {
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/noMetrics.json")));
         stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT))
@@ -65,46 +60,50 @@ public class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest 
         verify(exactly(1), getRequestedFor(urlPathMatching(V1_METRICS_PROJECT_CURRENT)));
     }
 
-    @Test(expected = MojoExecutionException.class)
-    public void thatExceptionIsThrownWhenMetricsCannotBeRetrievedForCurrentProject() throws Exception {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
-                .willReturn(aResponse().withBodyFile("api/v1/project/noMetrics.json")));
-        stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT))
-                .willReturn(aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK)));
+    @Test
+    void thatExceptionIsThrownWhenMetricsCannotBeRetrievedForCurrentProject() {
+        assertThrows(MojoExecutionException.class, () -> {
+            stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                    .willReturn(aResponse().withBodyFile("api/v1/project/noMetrics.json")));
+            stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT))
+                    .willReturn(aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK)));
 
-        metricsMojo.setProjectName("noMetrics");
-        metricsMojo.setProjectVersion("1.0.0");
-        metricsMojo.setPollingConfig(new PollingConfig(false, 1, 1));
-        metricsMojo.setFailOnError(true);
-        metricsMojo.execute();
-    }
-
-    @Test(expected = MojoFailureException.class)
-    public void thatAnyCriticalIssuesPresentCanFailTheBuild() throws Exception {
-        stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
-                .willReturn(aResponse()
-                        .withBody(asJson(ProjectBuilder.aProject()
-                                .withUuid("1234")
-                                .withName("test-project")
-                                .withVersion("1.2.3")
-                                .withMetrics(aMetrics()
-                                        .withCritical(101)
-                                        .withHigh(201)
-                                        .withMedium(301)
-                                        .withLow(401)
-                                        .withUnassigned(501))
-                                .build()))));
-
-        metricsMojo.setProjectName("test-project");
-        metricsMojo.setProjectVersion("1.2.3");
-        metricsMojo.setMetricsThresholds(new MetricsThresholds(100, 200, 300, 400, 500));
-
-        metricsMojo.execute();
-        fail("MojoFailureException expected");
+            metricsMojo.setProjectName("noMetrics");
+            metricsMojo.setProjectVersion("1.0.0");
+            metricsMojo.setPollingConfig(new PollingConfig(false, 1, 1));
+            metricsMojo.setFailOnError(true);
+            metricsMojo.execute();
+        });
     }
 
     @Test
-    public void thatTheMetricsIsSkippedWhenSkipIsTrue() throws Exception {
+    void thatAnyCriticalIssuesPresentCanFailTheBuild() {
+        assertThrows(MojoFailureException.class, () -> {
+            stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
+                    .willReturn(aResponse()
+                            .withBody(asJson(ProjectBuilder.aProject()
+                                    .withUuid("1234")
+                                    .withName("test-project")
+                                    .withVersion("1.2.3")
+                                    .withMetrics(aMetrics()
+                                            .withCritical(101)
+                                            .withHigh(201)
+                                            .withMedium(301)
+                                            .withLow(401)
+                                            .withUnassigned(501))
+                                    .build()))));
+
+            metricsMojo.setProjectName("test-project");
+            metricsMojo.setProjectVersion("1.2.3");
+            metricsMojo.setMetricsThresholds(new MetricsThresholds(100, 200, 300, 400, 500));
+
+            metricsMojo.execute();
+            fail("MojoFailureException expected");
+        });
+    }
+
+    @Test
+    void thatTheMetricsIsSkippedWhenSkipIsTrue() throws Exception {
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/get-all-projects.json")));
         metricsMojo.setSkip("true");
