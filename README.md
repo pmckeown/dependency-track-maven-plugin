@@ -432,9 +432,9 @@ Policy Violation requires your Automation Team to have additional permissions:
 
 #### Policy Configuration
 
-| Property   | Required | Default Value |
-|------------|----------|---------------|
-| failOnWarn | false    | false         |
+| Property   | Required | Default Value | System Property             |
+|------------|----------|---------------|-----------------------------|
+| failOnWarn | false    | false         | dependency-track.failOnWarn |
 
 #### Behaviour
 
@@ -477,9 +477,9 @@ whatever overridden values that are supplied.
 
 #### Configuration
 
-| Property                    | Required | Default Value |
-|-----------------------------|----------|---------------|
-| inheritedRiskScoreThreshold | false    | N/A           |
+| Property                    | Required | Default Value | System Property                              |
+|-----------------------------|----------|---------------|----------------------------------------------|
+| inheritedRiskScoreThreshold | false    | N/A           | dependency-track.inheritedRiskScoreThreshold |
 
 ### Get Metrics
 Get and print all metrics from the Dependency-Track server for the current project or any arbitrary project.  Optionally

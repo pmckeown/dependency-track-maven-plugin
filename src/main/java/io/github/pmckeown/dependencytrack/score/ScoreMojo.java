@@ -29,7 +29,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 @Mojo(name = "score", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
 public class ScoreMojo extends AbstractDependencyTrackMojo {
 
-    @Parameter
+    @Parameter(property = "dependency-track.inheritedRiskScoreThreshold")
     private Integer inheritedRiskScoreThreshold;
 
     private ScoreAction scoreAction;

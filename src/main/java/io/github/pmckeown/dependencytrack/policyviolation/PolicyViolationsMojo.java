@@ -43,7 +43,7 @@ import org.apache.maven.project.MavenProject;
 @Singleton
 public class PolicyViolationsMojo extends AbstractDependencyTrackMojo {
 
-    @Parameter(name = "failOnWarn")
+    @Parameter(name = "failOnWarn", property = "dependency-track.failOnWarn")
     private boolean failOnWarn;
 
     @Parameter(defaultValue = "${project}", readonly = true, required = false)
