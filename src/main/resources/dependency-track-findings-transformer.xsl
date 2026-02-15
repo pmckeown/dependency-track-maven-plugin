@@ -86,15 +86,7 @@
                             <th>Suppression</th>
                             <th>Description</th>
                         </tr>
-                        <xsl:for-each select="findingsReport/critical/findings/finding">
-                            <tr>
-                                <td><xsl:value-of select="component/group" /></td>
-                                <td><xsl:value-of select="component/name" /></td>
-                                <td><xsl:value-of select="component/version" /></td>
-                                <td><xsl:value-of select="analysis/state" /></td>
-                                <td><xsl:value-of select="vulnerability/description" /></td>
-                            </tr>
-                        </xsl:for-each>
+                        <xsl:apply-templates select="findingsReport/critical/findings/finding" />
                     </table>
                 </xsl:if>
 
@@ -108,15 +100,7 @@
                             <th>Suppression</th>
                             <th>Description</th>
                         </tr>
-                        <xsl:for-each select="findingsReport/high/findings/finding">
-                            <tr>
-                                <td><xsl:value-of select="component/group" /></td>
-                                <td><xsl:value-of select="component/name" /></td>
-                                <td><xsl:value-of select="component/version" /></td>
-                                <td><xsl:value-of select="analysis/state" /></td>
-                                <td><xsl:value-of select="vulnerability/description" /></td>
-                            </tr>
-                        </xsl:for-each>
+                        <xsl:apply-templates select="findingsReport/high/findings/finding" />
                     </table>
                 </xsl:if>
 
@@ -130,15 +114,7 @@
                             <th>Suppression</th>
                             <th>Description</th>
                         </tr>
-                        <xsl:for-each select="findingsReport/medium/findings/finding">
-                            <tr>
-                                <td><xsl:value-of select="component/group" /></td>
-                                <td><xsl:value-of select="component/name" /></td>
-                                <td><xsl:value-of select="component/version" /></td>
-                                <td><xsl:value-of select="analysis/state" /></td>
-                                <td><xsl:value-of select="vulnerability/description" /></td>
-                            </tr>
-                        </xsl:for-each>
+                        <xsl:apply-templates select="findingsReport/medium/findings/finding" />
                     </table>
                 </xsl:if>
 
@@ -152,15 +128,7 @@
                             <th>Suppression</th>
                             <th>Description</th>
                         </tr>
-                        <xsl:for-each select="findingsReport/low/findings/finding">
-                            <tr>
-                                <td><xsl:value-of select="component/group" /></td>
-                                <td><xsl:value-of select="component/name" /></td>
-                                <td><xsl:value-of select="component/version" /></td>
-                                <td><xsl:value-of select="analysis/state" /></td>
-                                <td><xsl:value-of select="vulnerability/description" /></td>
-                            </tr>
-                        </xsl:for-each>
+                        <xsl:apply-templates select="findingsReport/low/findings/finding" />
                     </table>
                 </xsl:if>
 
@@ -174,19 +142,26 @@
                             <th>Suppression</th>
                             <th>Description</th>
                         </tr>
-                        <xsl:for-each select="findingsReport/unassigned/findings/finding">
-                            <tr>
-                                <td><xsl:value-of select="component/group" /></td>
-                                <td><xsl:value-of select="component/name" /></td>
-                                <td><xsl:value-of select="component/version" /></td>
-                                <td><xsl:value-of select="analysis/state" /></td>
-                                <td><xsl:value-of select="vulnerability/description" /></td>
-                            </tr>
-                        </xsl:for-each>
+                        <xsl:apply-templates select="findingsReport/unassigned/findings/finding" />
                     </table>
                 </xsl:if>
             </body>
         </html>
+    </xsl:template>
+    
+    <xsl:template match="finding">
+        <tr>
+            <td><xsl:value-of select="component/group" /></td>
+            <td><xsl:value-of select="component/name" /></td>
+            <td><xsl:value-of select="component/version" /></td>
+            <td><xsl:value-of select="analysis/state" /></td>
+            <td>
+                <xsl:value-of select="vulnerability/vulnId" />
+                (<xsl:value-of select="vulnerability/source" />)
+                <br />
+                <xsl:value-of select="vulnerability/description" />
+            </td>
+        </tr>
     </xsl:template>
 
 </xsl:stylesheet>
