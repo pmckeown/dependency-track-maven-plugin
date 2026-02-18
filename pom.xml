@@ -9,7 +9,8 @@
     <packaging>maven-plugin</packaging>
 
     <name>Dependency Track Maven Plugin</name>
-    <description>Maven plugin to integrate with a Dependency Track server to submit dependency manifests and gather project metrics. Can be used within build pipelines to analyse the current project and optionally fail the build if vulnerabilities are found.</description>
+    <description>Maven plugin to integrate with a Dependency Track server to submit dependency manifests and gather project metrics. Can be used within build
+		pipelines to analyse the current project and optionally fail the build if vulnerabilities are found.</description>
     <url>https://github.com/pmckeown/dependency-track-maven-plugin</url>
     <inceptionYear>2019</inceptionYear>
 
@@ -29,6 +30,10 @@
             </roles>
         </developer>
     </developers>
+
+    <prerequisites>
+        <maven>${minimum.maven.version}</maven>
+    </prerequisites>
 
     <scm>
         <connection>scm:git:git@github.com:pmckeown/dependency-track-maven-plugin.git</connection>
@@ -62,13 +67,44 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Compile target -->
         <java.version>8</java.version>
+        <!-- Compile against -->
         <maven.version>3.9.5</maven.version>
+        <!-- Version required to use this plugin in a project -->
+        <minimum.maven.version>3.6.3</minimum.maven.version>
         <!-- Version required to build the project -->
         <java.build.version>11</java.build.version>
         <sonar.organization>pmckeown</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <cyclonedx-maven-plugin.version>2.7.10</cyclonedx-maven-plugin.version>
+        <cyclonedx-maven-plugin.version>2.9.1</cyclonedx-maven-plugin.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <!-- unirest imports httpclient which includes commons-logging 1.2.0 which does not recognize slf4j, which maven uses -->
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.3.5</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.20.2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.20.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.12.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -80,17 +116,6 @@
             <groupId>com.konghq</groupId>
             <artifactId>unirest-objectmapper-jackson</artifactId>
             <version>3.14.5</version>
-        </dependency>
-        <dependency>
-            <!-- unirest imports httpclient which includes commons-logging 1.2.0 which does not recognize slf4j, which maven uses -->
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.3.5</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.17.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -126,7 +151,7 @@
         <dependency>
             <groupId>org.cyclonedx</groupId>
             <artifactId>cyclonedx-core-java</artifactId>
-            <version>9.0.4</version>
+            <version>11.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
@@ -255,6 +280,33 @@
                                     <version>${java.build.version}</version>
                                 </requireJavaVersion>
                             </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>analyze</id>
+                        <goals>
+                            <goal>analyze-only</goal>
+                        </goals>
+                        <configuration>
+                            <failOnWarning>true</failOnWarning>
+                            <ignoredUnusedDeclaredDependencies>
+                                <!-- used by unirest 3 and we need a newer version  -->
+                                <ignoredUnusedDeclaredDependency>commons-logging:commons-logging</ignoredUnusedDeclaredDependency>
+                                <!-- jaxb implementation -->
+                                <ignoredUnusedDeclaredDependency>com.sun.activation:javax.activation</ignoredUnusedDeclaredDependency>
+                                <ignoredUnusedDeclaredDependency>com.sun.xml.bind:jaxb-core</ignoredUnusedDeclaredDependency>
+                                <ignoredUnusedDeclaredDependency>com.sun.xml.bind:jaxb-impl</ignoredUnusedDeclaredDependency>
+                            </ignoredUnusedDeclaredDependencies>
+                            <ignoredUsedUndeclaredDependencies>
+                                <!-- allow any transitive dependencies to be used -->
+                                <ignoredUsedUndeclaredDependency>*</ignoredUsedUndeclaredDependency>
+                            </ignoredUsedUndeclaredDependencies>
                         </configuration>
                     </execution>
                 </executions>
