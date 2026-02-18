@@ -618,6 +618,7 @@
                                         <goal>verify</goal>
                                     </goals>
                                     <skipInvocation>${skipITs}</skipInvocation>
+                                    <showVersion>true</showVersion>
                                 </configuration>
                             </execution>
                         </executions>
