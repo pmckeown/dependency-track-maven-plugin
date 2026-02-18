@@ -1,9 +1,9 @@
 package io.github.pmckeown.dependencytrack.report;
 
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
 import java.io.File;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
 public abstract class AbstractXmlReportWriter {
 
