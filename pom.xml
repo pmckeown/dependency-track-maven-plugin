@@ -62,7 +62,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Compile target -->
         <java.version>8</java.version>
-        <maven.version>3.9.5</maven.version>
+        <maven.version>3.9.12</maven.version>
         <!-- Version required to build the project -->
         <java.build.version>11</java.build.version>
         <sonar.organization>pmckeown</sonar.organization>
