@@ -2,10 +2,10 @@ package io.github.pmckeown.dependencytrack.policyviolation.report;
 
 import io.github.pmckeown.dependencytrack.policyviolation.PolicyViolation;
 import io.github.pmckeown.dependencytrack.report.Report;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.util.List;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "policyViolationsReport")
 @XmlType(propOrder = {"policyViolations"})

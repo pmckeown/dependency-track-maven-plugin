@@ -1,9 +1,9 @@
 package io.github.pmckeown.dependencytrack.policyviolation.report;
 
 import io.github.pmckeown.dependencytrack.policyviolation.PolicyViolation;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
 import java.util.List;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 
 public class PolicyViolationsWrapper {
 

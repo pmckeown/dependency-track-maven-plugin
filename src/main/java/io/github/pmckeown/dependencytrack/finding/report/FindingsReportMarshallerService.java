@@ -1,9 +1,9 @@
 package io.github.pmckeown.dependencytrack.finding.report;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
 import javax.inject.Singleton;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
 @Singleton
 class FindingsReportMarshallerService {
