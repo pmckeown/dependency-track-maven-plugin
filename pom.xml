@@ -79,7 +79,7 @@
         <dependency>
             <groupId>com.konghq</groupId>
             <artifactId>unirest-objectmapper-jackson</artifactId>
-            <version>3.14.5</version>
+            <version>4.2.9</version>
         </dependency>
         <dependency>
             <!-- unirest imports httpclient which includes commons-logging 1.2.0 which does not recognize slf4j, which maven uses -->
