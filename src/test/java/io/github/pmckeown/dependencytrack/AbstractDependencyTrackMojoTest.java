@@ -3,23 +3,24 @@ package io.github.pmckeown.dependencytrack;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
+import org.apache.maven.api.Project;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.model.Build;
+import org.apache.maven.api.plugin.testing.MojoTest;
+import org.junit.jupiter.api.BeforeEach;
+
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import javax.inject.Inject;
-import org.apache.maven.api.plugin.testing.MojoTest;
-import org.apache.maven.model.Build;
-import org.apache.maven.project.MavenProject;
-import org.junit.jupiter.api.BeforeEach;
 
 @WireMockTest
 @MojoTest
 public abstract class AbstractDependencyTrackMojoTest {
-    protected static final String TEST_PROJECT = "target/test-classes/projects/run";
+    protected static final String TEST_PROJECT = "${basedir}/target/test-classes/projects/run";
 
     protected WireMockRuntimeInfo wireMockRuntimeInfo;
 
     @Inject
-    protected MavenProject project;
+    protected Project project;
 
     /**
      * Configure the mojo for testing. Will inject the mocked dependency track URL.

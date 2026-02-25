@@ -13,8 +13,8 @@ import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectClient;
 import io.github.pmckeown.util.Logger;
 import java.util.Optional;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
 
 /**
  * Handles score retrieval and processing

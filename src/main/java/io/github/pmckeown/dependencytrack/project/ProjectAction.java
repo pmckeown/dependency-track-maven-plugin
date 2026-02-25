@@ -12,9 +12,9 @@ import io.github.pmckeown.util.Logger;
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import kong.unirest.UnirestException;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
 
 @Singleton
 public class ProjectAction {

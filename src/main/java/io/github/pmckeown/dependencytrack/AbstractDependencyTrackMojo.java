@@ -6,16 +6,19 @@ import static kong.unirest.HeaderNames.ACCEPT;
 import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
 import static kong.unirest.HeaderNames.USER_AGENT;
 
-import io.github.pmckeown.util.Logger;
 import java.util.concurrent.atomic.AtomicBoolean;
-import kong.unirest.Unirest;
-import kong.unirest.jackson.JacksonObjectMapper;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.maven.api.plugin.Mojo;
+import org.apache.maven.api.plugin.annotations.Parameter;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Parameter;
+
+import io.github.pmckeown.util.Logger;
+import kong.unirest.Unirest;
+import kong.unirest.jackson.JacksonObjectMapper;
 
 /**
  * Base class for Mojos in this project.
@@ -34,7 +37,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  *
  * @author Paul McKeown
  */
-public abstract class AbstractDependencyTrackMojo extends AbstractMojo {
+public abstract class AbstractDependencyTrackMojo extends AbstractMojo implements Mojo {
 
     private static AtomicBoolean unirestConfiguration = new AtomicBoolean();
 

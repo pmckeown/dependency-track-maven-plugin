@@ -2,17 +2,18 @@ package io.github.pmckeown.dependencytrack.score;
 
 import static java.lang.String.format;
 
+import org.apache.maven.api.Lifecycle.Phase;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.plugin.annotations.Mojo;
+import org.apache.maven.api.plugin.annotations.Parameter;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.util.Logger;
-import javax.inject.Inject;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Provides the capability to find the current Inherited Risk Score as determined by the Dependency
@@ -26,7 +27,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  *
  * @author Paul McKeown
  */
-@Mojo(name = "score", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
+@Mojo(name = "score", defaultPhase = Phase.VERIFY)
 public class ScoreMojo extends AbstractDependencyTrackMojo {
 
     @Parameter(property = "dependency-track.inheritedRiskScoreThreshold")

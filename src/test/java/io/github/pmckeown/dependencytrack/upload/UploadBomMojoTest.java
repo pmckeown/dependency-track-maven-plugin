@@ -17,7 +17,6 @@ import java.util.Collections;
 import kong.unirest.Unirest;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +39,7 @@ class UploadBomMojoTest {
     private Log mavenLogger;
 
     @Mock
-    private MavenProject project;
+    private org.apache.maven.api.Project project;
 
     @Mock
     private UploadBomAction uploadBomAction;

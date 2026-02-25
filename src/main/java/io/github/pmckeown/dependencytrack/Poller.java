@@ -6,7 +6,7 @@ import com.evanlennick.retry4j.config.RetryConfigBuilder;
 import com.evanlennick.retry4j.exception.UnexpectedException;
 import java.util.Optional;
 import java.util.concurrent.Callable;
-import javax.inject.Singleton;
+import org.apache.maven.api.di.Singleton;
 
 /**
  * Class for polling a remote server.

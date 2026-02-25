@@ -9,9 +9,9 @@ import io.github.pmckeown.util.Logger;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
 
 @Singleton
 class FindingsPrinter {

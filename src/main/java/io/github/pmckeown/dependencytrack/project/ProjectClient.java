@@ -7,12 +7,12 @@ import static kong.unirest.Unirest.*;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import java.util.Optional;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
 import kong.unirest.HttpStatus;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
 
 /**
  * Client for getting Project details from Dependency Track

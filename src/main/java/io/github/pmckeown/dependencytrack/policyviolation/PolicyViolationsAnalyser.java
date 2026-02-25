@@ -4,8 +4,8 @@ import io.github.pmckeown.util.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
 
 @Singleton
 public class PolicyViolationsAnalyser {

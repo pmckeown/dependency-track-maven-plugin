@@ -1,6 +1,15 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
-import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
+import java.io.File;
+import java.util.List;
+
+import org.apache.maven.api.Lifecycle.Phase;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
+import org.apache.maven.api.plugin.annotations.Mojo;
+import org.apache.maven.api.plugin.annotations.Parameter;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
@@ -10,15 +19,6 @@ import io.github.pmckeown.dependencytrack.policyviolation.report.PolicyViolation
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
-import java.io.File;
-import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 
 /**
  * Print the policy violations retrieved from the Dependency Track Server after a BOM upload. This
@@ -39,15 +39,15 @@ import org.apache.maven.project.MavenProject;
  *
  * @author Sahiba Mittal
  */
-@Mojo(name = "policy-violations", defaultPhase = VERIFY, threadSafe = true)
+@Mojo(name = "policy-violations", defaultPhase = Phase.VERIFY)
 @Singleton
 public class PolicyViolationsMojo extends AbstractDependencyTrackMojo {
 
     @Parameter(name = "failOnWarn", property = "dependency-track.failOnWarn")
     private boolean failOnWarn;
 
-    @Parameter(defaultValue = "${project}", readonly = true, required = false)
-    private MavenProject mavenProject;
+    @Inject
+    private org.apache.maven.api.Project mavenProject;
 
     private ProjectAction projectAction;
     private PolicyViolationsReportGenerator policyViolationReportGenerator;

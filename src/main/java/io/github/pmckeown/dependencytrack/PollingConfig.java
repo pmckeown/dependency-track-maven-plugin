@@ -1,9 +1,9 @@
 package io.github.pmckeown.dependencytrack;
 
 import java.time.temporal.ChronoUnit;
-import javax.inject.Singleton;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.maven.api.di.Singleton;
 
 @Singleton
 public class PollingConfig {

@@ -1,6 +1,6 @@
 package io.github.pmckeown.util;
 
-import javax.inject.Singleton;
+import org.apache.maven.api.di.Singleton;
 import org.apache.maven.plugin.logging.Log;
 
 /**

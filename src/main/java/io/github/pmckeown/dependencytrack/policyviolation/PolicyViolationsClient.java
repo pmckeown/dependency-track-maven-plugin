@@ -9,10 +9,10 @@ import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
 import java.util.List;
 import java.util.Optional;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
 
 @Singleton
 class PolicyViolationsClient {

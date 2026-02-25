@@ -7,9 +7,9 @@ import io.github.pmckeown.util.Logger;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import kong.unirest.UnirestException;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
 
 @Singleton
 public class PolicyViolationsAction {

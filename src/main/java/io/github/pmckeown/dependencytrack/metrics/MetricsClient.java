@@ -9,9 +9,9 @@ import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
 import java.util.Optional;
-import javax.inject.Inject;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
+import org.apache.maven.api.di.Inject;
 
 /**
  * Client for getting project Metrics from Dependency Track
