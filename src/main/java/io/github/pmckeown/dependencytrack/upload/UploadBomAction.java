@@ -10,9 +10,9 @@ import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.util.Logger;
 import java.io.File;
 import java.util.Optional;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
 
 /**
  * Handles uploading BOMs

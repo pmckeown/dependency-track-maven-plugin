@@ -7,8 +7,8 @@ import static io.github.pmckeown.dependencytrack.Constants.MEDIUM;
 import static io.github.pmckeown.dependencytrack.Constants.UNASSIGNED;
 
 import io.github.pmckeown.util.Logger;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
 import org.apache.maven.plugin.MojoFailureException;
 
 @Singleton

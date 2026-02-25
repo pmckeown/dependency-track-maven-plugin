@@ -9,8 +9,8 @@ import static io.github.pmckeown.dependencytrack.finding.Severity.UNASSIGNED;
 import io.github.pmckeown.dependencytrack.Constants;
 import io.github.pmckeown.util.Logger;
 import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
 
 @Singleton
 public class FindingsAnalyser {

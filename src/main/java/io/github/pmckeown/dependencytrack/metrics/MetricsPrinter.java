@@ -25,8 +25,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
 
 @Singleton
 class MetricsPrinter {

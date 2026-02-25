@@ -1,6 +1,6 @@
 package io.github.pmckeown.dependencytrack;
 
-import javax.inject.Singleton;
+import org.apache.maven.api.di.Singleton;
 
 /**
  * Holder for common configuration supplied on Mojo execution

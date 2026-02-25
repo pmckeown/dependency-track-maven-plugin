@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import kong.unirest.ContentType;
 import kong.unirest.GenericType;
 import kong.unirest.HttpRequest;
@@ -33,6 +31,8 @@ import kong.unirest.HttpResponse;
 import kong.unirest.MultipartBody;
 import kong.unirest.RequestBodyEntity;
 import kong.unirest.Unirest;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
 
 /**
  * Client for uploading BOMs to Dependency Track

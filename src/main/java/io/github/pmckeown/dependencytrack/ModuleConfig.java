@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.apache.maven.project.MavenProject;
 
 /** Holder for module dependent configuration supplied on Mojo execution */
 public class ModuleConfig {
@@ -17,7 +16,7 @@ public class ModuleConfig {
     private String parentUuid;
     private String parentName;
     private String parentVersion;
-    private MavenProject mavenProject;
+    private org.apache.maven.api.Project mavenProject;
     private boolean updateProjectInfo;
     private boolean updateParent;
     private Boolean isLatest;
@@ -100,11 +99,11 @@ public class ModuleConfig {
             logger.info("parentUuid set so ignoring parentVersion: %s", parentVersion);
     }
 
-    public MavenProject getMavenProject() {
+    public org.apache.maven.api.Project getMavenProject() {
         return mavenProject;
     }
 
-    public void setMavenProject(MavenProject mavenProject) {
+    public void setMavenProject(org.apache.maven.api.Project mavenProject) {
         this.mavenProject = mavenProject;
     }
 

@@ -1,8 +1,8 @@
 package io.github.pmckeown.dependencytrack.report;
 
-import javax.inject.Singleton;
 import javax.xml.XMLConstants;
 import javax.xml.transform.TransformerFactory;
+import org.apache.maven.api.di.Singleton;
 
 @Singleton
 public class TransformerFactoryProvider {

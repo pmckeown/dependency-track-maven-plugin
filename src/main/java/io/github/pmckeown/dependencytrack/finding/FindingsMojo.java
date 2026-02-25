@@ -1,6 +1,15 @@
 package io.github.pmckeown.dependencytrack.finding;
 
-import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
+import java.io.File;
+import java.util.List;
+
+import org.apache.maven.api.Lifecycle.Phase;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
+import org.apache.maven.api.plugin.annotations.Mojo;
+import org.apache.maven.api.plugin.annotations.Parameter;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
@@ -10,15 +19,6 @@ import io.github.pmckeown.dependencytrack.finding.report.FindingsReportGenerator
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.util.Logger;
-import java.io.File;
-import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 
 /**
  * Print the findings retrieved from the Dependency Track Server after a BOM upload. This is
@@ -60,7 +60,7 @@ import org.apache.maven.project.MavenProject;
  *
  * @author Paul McKeown
  */
-@Mojo(name = "findings", defaultPhase = VERIFY, threadSafe = true)
+@Mojo(name = "findings", defaultPhase = Phase.VERIFY)
 @Singleton
 public class FindingsMojo extends AbstractDependencyTrackMojo {
 
@@ -82,8 +82,8 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     @Parameter(property = "findingThresholds.unassigned")
     private Integer thresholdUnassigned;
 
-    @Parameter(defaultValue = "${project}", readonly = true, required = false)
-    private MavenProject mavenProject;
+    @Inject
+    private org.apache.maven.api.Project mavenProject;
 
     private ProjectAction projectAction;
     private FindingsAction findingsAction;
@@ -185,7 +185,7 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
         if (mavenProject == null) {
             return null;
         } else {
-            return new File(mavenProject.getBuild().getDirectory());
+            return mavenProject.getOutputDirectory(null).toFile();
         }
     }
 }

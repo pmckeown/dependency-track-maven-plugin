@@ -4,8 +4,8 @@ import io.github.pmckeown.dependencytrack.report.AbstractHtmlReportWriter;
 import io.github.pmckeown.dependencytrack.report.TransformerFactoryProvider;
 import java.io.File;
 import java.io.InputStream;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
 
 @Singleton
 public class FindingsReportHtmlReportWriter extends AbstractHtmlReportWriter {

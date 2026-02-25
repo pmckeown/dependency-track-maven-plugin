@@ -751,7 +751,7 @@
             <group>org.glassfish.hk2.external</group>
             <name>jakarta.inject</name>
             <version>2.5.0</version>
-            <description>Injection API (JSR 330) version ${javax.inject.version} repackaged as OSGi bundle</description>
+            <description>Injection API (JSR 330) version ${org.apache.maven.api.di.version} repackaged as OSGi bundle</description>
             <scope>required</scope>
             <hashes>
                 <hash alg="MD5">7fd713615ac786ff1a24194a1732ee21</hash>

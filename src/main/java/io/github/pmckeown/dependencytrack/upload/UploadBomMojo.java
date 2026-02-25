@@ -1,5 +1,15 @@
 package io.github.pmckeown.dependencytrack.upload;
 
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.api.Lifecycle.Phase;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.plugin.annotations.Mojo;
+import org.apache.maven.api.plugin.annotations.Parameter;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
@@ -9,15 +19,6 @@ import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.dependencytrack.project.UpdateRequest;
 import io.github.pmckeown.util.Logger;
-import java.util.Set;
-import javax.inject.Inject;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 
 /**
  * Provides the capability to upload a Bill of Material (BOM) to your Dependency Track server.
@@ -35,14 +36,14 @@ import org.apache.maven.project.MavenProject;
  *
  * @author Paul McKeown
  */
-@Mojo(name = "upload-bom", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
+@Mojo(name = "upload-bom", defaultPhase = Phase.VERIFY)
 public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     @Parameter(property = "dependency-track.bomLocation")
     private String bomLocation;
 
-    @Parameter(property = "project", readonly = true, required = true)
-    private MavenProject mavenProject;
+    @Inject
+    private org.apache.maven.api.Project mavenProject;
 
     @Parameter(property = "dependency-track.updateProjectInfo")
     private boolean updateProjectInfo;
@@ -207,7 +208,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
         return moduleConfig;
     }
 
-    void setMavenProject(MavenProject mp) {
+    void setMavenProject(org.apache.maven.api.Project mp) {
         this.mavenProject = mp;
         moduleConfig.setMavenProject(mp);
     }
