@@ -6,50 +6,44 @@ import static io.github.pmckeown.dependencytrack.Constants.LOW;
 import static io.github.pmckeown.dependencytrack.Constants.MEDIUM;
 import static io.github.pmckeown.dependencytrack.Constants.UNASSIGNED;
 
-import io.github.pmckeown.util.Logger;
-import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.di.Singleton;
 import org.apache.maven.plugin.MojoFailureException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class MetricsAnalyser {
+    private static final Logger LOG = LoggerFactory.getLogger(MetricsAnalyser.class);
 
-    static final String ERROR_TEMPLATE = "Number of %s issues [%d] exceeds the maximum allowed [%d]";
-
-    private Logger logger;
-
-    @Inject
-    public MetricsAnalyser(Logger logger) {
-        this.logger = logger;
-    }
+    static final String ERROR_TEMPLATE = "Number of {} issues [{}] exceeds the maximum allowed [{}]";
 
     void analyse(Metrics metrics, MetricsThresholds metricThresholds) throws MojoFailureException {
-        logger.info("Comparing project metrics against defined thresholds");
+        LOG.info("Comparing project metrics against defined thresholds");
 
         boolean failed = false;
 
         if (metricThresholds.getCritical() != null && metrics.getCritical() > metricThresholds.getCritical()) {
-            logger.warn(ERROR_TEMPLATE, CRITICAL, metrics.getCritical(), metricThresholds.getCritical());
+            LOG.warn(ERROR_TEMPLATE, CRITICAL, metrics.getCritical(), metricThresholds.getCritical());
             failed = true;
         }
 
         if (metricThresholds.getHigh() != null && metrics.getHigh() > metricThresholds.getHigh()) {
-            logger.warn(ERROR_TEMPLATE, HIGH, metrics.getHigh(), metricThresholds.getHigh());
+            LOG.warn(ERROR_TEMPLATE, HIGH, metrics.getHigh(), metricThresholds.getHigh());
             failed = true;
         }
 
         if (metricThresholds.getMedium() != null && metrics.getMedium() > metricThresholds.getMedium()) {
-            logger.warn(ERROR_TEMPLATE, MEDIUM, metrics.getMedium(), metricThresholds.getMedium());
+            LOG.warn(ERROR_TEMPLATE, MEDIUM, metrics.getMedium(), metricThresholds.getMedium());
             failed = true;
         }
 
         if (metricThresholds.getLow() != null && metrics.getLow() > metricThresholds.getLow()) {
-            logger.warn(ERROR_TEMPLATE, LOW, metrics.getLow(), metricThresholds.getLow());
+            LOG.warn(ERROR_TEMPLATE, LOW, metrics.getLow(), metricThresholds.getLow());
             failed = true;
         }
 
         if (metricThresholds.getUnassigned() != null && metrics.getUnassigned() > metricThresholds.getUnassigned()) {
-            logger.warn(ERROR_TEMPLATE, UNASSIGNED, metrics.getUnassigned(), metricThresholds.getUnassigned());
+            LOG.warn(ERROR_TEMPLATE, UNASSIGNED, metrics.getUnassigned(), metricThresholds.getUnassigned());
             failed = true;
         }
 

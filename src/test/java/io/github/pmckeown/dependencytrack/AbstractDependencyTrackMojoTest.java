@@ -3,14 +3,13 @@ package io.github.pmckeown.dependencytrack;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.apache.maven.api.Project;
 import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.model.Build;
 import org.apache.maven.api.plugin.testing.MojoTest;
 import org.junit.jupiter.api.BeforeEach;
-
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 
 @WireMockTest
 @MojoTest

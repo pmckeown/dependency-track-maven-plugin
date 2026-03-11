@@ -6,7 +6,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import io.github.pmckeown.dependencytrack.project.ProjectInfo;
-import io.github.pmckeown.util.Logger;
 import java.io.File;
 import java.net.URL;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -22,9 +20,6 @@ class BomParserTest {
 
     @InjectMocks
     private BomParser bomParser;
-
-    @Mock
-    private Logger logger;
 
     @ParameterizedTest
     @ValueSource(strings = {"bom.xml", "bom_byteorder.xml"})

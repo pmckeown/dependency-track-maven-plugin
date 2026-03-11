@@ -113,7 +113,18 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<dependencies>
+	<dependencies>		
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-core</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-api-annotations</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>com.konghq</groupId>
 			<artifactId>unirest-java</artifactId>
@@ -123,11 +134,6 @@
 			<groupId>com.konghq</groupId>
 			<artifactId>unirest-objectmapper-jackson</artifactId>
 			<version>3.14.5</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-core</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.evanlennick</groupId>
@@ -143,11 +149,6 @@
 			<groupId>org.cyclonedx</groupId>
 			<artifactId>cyclonedx-core-java</artifactId>
 			<version>12.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-api-annotations</artifactId>
-			<scope>provided</scope>
 		</dependency>
 
 		<!-- Test dependencies -->
@@ -195,6 +196,13 @@
 						<release>${java.version}</release>
 						<source>${java.version}</source>
 						<target>${java.version}</target>
+						<annotationProcessorPaths>
+							<path>
+								<groupId>org.apache.maven</groupId>
+								<artifactId>maven-api-di</artifactId>
+								<version>4.0.0-rc-5</version>
+							</path>
+						</annotationProcessorPaths>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -207,6 +215,9 @@
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>3.5.5</version>
+					<configuration>
+						<argLine>--add-opens=java.logging/java.util.logging=ALL-UNNAMED</argLine>
+					</configuration>
 				</plugin>
 				<plugin>
 					<artifactId>maven-jar-plugin</artifactId>

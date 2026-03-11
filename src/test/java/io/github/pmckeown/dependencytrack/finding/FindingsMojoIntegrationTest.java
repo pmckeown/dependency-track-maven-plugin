@@ -27,9 +27,9 @@ class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     FindingsMojo findingsMojo;
 
-//    @BeforeEach
+    @BeforeEach
     @Basedir(TEST_PROJECT)
-    @InjectMojo(goal = "findings",pom = "pom.xml")
+    @InjectMojo(goal = "findings")
     @MojoParameter(name = "projectName", value = "testName")
     @MojoParameter(name = "projectVersion", value = "99.99")
     void setUp(FindingsMojo mojo) {
@@ -38,11 +38,8 @@ class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    @Basedir(TEST_PROJECT)
-    @InjectMojo(goal = "findings",pom = "pom.xml")
-    @MojoParameter(name = "projectName", value = "testName")
-    @MojoParameter(name = "projectVersion", value = "99.99")
     void thatFindingMojoCanRetrieveFindingsAndPrintThem(FindingsMojo mojo) throws Exception {
+        configureMojo(mojo);
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
@@ -54,7 +51,7 @@ class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
                                         .withAnalysis(anAnalysis()))
                                 .build()))));
 
-        findingsMojo.execute();
+        mojo.execute();
 
         verify(exactly(1), getRequestedFor(urlPathEqualTo(V1_PROJECT_LOOKUP)));
         verify(exactly(1), getRequestedFor(urlPathMatching(V1_FINDING_PROJECT_UUID)));

@@ -7,18 +7,16 @@ import static kong.unirest.HeaderNames.ACCEPT_ENCODING;
 import static kong.unirest.HeaderNames.USER_AGENT;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-
+import kong.unirest.Unirest;
+import kong.unirest.jackson.JacksonObjectMapper;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.maven.api.plugin.Mojo;
 import org.apache.maven.api.plugin.annotations.Parameter;
 import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-
-import io.github.pmckeown.util.Logger;
-import kong.unirest.Unirest;
-import kong.unirest.jackson.JacksonObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for Mojos in this project.
@@ -37,7 +35,7 @@ import kong.unirest.jackson.JacksonObjectMapper;
  *
  * @author Paul McKeown
  */
-public abstract class AbstractDependencyTrackMojo extends AbstractMojo implements Mojo {
+public abstract class AbstractDependencyTrackMojo implements Mojo {
 
     private static AtomicBoolean unirestConfiguration = new AtomicBoolean();
 
@@ -76,14 +74,13 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo implement
     @Parameter
     private PollingConfig pollingConfig;
 
-    protected Logger logger;
-
     protected CommonConfig commonConfig;
 
     protected ModuleConfig moduleConfig;
 
-    protected AbstractDependencyTrackMojo(CommonConfig commonConfig, ModuleConfig moduleConfig, Logger logger) {
-        this.logger = logger;
+    protected final Logger mojoLogger = LoggerFactory.getLogger(getClass());
+
+    protected AbstractDependencyTrackMojo(CommonConfig commonConfig, ModuleConfig moduleConfig) {
         this.commonConfig = commonConfig;
         this.moduleConfig = moduleConfig;
     }
@@ -98,7 +95,6 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo implement
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
         // Set up Mojo environment
-        this.logger.setLog(getLog());
         this.commonConfig.setDependencyTrackBaseUrl(dependencyTrackBaseUrl);
         this.commonConfig.setApiKey(apiKey);
         this.commonConfig.setPollingConfig(this.pollingConfig != null ? this.pollingConfig : PollingConfig.defaults());
@@ -110,7 +106,7 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo implement
 
         // Perform the requested action
         if (getSkip()) {
-            logger.info("dependency-track.skip = true: Skipping analysis.");
+            mojoLogger.info("dependency-track.skip = true: Skipping analysis.");
             return;
         }
         this.performAction();
@@ -157,14 +153,14 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo implement
     }
 
     protected void handleFailure(String message) throws MojoFailureException {
-        getLog().error(message);
+        mojoLogger.error(message);
         if (failOnError) {
             throw new MojoFailureException(message);
         }
     }
 
     protected void handleFailure(String message, Throwable ex) throws MojoExecutionException {
-        getLog().error(message, ex);
+        mojoLogger.error(message, ex);
         if (failOnError) {
             throw new MojoExecutionException(message, ex);
         }
@@ -193,10 +189,10 @@ public abstract class AbstractDependencyTrackMojo extends AbstractMojo implement
                     .verifySsl(verifySsl);
 
             // Debug all Unirest config
-            logger.debug("Unirest Configuration: %s", ToStringBuilder.reflectionToString(Unirest.config()));
+            mojoLogger.debug("Unirest Configuration: {}", ToStringBuilder.reflectionToString(Unirest.config()));
 
             // Info print user specified
-            logger.info("SSL Verification enabled: %b", verifySsl);
+            mojoLogger.info("SSL Verification enabled: {}", verifySsl);
         }
     }
 

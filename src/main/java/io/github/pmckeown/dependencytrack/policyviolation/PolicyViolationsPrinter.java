@@ -3,46 +3,45 @@ package io.github.pmckeown.dependencytrack.policyviolation;
 import static io.github.pmckeown.dependencytrack.Constants.DELIMITER;
 
 import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.util.Logger;
 import java.util.List;
-import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.di.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class PolicyViolationsPrinter {
-
-    private Logger logger;
-
-    @Inject
-    public PolicyViolationsPrinter(Logger logger) {
-        this.logger = logger;
-    }
+    private static final Logger LOG = LoggerFactory.getLogger(PolicyViolationsPrinter.class);
 
     public void printPolicyViolations(Project project, List<PolicyViolation> policyViolations) {
-        if (policyViolations == null || policyViolations.isEmpty()) {
-            logger.info("No policy violations were retrieved for project: %s", project.getName());
+        if (!LOG.isInfoEnabled()) {
             return;
         }
-        logger.info(DELIMITER);
-        logger.info(
-                "%d policy violation(s) were retrieved for project: %s", policyViolations.size(), project.getName());
-        logger.info("Printing policy violations for project %s-%s", project.getName(), project.getVersion());
+        if (policyViolations == null || policyViolations.isEmpty()) {
+            LOG.info("No policy violations were retrieved for project: {}", project.getName());
+            return;
+        }
+        LOG.info(DELIMITER);
+        LOG.info("{} policy violation(s) were retrieved for project: {}", policyViolations.size(), project.getName());
+        LOG.info("Printing policy violations for project {}-{}", project.getName(), project.getVersion());
         policyViolations.forEach(policyViolation -> {
             PolicyCondition policyCondition = policyViolation.getPolicyCondition();
             Policy policy = policyCondition.getPolicy();
-            logger.info(DELIMITER);
-            logger.info(
-                    "Policy name: %s (%s)",
-                    policy.getName(), policy.getViolationState().name());
-            logger.info(
-                    "Policy condition: \"subject == %s && value %s %s\"",
-                    policyCondition.getSubject(), policyCondition.getOperator(), policyCondition.getValue());
-            logger.info(
-                    "Risk type: %s, Component: %s %s",
+            LOG.info(DELIMITER);
+            LOG.info(
+                    "Policy name: {} ({})",
+                    policy.getName(),
+                    policy.getViolationState().name());
+            LOG.info(
+                    "Policy condition: \"subject == {} && value {} {}\"",
+                    policyCondition.getSubject(),
+                    policyCondition.getOperator(),
+                    policyCondition.getValue());
+            LOG.info(
+                    "Risk type: {}, Component: {} {}",
                     policyViolation.getType(),
                     policyViolation.getComponent().getName(),
                     policyViolation.getComponent().getVersion());
-            logger.info(""); // Spacer
+            LOG.info(""); // Spacer
         });
     }
 }

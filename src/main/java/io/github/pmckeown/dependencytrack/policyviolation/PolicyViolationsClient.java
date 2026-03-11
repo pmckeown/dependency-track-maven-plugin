@@ -6,29 +6,28 @@ import static kong.unirest.Unirest.get;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.util.Logger;
 import java.util.List;
 import java.util.Optional;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
 import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.di.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 class PolicyViolationsClient {
+    private static final Logger LOG = LoggerFactory.getLogger(PolicyViolationsClient.class);
 
     private CommonConfig commonConfig;
 
-    private Logger logger;
-
     @Inject
-    PolicyViolationsClient(CommonConfig commonConfig, Logger logger) {
+    PolicyViolationsClient(CommonConfig commonConfig) {
         this.commonConfig = commonConfig;
-        this.logger = logger;
     }
 
     Response<List<PolicyViolation>> getPolicyViolationsForProject(Project project) {
-        logger.debug("Getting policy violations for project: %s-%s", project.getName(), project.getVersion());
+        LOG.debug("Getting policy violations for project: {}-{}", project.getName(), project.getVersion());
         final HttpResponse<List<PolicyViolation>> httpResponse = get(commonConfig.getDependencyTrackBaseUrl()
                         + V1_POLICY_VIOLATION_PROJECT_UUID)
                 .header("X-Api-Key", commonConfig.getApiKey())

@@ -2,18 +2,18 @@ package io.github.pmckeown.dependencytrack.score;
 
 import static java.lang.String.format;
 
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
+import io.github.pmckeown.dependencytrack.CommonConfig;
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.ModuleConfig;
 import org.apache.maven.api.Lifecycle.Phase;
 import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.plugin.annotations.Mojo;
 import org.apache.maven.api.plugin.annotations.Parameter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
-import io.github.pmckeown.dependencytrack.CommonConfig;
-import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.ModuleConfig;
-import io.github.pmckeown.util.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides the capability to find the current Inherited Risk Score as determined by the Dependency
@@ -29,6 +29,7 @@ import io.github.pmckeown.util.Logger;
  */
 @Mojo(name = "score", defaultPhase = Phase.VERIFY)
 public class ScoreMojo extends AbstractDependencyTrackMojo {
+    private static final Logger LOG = LoggerFactory.getLogger(ScoreMojo.class);
 
     @Parameter(property = "dependency-track.inheritedRiskScoreThreshold")
     private Integer inheritedRiskScoreThreshold;
@@ -36,8 +37,8 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
     private ScoreAction scoreAction;
 
     @Inject
-    public ScoreMojo(ScoreAction scoreAction, ModuleConfig moduleConfig, CommonConfig commonConfig, Logger logger) {
-        super(commonConfig, moduleConfig, logger);
+    public ScoreMojo(ScoreAction scoreAction, ModuleConfig moduleConfig, CommonConfig commonConfig) {
+        super(commonConfig, moduleConfig);
         this.scoreAction = scoreAction;
     }
 
@@ -54,8 +55,8 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
     }
 
     private void failBuildIfThresholdIsBreached(Integer inheritedRiskScore) throws MojoFailureException {
-        logger.debug(
-                "Inherited Risk Score Threshold set to: %s",
+        LOG.debug(
+                "Inherited Risk Score Threshold set to: {}",
                 inheritedRiskScoreThreshold == null ? "Not set" : inheritedRiskScoreThreshold);
 
         if (inheritedRiskScoreThreshold != null && inheritedRiskScore > inheritedRiskScoreThreshold) {

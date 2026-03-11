@@ -18,7 +18,6 @@ import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectClient;
-import io.github.pmckeown.util.Logger;
 import kong.unirest.UnirestException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,9 +38,6 @@ class ScoreActionTest {
 
     @Mock
     private MetricsAction metricsAction;
-
-    @Mock
-    private Logger logger;
 
     @Test
     void thatWhenAnExceptionOccursGettingProjectsThenAnExceptionIsThrown() {

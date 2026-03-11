@@ -16,13 +16,14 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.util.Logger;
+import io.github.pmckeown.test.logging.SpyLoggerRegistry;
 import kong.unirest.UnirestException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteProjectActionTest {
@@ -32,9 +33,6 @@ class DeleteProjectActionTest {
 
     @Mock
     private ProjectClient projectClient;
-
-    @Mock
-    private Logger logger;
 
     @Test
     void thatWhenProjectIsDeletedThenTrueIsReturn() throws Exception {
@@ -65,6 +63,7 @@ class DeleteProjectActionTest {
             assertThat(ex, is(instanceOf(DependencyTrackException.class)));
         }
 
+        Logger logger = SpyLoggerRegistry.expectLogger(ProjectAction.class);
         verify(logger, atLeastOnce()).error(anyString(), any(UnirestException.class));
     }
 }

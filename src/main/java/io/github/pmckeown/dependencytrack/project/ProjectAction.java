@@ -8,26 +8,25 @@ import io.github.pmckeown.dependencytrack.Item;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.bom.BomParser;
-import io.github.pmckeown.util.Logger;
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 import kong.unirest.UnirestException;
 import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.di.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class ProjectAction {
+    private static final Logger LOG = LoggerFactory.getLogger(ProjectAction.class);
 
     private ProjectClient projectClient;
     private BomParser bomParser;
-    private Logger logger;
 
     @Inject
-    public ProjectAction(ProjectClient projectClient, BomParser bomParser, Logger logger) {
+    public ProjectAction(ProjectClient projectClient, BomParser bomParser) {
         this.projectClient = projectClient;
         this.bomParser = bomParser;
-        this.logger = logger;
     }
 
     public Project getProject(ModuleConfig moduleConfig) throws DependencyTrackException {
@@ -60,7 +59,7 @@ public class ProjectAction {
                     }
                 }
             } else {
-                logger.error("Failed to list projects with error from server: " + response.getStatusText());
+                LOG.error("Failed to list projects with error from server: {}", response.getStatusText());
                 throw new DependencyTrackException("Failed to list projects");
             }
         } catch (UnirestException ex) {
@@ -76,13 +75,13 @@ public class ProjectAction {
             throws DependencyTrackException {
         ProjectInfo info = null;
         if (updateReq.hasBomLocation()) {
-            logger.info("Project info will be updated");
+            LOG.info("Project info will be updated");
             Optional<ProjectInfo> optInfo = bomParser.getProjectInfo(new File(updateReq.getBomLocation()));
             if (optInfo.isPresent()) {
                 info = optInfo.get();
                 info.setIsLatest(project.isLatest());
             } else {
-                logger.warn("Could not create ProjectInfo from bom at location: %s", updateReq.getBomLocation());
+                LOG.warn("Could not create ProjectInfo from bom at location: {}", updateReq.getBomLocation());
                 return false;
             }
         }
@@ -91,15 +90,15 @@ public class ProjectAction {
                 info = new ProjectInfo();
             }
             if (project.getTags() != null && !project.getTags().isEmpty()) {
-                logger.info("Merging Project Tags");
+                LOG.info("Merging Project Tags");
                 info.setTags(mergeTags(project.getTags(), projectTags));
             } else {
-                info.setTags(projectTags.stream().map(ProjectTag::new).collect(Collectors.toList()));
+                info.setTags(projectTags.stream().map(ProjectTag::new).toList());
             }
         }
 
         if (updateReq.hasParent()) {
-            logger.info("Project parent will be updated");
+            LOG.info("Project parent will be updated");
             if (info == null) {
                 info = new ProjectInfo();
             }
@@ -112,15 +111,15 @@ public class ProjectAction {
             return true;
         } else {
             try {
-                logger.debug("Project UUID: %s", project.getUuid());
-                logger.debug("Patch request: %s", info);
+                LOG.debug("Project UUID: {}", project.getUuid());
+                LOG.debug("Patch request: {}", info);
                 Response<Void> response = projectClient.patchProject(project.getUuid(), info);
-                logger.debug("Patch completed without error");
-                logger.debug("Response code: %s", response.getStatus());
-                logger.debug("Success? %s", response.isSuccess());
+                LOG.debug("Patch completed without error");
+                LOG.debug("Response code: {}", response.getStatus());
+                LOG.debug("Success? {}", response.isSuccess());
                 return response.isSuccess();
             } catch (UnirestException ex) {
-                logger.error("Failed to update project info", ex);
+                LOG.error("Failed to update project info", ex);
                 throw new DependencyTrackException("Failed to update project", ex);
             }
         }
@@ -132,13 +131,13 @@ public class ProjectAction {
 
     boolean deleteProject(Project project) throws DependencyTrackException {
         try {
-            logger.debug("Deleting project %s-%s", project.getName(), project.getVersion());
+            LOG.debug("Deleting project {}-{}", project.getName(), project.getVersion());
 
             Response<?> response = projectClient.deleteProject(project);
             return response.isSuccess();
         } catch (UnirestException ex) {
-            logger.error("Failed to delete project", ex);
-            throw new DependencyTrackException("Failed to delete project");
+            LOG.error("Failed to delete project", ex);
+            throw new DependencyTrackException("Failed to delete project", ex);
         }
     }
 

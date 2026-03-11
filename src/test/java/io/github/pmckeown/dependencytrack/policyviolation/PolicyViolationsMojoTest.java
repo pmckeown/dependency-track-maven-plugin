@@ -6,7 +6,6 @@ import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.policyviolation.report.PolicyViolationsReportGenerator;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
-import io.github.pmckeown.util.Logger;
 import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,9 +39,6 @@ class PolicyViolationsMojoTest {
 
     @Mock
     private PolicyViolationsReportGenerator policyViolationReportGenerator;
-
-    @Mock
-    private Logger logger;
 
     @Test
     void thatReportIsAlwaysGeneratedEvenWhenNoFindingsArePresent() throws Exception {

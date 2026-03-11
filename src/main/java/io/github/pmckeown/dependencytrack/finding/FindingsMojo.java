@@ -1,16 +1,5 @@
 package io.github.pmckeown.dependencytrack.finding;
 
-import java.io.File;
-import java.util.List;
-
-import org.apache.maven.api.Lifecycle.Phase;
-import org.apache.maven.api.di.Inject;
-import org.apache.maven.api.di.Singleton;
-import org.apache.maven.api.plugin.annotations.Mojo;
-import org.apache.maven.api.plugin.annotations.Parameter;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
@@ -18,7 +7,15 @@ import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.finding.report.FindingsReportGenerator;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
-import io.github.pmckeown.util.Logger;
+import java.io.File;
+import java.util.List;
+import org.apache.maven.api.Lifecycle.Phase;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
+import org.apache.maven.api.plugin.annotations.Mojo;
+import org.apache.maven.api.plugin.annotations.Parameter;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * Print the findings retrieved from the Dependency Track Server after a BOM upload. This is
@@ -99,9 +96,8 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
             FindingsAnalyser findingsAnalyser,
             FindingsReportGenerator findingsReportGenerator,
             CommonConfig commonConfig,
-            ModuleConfig moduleConfig,
-            Logger logger) {
-        super(commonConfig, moduleConfig, logger);
+            ModuleConfig moduleConfig) {
+        super(commonConfig, moduleConfig);
         this.projectAction = projectAction;
         this.findingsAction = findingsAction;
         this.findingsPrinter = findingsPrinter;

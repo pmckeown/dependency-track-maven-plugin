@@ -16,13 +16,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import io.github.pmckeown.util.Logger;
 import java.util.List;
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,9 +28,6 @@ class FindingsAnalyserTest {
 
     @InjectMocks
     private FindingsAnalyser findingAnalyser;
-
-    @Mock
-    private Logger logger;
 
     @Test
     void thatWhenNoThresholdIsProvidedThePolicyCannotBeBreached() {

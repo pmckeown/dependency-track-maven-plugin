@@ -21,7 +21,6 @@ import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.Poller;
 import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.Response;
-import io.github.pmckeown.util.Logger;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,9 +48,6 @@ class UploadBomActionTest {
 
     @Spy
     private Poller<Boolean> poller = new Poller<>();
-
-    @Mock
-    private Logger logger;
 
     @Test
     void thatWhenNoBomIsFoundThenFalseIsReturned() throws Exception {
@@ -108,7 +104,7 @@ class UploadBomActionTest {
         doReturn(new PollingConfig(true, 1, 3, MILLIS)).when(commonConfig).getPollingConfig();
 
         // Create a new candidate as the polling behaviour needs to change for this test
-        UploadBomAction action = new UploadBomAction(bomClient, new Poller<Boolean>(), commonConfig, logger);
+        UploadBomAction action = new UploadBomAction(bomClient, new Poller<Boolean>(), commonConfig);
 
         doReturn(aBomProcessingResponse(true))
                 .doReturn(aBomProcessingResponse(true))

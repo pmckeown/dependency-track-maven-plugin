@@ -18,7 +18,6 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
-import io.github.pmckeown.util.Logger;
 import java.util.Date;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -33,9 +32,6 @@ class MetricsClientTest {
 
     @InjectMocks
     private MetricsClient metricsClient;
-
-    @Mock
-    private Logger logger;
 
     @Mock
     private CommonConfig commonConfig;
