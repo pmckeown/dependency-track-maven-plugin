@@ -10,22 +10,19 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.util.Logger;
+import io.github.pmckeown.test.logging.SpyLoggerRegistry;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
 
 @ExtendWith(MockitoExtension.class)
 class PolicyViolationsPrinterTest {
 
     @InjectMocks
     private PolicyViolationsPrinter policyViolationsPrinter;
-
-    @Mock
-    private Logger logger;
 
     @Test
     void thatWhenNoViolationsAreRetrievedThatIsLogged() {
@@ -34,7 +31,8 @@ class PolicyViolationsPrinterTest {
         policyViolationsPrinter.printPolicyViolations(project, null);
 
         // Assert
-        verify(logger).info("No policy violations were retrieved for project: %s", "X");
+        Logger logger = SpyLoggerRegistry.expectLogger(PolicyViolationsPrinter.class);
+        verify(logger).info("No policy violations were retrieved for project: {}", "X");
     }
 
     @Test
@@ -43,10 +41,11 @@ class PolicyViolationsPrinterTest {
         List<PolicyViolation> policyViolations = policyViolationsList("SEVERITY", "p1", ViolationState.INFO);
         policyViolationsPrinter.printPolicyViolations(project, policyViolations);
 
+        Logger logger = SpyLoggerRegistry.expectLogger(PolicyViolationsPrinter.class);
         verify(logger, times(2)).info(DELIMITER);
-        verify(logger).info("%d policy violation(s) were retrieved for project: %s", 1, "a");
-        verify(logger).info("Printing policy violations for project %s-%s", "a", "1");
-        verify(logger).info("Policy name: %s (%s)", "p1", "INFO");
+        verify(logger).info("{} policy violation(s) were retrieved for project: {}", 1, "a");
+        verify(logger).info("Printing policy violations for project {}-{}", "a", "1");
+        verify(logger).info("Policy name: {} ({})", "p1", "INFO");
     }
 
     @Test
@@ -59,11 +58,12 @@ class PolicyViolationsPrinterTest {
                         .withPolicyViolation(policyViolation("SEVERITY", "p2", ViolationState.WARN))
                         .build());
 
+        Logger logger = SpyLoggerRegistry.expectLogger(PolicyViolationsPrinter.class);
         verify(logger, times(3)).info(DELIMITER);
-        verify(logger).info("%d policy violation(s) were retrieved for project: %s", 2, "a");
-        verify(logger).info("Printing policy violations for project %s-%s", "a", "1"); // Intro
-        verify(logger).info("Policy name: %s (%s)", "p1", "INFO");
-        verify(logger).info("Policy name: %s (%s)", "p2", "WARN");
+        verify(logger).info("{} policy violation(s) were retrieved for project: {}", 2, "a");
+        verify(logger).info("Printing policy violations for project {}-{}", "a", "1"); // Intro
+        verify(logger).info("Policy name: {} ({})", "p1", "INFO");
+        verify(logger).info("Policy name: {} ({})", "p2", "WARN");
     }
 
     private List<PolicyViolation> policyViolationsList(

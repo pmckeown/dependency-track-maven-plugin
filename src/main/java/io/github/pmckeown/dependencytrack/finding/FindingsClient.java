@@ -6,29 +6,29 @@ import static kong.unirest.Unirest.get;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.util.Logger;
 import java.util.List;
 import java.util.Optional;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
 import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.di.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 class FindingsClient {
 
+    private static final Logger LOG = LoggerFactory.getLogger(FindingsClient.class);
+
     private CommonConfig commonConfig;
 
-    private Logger logger;
-
     @Inject
-    FindingsClient(CommonConfig commonConfig, Logger logger) {
+    FindingsClient(CommonConfig commonConfig) {
         this.commonConfig = commonConfig;
-        this.logger = logger;
     }
 
     Response<List<Finding>> getFindingsForProject(Project project) {
-        logger.debug("Getting findings for project: %s-%s", project.getName(), project.getVersion());
+        LOG.debug("Getting findings for project: {}-{}", project.getName(), project.getVersion());
         final HttpResponse<List<Finding>> httpResponse = get(commonConfig.getDependencyTrackBaseUrl()
                         + V1_FINDING_PROJECT_UUID)
                 .header("X-Api-Key", commonConfig.getApiKey())

@@ -17,7 +17,6 @@ import static org.mockito.Mockito.doThrow;
 
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.util.Logger;
 import java.util.List;
 import kong.unirest.UnirestException;
 import org.junit.jupiter.api.Test;
@@ -34,9 +33,6 @@ class PolicyViolationsActionTest {
 
     @Mock
     private PolicyViolationsClient policyClient;
-
-    @Mock
-    private Logger logger;
 
     @Test
     void thatPolicyViolationsAreReturned() throws Exception {

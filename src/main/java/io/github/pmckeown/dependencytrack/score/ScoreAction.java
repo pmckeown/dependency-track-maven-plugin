@@ -11,10 +11,11 @@ import io.github.pmckeown.dependencytrack.metrics.Metrics;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectClient;
-import io.github.pmckeown.util.Logger;
 import java.util.Optional;
 import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.di.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles score retrieval and processing
@@ -23,17 +24,15 @@ import org.apache.maven.api.di.Singleton;
  */
 @Singleton
 class ScoreAction {
+    private static final Logger LOG = LoggerFactory.getLogger(ScoreAction.class);
 
     private ProjectClient projectClient;
     private MetricsAction metricsAction;
-    private Logger logger;
 
     @Inject
-    public ScoreAction(
-            ProjectClient projectClient, MetricsAction metricsAction, CommonConfig commonConfig, Logger logger) {
+    public ScoreAction(ProjectClient projectClient, MetricsAction metricsAction, CommonConfig commonConfig) {
         this.projectClient = projectClient;
         this.metricsAction = metricsAction;
-        this.logger = logger;
     }
 
     Integer determineScore(ModuleConfig moduleConfig, Integer inheritedRiskScoreThreshold)
@@ -69,25 +68,25 @@ class ScoreAction {
         if (metrics != null) {
             return metrics;
         } else {
-            logger.info("Metrics not present, checking the server for more info");
+            LOG.info("Metrics not present, checking the server for more info");
             return metricsAction.getMetrics(project);
         }
     }
 
     private void printInheritedRiskScore(Project project, int inheritedRiskScore, Integer inheritedRiskScoreThreshold) {
-        logger.info(DELIMITER);
-        logger.info("Project: %s, Version: %s", project.getName(), project.getVersion());
-        StringBuilder scoreMessage = new StringBuilder(format("Inherited Risk Score: %d", inheritedRiskScore));
+        LOG.info(DELIMITER);
+        LOG.info("Project: {}, Version: {}", project.getName(), project.getVersion());
+        StringBuilder scoreMessage = new StringBuilder(format("Inherited Risk Score: %s", inheritedRiskScore));
 
         if (inheritedRiskScoreThreshold != null) {
-            scoreMessage.append(format(" - Maximum allowed Inherited Risk Score: %d", inheritedRiskScoreThreshold));
+            scoreMessage.append(format(" - Maximum allowed Inherited Risk Score: %s", inheritedRiskScoreThreshold));
         }
 
         if (inheritedRiskScore > 0) {
-            logger.warn(scoreMessage.toString());
+            LOG.warn("{}", scoreMessage);
         } else {
-            logger.info(scoreMessage.toString());
+            LOG.info("{}", scoreMessage);
         }
-        logger.info(DELIMITER);
+        LOG.info(DELIMITER);
     }
 }

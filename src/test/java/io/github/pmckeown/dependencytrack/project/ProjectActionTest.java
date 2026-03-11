@@ -22,7 +22,6 @@ import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.bom.BomParser;
-import io.github.pmckeown.util.Logger;
 import java.io.File;
 import java.net.URL;
 import java.util.Collections;
@@ -56,9 +55,6 @@ class ProjectActionTest {
 
     @Mock
     private BomParser bomParser;
-
-    @Mock
-    private Logger logger;
 
     @Test
     void thatProjectCanBeRetrievedByCommonConfig() throws Exception {

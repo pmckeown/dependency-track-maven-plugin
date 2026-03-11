@@ -20,15 +20,15 @@ import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
-import io.github.pmckeown.util.Logger;
+import io.github.pmckeown.test.logging.SpyLoggerRegistry;
 import java.util.Arrays;
 import java.util.Collection;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
 
 @ExtendWith(MockitoExtension.class)
 public class MetricsPrinterTest {
@@ -59,9 +59,6 @@ public class MetricsPrinterTest {
     @InjectMocks
     private MetricsPrinter metricsPrinter;
 
-    @Mock
-    private Logger logger;
-
     public String key;
     public String value;
 
@@ -71,6 +68,7 @@ public class MetricsPrinterTest {
         initMetricsPrinterTest(key, value);
         metricsPrinter.print(metrics());
 
+        Logger logger = SpyLoggerRegistry.expectLogger(MetricsPrinter.class);
         verify(logger, atLeastOnce()).info(matches("\\s*" + key + " \\| " + value));
     }
 

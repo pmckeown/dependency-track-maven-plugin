@@ -18,7 +18,6 @@ import static org.mockito.Mockito.doThrow;
 
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.util.Logger;
 import java.util.List;
 import kong.unirest.UnirestException;
 import org.junit.jupiter.api.Test;
@@ -35,9 +34,6 @@ class FindingsActionTest {
 
     @Mock
     private FindingsClient findingClient;
-
-    @Mock
-    private Logger logger;
 
     @Test
     void thatFindingsAreReturned() throws Exception {

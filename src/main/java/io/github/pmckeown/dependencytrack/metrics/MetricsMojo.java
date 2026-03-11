@@ -1,20 +1,19 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
-import org.apache.maven.api.Lifecycle.Phase;
-import org.apache.maven.api.di.Inject;
-import org.apache.maven.api.plugin.annotations.Mojo;
-import org.apache.maven.api.plugin.annotations.Parameter;
-import org.apache.maven.lifecycle.mapping.LifecyclePhase;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
-import io.github.pmckeown.util.Logger;
+import org.apache.maven.api.Lifecycle.Phase;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.plugin.annotations.Mojo;
+import org.apache.maven.api.plugin.annotations.Parameter;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Print the full set of metrics about a project as determined by the Dependency Track Server
@@ -49,6 +48,7 @@ import io.github.pmckeown.util.Logger;
  */
 @Mojo(name = "metrics", defaultPhase = Phase.VERIFY)
 public class MetricsMojo extends AbstractDependencyTrackMojo {
+    private static final Logger LOG = LoggerFactory.getLogger(MetricsMojo.class);
 
     private MetricsAction metricsAction;
     private ProjectAction getProjectAction;
@@ -65,9 +65,8 @@ public class MetricsMojo extends AbstractDependencyTrackMojo {
             MetricsPrinter metricsPrinter,
             MetricsAnalyser metricsAnalyser,
             CommonConfig commonConfig,
-            ModuleConfig moduleConfig,
-            Logger logger) {
-        super(commonConfig, moduleConfig, logger);
+            ModuleConfig moduleConfig) {
+        super(commonConfig, moduleConfig);
         this.metricsAction = metricsAction;
         this.getProjectAction = getProjectAction;
         this.metricsPrinter = metricsPrinter;
@@ -78,7 +77,7 @@ public class MetricsMojo extends AbstractDependencyTrackMojo {
     public void performAction() throws MojoExecutionException, MojoFailureException {
         try {
             Project project = getProjectAction.getProject(moduleConfig);
-            logger.debug("Project Details: %s", project.toString());
+            LOG.debug("Project Details: {}", project);
 
             Metrics metrics = getMetrics(project);
             metricsPrinter.print(metrics);

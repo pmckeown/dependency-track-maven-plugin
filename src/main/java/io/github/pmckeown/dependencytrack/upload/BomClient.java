@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.util.StdConverter;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.project.ProjectTag;
-import io.github.pmckeown.util.Logger;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -33,6 +32,8 @@ import kong.unirest.RequestBodyEntity;
 import kong.unirest.Unirest;
 import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.di.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Client for uploading BOMs to Dependency Track
@@ -41,14 +42,13 @@ import org.apache.maven.api.di.Singleton;
  */
 @Singleton
 class BomClient {
+    private static final Logger LOG = LoggerFactory.getLogger(BomClient.class);
 
     private CommonConfig commonConfig;
-    private Logger logger;
 
     @Inject
-    BomClient(CommonConfig commonConfig, Logger logger) {
+    BomClient(CommonConfig commonConfig) {
         this.commonConfig = commonConfig;
-        this.logger = logger;
     }
 
     /**
@@ -73,9 +73,7 @@ class BomClient {
         if (httpResponse.isSuccess()) {
             body = Optional.of(httpResponse.getBody());
         } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Server response body: %s", httpResponse.mapError(String.class));
-            }
+            LOG.atDebug().setMessage("Server response body: {}").addArgument(() -> httpResponse.mapError(String.class));
             body = Optional.empty();
         }
 
@@ -105,7 +103,7 @@ class BomClient {
                 InputStream inputStream = bom.getBom().getInputStream();
                 request.field("bom", inputStream, ContentType.APPLICATION_OCTET_STREAM, "bom.xml");
             } catch (IOException e) {
-                logger.debug("Opening an input stream to the BOM reference failed. %s", e.getMessage());
+                LOG.debug("Opening an input stream to the BOM reference failed. {}", e.getMessage());
                 throw new IllegalStateException("Failure reading BOM source", e);
             }
         }

@@ -1,16 +1,5 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
-import java.io.File;
-import java.util.List;
-
-import org.apache.maven.api.Lifecycle.Phase;
-import org.apache.maven.api.di.Inject;
-import org.apache.maven.api.di.Singleton;
-import org.apache.maven.api.plugin.annotations.Mojo;
-import org.apache.maven.api.plugin.annotations.Parameter;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
@@ -18,7 +7,15 @@ import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.policyviolation.report.PolicyViolationsReportGenerator;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
-import io.github.pmckeown.util.Logger;
+import java.io.File;
+import java.util.List;
+import org.apache.maven.api.Lifecycle.Phase;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
+import org.apache.maven.api.plugin.annotations.Mojo;
+import org.apache.maven.api.plugin.annotations.Parameter;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * Print the policy violations retrieved from the Dependency Track Server after a BOM upload. This
@@ -61,11 +58,10 @@ public class PolicyViolationsMojo extends AbstractDependencyTrackMojo {
             PolicyViolationsReportGenerator policyViolationReportGenerator,
             CommonConfig commonConfig,
             ModuleConfig moduleConfig,
-            Logger logger,
             PolicyViolationsAction policyAction,
             PolicyViolationsPrinter policyViolationsPrinter,
             PolicyViolationsAnalyser policyAnalyser) {
-        super(commonConfig, moduleConfig, logger);
+        super(commonConfig, moduleConfig);
         this.projectAction = projectAction;
         this.policyViolationReportGenerator = policyViolationReportGenerator;
         this.policyAction = policyAction;

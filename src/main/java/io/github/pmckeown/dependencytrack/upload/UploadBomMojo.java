@@ -1,15 +1,5 @@
 package io.github.pmckeown.dependencytrack.upload;
 
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.api.Lifecycle.Phase;
-import org.apache.maven.api.di.Inject;
-import org.apache.maven.api.plugin.annotations.Mojo;
-import org.apache.maven.api.plugin.annotations.Parameter;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
@@ -18,7 +8,16 @@ import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.dependencytrack.project.UpdateRequest;
-import io.github.pmckeown.util.Logger;
+import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.api.Lifecycle.Phase;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.plugin.annotations.Mojo;
+import org.apache.maven.api.plugin.annotations.Parameter;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides the capability to upload a Bill of Material (BOM) to your Dependency Track server.
@@ -38,6 +37,7 @@ import io.github.pmckeown.util.Logger;
  */
 @Mojo(name = "upload-bom", defaultPhase = Phase.VERIFY)
 public class UploadBomMojo extends AbstractDependencyTrackMojo {
+    private static final Logger LOG = LoggerFactory.getLogger(UploadBomMojo.class);
 
     @Parameter(property = "dependency-track.bomLocation")
     private String bomLocation;
@@ -81,9 +81,8 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
             MetricsAction metricsAction,
             ProjectAction projectAction,
             CommonConfig commonConfig,
-            ModuleConfig moduleConfig,
-            Logger logger) {
-        super(commonConfig, moduleConfig, logger);
+            ModuleConfig moduleConfig) {
+        super(commonConfig, moduleConfig);
         this.uploadBomAction = uploadBomAction;
         this.metricsAction = metricsAction;
         this.projectAction = projectAction;
@@ -92,7 +91,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {
         enrichConfig();
-        logger.info("Update Project Parent : %s", moduleConfig.getUpdateParent());
+        LOG.info("Update Project Parent : {}", moduleConfig.getUpdateParent());
 
         try {
             if (!uploadBomAction.upload(moduleConfig, uploadWithPut)) {
@@ -110,7 +109,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
             if (updateProjectInfo || updateParent) {
                 boolean projectUpdated = projectAction.updateProject(project, updateReq, projectTags);
                 if (!projectUpdated) {
-                    logger.error("Failed to update project info");
+                    LOG.error("Failed to update project info");
                     throw new DependencyTrackException("Failed to update project info");
                 }
             }
@@ -135,7 +134,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
 
     private Project getProjectParent(ModuleConfig moduleConfig) throws DependencyTrackException {
         if (StringUtils.isBlank(moduleConfig.getParentName()) && StringUtils.isBlank(moduleConfig.getParentUuid())) {
-            logger.error("Parent update requested but no parent found in parent maven project or provided in config");
+            LOG.error("Parent update requested but no parent found in parent maven project or provided in config");
             throw new DependencyTrackException("No parent configured.");
         } else {
             if (StringUtils.isBlank(moduleConfig.getParentUuid()))
@@ -145,11 +144,11 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     }
 
     private Project getProjectParentByUuid(String uuid) throws DependencyTrackException {
-        logger.info("Attempting to fetch project parent: '%s'", uuid);
+        LOG.info("Attempting to fetch project parent: '{}'", uuid);
         try {
             return projectAction.getProject(uuid);
         } catch (DependencyTrackException ex) {
-            logger.error(
+            LOG.error(
                     "Failed to find parent project with UUID ['%s']. Check the update parent "
                             + "your settings for this plugin and verify if a matching parent project exists in the "
                             + "server.",
@@ -159,11 +158,11 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     }
 
     private Project getProjectParentByNameAndVersion(String name, String version) throws DependencyTrackException {
-        logger.info("Attempting to fetch project parent: '%s-%s'", name, version);
+        LOG.info("Attempting to fetch project parent: '{}-{}'", name, version);
         try {
             return projectAction.getProject(name, version);
         } catch (DependencyTrackException ex) {
-            logger.error(
+            LOG.error(
                     "Failed to find parent project with name ['%s-%s']. Check the update parent "
                             + "your settings for this plugin and verify if a matching parent project exists in the "
                             + "server.",
@@ -177,7 +176,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
             return bomLocation;
         } else {
             String defaultLocation = mavenProject.getBasedir() + "/target/bom.xml";
-            logger.debug("bomLocation not supplied so using: %s", defaultLocation);
+            LOG.debug("bomLocation not supplied so using: {}", defaultLocation);
             return defaultLocation;
         }
     }

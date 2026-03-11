@@ -7,11 +7,12 @@ import static kong.unirest.Unirest.get;
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.Response;
 import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.util.Logger;
 import java.util.Optional;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
 import org.apache.maven.api.di.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Client for getting project Metrics from Dependency Track
@@ -19,19 +20,17 @@ import org.apache.maven.api.di.Inject;
  * @author Paul McKeown
  */
 class MetricsClient {
+    private static final Logger LOG = LoggerFactory.getLogger(MetricsClient.class);
 
     private CommonConfig commonConfig;
 
-    private Logger logger;
-
     @Inject
-    MetricsClient(CommonConfig commonConfig, Logger logger) {
+    MetricsClient(CommonConfig commonConfig) {
         this.commonConfig = commonConfig;
-        this.logger = logger;
     }
 
     Response<Metrics> getMetrics(Project project) {
-        logger.debug("Getting metrics for project: %s-%s", project.getName(), project.getVersion());
+        LOG.debug("Getting metrics for project: {}-{}", project.getName(), project.getVersion());
         final HttpResponse<Metrics> httpResponse = get(commonConfig.getDependencyTrackBaseUrl()
                         + V1_METRICS_PROJECT_UUID_CURRENT)
                 .header("X-Api-Key", commonConfig.getApiKey())
@@ -49,7 +48,7 @@ class MetricsClient {
     }
 
     public Response<Void> refreshMetrics(Project project) {
-        logger.info("Refreshing Metrics for project: %s-%s", project.getName(), project.getVersion());
+        LOG.info("Refreshing Metrics for project: {}-{}", project.getName(), project.getVersion());
         final HttpResponse<?> httpResponse = get(commonConfig.getDependencyTrackBaseUrl()
                         + V1_METRICS_PROJECT_UUID_REFRESH)
                 .header("X-Api-Key", commonConfig.getApiKey())

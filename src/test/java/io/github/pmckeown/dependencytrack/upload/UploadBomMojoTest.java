@@ -12,18 +12,19 @@ import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
-import io.github.pmckeown.util.Logger;
+import io.github.pmckeown.test.logging.SpyLoggerRegistry;
 import java.util.Collections;
 import kong.unirest.Unirest;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
 
 @ExtendWith(MockitoExtension.class)
 class UploadBomMojoTest {
@@ -34,9 +35,6 @@ class UploadBomMojoTest {
 
     @InjectMocks
     private UploadBomMojo uploadBomMojo;
-
-    @Mock
-    private Log mavenLogger;
 
     @Mock
     private org.apache.maven.api.Project project;
@@ -51,9 +49,6 @@ class UploadBomMojoTest {
     private ProjectAction projectAction;
 
     @Mock
-    private Logger logger;
-
-    @Mock
     private CommonConfig commonConfig;
 
     @Mock
@@ -61,7 +56,6 @@ class UploadBomMojoTest {
 
     @BeforeEach
     void setup() {
-        uploadBomMojo.setLog(mavenLogger);
         uploadBomMojo.setCommonConfig(commonConfig);
         uploadBomMojo.setModuleConfig(moduleConfig);
         uploadBomMojo.setMavenProject(project);
@@ -156,8 +150,9 @@ class UploadBomMojoTest {
             assertThat(ex, instanceOf(MojoExecutionException.class));
         }
 
+        Logger logger = SpyLoggerRegistry.expectLogger(ProjectAction.class);
         verify(logger).error("Failed to update project info");
-        verify(mavenLogger).error(eq("Error occurred during upload"), any());
+        verify(logger).error(eq("Error occurred during upload"), Mockito.any(Throwable.class));
     }
 
     @Test
@@ -178,10 +173,10 @@ class UploadBomMojoTest {
             assertThat(ex, instanceOf(MojoExecutionException.class));
         }
 
+        Logger logger = SpyLoggerRegistry.expectLogger(UploadBomMojo.class);
         verify(logger)
-                .error("Parent update requested but no parent found in parent maven project or provided in "
-                        + "config");
-        verify(mavenLogger).error(eq("Error occurred during upload"), any());
+                .error("Parent update requested but no parent found in parent maven project or provided in config");
+        verify(logger).error(eq("Error occurred during upload"), Mockito.any(Throwable.class));
     }
 
     @Test
@@ -194,7 +189,8 @@ class UploadBomMojoTest {
         MojoExecutionException exception = assertThrows(MojoExecutionException.class, () -> uploadBomMojo.execute());
         assertThat(exception.getCause(), is(cause));
 
-        verify(mavenLogger).error("Error occurred during upload", cause);
+        Logger logger = SpyLoggerRegistry.expectLogger(UploadBomMojo.class);
+        verify(logger).error("Error occurred during upload", cause);
     }
 
     @Test
@@ -204,6 +200,7 @@ class UploadBomMojoTest {
 
         uploadBomMojo.execute();
 
-        verify(mavenLogger).error("Error occurred during upload", cause);
+        Logger logger = SpyLoggerRegistry.expectLogger(UploadBomMojo.class);
+        verify(logger).error("Error occurred during upload", cause);
     }
 }

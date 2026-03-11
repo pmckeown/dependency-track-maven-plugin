@@ -15,22 +15,19 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.util.Logger;
+import io.github.pmckeown.test.logging.SpyLoggerRegistry;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
 
 @ExtendWith(MockitoExtension.class)
 class FindingsPrinterTest {
 
     @InjectMocks
     private FindingsPrinter findingsPrinter;
-
-    @Mock
-    private Logger logger;
 
     @Test
     void thatWhenNoFindingsAreRetrievedThatIsLogged() {
@@ -39,7 +36,8 @@ class FindingsPrinterTest {
         findingsPrinter.printFindings(project, null);
 
         // Assert
-        verify(logger).info("No findings were retrieved for project: %s", "X");
+        Logger logger = SpyLoggerRegistry.expectLogger(FindingsPrinter.class);
+        verify(logger).info("No findings were retrieved for project: {}", "X");
     }
 
     @Test
@@ -50,7 +48,8 @@ class FindingsPrinterTest {
         findingsPrinter.printFindings(project, findings);
 
         // Assert
-        verify(logger).info("%d finding(s) were retrieved for project: %s", 1, "X");
+        Logger logger = SpyLoggerRegistry.expectLogger(FindingsPrinter.class);
+        verify(logger).info("{} finding(s) were retrieved for project: {}", 1, "X");
     }
 
     @Test
@@ -61,10 +60,11 @@ class FindingsPrinterTest {
         List<Finding> findings = findingsList(longDescription, "CVE-2016-1", false);
         findingsPrinter.printFindings(project, findings);
 
-        verify(logger).info("Printing findings for project %s-%s", "a", "1"); // Intro
+        Logger logger = SpyLoggerRegistry.expectLogger(FindingsPrinter.class);
+        verify(logger).info("Printing findings for project {}-{}", "a", "1"); // Intro
         verify(logger).info(DELIMITER);
-        verify(logger).info("%s (%s)", "CVE-2016-1", "NVD");
-        verify(logger).info("%s: %s", "HIGH", "nz.co.dodgy:insecure-encrypter:20.0");
+        verify(logger).info("{} ({})", "CVE-2016-1", "NVD");
+        verify(logger).info("{}: {}", "HIGH", "nz.co.dodgy:insecure-encrypter:20.0");
         verify(logger).info("");
         verify(logger, times(4)).info(descriptionPart);
     }
@@ -75,11 +75,12 @@ class FindingsPrinterTest {
         List<Finding> findings = findingsList(null, true);
         findingsPrinter.printFindings(project, findings);
 
-        verify(logger).info("Printing findings for project %s-%s", "a", "1");
+        Logger logger = SpyLoggerRegistry.expectLogger(FindingsPrinter.class);
+        verify(logger).info("Printing findings for project {}-{}", "a", "1");
         verify(logger).info(DELIMITER);
-        verify(logger).info("%s: %s", "HIGH", "nz.co.dodgy:insecure-encrypter:20.0");
+        verify(logger).info("{}: {}", "HIGH", "nz.co.dodgy:insecure-encrypter:20.0");
         verify(logger, times(2)).info("");
-        verify(logger).info("Suppressed - %s", FALSE_POSITIVE.name());
+        verify(logger).info("Suppressed - {}", FALSE_POSITIVE.name());
     }
 
     /**
@@ -93,6 +94,7 @@ class FindingsPrinterTest {
 
         findingsPrinter.printFindings(project, findings);
 
+        Logger logger = SpyLoggerRegistry.expectLogger(FindingsPrinter.class);
         verify(logger).info("crafted value that contains both ${} and %%{} sequences, which causes");
     }
 
@@ -107,6 +109,7 @@ class FindingsPrinterTest {
 
         findingsPrinter.printFindings(project, findings);
 
+        Logger logger = SpyLoggerRegistry.expectLogger(FindingsPrinter.class);
         verify(logger).info("be vulnerable.> > -- [redhat.com](https://bugzilla.redhat.com/show_bug");
     }
 
@@ -120,6 +123,7 @@ class FindingsPrinterTest {
 
         findingsPrinter.printFindings(project, findings);
 
+        Logger logger = SpyLoggerRegistry.expectLogger(FindingsPrinter.class);
         verify(logger).info(repeat("x", chunkSize - 1) + "y");
         verify(logger).info(repeat("y", chunkSize - 2));
     }

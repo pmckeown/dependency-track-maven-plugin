@@ -1,13 +1,14 @@
 package io.github.pmckeown.dependencytrack;
 
-import io.github.pmckeown.util.Logger;
 import java.util.Collections;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Holder for module dependent configuration supplied on Mojo execution */
 public class ModuleConfig {
+    public static final Logger LOG = LoggerFactory.getLogger(ModuleConfig.class);
 
     private String projectUuid = "";
     private String projectName = "";
@@ -22,8 +23,6 @@ public class ModuleConfig {
     private Boolean isLatest;
     private boolean autoCreate = true;
     private Set<String> projectTags = Collections.emptySet();
-
-    protected Logger logger = new Logger(new SystemStreamLog());
 
     public String getProjectUuid() {
         return projectUuid;
@@ -54,7 +53,7 @@ public class ModuleConfig {
             return bomLocation;
         } else {
             String defaultLocation = getMavenProject().getBasedir() + "/target/bom.xml";
-            this.logger.debug("bomLocation not supplied so using: %s", defaultLocation);
+            LOG.debug("bomLocation not supplied so using: {}", defaultLocation);
             return defaultLocation;
         }
     }
@@ -70,8 +69,8 @@ public class ModuleConfig {
     public void setParentUuid(String parentUuid) {
         this.parentUuid = parentUuid;
         if (StringUtils.isNotBlank(parentUuid)) {
-            logger.info("parentUuid set to: %s", parentUuid);
-            logger.info("clearing parentName and parentVersion");
+            LOG.info("parentUuid set to: {}", parentUuid);
+            LOG.info("clearing parentName and parentVersion");
             this.setParentName(null);
             this.setParentVersion(null);
         }
@@ -85,7 +84,7 @@ public class ModuleConfig {
         if (StringUtils.isBlank(parentUuid)) {
             this.parentName = parentName;
         } else if (StringUtils.isNotBlank(parentUuid))
-            logger.info("parentUuid set so ignoring parentName: %s", parentName);
+            LOG.info("parentUuid set so ignoring parentName: {}", parentName);
     }
 
     public String getParentVersion() {
@@ -96,7 +95,7 @@ public class ModuleConfig {
         if (StringUtils.isBlank(parentUuid)) {
             this.parentVersion = parentVersion;
         } else if (StringUtils.isNotBlank(parentUuid))
-            logger.info("parentUuid set so ignoring parentVersion: %s", parentVersion);
+            LOG.info("parentUuid set so ignoring parentVersion: {}", parentVersion);
     }
 
     public org.apache.maven.api.Project getMavenProject() {

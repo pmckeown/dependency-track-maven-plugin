@@ -12,22 +12,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.verify;
 
-import io.github.pmckeown.util.Logger;
+import io.github.pmckeown.test.logging.SpyLoggerRegistry;
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
 
 @ExtendWith(MockitoExtension.class)
 class MetricsAnalyserTest {
 
     @InjectMocks
     private MetricsAnalyser metricsAnalyser;
-
-    @Mock
-    private Logger logger;
 
     @Test
     void thatIfCriticalIssuesExistThenAnErrorIsReturned() throws Exception {
@@ -40,6 +37,7 @@ class MetricsAnalyserTest {
             assertThat(ex, instanceOf(MojoFailureException.class));
         }
 
+        Logger logger = SpyLoggerRegistry.expectLogger(MetricsAnalyser.class);
         verify(logger).warn(ERROR_TEMPLATE, CRITICAL, 100, 0);
     }
 
@@ -54,6 +52,7 @@ class MetricsAnalyserTest {
             assertThat(ex, instanceOf(MojoFailureException.class));
         }
 
+        Logger logger = SpyLoggerRegistry.expectLogger(MetricsAnalyser.class);
         verify(logger).warn(ERROR_TEMPLATE, HIGH, 200, 0);
     }
 
@@ -68,6 +67,7 @@ class MetricsAnalyserTest {
             assertThat(ex, instanceOf(MojoFailureException.class));
         }
 
+        Logger logger = SpyLoggerRegistry.expectLogger(MetricsAnalyser.class);
         verify(logger).warn(ERROR_TEMPLATE, MEDIUM, 300, 0);
     }
 
@@ -82,6 +82,7 @@ class MetricsAnalyserTest {
             assertThat(ex, instanceOf(MojoFailureException.class));
         }
 
+        Logger logger = SpyLoggerRegistry.expectLogger(MetricsAnalyser.class);
         verify(logger).warn(ERROR_TEMPLATE, LOW, 400, 0);
     }
 
@@ -96,6 +97,7 @@ class MetricsAnalyserTest {
             assertThat(ex, instanceOf(MojoFailureException.class));
         }
 
+        Logger logger = SpyLoggerRegistry.expectLogger(MetricsAnalyser.class);
         verify(logger).warn(ERROR_TEMPLATE, UNASSIGNED, 500, 0);
     }
 
@@ -116,6 +118,7 @@ class MetricsAnalyserTest {
             assertThat(ex, instanceOf(MojoFailureException.class));
         }
 
+        Logger logger = SpyLoggerRegistry.expectLogger(MetricsAnalyser.class);
         verify(logger).warn(ERROR_TEMPLATE, CRITICAL, 100, 0);
         verify(logger).warn(ERROR_TEMPLATE, HIGH, 200, 0);
         verify(logger).warn(ERROR_TEMPLATE, MEDIUM, 300, 0);

@@ -1,48 +1,42 @@
 package io.github.pmckeown.dependencytrack.finding;
 
 import static io.github.pmckeown.dependencytrack.Constants.DELIMITER;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.joinWith;
 
 import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.util.Logger;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.api.di.Inject;
+import org.apache.commons.lang3.Strings;
 import org.apache.maven.api.di.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 class FindingsPrinter {
-
-    private Logger logger;
-
-    @Inject
-    public FindingsPrinter(Logger logger) {
-        this.logger = logger;
-    }
+    private static final Logger LOG = LoggerFactory.getLogger(FindingsPrinter.class);
 
     void printFindings(Project project, List<Finding> findings) {
         if (findings == null || findings.isEmpty()) {
-            logger.info("No findings were retrieved for project: %s", project.getName());
+            LOG.info("No findings were retrieved for project: {}", project.getName());
             return;
         }
-        logger.info("%d finding(s) were retrieved for project: %s", findings.size(), project.getName());
-        logger.info("Printing findings for project %s-%s", project.getName(), project.getVersion());
+        LOG.info("{} finding(s) were retrieved for project: {}", findings.size(), project.getName());
+        LOG.info("Printing findings for project {}-{}", project.getName(), project.getVersion());
         findings.forEach(finding -> {
             Vulnerability vulnerability = finding.getVulnerability();
-            logger.info(DELIMITER);
-            logger.info("%s (%s)", vulnerability.getVulnId(), vulnerability.getSource());
-            logger.info("%s: %s", vulnerability.getSeverity().name(), getComponentDetails(finding));
-            logger.info(""); // Spacer
+            LOG.info(DELIMITER);
+            LOG.info("{} ({})", vulnerability.getVulnId(), vulnerability.getSource());
+            LOG.info("{}: {}", vulnerability.getSeverity().name(), getComponentDetails(finding));
+            LOG.info(""); // Spacer
             List<String> wrappedDescriptionParts = splitString(vulnerability.getDescription());
             if (wrappedDescriptionParts != null && !wrappedDescriptionParts.isEmpty()) {
-                wrappedDescriptionParts.forEach(s -> logger.info(s));
+                wrappedDescriptionParts.forEach(s -> LOG.info(s));
             }
             if (finding.getAnalysis().isSuppressed()) {
-                logger.info("");
-                logger.info("Suppressed - %s", finding.getAnalysis().getState().name());
+                LOG.info("");
+                LOG.info("Suppressed - {}", finding.getAnalysis().getState().name());
             }
         });
     }
@@ -57,13 +51,13 @@ class FindingsPrinter {
             return Collections.emptyList();
         }
 
-        String percentEscaped = StringUtils.replace(string, "%", "%%");
-        String cleaned = StringUtils.replace(percentEscaped, "\n", "");
+        String percentEscaped = Strings.CS.replace(string, "%", "%%");
+        String cleaned = Strings.CS.replace(percentEscaped, "\n", "");
         int chunkSize = getPrintWidth();
         final int numberOfChunks = (cleaned.length() + chunkSize - 1) / chunkSize;
         return IntStream.range(0, numberOfChunks)
                 .mapToObj(i -> cleaned.substring(i * chunkSize, Math.min((i + 1) * chunkSize, cleaned.length())))
-                .collect(toList());
+                .toList();
     }
 
     private String getComponentDetails(Finding finding) {

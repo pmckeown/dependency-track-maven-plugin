@@ -33,27 +33,22 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackIntegrationTest;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.Response;
-import io.github.pmckeown.util.Logger;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import kong.unirest.UnirestException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class BomClientIntegrationTest extends AbstractDependencyTrackIntegrationTest {
 
-    @Mock
-    private Logger logger;
-
     private BomClient client;
 
     @BeforeEach
     void setUp(WireMockRuntimeInfo wmri) {
-        client = new BomClient(getCommonConfig(wmri), logger);
+        client = new BomClient(getCommonConfig(wmri));
     }
 
     @Test

@@ -4,10 +4,11 @@ import static java.lang.String.format;
 
 import io.github.pmckeown.dependencytrack.*;
 import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.util.Logger;
 import java.util.Optional;
 import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.di.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles the integration to Dependency Track for getting Metrics
@@ -16,6 +17,7 @@ import org.apache.maven.api.di.Singleton;
  */
 @Singleton
 public class MetricsAction {
+    private static final Logger LOG = LoggerFactory.getLogger(MetricsAction.class);
 
     private MetricsClient metricsClient;
 
@@ -23,33 +25,30 @@ public class MetricsAction {
 
     private CommonConfig commonConfig;
 
-    private Logger logger;
-
     @Inject
-    public MetricsAction(MetricsClient metricsClient, Poller<Metrics> poller, CommonConfig config, Logger logger) {
+    public MetricsAction(MetricsClient metricsClient, Poller<Metrics> poller, CommonConfig config) {
         this.metricsClient = metricsClient;
         this.poller = poller;
         this.commonConfig = config;
-        this.logger = logger;
     }
 
     public Metrics getMetrics(Project project) throws DependencyTrackException {
         try {
             return pollForMetrics(project);
         } catch (Exception ex) {
-            logger.error(ex.getMessage());
+            LOG.error(ex.getMessage(), ex);
             throw new DependencyTrackException(format("Failed to get Metrics for project: %s", project.getUuid()));
         }
     }
 
     private Metrics pollForMetrics(Project project) throws DependencyTrackException {
         Optional<Metrics> body = poller.poll(commonConfig.getPollingConfig(), () -> {
-            logger.info("Polling for metrics from the Dependency-Track server");
+            LOG.info("Polling for metrics from the Dependency-Track server");
             Response<Metrics> response = metricsClient.getMetrics(project);
             return response.getBody();
         });
         if (body.isPresent()) {
-            logger.debug("Metrics found for project: %s", project.getUuid());
+            LOG.debug("Metrics found for project: {}", project.getUuid());
             return body.get();
         } else {
             throw new DependencyTrackException(
@@ -58,17 +57,17 @@ public class MetricsAction {
     }
 
     public void refreshMetrics(Project project) {
-        logger.info("Requesting Metrics analysis for project: %s-%s", project.getName(), project.getVersion());
+        LOG.info("Requesting Metrics analysis for project: {}-{}", project.getName(), project.getVersion());
         try {
             Response<Void> response = metricsClient.refreshMetrics(project);
             if (response.isSuccess()) {
-                logger.debug("Metrics refreshed");
+                LOG.debug("Metrics refreshed");
             } else {
-                logger.debug("Metrics refresh failed, response from server: %s", response.getStatusText());
+                LOG.debug("Metrics refresh failed, response from server: {}", response.getStatusText());
             }
         } catch (Exception ex) {
             // Exception intentionally logged and swallowed
-            logger.error("Failed to refresh metrics with exception: %s", ex.getMessage());
+            LOG.error("Failed to refresh metrics with exception: {}", ex.getMessage());
         }
     }
 }

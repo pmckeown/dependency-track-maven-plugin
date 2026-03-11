@@ -8,24 +8,21 @@ import static io.github.pmckeown.dependencytrack.policyviolation.PolicyViolation
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import io.github.pmckeown.util.Logger;
+import io.github.pmckeown.test.logging.SpyLoggerRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
 
 @ExtendWith(MockitoExtension.class)
 class PolicyViolationsAnalyserTest {
 
     @InjectMocks
     private PolicyViolationsAnalyser policyAnalyser;
-
-    @Mock
-    private Logger logger;
 
     @Test
     void thatInfoLevelPolicyViolationsWithFailOnWarnFalseDoesNotResultInPolicyBreach() {
@@ -40,8 +37,9 @@ class PolicyViolationsAnalyserTest {
                 false);
         assertFalse(isPolicyBreached);
 
+        Logger logger = SpyLoggerRegistry.expectLogger(PolicyViolationsAnalyser.class);
         verify(logger).info(anyString());
-        verifyNoMoreInteractions(logger);
+        verify(logger, never()).warn(anyString());
     }
 
     @Test
@@ -57,8 +55,9 @@ class PolicyViolationsAnalyserTest {
                 true);
         assertFalse(isPolicyBreached);
 
+        Logger logger = SpyLoggerRegistry.expectLogger(PolicyViolationsAnalyser.class);
         verify(logger).info(anyString());
-        verifyNoMoreInteractions(logger);
+        verify(logger, never()).warn(anyString());
     }
 
     @Test
@@ -74,8 +73,9 @@ class PolicyViolationsAnalyserTest {
                 false);
         assertFalse(isPolicyBreached);
 
+        Logger logger = SpyLoggerRegistry.expectLogger(PolicyViolationsAnalyser.class);
         verify(logger).info(anyString());
-        verifyNoMoreInteractions(logger);
+        verify(logger, never()).warn(anyString());
     }
 
     @Test
@@ -91,6 +91,7 @@ class PolicyViolationsAnalyserTest {
                 true);
         assertTrue(isPolicyBreached);
 
+        Logger logger = SpyLoggerRegistry.expectLogger(PolicyViolationsAnalyser.class);
         verify(logger).info(anyString());
         verify(logger).warn(ERROR_TEMPLATE, "Warn Severity Policy", "password-printer", "1.0.0");
     }
@@ -108,6 +109,7 @@ class PolicyViolationsAnalyserTest {
                 false);
         assertTrue(isPolicyBreached);
 
+        Logger logger = SpyLoggerRegistry.expectLogger(PolicyViolationsAnalyser.class);
         verify(logger).info(anyString());
         verify(logger).warn(ERROR_TEMPLATE, "Fail Severity Policy", "password-printer", "1.0.0");
     }
@@ -125,6 +127,7 @@ class PolicyViolationsAnalyserTest {
                 true);
         assertTrue(isPolicyBreached);
 
+        Logger logger = SpyLoggerRegistry.expectLogger(PolicyViolationsAnalyser.class);
         verify(logger).info(anyString());
         verify(logger).warn(ERROR_TEMPLATE, "Fail Severity Policy", "password-printer", "1.0.0");
     }

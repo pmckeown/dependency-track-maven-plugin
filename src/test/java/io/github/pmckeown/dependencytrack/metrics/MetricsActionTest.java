@@ -22,7 +22,7 @@ import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.Poller;
 import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.util.Logger;
+import io.github.pmckeown.test.logging.SpyLoggerRegistry;
 import kong.unirest.UnirestException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +30,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
 
 @ExtendWith(MockitoExtension.class)
 class MetricsActionTest {
@@ -47,9 +48,6 @@ class MetricsActionTest {
 
     @Spy
     private Poller<Metrics> poller = new Poller<>();
-
-    @Mock
-    private Logger logger;
 
     @Test
     void thatMetricsCanBeRetrieved() throws Exception {
@@ -98,6 +96,8 @@ class MetricsActionTest {
                     metricsAction.refreshMetrics(aProject().build());
                 },
                 "No exception expected");
+
+        Logger logger = SpyLoggerRegistry.expectLogger(MetricsAction.class);
         verify(logger).debug(anyString());
     }
 
@@ -109,6 +109,7 @@ class MetricsActionTest {
                     metricsAction.refreshMetrics(aProject().build());
                 },
                 "No exception expected");
+        Logger logger = SpyLoggerRegistry.expectLogger(MetricsAction.class);
         verify(logger).debug(anyString(), anyString());
     }
 
@@ -121,6 +122,7 @@ class MetricsActionTest {
                     metricsAction.refreshMetrics(aProject().build());
                 },
                 "No exception expected");
+        Logger logger = SpyLoggerRegistry.expectLogger(MetricsAction.class);
         verify(logger).error(anyString(), anyString());
     }
 

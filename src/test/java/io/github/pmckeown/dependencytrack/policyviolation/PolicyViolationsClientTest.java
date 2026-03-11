@@ -26,7 +26,6 @@ import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackIntegrationTest;
 import io.github.pmckeown.dependencytrack.Response;
-import io.github.pmckeown.util.Logger;
 import java.util.List;
 import java.util.Optional;
 import kong.unirest.UnirestException;
@@ -34,7 +33,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,12 +41,9 @@ class PolicyViolationsClientTest extends AbstractDependencyTrackIntegrationTest 
     @InjectMocks
     private PolicyViolationsClient policyClient;
 
-    @Mock
-    private Logger logger;
-
     @BeforeEach
     void setUp(WireMockRuntimeInfo wmri) {
-        policyClient = new PolicyViolationsClient(getCommonConfig(wmri), logger);
+        policyClient = new PolicyViolationsClient(getCommonConfig(wmri));
     }
 
     @Test
