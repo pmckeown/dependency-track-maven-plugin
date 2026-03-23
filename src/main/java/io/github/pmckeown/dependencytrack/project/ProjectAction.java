@@ -12,10 +12,12 @@ import java.io.File;
 import java.util.*;
 import kong.unirest.UnirestException;
 import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Named
 @Singleton
 public class ProjectAction {
     private static final Logger LOG = LoggerFactory.getLogger(ProjectAction.class);

@@ -6,8 +6,10 @@ import io.github.pmckeown.dependencytrack.finding.FindingThresholds;
 import java.io.File;
 import java.util.List;
 import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 
+@Named
 @Singleton
 public class FindingsReportGenerator {
 

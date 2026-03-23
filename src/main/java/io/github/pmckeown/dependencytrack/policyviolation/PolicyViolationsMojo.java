@@ -1,9 +1,7 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
-import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.policyviolation.report.PolicyViolationsReportGenerator;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
@@ -46,28 +44,20 @@ public class PolicyViolationsMojo extends AbstractDependencyTrackMojo {
     @Inject
     private org.apache.maven.api.Project mavenProject;
 
+    @Inject
     private ProjectAction projectAction;
-    private PolicyViolationsReportGenerator policyViolationReportGenerator;
-    private PolicyViolationsAction policyAction;
-    private PolicyViolationsPrinter policyViolationsPrinter;
-    private PolicyViolationsAnalyser policyAnalyser;
 
     @Inject
-    public PolicyViolationsMojo(
-            ProjectAction projectAction,
-            PolicyViolationsReportGenerator policyViolationReportGenerator,
-            CommonConfig commonConfig,
-            ModuleConfig moduleConfig,
-            PolicyViolationsAction policyAction,
-            PolicyViolationsPrinter policyViolationsPrinter,
-            PolicyViolationsAnalyser policyAnalyser) {
-        super(commonConfig, moduleConfig);
-        this.projectAction = projectAction;
-        this.policyViolationReportGenerator = policyViolationReportGenerator;
-        this.policyAction = policyAction;
-        this.policyViolationsPrinter = policyViolationsPrinter;
-        this.policyAnalyser = policyAnalyser;
-    }
+    private PolicyViolationsReportGenerator policyViolationReportGenerator;
+
+    @Inject
+    private PolicyViolationsAction policyAction;
+
+    @Inject
+    private PolicyViolationsPrinter policyViolationsPrinter;
+
+    @Inject
+    private PolicyViolationsAnalyser policyAnalyser;
 
     @Override
     protected void performAction() throws MojoExecutionException, MojoFailureException {

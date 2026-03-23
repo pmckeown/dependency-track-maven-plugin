@@ -6,7 +6,6 @@ import com.evanlennick.retry4j.config.RetryConfigBuilder;
 import com.evanlennick.retry4j.exception.UnexpectedException;
 import java.util.Optional;
 import java.util.concurrent.Callable;
-import org.apache.maven.api.di.Singleton;
 
 /**
  * Class for polling a remote server.
@@ -22,7 +21,6 @@ import org.apache.maven.api.di.Singleton;
  *
  * @param <T> The expected return type. This will be wrapped in an {@link Optional}
  */
-@Singleton
 public class Poller<T> {
 
     /**

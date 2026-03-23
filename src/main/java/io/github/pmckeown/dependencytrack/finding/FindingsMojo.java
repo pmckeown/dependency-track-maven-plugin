@@ -1,9 +1,7 @@
 package io.github.pmckeown.dependencytrack.finding;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
-import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.finding.report.FindingsReportGenerator;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
@@ -82,28 +80,20 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     @Inject
     private org.apache.maven.api.Project mavenProject;
 
+    @Inject
     private ProjectAction projectAction;
-    private FindingsAction findingsAction;
-    private FindingsPrinter findingsPrinter;
-    private FindingsAnalyser findingsAnalyser;
-    private FindingsReportGenerator findingsReportGenerator;
 
     @Inject
-    public FindingsMojo(
-            ProjectAction projectAction,
-            FindingsAction findingsAction,
-            FindingsPrinter findingsPrinter,
-            FindingsAnalyser findingsAnalyser,
-            FindingsReportGenerator findingsReportGenerator,
-            CommonConfig commonConfig,
-            ModuleConfig moduleConfig) {
-        super(commonConfig, moduleConfig);
-        this.projectAction = projectAction;
-        this.findingsAction = findingsAction;
-        this.findingsPrinter = findingsPrinter;
-        this.findingsAnalyser = findingsAnalyser;
-        this.findingsReportGenerator = findingsReportGenerator;
-    }
+    private FindingsAction findingsAction;
+
+    @Inject
+    private FindingsPrinter findingsPrinter;
+
+    @Inject
+    private FindingsAnalyser findingsAnalyser;
+
+    @Inject
+    private FindingsReportGenerator findingsReportGenerator;
 
     @Override
     protected void performAction() throws MojoExecutionException, MojoFailureException {

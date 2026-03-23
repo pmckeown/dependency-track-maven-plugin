@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Paul McKeown
  */
+@Named
 @Singleton
 public class UploadBomAction {
     private static final Logger LOG = LoggerFactory.getLogger(UploadBomAction.class);
@@ -29,9 +31,9 @@ public class UploadBomAction {
     private Poller<Boolean> poller;
 
     @Inject
-    public UploadBomAction(BomClient bomClient, Poller<Boolean> poller, CommonConfig commonConfig) {
+    public UploadBomAction(BomClient bomClient, CommonConfig commonConfig) {
         this.bomClient = bomClient;
-        this.poller = poller;
+        this.poller = new Poller<>();
         this.commonConfig = commonConfig;
     }
 

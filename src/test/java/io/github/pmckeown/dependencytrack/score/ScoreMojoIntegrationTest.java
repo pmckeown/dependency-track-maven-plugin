@@ -8,32 +8,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.PollingConfig;
-import org.apache.maven.api.plugin.testing.Basedir;
 import org.apache.maven.api.plugin.testing.InjectMojo;
-import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.apache.maven.plugin.MojoFailureException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
-    ScoreMojo scoreMojo;
-
-    @BeforeEach
-    @Basedir(TEST_PROJECT)
-    @InjectMojo(goal = "score")
-    @MojoParameter(name = "projectName", value = "dependency-track")
-    @MojoParameter(name = "projectVersion", value = "3.6.0-SNAPSHOT")
-    void setUp(ScoreMojo mojo) {
-        scoreMojo = mojo;
-        configureMojo(scoreMojo);
-    }
-
     @Test
-    void thatAllProjectsCanBeRetrieved() throws Exception {
+    @InjectMojo(goal = "score")
+    void thatAllProjectsCanBeRetrieved(ScoreMojo scoreMojo) throws Exception {
+        configureMojo(scoreMojo);
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
 
@@ -43,7 +29,10 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatARiskScoreHigherThanTheThresholdCausesBuildToFailEvenWithFailOnErrorFalse() throws Exception {
+    @InjectMojo(goal = "score")
+    void thatARiskScoreHigherThanTheThresholdCausesBuildToFailEvenWithFailOnErrorFalse(ScoreMojo scoreMojo)
+            throws Exception {
+        configureMojo(scoreMojo);
         // The current project score in the JSON file is 3
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
@@ -60,7 +49,9 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatARiskScoreEqualToTheThresholdDoesNothing() {
+    @InjectMojo(goal = "score")
+    void thatARiskScoreEqualToTheThresholdDoesNothing(ScoreMojo scoreMojo) {
+        configureMojo(scoreMojo);
         // The current project score in the JSON file is 3
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
@@ -75,7 +66,9 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatFailureToGetARiskScoreEqualThrowsAnException() {
+    @InjectMojo(goal = "score")
+    void thatFailureToGetARiskScoreEqualThrowsAnException(ScoreMojo scoreMojo) {
+        configureMojo(scoreMojo);
         // The current project score in the JSON file is 3
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
@@ -90,7 +83,9 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatARiskScoreLowerThanTheThresholdDoesNothing() {
+    @InjectMojo(goal = "score")
+    void thatARiskScoreLowerThanTheThresholdDoesNothing(ScoreMojo scoreMojo) {
+        configureMojo(scoreMojo);
         // The current project score in the JSON file is 3
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
@@ -105,7 +100,9 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenNoMetricsHaveBeenCalculatedThenTheMetricsAreRetrieved() throws Exception {
+    @InjectMojo(goal = "score")
+    void thatWhenNoMetricsHaveBeenCalculatedThenTheMetricsAreRetrieved(ScoreMojo scoreMojo) throws Exception {
+        configureMojo(scoreMojo);
         // The current project score in the JSON file is 3
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/noMetrics.json")));
@@ -120,7 +117,9 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenNoMetricsHaveBeenTheTheCallIsRetriedTheCorrectNumberOfTimes() throws Exception {
+    @InjectMojo(goal = "score")
+    void thatWhenNoMetricsHaveBeenTheTheCallIsRetriedTheCorrectNumberOfTimes(ScoreMojo scoreMojo) throws Exception {
+        configureMojo(scoreMojo);
         // The current project score in the JSON file is 3
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/noMetrics.json")));
@@ -143,7 +142,9 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenFailOnErrorIsFalseAFailureFromToDependencyTrackDoesNotFailTheBuild() {
+    @InjectMojo(goal = "score")
+    void thatWhenFailOnErrorIsFalseAFailureFromToDependencyTrackDoesNotFailTheBuild(ScoreMojo scoreMojo) {
+        configureMojo(scoreMojo);
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(notFound()));
 
         assertDoesNotThrow(
@@ -157,7 +158,9 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenFailOnErrorIsTrueAFailureFromToDependencyTrackDoesFailTheBuild() throws Exception {
+    @InjectMojo(goal = "score")
+    void thatWhenFailOnErrorIsTrueAFailureFromToDependencyTrackDoesFailTheBuild(ScoreMojo scoreMojo) throws Exception {
+        configureMojo(scoreMojo);
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(notFound()));
 
         try {
@@ -170,7 +173,8 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenFailOnErrorIsFalseAFailureToConnectToDependencyTrackDoesNotFailTheBuild() {
+    @InjectMojo(goal = "score")
+    void thatWhenFailOnErrorIsFalseAFailureToConnectToDependencyTrackDoesNotFailTheBuild(ScoreMojo scoreMojo) {
         // No Wiremock Stubbing
 
         assertDoesNotThrow(
@@ -183,7 +187,9 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenFailOnErrorIsTrueAFailureToConnectToDependencyTrackDoesFailTheBuild() throws Exception {
+    @InjectMojo(goal = "score")
+    void thatWhenFailOnErrorIsTrueAFailureToConnectToDependencyTrackDoesFailTheBuild(ScoreMojo scoreMojo)
+            throws Exception {
         // No Wiremock Stubbing
 
         try {
@@ -197,8 +203,9 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatTheScoreIsSkippedWhenSkipIsTrue(WireMockRuntimeInfo wmri) throws Exception {
-        scoreMojo.setDependencyTrackBaseUrl("http://localhost:" + wmri.getHttpPort());
+    @InjectMojo(goal = "score")
+    void thatTheScoreIsSkippedWhenSkipIsTrue(ScoreMojo scoreMojo) throws Exception {
+        scoreMojo.setDependencyTrackBaseUrl(wireMockRuntimeInfo.getHttpBaseUrl());
         scoreMojo.setProjectName("dependency-track");
         scoreMojo.setProjectVersion("3.6.0-SNAPSHOT");
         scoreMojo.setSkip("true");

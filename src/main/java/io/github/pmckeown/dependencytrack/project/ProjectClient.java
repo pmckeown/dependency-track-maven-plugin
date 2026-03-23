@@ -12,6 +12,7 @@ import kong.unirest.HttpResponse;
 import kong.unirest.HttpStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 
 /**
@@ -19,6 +20,7 @@ import org.apache.maven.api.di.Singleton;
  *
  * @author Paul McKeown
  */
+@Named
 @Singleton
 public class ProjectClient {
 

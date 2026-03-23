@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.Optional;
 import kong.unirest.UnirestException;
 import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Named
 @Singleton
 public class PolicyViolationsAction {
     private static final Logger LOG = LoggerFactory.getLogger(PolicyViolationsAction.class);

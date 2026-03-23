@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.Optional;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BOMInputStream;
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 import org.cyclonedx.model.Bom;
 import org.cyclonedx.model.Component;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Paul McKeown
  */
+@Named
 @Singleton
 public class BomParser {
     private static final Logger LOG = LoggerFactory.getLogger(BomParser.class);

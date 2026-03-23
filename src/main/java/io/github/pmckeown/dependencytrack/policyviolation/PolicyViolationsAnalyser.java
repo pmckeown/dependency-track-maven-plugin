@@ -2,10 +2,12 @@ package io.github.pmckeown.dependencytrack.policyviolation;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Named
 @Singleton
 public class PolicyViolationsAnalyser {
     private static final Logger LOG = LoggerFactory.getLogger(PolicyViolationsAnalyser.class);

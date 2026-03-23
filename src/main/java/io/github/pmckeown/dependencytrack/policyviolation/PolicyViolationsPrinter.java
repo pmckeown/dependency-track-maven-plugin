@@ -4,10 +4,12 @@ import static io.github.pmckeown.dependencytrack.Constants.DELIMITER;
 
 import io.github.pmckeown.dependencytrack.project.Project;
 import java.util.List;
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Named
 @Singleton
 public class PolicyViolationsPrinter {
     private static final Logger LOG = LoggerFactory.getLogger(PolicyViolationsPrinter.class);

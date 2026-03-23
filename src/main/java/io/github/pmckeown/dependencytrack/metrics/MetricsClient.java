@@ -11,6 +11,7 @@ import java.util.Optional;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
 import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Paul McKeown
  */
+@Named
 class MetricsClient {
     private static final Logger LOG = LoggerFactory.getLogger(MetricsClient.class);
 

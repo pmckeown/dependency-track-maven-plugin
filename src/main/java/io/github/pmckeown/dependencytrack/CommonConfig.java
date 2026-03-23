@@ -1,5 +1,6 @@
 package io.github.pmckeown.dependencytrack;
 
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 
 /**
@@ -7,6 +8,7 @@ import org.apache.maven.api.di.Singleton;
  *
  * @author Paul McKeown
  */
+@Named
 @Singleton
 public class CommonConfig {
 

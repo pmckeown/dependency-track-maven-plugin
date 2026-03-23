@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import kong.unirest.Unirest;
 import kong.unirest.jackson.JacksonObjectMapper;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.plugin.Mojo;
 import org.apache.maven.api.plugin.annotations.Parameter;
 import org.apache.maven.artifact.ArtifactUtils;
@@ -74,12 +75,17 @@ public abstract class AbstractDependencyTrackMojo implements Mojo {
     @Parameter
     private PollingConfig pollingConfig;
 
+    @Inject
     protected CommonConfig commonConfig;
 
+    @Inject
     protected ModuleConfig moduleConfig;
 
     protected final Logger mojoLogger = LoggerFactory.getLogger(getClass());
 
+    protected AbstractDependencyTrackMojo() {}
+
+    @Deprecated
     protected AbstractDependencyTrackMojo(CommonConfig commonConfig, ModuleConfig moduleConfig) {
         this.commonConfig = commonConfig;
         this.moduleConfig = moduleConfig;

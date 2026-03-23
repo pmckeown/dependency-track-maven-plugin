@@ -3,9 +3,7 @@ package io.github.pmckeown.dependencytrack.project;
 import static java.lang.String.format;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
-import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.ModuleConfig;
 import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.plugin.annotations.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -19,13 +17,8 @@ import org.apache.maven.plugin.MojoFailureException;
 @Mojo(name = "delete-project")
 public class DeleteProjectMojo extends AbstractDependencyTrackMojo {
 
-    private ProjectAction projectAction;
-
     @Inject
-    public DeleteProjectMojo(ProjectAction projectAction, CommonConfig commonConfig, ModuleConfig moduleConfig) {
-        super(commonConfig, moduleConfig);
-        this.projectAction = projectAction;
-    }
+    private ProjectAction projectAction;
 
     @Override
     protected void performAction() throws MojoExecutionException, MojoFailureException {

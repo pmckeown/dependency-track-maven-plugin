@@ -69,24 +69,14 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     @Parameter(property = "dependency-track.uploadWithPut", defaultValue = "true")
     private boolean uploadWithPut = true;
 
-    private final UploadBomAction uploadBomAction;
-
-    private final MetricsAction metricsAction;
-
-    private final ProjectAction projectAction;
+    @Inject
+    private UploadBomAction uploadBomAction;
 
     @Inject
-    public UploadBomMojo(
-            UploadBomAction uploadBomAction,
-            MetricsAction metricsAction,
-            ProjectAction projectAction,
-            CommonConfig commonConfig,
-            ModuleConfig moduleConfig) {
-        super(commonConfig, moduleConfig);
-        this.uploadBomAction = uploadBomAction;
-        this.metricsAction = metricsAction;
-        this.projectAction = projectAction;
-    }
+    private MetricsAction metricsAction;
+
+    @Inject
+    private ProjectAction projectAction;
 
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {

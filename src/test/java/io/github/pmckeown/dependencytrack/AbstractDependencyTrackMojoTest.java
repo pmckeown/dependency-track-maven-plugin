@@ -1,13 +1,9 @@
 package io.github.pmckeown.dependencytrack;
 
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.mock;
-
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.apache.maven.api.Project;
 import org.apache.maven.api.di.Inject;
-import org.apache.maven.api.model.Build;
 import org.apache.maven.api.plugin.testing.MojoTest;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -27,18 +23,11 @@ public abstract class AbstractDependencyTrackMojoTest {
      * @param mojo Mojo to configure
      */
     protected void configureMojo(AbstractDependencyTrackMojo mojo) {
-        mojo.setDependencyTrackBaseUrl("http://localhost:" + wireMockRuntimeInfo.getHttpPort());
+        mojo.setDependencyTrackBaseUrl(wireMockRuntimeInfo.getHttpBaseUrl());
     }
 
     @BeforeEach
     void setUp(WireMockRuntimeInfo wmri) {
         this.wireMockRuntimeInfo = wmri;
-
-        Build build = project.getBuild();
-        if (build == null) {
-            build = mock();
-            lenient().when(project.getBuild()).thenReturn(build);
-            lenient().when(build.getDirectory()).thenReturn(TEST_PROJECT + "/target");
-        }
     }
 }

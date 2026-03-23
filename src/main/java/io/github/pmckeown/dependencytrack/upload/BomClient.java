@@ -31,6 +31,7 @@ import kong.unirest.MultipartBody;
 import kong.unirest.RequestBodyEntity;
 import kong.unirest.Unirest;
 import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Paul McKeown
  */
+@Named
 @Singleton
 class BomClient {
     private static final Logger LOG = LoggerFactory.getLogger(BomClient.class);
