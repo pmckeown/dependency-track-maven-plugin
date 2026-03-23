@@ -5,8 +5,10 @@ import io.github.pmckeown.dependencytrack.report.TransformerFactoryProvider;
 import java.io.File;
 import java.io.InputStream;
 import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 
+@Named
 @Singleton
 public class FindingsReportHtmlReportWriter extends AbstractHtmlReportWriter {
 

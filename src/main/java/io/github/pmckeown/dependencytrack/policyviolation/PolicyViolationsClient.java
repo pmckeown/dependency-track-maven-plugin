@@ -11,10 +11,12 @@ import java.util.Optional;
 import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
 import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Named
 @Singleton
 class PolicyViolationsClient {
     private static final Logger LOG = LoggerFactory.getLogger(PolicyViolationsClient.class);

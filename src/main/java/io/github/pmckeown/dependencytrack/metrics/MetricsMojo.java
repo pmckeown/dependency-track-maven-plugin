@@ -1,9 +1,7 @@
 package io.github.pmckeown.dependencytrack.metrics;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
-import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import org.apache.maven.api.Lifecycle.Phase;
@@ -50,28 +48,20 @@ import org.slf4j.LoggerFactory;
 public class MetricsMojo extends AbstractDependencyTrackMojo {
     private static final Logger LOG = LoggerFactory.getLogger(MetricsMojo.class);
 
+    @Inject
     private MetricsAction metricsAction;
+
+    @Inject
     private ProjectAction getProjectAction;
+
+    @Inject
     private MetricsPrinter metricsPrinter;
+
+    @Inject
     private MetricsAnalyser metricsAnalyser;
 
     @Parameter(name = "metricsThresholds")
     private MetricsThresholds metricsThresholds;
-
-    @Inject
-    public MetricsMojo(
-            MetricsAction metricsAction,
-            ProjectAction getProjectAction,
-            MetricsPrinter metricsPrinter,
-            MetricsAnalyser metricsAnalyser,
-            CommonConfig commonConfig,
-            ModuleConfig moduleConfig) {
-        super(commonConfig, moduleConfig);
-        this.metricsAction = metricsAction;
-        this.getProjectAction = getProjectAction;
-        this.metricsPrinter = metricsPrinter;
-        this.metricsAnalyser = metricsAnalyser;
-    }
 
     @Override
     public void performAction() throws MojoExecutionException, MojoFailureException {

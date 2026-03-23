@@ -15,29 +15,15 @@ import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aV
 import static org.junit.jupiter.api.Assertions.*;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
-import org.apache.maven.api.plugin.testing.Basedir;
 import org.apache.maven.api.plugin.testing.InjectMojo;
-import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
-    FindingsMojo findingsMojo;
-
-    @BeforeEach
-    @Basedir(TEST_PROJECT)
-    @InjectMojo(goal = "findings")
-    @MojoParameter(name = "projectName", value = "testName")
-    @MojoParameter(name = "projectVersion", value = "99.99")
-    void setUp(FindingsMojo mojo) {
-        findingsMojo = mojo;
-        configureMojo(findingsMojo);
-    }
-
     @Test
+    @InjectMojo(goal = "findings")
     void thatFindingMojoCanRetrieveFindingsAndPrintThem(FindingsMojo mojo) throws Exception {
         configureMojo(mojo);
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
@@ -58,14 +44,16 @@ class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenNoFindingsAreFoundTheMojoDoesNotFail() {
+    @InjectMojo(goal = "findings")
+    void thatWhenNoFindingsAreFoundTheMojoDoesNotFail(FindingsMojo mojo) {
+        configureMojo(mojo);
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID)).willReturn(ok()));
 
         assertDoesNotThrow(
                 () -> {
-                    findingsMojo.execute();
+                    mojo.execute();
                     verify(exactly(1), getRequestedFor(urlPathEqualTo(V1_PROJECT_LOOKUP)));
                     verify(exactly(1), getRequestedFor(urlPathMatching(V1_FINDING_PROJECT_UUID)));
                 },
@@ -73,22 +61,26 @@ class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenExceptionOccursWhileGettingFindingsAndFailOnErrorIsTrueTheMojoErrors() {
+    @InjectMojo(goal = "findings")
+    void thatWhenExceptionOccursWhileGettingFindingsAndFailOnErrorIsTrueTheMojoErrors(FindingsMojo mojo) {
+        configureMojo(mojo);
         assertThrows(MojoExecutionException.class, () -> {
             stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                     .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
             stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
                     .willReturn(aResponse().withFault(RANDOM_DATA_THEN_CLOSE)));
 
-            findingsMojo.setFailOnError(true);
+            mojo.setFailOnError(true);
 
-            findingsMojo.execute();
+            mojo.execute();
             fail("Exception expected");
         });
     }
 
     @Test
-    void thatBuildFailsWhenFindingsNumberBreachesDefinedThresholds() {
+    @InjectMojo(goal = "findings")
+    void thatBuildFailsWhenFindingsNumberBreachesDefinedThresholds(FindingsMojo mojo) {
+        configureMojo(mojo);
         assertThrows(MojoFailureException.class, () -> {
             stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                     .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
@@ -101,15 +93,17 @@ class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
                                             .withAnalysis(anAnalysis()))
                                     .build()))));
 
-            findingsMojo.setFindingThresholds(new FindingThresholds(0, 0, 0, 0, 0));
+            mojo.setFindingThresholds(new FindingThresholds(0, 0, 0, 0, 0));
 
-            findingsMojo.execute();
+            mojo.execute();
             fail("Exception expected");
         });
     }
 
     @Test
-    void thatBuildDoesNotFailWhenOnlyUnassignedFindingExists() throws Exception {
+    @InjectMojo(goal = "findings")
+    void thatBuildDoesNotFailWhenOnlyUnassignedFindingExists(FindingsMojo mojo) throws Exception {
+        configureMojo(mojo);
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
@@ -121,17 +115,19 @@ class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
                                         .withAnalysis(anAnalysis()))
                                 .build()))));
 
-        findingsMojo.setFindingThresholds(new FindingThresholds());
+        mojo.setFindingThresholds(new FindingThresholds());
 
         assertDoesNotThrow(
                 () -> {
-                    findingsMojo.execute();
+                    mojo.execute();
                 },
                 "Exception not expected");
     }
 
     @Test
-    void thatFindingsIsSkippedWhenSkipIsTrue() throws Exception {
+    @InjectMojo(goal = "findings")
+    void thatFindingsIsSkippedWhenSkipIsTrue(FindingsMojo mojo) throws Exception {
+        configureMojo(mojo);
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
@@ -143,9 +139,9 @@ class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
                                         .withAnalysis(anAnalysis()))
                                 .build()))));
 
-        findingsMojo.setSkip("true");
+        mojo.setSkip("true");
 
-        findingsMojo.execute();
+        mojo.execute();
 
         verify(exactly(0), getRequestedFor(urlPathEqualTo(V1_PROJECT_LOOKUP)));
         verify(exactly(0), getRequestedFor(urlPathMatching(V1_FINDING_PROJECT_UUID)));

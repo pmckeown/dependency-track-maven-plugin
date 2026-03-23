@@ -3,10 +3,12 @@ package io.github.pmckeown.dependencytrack;
 import java.util.Collections;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.api.di.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Holder for module dependent configuration supplied on Mojo execution */
+@Named
 public class ModuleConfig {
     public static final Logger LOG = LoggerFactory.getLogger(ModuleConfig.class);
 

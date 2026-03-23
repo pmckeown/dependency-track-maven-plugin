@@ -6,6 +6,7 @@ import io.github.pmckeown.dependencytrack.*;
 import io.github.pmckeown.dependencytrack.project.Project;
 import java.util.Optional;
 import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Paul McKeown
  */
+@Named
 @Singleton
 public class MetricsAction {
     private static final Logger LOG = LoggerFactory.getLogger(MetricsAction.class);
@@ -26,9 +28,9 @@ public class MetricsAction {
     private CommonConfig commonConfig;
 
     @Inject
-    public MetricsAction(MetricsClient metricsClient, Poller<Metrics> poller, CommonConfig config) {
+    public MetricsAction(MetricsClient metricsClient, CommonConfig config) {
         this.metricsClient = metricsClient;
-        this.poller = poller;
+        this.poller = new Poller<>();
         this.commonConfig = config;
     }
 

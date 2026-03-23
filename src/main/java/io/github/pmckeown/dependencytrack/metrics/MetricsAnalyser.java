@@ -6,11 +6,13 @@ import static io.github.pmckeown.dependencytrack.Constants.LOW;
 import static io.github.pmckeown.dependencytrack.Constants.MEDIUM;
 import static io.github.pmckeown.dependencytrack.Constants.UNASSIGNED;
 
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 import org.apache.maven.plugin.MojoFailureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Named
 @Singleton
 public class MetricsAnalyser {
     private static final Logger LOG = LoggerFactory.getLogger(MetricsAnalyser.class);

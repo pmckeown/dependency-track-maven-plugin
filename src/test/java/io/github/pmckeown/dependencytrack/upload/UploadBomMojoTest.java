@@ -150,7 +150,7 @@ class UploadBomMojoTest {
             assertThat(ex, instanceOf(MojoExecutionException.class));
         }
 
-        Logger logger = SpyLoggerRegistry.expectLogger(ProjectAction.class);
+        Logger logger = SpyLoggerRegistry.expectLogger(UploadBomMojo.class);
         verify(logger).error("Failed to update project info");
         verify(logger).error(eq("Error occurred during upload"), Mockito.any(Throwable.class));
     }

@@ -3,9 +3,7 @@ package io.github.pmckeown.dependencytrack.score;
 import static java.lang.String.format;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
-import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.ModuleConfig;
 import org.apache.maven.api.Lifecycle.Phase;
 import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.plugin.annotations.Mojo;
@@ -34,13 +32,8 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
     @Parameter(property = "dependency-track.inheritedRiskScoreThreshold")
     private Integer inheritedRiskScoreThreshold;
 
-    private ScoreAction scoreAction;
-
     @Inject
-    public ScoreMojo(ScoreAction scoreAction, ModuleConfig moduleConfig, CommonConfig commonConfig) {
-        super(commonConfig, moduleConfig);
-        this.scoreAction = scoreAction;
-    }
+    private ScoreAction scoreAction;
 
     @Override
     public void performAction() throws MojoFailureException, MojoExecutionException {

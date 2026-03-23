@@ -13,6 +13,7 @@ import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectClient;
 import java.util.Optional;
 import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Paul McKeown
  */
+@Named
 @Singleton
 class ScoreAction {
     private static final Logger LOG = LoggerFactory.getLogger(ScoreAction.class);

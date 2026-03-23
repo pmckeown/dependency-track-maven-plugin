@@ -9,31 +9,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.http.Fault;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
-import org.apache.maven.api.plugin.testing.Basedir;
 import org.apache.maven.api.plugin.testing.InjectMojo;
-import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
-    DeleteProjectMojo deleteProjectMojo;
-
-    @BeforeEach
-    @Basedir(TEST_PROJECT)
-    @InjectMojo(goal = "delete-project")
-    @MojoParameter(name = "projectName", value = "dependency-track")
-    @MojoParameter(name = "projectVersion", value = "3.6.0-SNAPSHOT")
-    @MojoParameter(name = "failOnError", value = "false")
-    void setUp(DeleteProjectMojo mojo) {
-        deleteProjectMojo = mojo;
-        configureMojo(deleteProjectMojo);
-    }
-
     @Test
-    void thatAProjectCanBeDeleted() throws Exception {
+    @InjectMojo(goal = "delete-project")
+    void thatAProjectCanBeDeleted(DeleteProjectMojo deleteProjectMojo) throws Exception {
+        configureMojo(deleteProjectMojo);
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
         stubFor(delete(urlPathMatching(V1_PROJECT_UUID)).willReturn(aResponse().withStatus(200)));
@@ -44,7 +30,9 @@ class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenProjectDeletionFailedAndFailOnErrorFalseThenMojoSucceeds() {
+    @InjectMojo(goal = "delete-project")
+    void thatWhenProjectDeletionFailedAndFailOnErrorFalseThenMojoSucceeds(DeleteProjectMojo deleteProjectMojo) {
+        configureMojo(deleteProjectMojo);
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/dependency-track-3.6.json")));
         stubFor(delete(urlPathMatching(V1_PROJECT_UUID)).willReturn(aResponse().withStatus(500)));
@@ -59,7 +47,10 @@ class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenProjectDeletionFailedAndFailOnErrorTrueThenMojoFailureExceptionIsThrown() {
+    @InjectMojo(goal = "delete-project")
+    void thatWhenProjectDeletionFailedAndFailOnErrorTrueThenMojoFailureExceptionIsThrown(
+            DeleteProjectMojo deleteProjectMojo) {
+        configureMojo(deleteProjectMojo);
         assertThrows(MojoFailureException.class, () -> {
             stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                     .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
@@ -73,7 +64,9 @@ class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenProjectIsNotFoundDeletionIsNotAttempted() throws Exception {
+    @InjectMojo(goal = "delete-project")
+    void thatWhenProjectIsNotFoundDeletionIsNotAttempted(DeleteProjectMojo deleteProjectMojo) throws Exception {
+        configureMojo(deleteProjectMojo);
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP)).willReturn(aResponse()));
         deleteProjectMojo.setProjectName("unknown");
         deleteProjectMojo.setProjectVersion("1.2.3-SNAPSHOT");
@@ -84,7 +77,10 @@ class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenProjectDeleteErrorsAndFailOnErrorTrueThenMojoExecutionExceptionIsThrown() {
+    @InjectMojo(goal = "delete-project")
+    void thatWhenProjectDeleteErrorsAndFailOnErrorTrueThenMojoExecutionExceptionIsThrown(
+            DeleteProjectMojo deleteProjectMojo) {
+        configureMojo(deleteProjectMojo);
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(delete(urlPathMatching(V1_PROJECT_UUID))
@@ -101,7 +97,9 @@ class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatWhenProjectDeleteErrorsAndFailOnErrorFalseThenMojoSucceeds() {
+    @InjectMojo(goal = "delete-project")
+    void thatWhenProjectDeleteErrorsAndFailOnErrorFalseThenMojoSucceeds(DeleteProjectMojo deleteProjectMojo) {
+        configureMojo(deleteProjectMojo);
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(delete(urlPathMatching(V1_PROJECT_UUID))
@@ -117,7 +115,9 @@ class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     }
 
     @Test
-    void thatDeleteIsSkippedWhenSkipIsTrue() throws Exception {
+    @InjectMojo(goal = "delete-project")
+    void thatDeleteIsSkippedWhenSkipIsTrue(DeleteProjectMojo deleteProjectMojo) throws Exception {
+        configureMojo(deleteProjectMojo);
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                 .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
         stubFor(delete(urlPathMatching(V1_PROJECT_UUID)).willReturn(aResponse().withStatus(200)));

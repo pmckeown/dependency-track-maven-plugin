@@ -5,8 +5,10 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import java.io.File;
 import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 
+@Named
 @Singleton
 public class PolicyViolationsXmlReportWriter extends AbstractXmlReportWriter {
 

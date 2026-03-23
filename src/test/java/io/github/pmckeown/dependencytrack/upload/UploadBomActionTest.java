@@ -104,7 +104,7 @@ class UploadBomActionTest {
         doReturn(new PollingConfig(true, 1, 3, MILLIS)).when(commonConfig).getPollingConfig();
 
         // Create a new candidate as the polling behaviour needs to change for this test
-        UploadBomAction action = new UploadBomAction(bomClient, new Poller<Boolean>(), commonConfig);
+        UploadBomAction action = new UploadBomAction(bomClient, commonConfig);
 
         doReturn(aBomProcessingResponse(true))
                 .doReturn(aBomProcessingResponse(true))

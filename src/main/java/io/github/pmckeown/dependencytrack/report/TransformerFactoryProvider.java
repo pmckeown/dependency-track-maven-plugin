@@ -2,8 +2,10 @@ package io.github.pmckeown.dependencytrack.report;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.TransformerFactory;
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 
+@Named
 @Singleton
 public class TransformerFactoryProvider {
 

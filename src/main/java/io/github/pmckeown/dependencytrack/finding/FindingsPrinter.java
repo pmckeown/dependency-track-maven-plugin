@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Named
 @Singleton
 class FindingsPrinter {
     private static final Logger LOG = LoggerFactory.getLogger(FindingsPrinter.class);
