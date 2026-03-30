@@ -9,6 +9,7 @@ import static org.mockito.Mockito.*;
 
 import io.github.pmckeown.dependencytrack.CommonConfig;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.metrics.MetricsAction;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
@@ -147,7 +148,7 @@ class UploadBomMojoTest {
             uploadBomMojo.performAction();
             fail("Exception expected");
         } catch (Exception ex) {
-            assertThat(ex, instanceOf(MojoExecutionException.class));
+            assertThat(ex, instanceOf(DependencyTrackMojoException.class));
         }
 
         Logger logger = SpyLoggerRegistry.expectLogger(UploadBomMojo.class);
@@ -170,7 +171,7 @@ class UploadBomMojoTest {
             uploadBomMojo.performAction();
             fail("Exception expected");
         } catch (Exception ex) {
-            assertThat(ex, instanceOf(MojoExecutionException.class));
+            assertThat(ex, instanceOf(DependencyTrackMojoException.class));
         }
 
         Logger logger = SpyLoggerRegistry.expectLogger(UploadBomMojo.class);
@@ -186,7 +187,7 @@ class UploadBomMojoTest {
 
         uploadBomMojo.setFailOnError(true);
 
-        MojoExecutionException exception = assertThrows(MojoExecutionException.class, () -> uploadBomMojo.execute());
+        DependencyTrackMojoException exception = assertThrows(DependencyTrackMojoException.class, () -> uploadBomMojo.execute());
         assertThat(exception.getCause(), is(cause));
 
         Logger logger = SpyLoggerRegistry.expectLogger(UploadBomMojo.class);

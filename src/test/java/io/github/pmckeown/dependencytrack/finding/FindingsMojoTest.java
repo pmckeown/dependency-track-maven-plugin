@@ -71,7 +71,7 @@ class FindingsMojoTest {
             findingsMojo.execute();
             fail("Exception expected here");
         } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoFailureException.class)));
+            assertThat(ex, is(instanceOf(FindingsPolicyBreachedException.class)));
         }
     }
 

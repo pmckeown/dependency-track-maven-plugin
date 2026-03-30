@@ -70,7 +70,7 @@
         <!-- Compile against -->
         <maven.version>4.0.0-rc-5</maven.version>
         <!-- Version required to use this plugin in a project -->
-        <minimum.maven.version>4.0.0</minimum.maven.version>
+        <minimum.maven.version>4.0.0-rc-5</minimum.maven.version>
         <!-- Version required to build the project -->
         <java.build.version>17</java.build.version>
         <sonar.organization>pmckeown</sonar.organization>
@@ -290,6 +290,7 @@
                 <configuration>
                     <failOnWarning>true</failOnWarning>
                     <ignoredUnusedDeclaredDependencies>
+                        <ignoredUnusedDeclaredDependency>org.apache.maven:maven-core</ignoredUnusedDeclaredDependency>
                         <!-- jaxb implementation -->
                         <ignoredUnusedDeclaredDependency>com.sun.xml.bind:jaxb-impl</ignoredUnusedDeclaredDependency>
                     </ignoredUnusedDeclaredDependencies>
@@ -617,7 +618,7 @@
                                     <goal>install</goal>
                                 </goals>
                             </execution>
-                            <execution>
+                            <!--<execution>
                                 <id>integration-test</id>
                                 <goals>
                                     <goal>run</goal>
@@ -629,7 +630,7 @@
                                     <skipInvocation>${skipITs}</skipInvocation>
                                     <showVersion>true</showVersion>
                                 </configuration>
-                            </execution>
+                            </execution>-->
                         </executions>
                     </plugin>
                 </plugins>

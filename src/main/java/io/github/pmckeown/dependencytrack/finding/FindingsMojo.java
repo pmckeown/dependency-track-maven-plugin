@@ -2,6 +2,7 @@ package io.github.pmckeown.dependencytrack.finding;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
 import io.github.pmckeown.dependencytrack.finding.report.FindingsReportGenerator;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
@@ -12,20 +13,16 @@ import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.di.Singleton;
 import org.apache.maven.api.plugin.annotations.Mojo;
 import org.apache.maven.api.plugin.annotations.Parameter;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 
 /**
- * Print the findings retrieved from the Dependency Track Server after a BOM upload. This is
- * calculated immediately by the server and as such can be used in situations where you want to know
- * if a change to your application pom.xml has had an impact on the vulnerabilities present in your
- * application.
- *
- * <p>You can optionally define thresholds for failing the build where the number of issues in a
- * particular category is greater than the threshold you define for that category.
- *
- * <p>For example the following configuration with fail the build if there are any Critical or High
- * issues found in the scan, more than 10 medium issues or more than 20 low issues.
+ * Print the findings retrieved from the Dependency Track Server after a BOM upload. This is calculated immediately by the server and as such can be used in
+ * situations where you want to know if a change to your application pom.xml has had an impact on the vulnerabilities present in your application.
+ * <p>
+ * You can optionally define thresholds for failing the build where the number of issues in a particular category is greater than the threshold you define for
+ * that category.
+ * <p>
+ * For example the following configuration with fail the build if there are any Critical or High issues found in the scan, more than 10 medium issues or more
+ * than 20 low issues.
  *
  * <pre>
  * &lt;findingThresholds&gt;
@@ -38,19 +35,18 @@ import org.apache.maven.plugin.MojoFailureException;
  * </pre>
  *
  * This allows you to tune build failures to your risk appetite.
- *
- * <p>Specific configuration options are:
- *
+ * <p>
+ * Specific configuration options are:
  * <ol>
- *   <li>findingThresholds
- *   <li>
- *       <ol>
- *         <li>critical
- *         <li>high
- *         <li>medium
- *         <li>low
- *         <li>unassigned
- *       </ol>
+ * <li>findingThresholds
+ * <li>
+ * <ol>
+ * <li>critical
+ * <li>high
+ * <li>medium
+ * <li>low
+ * <li>unassigned
+ * </ol>
  * </ol>
  *
  * @author Paul McKeown
@@ -96,7 +92,7 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     private FindingsReportGenerator findingsReportGenerator;
 
     @Override
-    protected void performAction() throws MojoExecutionException, MojoFailureException {
+    protected void performAction() throws DependencyTrackMojoException {
         List<Finding> findings;
         try {
             Project project = projectAction.getProject(moduleConfig);
@@ -108,7 +104,9 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
             findingsReportGenerator.generate(getOutputDirectory(), findings, this.findingThresholds, policyBreached);
 
             if (policyBreached) {
-                throw new MojoFailureException("Number of findings exceeded defined thresholds");
+                throw new FindingsPolicyBreachedException("Number of findings exceeded defined thresholds",
+                        "Reported vulnerability findings for %s-%s exceeded the configured threshold: %s"
+                                .formatted(moduleConfig.getProjectName(), moduleConfig.getProjectVersion(), findingThresholds));
             }
         } catch (DependencyTrackException ex) {
             handleFailure("Error occurred when getting findings", ex);
@@ -116,9 +114,8 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
     }
 
     /**
-     * If Maven options are provided on the command line and the {@link FindingThresholds} is not
-     * already populated from XML configuration, populate the {@link FindingThresholds} from those
-     * options.
+     * If Maven options are provided on the command line and the {@link FindingThresholds} is not already populated from XML configuration, populate the
+     * {@link FindingThresholds} from those options.
      */
     void populateThresholdFromCliOptions() {
         if (this.findingThresholds == null

@@ -1,26 +1,22 @@
 package io.github.pmckeown.dependencytrack.score;
 
-import static java.lang.String.format;
-
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
-import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import org.apache.maven.api.Lifecycle.Phase;
 import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.plugin.annotations.Mojo;
 import org.apache.maven.api.plugin.annotations.Parameter;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
+
 /**
- * Provides the capability to find the current Inherited Risk Score as determined by the Dependency
- * Track Server.
- *
- * <p>Specific configuration options are:
- *
+ * Provides the capability to find the current Inherited Risk Score as determined by the Dependency Track Server.
+ * <p>
+ * Specific configuration options are:
  * <ol>
- *   <li>inheritedRiskScoreThreshold
+ * <li>inheritedRiskScoreThreshold
  * </ol>
  *
  * @author Paul McKeown
@@ -36,27 +32,22 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
     private ScoreAction scoreAction;
 
     @Override
-    public void performAction() throws MojoFailureException, MojoExecutionException {
+    public void performAction() throws DependencyTrackMojoException {
         try {
             Integer inheritedRiskScore = scoreAction.determineScore(moduleConfig, inheritedRiskScoreThreshold);
             failBuildIfThresholdIsBreached(inheritedRiskScore);
         } catch (DependencyTrackException ex) {
-            handleFailure(format(
-                    "Failed to determine score for: %s-%s",
-                    moduleConfig.getProjectName(), moduleConfig.getProjectVersion()));
+            handleFailure("Failed to determine score for: %s-%s".formatted(moduleConfig.getProjectName(), moduleConfig.getProjectVersion()));
         }
     }
 
-    private void failBuildIfThresholdIsBreached(Integer inheritedRiskScore) throws MojoFailureException {
-        LOG.debug(
-                "Inherited Risk Score Threshold set to: {}",
-                inheritedRiskScoreThreshold == null ? "Not set" : inheritedRiskScoreThreshold);
+    private void failBuildIfThresholdIsBreached(Integer inheritedRiskScore) throws InheritedRiskScoreException {
+        LOG.debug("Inherited Risk Score Threshold set to: {}", inheritedRiskScoreThreshold == null ? "Not set" : inheritedRiskScoreThreshold);
 
         if (inheritedRiskScoreThreshold != null && inheritedRiskScore > inheritedRiskScoreThreshold) {
-
-            throw new MojoFailureException(format(
-                    "Inherited Risk Score [%d] was greater than the " + "configured threshold [%d]",
-                    inheritedRiskScore, inheritedRiskScoreThreshold));
+            throw new InheritedRiskScoreException("Inherited Risk Score exceeded threshold",
+                    "Inherited Risk Score [%d] for %s-%s was greater than the configured threshold [%d]"
+                            .formatted(inheritedRiskScore, moduleConfig.getProjectName(), moduleConfig.getProjectVersion(), inheritedRiskScoreThreshold));
         }
     }
 

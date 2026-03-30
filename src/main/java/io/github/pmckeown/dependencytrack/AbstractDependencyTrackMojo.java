@@ -14,8 +14,6 @@ import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.plugin.Mojo;
 import org.apache.maven.api.plugin.annotations.Parameter;
 import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,12 +83,6 @@ public abstract class AbstractDependencyTrackMojo implements Mojo {
 
     protected AbstractDependencyTrackMojo() {}
 
-    @Deprecated
-    protected AbstractDependencyTrackMojo(CommonConfig commonConfig, ModuleConfig moduleConfig) {
-        this.commonConfig = commonConfig;
-        this.moduleConfig = moduleConfig;
-    }
-
     /**
      * Initialises the {@link Logger} and {@link CommonConfig} instances that were injected by the
      * SISU inversion of control container (using Guice under the hood) by providing the data provided
@@ -99,7 +91,7 @@ public abstract class AbstractDependencyTrackMojo implements Mojo {
      * <p>Then performs the action defined by the subclass.
      */
     @Override
-    public final void execute() throws MojoExecutionException, MojoFailureException {
+    public final void execute() throws DependencyTrackMojoException {
         // Set up Mojo environment
         this.commonConfig.setDependencyTrackBaseUrl(dependencyTrackBaseUrl);
         this.commonConfig.setApiKey(apiKey);
@@ -121,10 +113,9 @@ public abstract class AbstractDependencyTrackMojo implements Mojo {
     /**
      * Template method to be implemented by subclasses.
      *
-     * @throws MojoExecutionException when an error is encountered during Mojo execution
-     * @throws MojoFailureException when the Mojo fails
+     * @throws DependencyTrackMojoException when an error is encountered during Mojo execution
      */
-    protected abstract void performAction() throws MojoExecutionException, MojoFailureException;
+    protected abstract void performAction() throws DependencyTrackMojoException;
 
     public void setProjectName(String projectName) {
         this.projectName = projectName;
@@ -158,17 +149,17 @@ public abstract class AbstractDependencyTrackMojo implements Mojo {
         this.pollingConfig = pollingConfig;
     }
 
-    protected void handleFailure(String message) throws MojoFailureException {
+    protected void handleFailure(String message) throws DependencyTrackMojoException {
         mojoLogger.error(message);
         if (failOnError) {
-            throw new MojoFailureException(message);
+            throw new DependencyTrackMojoException(message);
         }
     }
 
-    protected void handleFailure(String message, Throwable ex) throws MojoExecutionException {
+    protected void handleFailure(String message, Throwable ex) throws DependencyTrackMojoException {
         mojoLogger.error(message, ex);
         if (failOnError) {
-            throw new MojoExecutionException(message, ex);
+            throw new DependencyTrackMojoException(message, ex);
         }
     }
 
@@ -195,7 +186,9 @@ public abstract class AbstractDependencyTrackMojo implements Mojo {
                     .verifySsl(verifySsl);
 
             // Debug all Unirest config
-            mojoLogger.debug("Unirest Configuration: {}", ToStringBuilder.reflectionToString(Unirest.config()));
+            if (mojoLogger.isDebugEnabled()) {
+                mojoLogger.debug("Unirest Configuration: {}", ToStringBuilder.reflectionToString(Unirest.config()));
+            }
 
             // Info print user specified
             mojoLogger.info("SSL Verification enabled: {}", verifySsl);

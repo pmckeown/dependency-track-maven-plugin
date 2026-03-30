@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
+
 import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -46,7 +48,7 @@ class PolicyViolationsMojoIntegrationTest extends AbstractDependencyTrackMojoTes
             policyMojo.execute();
             fail("Exception expected");
         } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoFailureException.class)));
+            assertThat(ex, is(instanceOf(PolicyViolationsException.class)));
         }
 
         verify(exactly(1), getRequestedFor(urlPathMatching(V1_POLICY_VIOLATION_PROJECT_UUID)));
@@ -66,7 +68,7 @@ class PolicyViolationsMojoIntegrationTest extends AbstractDependencyTrackMojoTes
             policyMojo.execute();
             fail("Exception expected");
         } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoFailureException.class)));
+            assertThat(ex, is(instanceOf(PolicyViolationsException.class)));
         }
 
         verify(exactly(1), getRequestedFor(urlPathMatching(V1_POLICY_VIOLATION_PROJECT_UUID)));
@@ -86,7 +88,7 @@ class PolicyViolationsMojoIntegrationTest extends AbstractDependencyTrackMojoTes
             policyMojo.execute();
             fail("Exception expected");
         } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoFailureException.class)));
+            assertThat(ex, is(instanceOf(PolicyViolationsException.class)));
         }
 
         verify(exactly(1), getRequestedFor(urlPathMatching(V1_POLICY_VIOLATION_PROJECT_UUID)));
@@ -108,7 +110,7 @@ class PolicyViolationsMojoIntegrationTest extends AbstractDependencyTrackMojoTes
             policyMojo.execute();
             fail("Exception expected");
         } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoExecutionException.class)));
+            assertThat(ex, is(instanceOf(DependencyTrackMojoException.class)));
         }
     }
 

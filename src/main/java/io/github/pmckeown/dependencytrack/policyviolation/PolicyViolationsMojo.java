@@ -1,36 +1,32 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
-import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.policyviolation.report.PolicyViolationsReportGenerator;
-import io.github.pmckeown.dependencytrack.project.Project;
-import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import java.io.File;
 import java.util.List;
+
 import org.apache.maven.api.Lifecycle.Phase;
 import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.di.Singleton;
 import org.apache.maven.api.plugin.annotations.Mojo;
 import org.apache.maven.api.plugin.annotations.Parameter;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
+
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
+import io.github.pmckeown.dependencytrack.policyviolation.report.PolicyViolationsReportGenerator;
+import io.github.pmckeown.dependencytrack.project.Project;
+import io.github.pmckeown.dependencytrack.project.ProjectAction;
 
 /**
- * Print the policy violations retrieved from the Dependency Track Server after a BOM upload. This
- * is calculated immediately by the server and as such can be used in situations where you want to
- * know if a change to your application pom.xml has breached a Policy defined on the Dependency
- * Track server.
- *
- * <p>The build will fail if any Policies are breached that are configured with a violation state of
- * FAIL.
- *
- * <p>The build will pass if any Policies are breached that are configured with a violation state of
- * INFO.
- *
- * <p>The build will pass if any Policies are breached that are configured with a violation state of
- * WARN unless the `failOnWarn` option is supplied.
- *
- * <p>This allows you to tune build failures to your risk appetite.
+ * Print the policy violations retrieved from the Dependency Track Server after a BOM upload. This is calculated immediately by the server and as such can be
+ * used in situations where you want to know if a change to your application pom.xml has breached a Policy defined on the Dependency Track server.
+ * <p>
+ * The build will fail if any Policies are breached that are configured with a violation state of FAIL.
+ * <p>
+ * The build will pass if any Policies are breached that are configured with a violation state of INFO.
+ * <p>
+ * The build will pass if any Policies are breached that are configured with a violation state of WARN unless the `failOnWarn` option is supplied.
+ * <p>
+ * This allows you to tune build failures to your risk appetite.
  *
  * @author Sahiba Mittal
  */
@@ -60,7 +56,7 @@ public class PolicyViolationsMojo extends AbstractDependencyTrackMojo {
     private PolicyViolationsAnalyser policyAnalyser;
 
     @Override
-    protected void performAction() throws MojoExecutionException, MojoFailureException {
+    protected void performAction() throws DependencyTrackMojoException {
         List<PolicyViolation> policyViolations;
         try {
             Project project = projectAction.getProject(moduleConfig);
@@ -71,7 +67,9 @@ public class PolicyViolationsMojo extends AbstractDependencyTrackMojo {
             policyViolationReportGenerator.generate(getOutputDirectory(), policyViolations);
 
             if (policyViolationsBreached) {
-                throw new MojoFailureException("Policy violations breached");
+                throw new PolicyViolationsException("Policy violations breached",
+                        "Policy violations for %s-%s have been breached"
+                                .formatted(project.getName(), project.getVersion()));
             }
         } catch (DependencyTrackException ex) {
             handleFailure("Error occurred when getting policy violations", ex);
