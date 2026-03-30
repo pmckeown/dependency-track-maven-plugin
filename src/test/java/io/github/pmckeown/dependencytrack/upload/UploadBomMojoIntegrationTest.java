@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
 import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.TestResourceConstants;
 import java.util.HashSet;
@@ -109,7 +110,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
             uploadBomMojo.execute();
             fail("Exception expected");
         } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoExecutionException.class)));
+            assertThat(ex, is(instanceOf(DependencyTrackMojoException.class)));
         }
     }
 
@@ -146,7 +147,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
             uploadBomMojo.execute();
             fail("Exception expected");
         } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoExecutionException.class)));
+            assertThat(ex, is(instanceOf(DependencyTrackMojoException.class)));
         }
     }
 

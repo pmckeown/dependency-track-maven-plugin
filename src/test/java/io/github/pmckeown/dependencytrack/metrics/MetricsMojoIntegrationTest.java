@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.http.Fault;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
 import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.project.ProjectBuilder;
 import org.apache.maven.api.plugin.testing.InjectMojo;
@@ -58,7 +59,7 @@ class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     @InjectMojo(goal = "metrics")
     void thatExceptionIsThrownWhenMetricsCannotBeRetrievedForCurrentProject(MetricsMojo metricsMojo) {
         configureMojo(metricsMojo);
-        assertThrows(MojoExecutionException.class, () -> {
+        assertThrows(DependencyTrackMojoException.class, () -> {
             stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                     .willReturn(aResponse().withBodyFile("api/v1/project/noMetrics.json")));
             stubFor(get(urlPathMatching(V1_METRICS_PROJECT_CURRENT))
@@ -76,7 +77,7 @@ class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     @InjectMojo(goal = "metrics")
     void thatAnyCriticalIssuesPresentCanFailTheBuild(MetricsMojo metricsMojo) {
         configureMojo(metricsMojo);
-        assertThrows(MojoFailureException.class, () -> {
+        assertThrows(MetricsThresholdsException.class, () -> {
             stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                     .willReturn(aResponse()
                             .withBody(asJson(ProjectBuilder.aProject()

@@ -8,7 +8,6 @@ import static io.github.pmckeown.dependencytrack.Constants.UNASSIGNED;
 
 import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;
-import org.apache.maven.plugin.MojoFailureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,38 +18,36 @@ public class MetricsAnalyser {
 
     static final String ERROR_TEMPLATE = "Number of {} issues [{}] exceeds the maximum allowed [{}]";
 
-    void analyse(Metrics metrics, MetricsThresholds metricThresholds) throws MojoFailureException {
+    boolean analyse(Metrics metrics, MetricsThresholds metricThresholds) {
         LOG.info("Comparing project metrics against defined thresholds");
 
-        boolean failed = false;
+        boolean success = true;
 
         if (metricThresholds.getCritical() != null && metrics.getCritical() > metricThresholds.getCritical()) {
             LOG.warn(ERROR_TEMPLATE, CRITICAL, metrics.getCritical(), metricThresholds.getCritical());
-            failed = true;
+            success = false;
         }
 
         if (metricThresholds.getHigh() != null && metrics.getHigh() > metricThresholds.getHigh()) {
             LOG.warn(ERROR_TEMPLATE, HIGH, metrics.getHigh(), metricThresholds.getHigh());
-            failed = true;
+            success = false;
         }
 
         if (metricThresholds.getMedium() != null && metrics.getMedium() > metricThresholds.getMedium()) {
             LOG.warn(ERROR_TEMPLATE, MEDIUM, metrics.getMedium(), metricThresholds.getMedium());
-            failed = true;
+            success = false;
         }
 
         if (metricThresholds.getLow() != null && metrics.getLow() > metricThresholds.getLow()) {
             LOG.warn(ERROR_TEMPLATE, LOW, metrics.getLow(), metricThresholds.getLow());
-            failed = true;
+            success = false;
         }
 
         if (metricThresholds.getUnassigned() != null && metrics.getUnassigned() > metricThresholds.getUnassigned()) {
             LOG.warn(ERROR_TEMPLATE, UNASSIGNED, metrics.getUnassigned(), metricThresholds.getUnassigned());
-            failed = true;
+            success = false;
         }
 
-        if (failed) {
-            throw new MojoFailureException("Project metrics exceeded defined metric thresholds");
-        }
+        return success;
     }
 }

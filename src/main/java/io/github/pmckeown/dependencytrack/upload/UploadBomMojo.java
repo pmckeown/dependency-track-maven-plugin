@@ -12,10 +12,9 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.api.Lifecycle.Phase;
 import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.plugin.MojoException;
 import org.apache.maven.api.plugin.annotations.Mojo;
 import org.apache.maven.api.plugin.annotations.Parameter;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +78,7 @@ public class UploadBomMojo extends AbstractDependencyTrackMojo {
     private ProjectAction projectAction;
 
     @Override
-    public void performAction() throws MojoExecutionException, MojoFailureException {
+    public void performAction() throws MojoException {
         enrichConfig();
         LOG.info("Update Project Parent : {}", moduleConfig.getUpdateParent());
 

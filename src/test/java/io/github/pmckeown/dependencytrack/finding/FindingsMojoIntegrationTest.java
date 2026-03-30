@@ -15,6 +15,8 @@ import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aV
 import static org.junit.jupiter.api.Assertions.*;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
+
 import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -64,7 +66,7 @@ class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     @InjectMojo(goal = "findings")
     void thatWhenExceptionOccursWhileGettingFindingsAndFailOnErrorIsTrueTheMojoErrors(FindingsMojo mojo) {
         configureMojo(mojo);
-        assertThrows(MojoExecutionException.class, () -> {
+        assertThrows(DependencyTrackMojoException.class, () -> {
             stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                     .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
             stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))
@@ -81,7 +83,7 @@ class FindingsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     @InjectMojo(goal = "findings")
     void thatBuildFailsWhenFindingsNumberBreachesDefinedThresholds(FindingsMojo mojo) {
         configureMojo(mojo);
-        assertThrows(MojoFailureException.class, () -> {
+        assertThrows(FindingsPolicyBreachedException.class, () -> {
             stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                     .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
             stubFor(get(urlPathMatching(V1_FINDING_PROJECT_UUID))

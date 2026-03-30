@@ -2,14 +2,13 @@ package io.github.pmckeown.dependencytrack.metrics;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import org.apache.maven.api.Lifecycle.Phase;
 import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.plugin.annotations.Mojo;
 import org.apache.maven.api.plugin.annotations.Parameter;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +63,7 @@ public class MetricsMojo extends AbstractDependencyTrackMojo {
     private MetricsThresholds metricsThresholds;
 
     @Override
-    public void performAction() throws MojoExecutionException, MojoFailureException {
+    public void performAction() throws DependencyTrackMojoException {
         try {
             Project project = getProjectAction.getProject(moduleConfig);
             LOG.debug("Project Details: {}", project);
@@ -73,7 +72,11 @@ public class MetricsMojo extends AbstractDependencyTrackMojo {
             metricsPrinter.print(metrics);
 
             if (metricsThresholds != null) {
-                metricsAnalyser.analyse(metrics, metricsThresholds);
+                if (!metricsAnalyser.analyse(metrics, metricsThresholds)) {
+                    throw new MetricsThresholdsException("Project metrics exceeded defined metric thresholds", 
+                            "Project metrics for %s-%s exceeded defined thresholds %s"
+                            .formatted(project.getName(), project.getVersion(), metricsThresholds));
+                }
             }
         } catch (DependencyTrackException ex) {
             handleFailure(ex.getMessage(), ex);

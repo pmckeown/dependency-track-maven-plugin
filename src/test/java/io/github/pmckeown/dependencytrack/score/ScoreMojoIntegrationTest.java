@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
 import io.github.pmckeown.dependencytrack.PollingConfig;
 import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.plugin.MojoFailureException;
@@ -44,7 +45,7 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
             scoreMojo.execute();
             fail("Exception expected");
         } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoFailureException.class)));
+            assertThat(ex, is(instanceOf(InheritedRiskScoreException.class)));
         }
     }
 
@@ -135,7 +136,7 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
             scoreMojo.execute();
             fail("Exception expected");
         } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoFailureException.class)));
+            assertThat(ex, is(instanceOf(DependencyTrackMojoException.class)));
         }
 
         verify(exactly(1), getRequestedFor(urlPathMatching(V1_METRICS_PROJECT_CURRENT)));
@@ -168,7 +169,7 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
             scoreMojo.execute();
             fail("Exception expected");
         } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoFailureException.class)));
+            assertThat(ex, is(instanceOf(DependencyTrackMojoException.class)));
         }
     }
 
@@ -198,7 +199,7 @@ class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
             scoreMojo.execute();
             fail("No exception expected");
         } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoFailureException.class)));
+            assertThat(ex, is(instanceOf(DependencyTrackMojoException.class)));
         }
     }
 

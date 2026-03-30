@@ -9,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.http.Fault;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
+import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
+
 import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -51,7 +53,7 @@ class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
     void thatWhenProjectDeletionFailedAndFailOnErrorTrueThenMojoFailureExceptionIsThrown(
             DeleteProjectMojo deleteProjectMojo) {
         configureMojo(deleteProjectMojo);
-        assertThrows(MojoFailureException.class, () -> {
+        assertThrows(DependencyTrackMojoException.class, () -> {
             stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))
                     .willReturn(aResponse().withBodyFile("api/v1/project/testName-project.json")));
             stubFor(delete(urlPathMatching(V1_PROJECT_UUID))
@@ -92,7 +94,7 @@ class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
             deleteProjectMojo.execute();
             fail("Exception expected");
         } catch (Exception ex) {
-            assertThat(ex, is(instanceOf(MojoExecutionException.class)));
+            assertThat(ex, is(instanceOf(DependencyTrackMojoException.class)));
         }
     }
 
