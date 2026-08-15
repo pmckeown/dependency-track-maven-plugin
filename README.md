@@ -8,12 +8,12 @@ Maven plugin to integrate with a [Dependency-Track](https://dependencytrack.org/
 project metrics.  Can be used within build pipelines to analyse the current project and optionally fail the build if vulnerabilities 
 are found.
 
-# Usage
+## Usage
 This maven plugin provides various functions relating to Dependency-Track, from uploading the Bill of Material, to 
 checking for 3rd party dependencies with vulnerabilities in your Maven POM.  Common configuration can be provided 
 in the `pluginManagement` section of your POM to avoid repetition.
 
-## Plugin Configuration
+### Plugin Configuration
 
 ```xml
 <pluginManagement>
@@ -62,7 +62,7 @@ This assures that your submodules reflect the parent/child hierarchy of your pom
 > 8080 and 8081 respectively). You must ensure that you target the api server component (8081) and not the front-end
 > component URL in the `dependencyTrackBaseUrl` property.
 
-### Polling Configuration
+#### Polling Configuration
 The plugin is configured to poll for results from the Dependency-Track server by default.  The polling configuration
 can be changed by modifying the `pollingConfig` element in the plugin configuration.  The available options are:
 
@@ -131,7 +131,7 @@ mvn io.github.pmckeown:dependency-track-maven-plugin:findings \
   -Dpolling.timeUnit=MILLIS
 ```
 
-### Dependency-Track Configuration
+#### Dependency-Track Configuration
 Your Dependency-Track server must be configured with an `Automation` team whose API Key should be provided
 in the `apiKey` configuration parameter to this plugin.
 
@@ -157,16 +157,14 @@ The skip property has more than two possible values:
  * any other values will be considered as false
 
 
-<a name="permissions"></a>
+### Permissions
 
-## Permissions
-
-The following recommend permissions are required for the different actions when using Dependency Track 5.
-Information for older versions of Dependency Track are mentioned blow.  
+The following recommended permissions are required for the different actions when using Dependency Track 5.
+Information for older versions of Dependency Track is mentioned below.  
 
 `VIEW_PORTFOLIO` is required for all actions.
 
-### Upload Bill of Material
+#### Upload Bill of Material
 - `BOM_UPLOAD`
 - `PROJECT_CREATION_UPLOAD` <sup>1</sup>
 - `PORTFOLIO_MANAGEMENT_UPDATE` <sup>2</sup>
@@ -175,27 +173,27 @@ Information for older versions of Dependency Track are mentioned blow.
 
 <sup>2</sup> only required for `updateProjectInfo` and `updateParent`.
 
-### Project Findings
+#### Project Findings
 - `VIEW_VULNERABILITY`
 
-### Policy Violations
+#### Policy Violations
 - `VIEW_POLICY_VIOLATION`
 
-### Delete Project
+#### Delete Project
 - `PORTFOLIO_MANAGEMENT_DELETE`
 
-### Older Dependency Track Versions
+#### Older Dependency Track Versions
 
-#### 4.x
+##### 4.x
 
 Instead of `PORTFOLIO_MANAGEMENT_UPDATE` or `PORTFOLIO_MANAGEMENT_DELETE` you need to grant the `PORTFOLIO_MANAGEMENT` permission.
 
-#### 4.4.x and earlier
+##### 4.4.x and earlier
 
 The policy violations action also needs the `VULNERABILITY_ANALYSIS` permission.
 
 
-## Dependency-Track Plugin/Server Compatibility
+### Dependency-Track Plugin/Server Compatibility
 
 The Dependency-Track Plugin is compatible with Dependency Track 4 and 5.
 
@@ -208,7 +206,7 @@ The Dependency-Track Plugin is compatible with Dependency Track 4 and 5.
 > Certain plugin features are not available in older server versions.
 > This will be mentioned in the documentation below. 
 
-# Features
+## Features
 
 * [Upload Bill of Material](#mojo-upload-bom) - Create/modify a project on the Dependency-Track server, as well
 as set additional information such as description, group, PURL via the `updateProjectInfo` option
@@ -222,17 +220,17 @@ quality control
 
 <a name="mojo-upload-bom"></a>
 
-## Upload Bill of Material
+### Upload Bill of Material
 Upload a Bill of Material (BOM) to a Dependency-Track server.  By default, this uploads the bom.xml and creates (or
 updates if already present) a project on the Dependency-Track server with the name and version that map to the current
 maven project artifactId and version.  Set the projectName or projectVersion properties if you want to override the
 project name or version. 
 
-### POM Usage
+#### POM Usage
 Binds by default to the Verify Phase in the Maven lifecycle in line with 
 [cyclonedx-maven-plugin](https://github.com/CycloneDX/cyclonedx-maven-plugin).
 
-### Direct Usage
+#### Direct Usage
 
 ```
 mvn io.github.pmckeown:dependency-track-maven-plugin:upload-bom \
@@ -240,7 +238,7 @@ mvn io.github.pmckeown:dependency-track-maven-plugin:upload-bom \
   -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY}
 ```
 
-### Direct Usage with Overrides
+#### Direct Usage with Overrides
 
 ```
 mvn io.github.pmckeown:dependency-track-maven-plugin:upload-bom \
@@ -250,14 +248,14 @@ mvn io.github.pmckeown:dependency-track-maven-plugin:upload-bom \
   -Ddependency-track.projectVersion=99.99
 ```
 
-### Dependencies
+#### Dependencies
 Needs to be used in conjunction with the [cyclonedx-maven-plugin](https://github.com/CycloneDX/cyclonedx-maven-plugin)
 which will generate a bom.xml file from the declared and transitive dependencies in your POM.
 
 If both the cyclonedx-maven-plugin and this plugin are run in the same phase, the cyclonedx-maven-plugin should be declared
 first in your POM to ensure that it runs first.
 
-### Configuration
+#### Configuration
 
 By default, the plugin will poll the Dependency-Track server after a BOM upload to ensure it has been completed before 
 continuing with plugin execution. This can be disabled by updating the [Polling Configuration](#polling-configuration). 
@@ -300,7 +298,7 @@ no parent set within the `pom.xml`, then explicitly set `parentName`.
 > Both `parentName` and `parentVersion` must be configured, otherwise both values are omitted in the upload.
 >
 > If both `parentUuid` and `parentName` / `parentVersion` are provided in configuration, `parentUuid` will
-take precedence.
+> take precedence.
 >
 > If a non-existing parent information is provided, the plugin will fail with `404 Not found`.
 
@@ -315,7 +313,7 @@ When it is set to `false` the POST API will be used for uploading, which uses a 
 The POST API is less restrained on the maximum SBOM size and also plays better with WebApplication Firewalls.
 
 
-### Examples
+#### Examples
 
 ```xml
 <execution>
@@ -336,7 +334,7 @@ The POST API is less restrained on the maximum SBOM size and also plays better w
 
 <a name="mojo-findings"></a>
 
-## Get Project Findings
+### Get Project Findings
 After a BOM upload, the best way to determine if there are any vulnerabilities is to use the `findings` goal which is 
 usable immediately after an upload.  Other goals, such as `metrics` and `score` pull down information from the
 Dependency-Track server that is analysed asynchronously and as such may not be available when invoked immediately after 
@@ -354,11 +352,11 @@ results containing 1 high finding will not fail.
 When using this goal independently, remember that the default behaviour of the plugin is to not fail when findings
 are found, use the `dependency-track.failOnError` command line property to configure this.
 
-### POM Usage
+#### POM Usage
 Binds by default to the Verify Phase in the Maven lifecycle in line with 
 [cyclonedx-maven-plugin](https://github.com/CycloneDX/cyclonedx-maven-plugin).
 
-### Direct Usage
+#### Direct Usage
 
 ```shell
 mvn io.github.pmckeown:dependency-track-maven-plugin:findings \
@@ -366,7 +364,7 @@ mvn io.github.pmckeown:dependency-track-maven-plugin:findings \
   -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY}
 ```
 
-### Direct Usage with Overrides
+#### Direct Usage with Overrides
 
 ```shell
 mvn io.github.pmckeown:dependency-track-maven-plugin:findings \
@@ -376,11 +374,11 @@ mvn io.github.pmckeown:dependency-track-maven-plugin:findings \
   -Ddependency-track.projectVersion=99.99
 ```
 
-### Dependencies
+#### Dependencies
 Depends on a project existing in the Dependency-Track server that matches the current project artifactId and version or
 whatever overridden values that are supplied.
 
-### Configuration
+#### Configuration
 
 The `findings` goal supports the following XML configuration in the POM:
 
@@ -403,7 +401,7 @@ The `findings` goal also supports the following command line options however XML
 | findingThresholds.low        | false    | 50            |
 | findingThresholds.unassigned | false    | 0             |
 
-### Examples
+#### Examples
 The following configuration will cause the build to fail if there are any critical or high issues found, more than 5 
 medium issues or more than 10 low issues. 
 
@@ -449,7 +447,7 @@ mvn io.github.pmckeown:dependency-track-maven-plugin:findings \
 
 <a name="mojo-policy-violations"></a>
 
-## Get Policy Violations
+### Get Policy Violations
 Dependency Track supports the definition of [Policies](https://dependencytrack.github.io/docs/next/reference/policies/) which 
 can be applied to Projects, Components or the entire portfolio.
 
@@ -466,14 +464,14 @@ a Policy and so when a Policy is violated the plugin behaviour is as follows:
   * WARN - the build will pass unless the `failOnWarn` option for this goal is set to true
   * INFO - the build will pass  
 
-### POM Usage
+#### POM Usage
 
 Binds by default to the Verify Phase in the Maven lifecycle. This goal should be run after the `upload-bom` goal with
-enough time for the server to compute the new score if it has changed.
+enough time for the server to evaluate the uploaded SBOM against the configured policies.
 
 Ideally `upload-bom` would run during the validate phase and `policy-violations` in the verify phase.
 
-### Direct Usage
+#### Direct Usage
 
 ```shell
 mvn io.github.pmckeown:dependency-track-maven-plugin:policy-violations \
@@ -481,17 +479,17 @@ mvn io.github.pmckeown:dependency-track-maven-plugin:policy-violations \
   -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY}
 ```
 
-### Dependencies
+#### Dependencies
 Depends on a project existing in the Dependency-Track server that matches the current project artifactId and version or
 whatever overridden values that are supplied.
 
-### Configuration
+#### Configuration
 
 | Property   | Required | Default Value | System Property             |
 |------------|----------|---------------|-----------------------------|
 | failOnWarn | false    | false         | dependency-track.failOnWarn |
 
-### Behaviour
+#### Behaviour
 
 The Policy Violations associated with a Project is refreshed and up to date after a SBOM upload and after 
 a periodic server-side data refresh.
@@ -504,7 +502,7 @@ changes since the policy was last applied.
 
 <a name="mojo-score"></a>
 
-## Get Inherited Risk Score
+### Get Inherited Risk Score
 Get the Inherited Risk Score from the Dependency-Track server for the current project or any arbitrary project.
 The Risk Score per vulnerability tells you about a specific vulnerability in a dependency in your application and how 
 vulnerable you are to exploit and how bad the impact could be.  The Inherited Risk Score provides a summation of those
@@ -516,13 +514,13 @@ failing on a score greater than zero.
 If the `inheritedRiskScoreThreshold` parameter is set, then the build will fail if the Inherited Risk Score is **greater 
 than** the threshold.
 
-### POM Usage
+#### POM Usage
 Binds by default to the Verify Phase in the Maven lifecycle.  This goal should be run after the `upload-bom` goal with
 enough time for the server to compute the new score if it has changed.
 
 Ideally `upload-bom` would run during the validate phase and `score` in the verify phase.
 
-### Direct Usage
+#### Direct Usage
 
 ```shell
 mvn io.github.pmckeown:dependency-track-maven-plugin:score \
@@ -530,11 +528,11 @@ mvn io.github.pmckeown:dependency-track-maven-plugin:score \
   -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY}
 ```
 
-### Dependencies
+#### Dependencies
 Depends on a project existing in the Dependency-Track server that matches the current project artifactId and version or
 whatever overridden values that are supplied.
 
-### Configuration
+#### Configuration
 
 | Property                    | Required | Default Value | System Property                              |
 |-----------------------------|----------|---------------|----------------------------------------------|
@@ -543,17 +541,17 @@ whatever overridden values that are supplied.
 
 <a name="mojo-metrics"></a>
 
-## Get Metrics
+### Get Metrics
 Get and print all metrics from the Dependency-Track server for the current project or any arbitrary project.  Optionally
 define thresholds for each category of issue found to allow finer grained control over build failure.
 
-### POM Usage
+#### POM Usage
 Binds by default to the Verify Phase in the Maven lifecycle.  This goal should be run after the `upload-bom` goal with
 enough time for the server to compute the new score if it has changed.
 
 Ideally `upload-bom` would run during the validate phase and `metrics` in the verify phase.
 
-### Direct Usage
+#### Direct Usage
 
 ```shell
 mvn io.github.pmckeown:dependency-track-maven-plugin:metrics \  
@@ -561,11 +559,11 @@ mvn io.github.pmckeown:dependency-track-maven-plugin:metrics \
   -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY}
 ```
 
-### Dependencies
+#### Dependencies
 Depends on a project existing in the Dependency-Track server that matches the current project artifactId and version or
 whatever overridden values that are supplied.
 
-### Configuration
+#### Configuration
 
 | Property                   | Required | Default Value | Description                                                                                            |
 |----------------------------|----------|---------------|--------------------------------------------------------------------------------------------------------|
@@ -577,7 +575,7 @@ whatever overridden values that are supplied.
 
 Note that this goal does not yet support command line threshold options.
 
-### Examples
+#### Examples
 The following configuration will cause the build to fail if there are any critical or high issues found, more than 5 
 medium issues or more than 10 low issues.
  
@@ -599,17 +597,17 @@ You can enable the build to fail on any issues in any category by using the foll
 
 <a name="mojo-delete-project"></a>
 
-## Delete Project
+### Delete Project
 Delete the current or any arbitrary project from the Dependency-Track server.
 
-### POM Usage
+#### POM Usage
 Does not bind by default to any Phase in the Maven lifecycle.  This goal can be run independently any time to delete a 
 project.
 
 Expected usage is for temporary scans of short-lived branch code that need to be cleaned up from the server once the 
 score has been determined.
 
-### Direct Usage
+#### Direct Usage
 
 ```
 mvn io.github.pmckeown:dependency-track-maven-plugin:delete-project \
@@ -617,11 +615,14 @@ mvn io.github.pmckeown:dependency-track-maven-plugin:delete-project \
   -Ddependency-track.apiKey=${DEPENDENCY_TRACK_API_KEY}
 ```
 
-### Dependencies
+#### Dependencies
 Depends on a project existing in the Dependency-Track server that matches the current project artifactId and version or
 whatever overridden values that are supplied.
 
-# Documentation
+#### Configuration
+See common configuration above.
+
+## Documentation
 Further docs can be found in [doc/](doc/):
 *   [Testing](./doc/TESTING.md)
 *   [Releases](./doc/RELEASES.md)
