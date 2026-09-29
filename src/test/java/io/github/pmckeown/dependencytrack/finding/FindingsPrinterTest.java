@@ -11,12 +11,14 @@ import static io.github.pmckeown.dependencytrack.finding.VulnerabilityBuilder.aV
 import static io.github.pmckeown.dependencytrack.project.ProjectBuilder.aProject;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.apache.commons.lang3.StringUtils.repeat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.util.Logger;
 import java.util.List;
+import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -66,7 +68,7 @@ class FindingsPrinterTest {
         verify(logger).info("%s (%s)", "CVE-2016-1", "NVD");
         verify(logger).info("%s: %s", "HIGH", "nz.co.dodgy:insecure-encrypter:20.0");
         verify(logger).info("");
-        verify(logger, times(4)).info(descriptionPart);
+        verify(logger, times(4)).info("%s", descriptionPart);
     }
 
     @Test
@@ -84,16 +86,19 @@ class FindingsPrinterTest {
 
     /**
      * Regression test for issue: https://github.com/pmckeown/dependency-track-maven-plugin/issues/89
+     *
+     * <p>Description parts are passed to the logger as arguments, so percent characters no longer
+     * need to be escaped and are printed verbatim.
      */
     @Test
-    void thatPercentCharactersInFindingsOutputAreEscapedForFormatting() {
+    void thatPercentCharactersInFindingsOutputArePrintedVerbatim() {
         String findingContent = "crafted value that contains both ${} and %{} sequences, which causes";
         Project project = aProject().withName("a").withVersion("1").build();
         List<Finding> findings = findingsList(findingContent, false);
 
         findingsPrinter.printFindings(project, findings);
 
-        verify(logger).info("crafted value that contains both ${} and %%{} sequences, which causes");
+        verify(logger).info("%s", "crafted value that contains both ${} and %{} sequences, which causes");
     }
 
     /**
@@ -107,7 +112,7 @@ class FindingsPrinterTest {
 
         findingsPrinter.printFindings(project, findings);
 
-        verify(logger).info("be vulnerable.> > -- [redhat.com](https://bugzilla.redhat.com/show_bug");
+        verify(logger).info("%s", "be vulnerable.> > -- [redhat.com](https://bugzilla.redhat.com/show_bug");
     }
 
     /** Test for issue: https://github.com/pmckeown/dependency-track-maven-plugin/issues/281 */
@@ -120,8 +125,45 @@ class FindingsPrinterTest {
 
         findingsPrinter.printFindings(project, findings);
 
-        verify(logger).info(repeat("x", chunkSize - 1) + "y");
-        verify(logger).info(repeat("y", chunkSize - 2));
+        verify(logger).info("%s", repeat("x", chunkSize - 1) + "y");
+        verify(logger).info("%s", repeat("y", chunkSize - 2));
+    }
+
+    /**
+     * Regression test: the description of GHSA-rmr5-cpv2-vgjf ("... allocate 100% CPU time ...")
+     * contains a percent sign that lands exactly on a line wrap boundary. The previous fix for
+     * issue 89 escaped % to %% before wrapping, so the escaped pair could be split across two
+     * chunks, leaving a lone % at the end of a chunk. Because each chunk was passed to
+     * String.format as the format template, printing then crashed with
+     * java.util.UnknownFormatConversionException: Conversion = '%' and the findings goal failed.
+     */
+    @Test
+    void thatPercentCharacterAtALineWrapBoundaryIsPassedAsArgumentNotAsFormatTemplate() {
+        int chunkSize = findingsPrinter.getPrintWidth();
+        String findingContent = repeat("x", chunkSize - 1) + "% of the time";
+        Project project = aProject().withName("a").withVersion("1").build();
+        List<Finding> findings = findingsList(findingContent, false);
+
+        findingsPrinter.printFindings(project, findings);
+
+        verify(logger).info("%s", repeat("x", chunkSize - 1) + "%");
+        verify(logger).info("%s", " of the time");
+    }
+
+    /**
+     * Same scenario as above but with a real {@link Logger}, so the chunk is actually run through
+     * String.format. Before the fix this threw UnknownFormatConversionException.
+     */
+    @Test
+    void thatRealLoggerDoesNotThrowWhenPercentLandsOnLineWrapBoundary() {
+        FindingsPrinter printerWithRealLogger = new FindingsPrinter(new Logger(new SystemStreamLog()));
+        Project project = aProject().withName("a").withVersion("1").build();
+        // Start of the GHSA-rmr5-cpv2-vgjf description; the % of "100%" is the last char of line 1
+        String description = "### Impact\nThe vulnerability may allow a remote attacker to allocate 100% CPU time "
+                + "on the target system resulting in a denial of service";
+        List<Finding> findings = findingsList(description, false);
+
+        assertDoesNotThrow(() -> printerWithRealLogger.printFindings(project, findings));
     }
 
     private List<Finding> findingsList(boolean isSuppressed, final VulnerabilityBuilder vulnerabilityBuilder) {
