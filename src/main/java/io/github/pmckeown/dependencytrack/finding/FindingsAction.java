@@ -41,7 +41,7 @@ public class FindingsAction {
                 throw new DependencyTrackException("Error received from server");
             }
         } catch (UnirestException ex) {
-            logger.error(ex.getMessage());
+            logger.error("%s", ex.getMessage());
             throw new DependencyTrackException(ex.getMessage());
         }
     }

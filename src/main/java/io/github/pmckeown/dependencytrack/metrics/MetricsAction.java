@@ -37,7 +37,7 @@ public class MetricsAction {
         try {
             return pollForMetrics(project);
         } catch (Exception ex) {
-            logger.error(ex.getMessage());
+            logger.error("%s", ex.getMessage());
             throw new DependencyTrackException(format("Failed to get Metrics for project: %s", project.getUuid()));
         }
     }

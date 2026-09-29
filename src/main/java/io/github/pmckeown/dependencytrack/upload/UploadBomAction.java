@@ -93,7 +93,7 @@ public class UploadBomAction {
                 String message = String.format(
                         "Failure integrating with Dependency Track: %d %s",
                         response.getStatus(), response.getStatusText());
-                logger.error(message);
+                logger.error("%s", message);
                 throw new DependencyTrackException(message);
             }
         } catch (Exception ex) {
