@@ -38,7 +38,9 @@ class FindingsPrinter {
             logger.info(""); // Spacer
             List<String> wrappedDescriptionParts = splitString(vulnerability.getDescription());
             if (wrappedDescriptionParts != null && !wrappedDescriptionParts.isEmpty()) {
-                wrappedDescriptionParts.forEach(s -> logger.info(s));
+                // Pass the description parts as arguments, never as the format template: they are
+                // server-controlled text and may contain format conversions such as %m or a lone %
+                wrappedDescriptionParts.forEach(s -> logger.info("%s", s));
             }
             if (finding.getAnalysis().isSuppressed()) {
                 logger.info("");
@@ -57,8 +59,7 @@ class FindingsPrinter {
             return Collections.emptyList();
         }
 
-        String percentEscaped = StringUtils.replace(string, "%", "%%");
-        String cleaned = StringUtils.replace(percentEscaped, "\n", "");
+        String cleaned = StringUtils.replace(string, "\n", "");
         int chunkSize = getPrintWidth();
         final int numberOfChunks = (cleaned.length() + chunkSize - 1) / chunkSize;
         return IntStream.range(0, numberOfChunks)
