@@ -73,9 +73,10 @@ public class MetricsMojo extends AbstractDependencyTrackMojo {
 
             if (metricsThresholds != null) {
                 if (!metricsAnalyser.analyse(metrics, metricsThresholds)) {
-                    throw new MetricsThresholdsException("Project metrics exceeded defined metric thresholds", 
+                    throw new MetricsThresholdsException(
+                            "Project metrics exceeded defined metric thresholds",
                             "Project metrics for %s-%s exceeded defined thresholds %s"
-                            .formatted(project.getName(), project.getVersion(), metricsThresholds));
+                                    .formatted(project.getName(), project.getVersion(), metricsThresholds));
                 }
             }
         } catch (DependencyTrackException ex) {

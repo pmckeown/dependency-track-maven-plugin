@@ -3,7 +3,6 @@ package io.github.pmckeown.dependencytrack.project;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
-
 import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.plugin.annotations.Mojo;
 
@@ -30,8 +29,9 @@ public class DeleteProjectMojo extends AbstractDependencyTrackMojo {
                         .formatted(moduleConfig.getProjectName(), moduleConfig.getProjectVersion()));
             }
         } catch (DependencyTrackException ex) {
-            handleFailure("Exception occurred while trying to delete project: %s-%s"
-                    .formatted(moduleConfig.getProjectName(), moduleConfig.getProjectVersion()),
+            handleFailure(
+                    "Exception occurred while trying to delete project: %s-%s"
+                            .formatted(moduleConfig.getProjectName(), moduleConfig.getProjectVersion()),
                     ex);
         }
     }

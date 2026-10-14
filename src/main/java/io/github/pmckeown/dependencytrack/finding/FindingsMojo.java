@@ -104,9 +104,13 @@ public class FindingsMojo extends AbstractDependencyTrackMojo {
             findingsReportGenerator.generate(getOutputDirectory(), findings, this.findingThresholds, policyBreached);
 
             if (policyBreached) {
-                throw new FindingsPolicyBreachedException("Number of findings exceeded defined thresholds",
+                throw new FindingsPolicyBreachedException(
+                        "Number of findings exceeded defined thresholds",
                         "Reported vulnerability findings for %s-%s exceeded the configured threshold: %s"
-                                .formatted(moduleConfig.getProjectName(), moduleConfig.getProjectVersion(), findingThresholds));
+                                .formatted(
+                                        moduleConfig.getProjectName(),
+                                        moduleConfig.getProjectVersion(),
+                                        findingThresholds));
             }
         } catch (DependencyTrackException ex) {
             handleFailure("Error occurred when getting findings", ex);

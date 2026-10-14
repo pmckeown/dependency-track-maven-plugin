@@ -13,8 +13,6 @@ import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
 import io.github.pmckeown.dependencytrack.PollingConfig;
 import io.github.pmckeown.dependencytrack.project.ProjectBuilder;
 import org.apache.maven.api.plugin.testing.InjectMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.junit.jupiter.api.Test;
 
 class MetricsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {

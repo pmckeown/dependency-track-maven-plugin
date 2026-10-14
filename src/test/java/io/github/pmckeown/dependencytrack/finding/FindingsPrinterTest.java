@@ -18,7 +18,6 @@ import static org.mockito.Mockito.verify;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.test.logging.SpyLoggerRegistry;
 import java.util.List;
-import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -68,7 +67,7 @@ class FindingsPrinterTest {
         verify(logger).info("{} ({})", "CVE-2016-1", "NVD");
         verify(logger).info("{}: {}", "HIGH", "nz.co.dodgy:insecure-encrypter:20.0");
         verify(logger).info("");
-        verify(logger, times(4)).info("%s", descriptionPart);
+        verify(logger, times(4)).info("{}", descriptionPart);
     }
 
     @Test
@@ -100,7 +99,7 @@ class FindingsPrinterTest {
         findingsPrinter.printFindings(project, findings);
 
         Logger logger = SpyLoggerRegistry.expectLogger(FindingsPrinter.class);
-        verify(logger).info("{}", "crafted value that contains both ${} and %%{} sequences, which causes");
+        verify(logger).info("{}", "crafted value that contains both ${} and %{} sequences, which causes");
     }
 
     /**

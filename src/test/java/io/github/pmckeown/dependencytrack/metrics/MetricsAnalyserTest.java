@@ -7,14 +7,10 @@ import static io.github.pmckeown.dependencytrack.Constants.MEDIUM;
 import static io.github.pmckeown.dependencytrack.Constants.UNASSIGNED;
 import static io.github.pmckeown.dependencytrack.metrics.MetricsAnalyser.ERROR_TEMPLATE;
 import static io.github.pmckeown.dependencytrack.metrics.MetricsBuilder.aMetrics;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.verify;
 
 import io.github.pmckeown.test.logging.SpyLoggerRegistry;
-import org.apache.maven.plugin.MojoFailureException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -1,20 +1,18 @@
 package io.github.pmckeown.dependencytrack.policyviolation;
 
-import java.io.File;
-import java.util.List;
-
-import org.apache.maven.api.Lifecycle.Phase;
-import org.apache.maven.api.di.Inject;
-import org.apache.maven.api.di.Singleton;
-import org.apache.maven.api.plugin.annotations.Mojo;
-import org.apache.maven.api.plugin.annotations.Parameter;
-
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
 import io.github.pmckeown.dependencytrack.policyviolation.report.PolicyViolationsReportGenerator;
 import io.github.pmckeown.dependencytrack.project.Project;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
+import java.io.File;
+import java.util.List;
+import org.apache.maven.api.Lifecycle.Phase;
+import org.apache.maven.api.di.Inject;
+import org.apache.maven.api.di.Singleton;
+import org.apache.maven.api.plugin.annotations.Mojo;
+import org.apache.maven.api.plugin.annotations.Parameter;
 
 /**
  * Print the policy violations retrieved from the Dependency Track Server after a BOM upload. This is calculated immediately by the server and as such can be
@@ -67,7 +65,8 @@ public class PolicyViolationsMojo extends AbstractDependencyTrackMojo {
             policyViolationReportGenerator.generate(getOutputDirectory(), policyViolations);
 
             if (policyViolationsBreached) {
-                throw new PolicyViolationsException("Policy violations breached",
+                throw new PolicyViolationsException(
+                        "Policy violations breached",
                         "Policy violations for %s-%s have been breached"
                                 .formatted(project.getName(), project.getVersion()));
             }

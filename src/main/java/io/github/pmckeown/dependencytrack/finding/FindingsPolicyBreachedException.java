@@ -7,5 +7,4 @@ public class FindingsPolicyBreachedException extends DependencyTrackMojoExceptio
     public FindingsPolicyBreachedException(String shortMessage, String longMessage) {
         super(null, shortMessage, longMessage);
     }
-
 }

@@ -11,7 +11,6 @@ import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.finding.report.FindingsReportGenerator;
 import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import java.util.ArrayList;
-import org.apache.maven.plugin.MojoFailureException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -12,7 +12,6 @@ import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
 import io.github.pmckeown.dependencytrack.PollingConfig;
 import org.apache.maven.api.plugin.testing.InjectMojo;
-import org.apache.maven.plugin.MojoFailureException;
 import org.junit.jupiter.api.Test;
 
 class ScoreMojoIntegrationTest extends AbstractDependencyTrackMojoTest {

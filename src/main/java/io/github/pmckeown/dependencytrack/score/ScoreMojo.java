@@ -1,15 +1,14 @@
 package io.github.pmckeown.dependencytrack.score;
 
+import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
+import io.github.pmckeown.dependencytrack.DependencyTrackException;
+import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
 import org.apache.maven.api.Lifecycle.Phase;
 import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.plugin.annotations.Mojo;
 import org.apache.maven.api.plugin.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojo;
-import io.github.pmckeown.dependencytrack.DependencyTrackException;
-import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
 
 /**
  * Provides the capability to find the current Inherited Risk Score as determined by the Dependency Track Server.
@@ -37,17 +36,25 @@ public class ScoreMojo extends AbstractDependencyTrackMojo {
             Integer inheritedRiskScore = scoreAction.determineScore(moduleConfig, inheritedRiskScoreThreshold);
             failBuildIfThresholdIsBreached(inheritedRiskScore);
         } catch (DependencyTrackException ex) {
-            handleFailure("Failed to determine score for: %s-%s".formatted(moduleConfig.getProjectName(), moduleConfig.getProjectVersion()));
+            handleFailure("Failed to determine score for: %s-%s"
+                    .formatted(moduleConfig.getProjectName(), moduleConfig.getProjectVersion()));
         }
     }
 
     private void failBuildIfThresholdIsBreached(Integer inheritedRiskScore) throws InheritedRiskScoreException {
-        LOG.debug("Inherited Risk Score Threshold set to: {}", inheritedRiskScoreThreshold == null ? "Not set" : inheritedRiskScoreThreshold);
+        LOG.debug(
+                "Inherited Risk Score Threshold set to: {}",
+                inheritedRiskScoreThreshold == null ? "Not set" : inheritedRiskScoreThreshold);
 
         if (inheritedRiskScoreThreshold != null && inheritedRiskScore > inheritedRiskScoreThreshold) {
-            throw new InheritedRiskScoreException("Inherited Risk Score exceeded threshold",
+            throw new InheritedRiskScoreException(
+                    "Inherited Risk Score exceeded threshold",
                     "Inherited Risk Score [%d] for %s-%s was greater than the configured threshold [%d]"
-                            .formatted(inheritedRiskScore, moduleConfig.getProjectName(), moduleConfig.getProjectVersion(), inheritedRiskScoreThreshold));
+                            .formatted(
+                                    inheritedRiskScore,
+                                    moduleConfig.getProjectName(),
+                                    moduleConfig.getProjectVersion(),
+                                    inheritedRiskScoreThreshold));
         }
     }
 

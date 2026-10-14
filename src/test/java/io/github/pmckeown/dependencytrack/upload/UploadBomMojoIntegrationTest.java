@@ -35,13 +35,15 @@ import java.util.HashSet;
 import java.util.Set;
 import kong.unirest.Unirest;
 import org.apache.maven.api.plugin.testing.InjectMojo;
-import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
+
+    static final String BOM_LOCATION = "${project.build.directory}/test-classes/projects/run/bom.xml";
 
     void configure(UploadBomMojo uploadBomMojo) {
         configureMojo(uploadBomMojo);
@@ -54,6 +56,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     @InjectMojo(goal = "upload-bom")
+    @MojoParameter(name = "bomLocation", value = BOM_LOCATION)
     void thatBomCanBeUploadedSuccessfully(UploadBomMojo uploadBomMojo) throws Exception {
         configure(uploadBomMojo);
         stubFor(post(urlEqualTo(V1_BOM)).willReturn(ok()));
@@ -67,6 +70,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     @InjectMojo(goal = "upload-bom")
+    @MojoParameter(name = "bomLocation", value = BOM_LOCATION)
     void thatBomCanBeUploadedSuccessfullyWithPut(UploadBomMojo uploadBomMojo) throws Exception {
         configure(uploadBomMojo);
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
@@ -78,6 +82,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     @InjectMojo(goal = "upload-bom")
+    @MojoParameter(name = "bomLocation", value = BOM_LOCATION)
     void thatWhenFailOnErrorIsFalseAFailureFromToDependencyTrackDoesNotFailTheBuild(UploadBomMojo uploadBomMojo) {
         configure(uploadBomMojo);
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(notFound()));
@@ -94,6 +99,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     @InjectMojo(goal = "upload-bom")
+    @MojoParameter(name = "bomLocation", value = BOM_LOCATION)
     void thatWhenFailOnErrorIsTrueAFailureFromToDependencyTrackDoesFailTheBuild(UploadBomMojo uploadBomMojo)
             throws Exception {
         configure(uploadBomMojo);
@@ -116,6 +122,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     @InjectMojo(goal = "upload-bom")
+    @MojoParameter(name = "bomLocation", value = BOM_LOCATION)
     void thatWhenFailOnErrorIsFalseAFailureToConnectToDependencyTrackDoesNotFailTheBuild(UploadBomMojo uploadBomMojo) {
         configure(uploadBomMojo);
         // No Wiremock Stubbing
@@ -131,6 +138,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     @InjectMojo(goal = "upload-bom")
+    @MojoParameter(name = "bomLocation", value = BOM_LOCATION)
     void thatWhenFailOnErrorIsTrueAFailureToConnectToDependencyTrackDoesFailTheBuild(UploadBomMojo uploadBomMojo)
             throws Exception {
         configure(uploadBomMojo);
@@ -153,6 +161,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     @InjectMojo(goal = "upload-bom")
+    @MojoParameter(name = "bomLocation", value = BOM_LOCATION)
     void thatProjectNameCanBeProvided(UploadBomMojo uploadBomMojo) throws Exception {
         configure(uploadBomMojo);
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
@@ -168,6 +177,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     @InjectMojo(goal = "upload-bom")
+    @MojoParameter(name = "bomLocation", value = BOM_LOCATION)
     void thatProjectNameDefaultsToArtifactId(UploadBomMojo uploadBomMojo) throws Exception {
         configure(uploadBomMojo);
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
@@ -183,6 +193,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     @InjectMojo(goal = "upload-bom")
+    @MojoParameter(name = "bomLocation", value = BOM_LOCATION)
     void thatProjectVersionCanBeProvided(UploadBomMojo uploadBomMojo) throws Exception {
         configure(uploadBomMojo);
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
@@ -198,6 +209,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     @InjectMojo(goal = "upload-bom")
+    @MojoParameter(name = "bomLocation", value = BOM_LOCATION)
     void thatProjectIsLatestCanBeProvided(UploadBomMojo uploadBomMojo) throws Exception {
         configure(uploadBomMojo);
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
@@ -213,6 +225,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     @InjectMojo(goal = "upload-bom")
+    @MojoParameter(name = "bomLocation", value = BOM_LOCATION)
     void thatProjectTagsCanBeProvided(UploadBomMojo uploadBomMojo) throws Exception {
         configure(uploadBomMojo);
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
@@ -233,6 +246,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     @InjectMojo(goal = "upload-bom")
+    @MojoParameter(name = "bomLocation", value = BOM_LOCATION)
     void thatProjectVersionDefaultsToPomVersion(UploadBomMojo uploadBomMojo) throws Exception {
         configure(uploadBomMojo);
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
@@ -247,6 +261,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     @InjectMojo(goal = "upload-bom")
+    @MojoParameter(name = "bomLocation", value = BOM_LOCATION)
     void thatTheUploadIsSkippedWhenSkipIsTrue(UploadBomMojo uploadBomMojo) throws Exception {
         configure(uploadBomMojo);
         stubFor(put(urlEqualTo(V1_BOM)).willReturn(ok()));
@@ -260,6 +275,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     @InjectMojo(goal = "upload-bom")
+    @MojoParameter(name = "bomLocation", value = BOM_LOCATION)
     void thatSslVerifyDefaultsToTrue(UploadBomMojo uploadBomMojo) throws Exception {
         configure(uploadBomMojo);
         uploadBomMojo.setSkip("true");
@@ -269,6 +285,7 @@ class UploadBomMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
 
     @Test
     @InjectMojo(goal = "upload-bom")
+    @MojoParameter(name = "bomLocation", value = BOM_LOCATION)
     void thatProjectParentNameAndVersionCanBeIgnored(UploadBomMojo uploadBomMojo) throws Exception {
         configure(uploadBomMojo);
         stubFor(get(urlPathEqualTo(V1_PROJECT_LOOKUP))

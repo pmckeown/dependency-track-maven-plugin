@@ -16,7 +16,6 @@ import io.github.pmckeown.dependencytrack.project.ProjectAction;
 import io.github.pmckeown.test.logging.SpyLoggerRegistry;
 import java.util.Collections;
 import kong.unirest.Unirest;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -187,7 +186,8 @@ class UploadBomMojoTest {
 
         uploadBomMojo.setFailOnError(true);
 
-        DependencyTrackMojoException exception = assertThrows(DependencyTrackMojoException.class, () -> uploadBomMojo.execute());
+        DependencyTrackMojoException exception =
+                assertThrows(DependencyTrackMojoException.class, () -> uploadBomMojo.execute());
         assertThat(exception.getCause(), is(cause));
 
         Logger logger = SpyLoggerRegistry.expectLogger(UploadBomMojo.class);

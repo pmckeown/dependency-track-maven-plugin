@@ -10,8 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 @WireMockTest
 @MojoTest
 public abstract class AbstractDependencyTrackMojoTest {
-    protected static final String TEST_PROJECT = "${basedir}/target/test-classes/projects/run";
-
     protected WireMockRuntimeInfo wireMockRuntimeInfo;
 
     @Inject
