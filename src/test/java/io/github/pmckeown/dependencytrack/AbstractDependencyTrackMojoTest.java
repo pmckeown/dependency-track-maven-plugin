@@ -4,7 +4,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.apache.maven.api.Project;
 import org.apache.maven.api.di.Inject;
-import org.apache.maven.api.plugin.testing.MojoTest;
+import org.apache.maven.testing.plugin.MojoTest;
 import org.junit.jupiter.api.BeforeEach;
 
 @WireMockTest

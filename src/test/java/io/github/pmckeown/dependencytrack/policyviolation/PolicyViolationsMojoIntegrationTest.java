@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
-import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.apache.maven.testing.plugin.InjectMojo;
 import org.junit.jupiter.api.Test;
 
 class PolicyViolationsMojoIntegrationTest extends AbstractDependencyTrackMojoTest {

@@ -7,7 +7,6 @@ import io.github.pmckeown.dependencytrack.ModuleConfig;
 import io.github.pmckeown.dependencytrack.project.ProjectTag;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -35,7 +34,8 @@ public class UploadBomRequest {
         this.autoCreate = moduleConfig.isAutoCreate();
         this.bom = bomReference;
         this.isLatest = moduleConfig.isLatest();
-        if (CollectionUtils.isEmpty(moduleConfig.getProjectTags())) {
+        if (moduleConfig.getProjectTags() == null
+                || moduleConfig.getProjectTags().isEmpty()) {
             this.projectTags = null;
         } else {
             this.projectTags =

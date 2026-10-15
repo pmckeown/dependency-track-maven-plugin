@@ -2,7 +2,6 @@ package io.github.pmckeown.dependencytrack.project;
 
 import static java.lang.String.format;
 
-import com.networknt.schema.utils.StringUtils;
 import io.github.pmckeown.dependencytrack.DependencyTrackException;
 import io.github.pmckeown.dependencytrack.Item;
 import io.github.pmckeown.dependencytrack.ModuleConfig;
@@ -11,6 +10,7 @@ import io.github.pmckeown.dependencytrack.bom.BomParser;
 import java.io.File;
 import java.util.*;
 import kong.unirest.UnirestException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.api.di.Inject;
 import org.apache.maven.api.di.Named;
 import org.apache.maven.api.di.Singleton;

@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.github.tomakehurst.wiremock.http.Fault;
 import io.github.pmckeown.dependencytrack.AbstractDependencyTrackMojoTest;
 import io.github.pmckeown.dependencytrack.DependencyTrackMojoException;
-import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.apache.maven.testing.plugin.InjectMojo;
 import org.junit.jupiter.api.Test;
 
 class DeleteProjectMojoIntegrationTest extends AbstractDependencyTrackMojoTest {
